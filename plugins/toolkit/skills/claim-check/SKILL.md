@@ -157,15 +157,25 @@ Keep the report **concise and verdict-first**, written as **plain structured tex
 buries the verdict). It has three parts and nothing else:
 
 1. **Verdict — `<bucket>`:** the single most important sentence, then a tight
-   rationale — why this verdict and how it was verified (the decisive evidence
-   and its rung on the ladder). For `mis-scoped`, add a one-line **corrected
-   framing**; for `inconclusive`, name the wall and the one input that would
-   breach it.
-2. **Prior / parallel work:** only what *bears on the verdict* — the commits or
+   rationale in a sentence or two — why this verdict and how it was verified
+   (the decisive method and its rung on the ladder). The evidence itself
+   follows as short labeled bullets — one per repro case with its
+   observed-vs-expected result, one for the root-cause chain of `file:line`
+   hops, one per caveat or limit on the evidence — so parallel cases and
+   caveats sit side by side and can be compared. For `mis-scoped`, add a
+   one-line **corrected framing**; for `inconclusive`, name the wall and the
+   one input that would breach it.
+2. **Prior / parallel work — `<status>`:** the status is one word, so the
+   landscape reads at a glance: `clean` (the search found nothing that
+   addresses or constrains it), `in-flight` (parallel work on the same ground
+   is underway — coordinate first), `related` (nothing touches it directly,
+   but merged or adjacent work bears on the fix), or `blocked` (other work
+   must land first); when several apply, pick the one the operator must act on
+   first. Then, as prose, only what *bears on the verdict* — the commits or
    PRs that already closed part of it, and the sibling tickets that need
    coordination or that a fix here could regress — plus one line on what was
-   searched (so "none found" means something). Not a catalogue of every related
-   ticket and branch.
+   searched (so "none found" means something). Not a catalogue of every
+   related ticket and branch.
 3. **Readiness:** the section an implementer scans back to, so it is shaped for
    scanning. It opens with a one-line call — actionable, blocked (and on what),
    or not actionable (and exactly what is missing or what decision unblocks it)
@@ -218,8 +228,9 @@ or `tmp/<YYYY-MM-DD>-<slug>-claim-check.md`); otherwise in-chat.
   nor under-investigate a load-bearing claim.
 - Lead with the verdict; the report is verdict + prior/parallel work + readiness
   and nothing else — no per-claim table, no echoed source, no blockquote wrapper.
-  Keep prior/parallel work to what bears on the verdict; shape readiness as a
-  one-line call followed by labeled bullets.
+  Bullet the verdict's evidence; open prior/parallel work with its one-word
+  status and keep it to what bears on the verdict; shape readiness as a one-line
+  call followed by labeled bullets.
 - Stop at the fix, not at the search. Build the harness that proves or breaks a
   claim; do not implement the fix — acting on the findings is the separate step
   the operator owns.

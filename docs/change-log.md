@@ -1,5 +1,28 @@
 # Change Log
 
+## 2026-07-07
+
+### claim-check — verdict evidence bulleted, prior/parallel work opens with a status word
+
+The run right after the readiness reshape showed the same shaping failure one
+section up: the verdict opened well, then wove three repro cases, the root-cause
+chain, and a provenance caveat into one dense paragraph (parallel cases impossible
+to compare), and prior/parallel work — good on content — gave no first-glance
+answer to "is anyone on this?". Same fix form (positive recipe per
+`writing-skills`): the verdict is now headline + one-two-sentence rationale, then
+short labeled bullets — one per repro case with observed-vs-expected, one for the
+root-cause chain of `file:line` hops, one per caveat; prior/parallel work opens
+with a one-word status (`clean` / `in-flight` / `related` / `blocked`, act-first
+tag when several apply) and stays prose. Supersedes the prior decision's
+"verdict and prior-work stay prose" clause. Micro-tested 5-vs-5 on the real
+failing material: five of five incumbent reps reproduced the dense-verdict
+failure; five of five recipe reps converged on the bulleted shape and
+independently chose the same status word. Canonical copy is
+`plugins/toolkit/skills/claim-check/SKILL.md` only; origin doc updated for
+parity. `toolkit` `0.12.0` → `0.12.1` across all four manifests; the validator
+passes. See
+[`docs/decisions/claim-check-verdict-and-priorwork-shape.md`](decisions/claim-check-verdict-and-priorwork-shape.md).
+
 ## 2026-07-03
 
 ### empirical-proof — new toolkit skill: post-change runtime proof with anti-cheating teeth

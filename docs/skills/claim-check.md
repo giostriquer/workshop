@@ -142,9 +142,26 @@ Surfaced by early lived-in use on real tickets:
   wording was micro-tested 5-vs-5 against the incumbent on the real failing
   material: all five recipe reps converged on the scannable shape, while the
   incumbent left the gotchas as dense prose in five of five and reproduced the
-  fully-inline failure in one. Verdict and prior/parallel work stay prose — they
-  are read once; readiness is the part the implementer returns to. See
+  fully-inline failure in one. (This pass deliberately left verdict and
+  prior/parallel work as prose — an assumption the next lived run falsified;
+  see the following refinement.) See
   [`docs/decisions/claim-check-readiness-shape.md`](../decisions/claim-check-readiness-shape.md).
+- **The verdict's evidence is bulleted too, and prior/parallel work opens with a
+  status word.** The run right after the readiness reshape produced a verdict
+  that opened well and then wove three repro cases, the root-cause chain, and a
+  provenance caveat into one dense paragraph — parallel cases impossible to
+  compare — while the prior/parallel section, though good, gave no first-glance
+  answer to "is anyone on this?". Same failure class (wrong-shaped output),
+  same fix form (a recipe, not a prohibition): the verdict is now headline +
+  one-two-sentence rationale, then short labeled bullets — one per repro case
+  with its observed-vs-expected result, one for the root-cause chain of
+  `file:line` hops, one per caveat or limit on the evidence; prior/parallel
+  work opens with a one-word status — `clean` / `in-flight` / `related` /
+  `blocked` — then stays prose. Micro-tested 5-vs-5 on the real failing
+  material: all five incumbent reps reproduced the dense-verdict failure, all
+  five recipe reps converged on the bulleted shape and independently picked
+  the same status word. See
+  [`docs/decisions/claim-check-verdict-and-priorwork-shape.md`](../decisions/claim-check-verdict-and-priorwork-shape.md).
 - **Depth over speed — and "needs more information" is honest.** Two separate
   sessions returned confident verdicts too early and only found the real evidence
   after the operator contested them. The fix is a grounding gate, not a nudge: an
