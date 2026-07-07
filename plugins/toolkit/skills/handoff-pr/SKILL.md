@@ -1,6 +1,6 @@
 ---
 name: handoff-pr
-description: Use when a branch is ready for a PR but the current session is not authorized to open one. Produces a structured PR handoff artifact (title, body, ticket links, validation and review status) for a separately-authorized session or agent to open. Derives the PR body from the repo's own PR template when one exists. Auto-detects the ClickUp / Linear / Jira ticket and asks to confirm. Never opens the PR itself.
+description: Use when a branch is ready for a PR but the current session is not authorized to open one. Produces a structured PR handoff artifact (title, body, ticket links, validation and review status) for a separately-authorized session or agent to open. Derives the PR body from the repo's own PR template when one exists. Auto-detects the ClickUp / Linear / Jira ticket and asks to confirm. Writes the artifact to a `tmp/` scratch file by default; `inline` prints it in-session instead and writes no file. Never opens the PR itself.
 ---
 
 # Handoff PR
@@ -35,7 +35,9 @@ The work is ready for a PR, but the current session does not hold PR-write autho
    - **Template found:** fill that template's actual sections **verbatim** — preserve its headings, their order, every checkbox item, and any `<!-- comment markers -->`. Do **not** add, drop, or rename sections. Map our content into the fields the template already has: summary text into its summary/description field, the ticket link into its issue/ticket field, validation evidence into its testing/QA field *if it has one* (the commands run + their results, not bare test-file names). For a checklist, tick `[x]` **only** for items actually verified; leave the rest `[ ]`. If a field has no content to fill, leave it blank (or keep its placeholder) rather than fabricating one. **Before finalizing, check your body's headings against the template's: same set, same order, none added (no `Summary` / `Caveats` unless the template has them), none renamed — if they differ, you replaced the template instead of filling it; redo.**
    - **No template (only after the Step 3 search came up empty):** fall back to the built-in structure below.
 6. **Assemble the artifact** using the layout below — the paste-ready **PR body** first, then the **handoff notes** that stay with the opener.
-7. **Deliver:** print the artifact inline. Also write it to `tmp/handoff-pr-<branch-slug>.md` (sanitize the branch name: `/` → `-`) and report the path, so the authorized session can read it.
+7. **Deliver — exactly one mode, chosen by the invocation argument:**
+   - **Default (no argument):** write the artifact to `tmp/handoff-pr-<branch-slug>.md` (sanitize the branch name: `/` → `-`) and report the path so the authorized session can read it. Do not also print the full artifact inline — the path plus the PR title is the in-session output.
+   - **`inline`** (invoked as `/handoff-pr inline`): print the full artifact inline and write **no** file — no `tmp/` artifact, no scratch copy anywhere.
 8. **Stop.** State plainly that opening the PR is the authorized session's job: it pastes the PR body and runs the `gh pr create` command from the handoff notes. Do not run it.
 
 ## The artifact
@@ -74,6 +76,7 @@ Two clearly separated blocks. The **PR body** is the only part that goes into th
 ## Rules
 
 - Never run `gh pr create` (or any PR-opening command) — produce the artifact only.
+- Deliver in exactly one mode: the `tmp/` file by default, inline-only (no file written) when invoked with `inline` — never both.
 - When the repo ships a PR template, the body **is** that template: same headings, order, checkboxes, and comment markers. Fill its fields; never add, drop, or rename sections.
 - **Never replace a found template with the built-in skeleton.** The fallback's `Summary` / `Ticket` / `Caveats` headings appear *only* when the repo genuinely has no template. Use the fallback solely after an actual Step 3 search came up empty, and before finalizing a template-based body confirm its headings match the template's exactly.
 - If the repo enforces PR **title** or **branch-name** conventions (a PR-title linter, commit-lint, a branch-name rule), conform the title and branch to the pattern it actually enforces — discover it from the linter / CI config rather than guessing a scope or prefix that gets the PR rejected.

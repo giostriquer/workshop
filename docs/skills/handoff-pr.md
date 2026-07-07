@@ -18,13 +18,17 @@ Five failure modes in the ad-hoc flow:
 
 ## Solution shape
 
-An artifact generator, not a PR opener. It detects branch + base, summarizes from the real diff, auto-detects and confirms the ticket link, and — before assembling anything — looks for the repo's own PR template. When one exists, the PR body *is* that template filled in verbatim (headings, order, checkboxes, and `<!-- markers -->` preserved); otherwise it falls back to a built-in Summary / Ticket / Caveats structure. The artifact is two visibly separate blocks: a paste-ready **PR body** (the only part that goes in the PR description) and **handoff notes** that carry the opener-only fields — which template was chosen, validation provenance, review status, and the `gh pr create` command — so process fields never leak into the public PR. It prints the artifact and writes it to a scratch file. It explicitly never runs `gh pr create` — that is the authorized session's job.
+An artifact generator, not a PR opener. It detects branch + base, summarizes from the real diff, auto-detects and confirms the ticket link, and — before assembling anything — looks for the repo's own PR template. When one exists, the PR body *is* that template filled in verbatim (headings, order, checkboxes, and `<!-- markers -->` preserved); otherwise it falls back to a built-in Summary / Ticket / Caveats structure. The artifact is two visibly separate blocks: a paste-ready **PR body** (the only part that goes in the PR description) and **handoff notes** that carry the opener-only fields — which template was chosen, validation provenance, review status, and the `gh pr create` command — so process fields never leak into the public PR. Delivery is exactly one mode: by default it writes the artifact to a scratch file and reports the path; invoked with `inline`, it prints the artifact in-session instead and writes no file. It explicitly never runs `gh pr create` — that is the authorized session's job.
 
 ## Real invocation snippet
 
 > /handoff-pr
 
 Finds the repo's PR template, builds the PR body to its shape (or the built-in fallback), confirms the ticket, writes `tmp/handoff-pr-<branch-slug>.md`, and stops short of opening the PR.
+
+> /handoff-pr inline
+
+Same, but prints the artifact in-session and writes no `tmp/` file — for when a scratch artifact isn't wanted.
 
 ## Pitfalls observed
 
@@ -33,6 +37,7 @@ Finds the repo's PR template, builds the PR body to its shape (or the built-in f
 - **Leaking process fields.** Validation provenance and review status are handoff bookkeeping; pasted into the public PR body they read as noise and can expose internal scratch paths. They live in the opener-only notes.
 - **Summarizing from memory.** The artifact may be opened by a session with no shared context, so the summary must come from the diff.
 - **Omitting the ticket when none is auto-detected.** Ask for it rather than shipping a PR with no traceability.
+- **Double delivery.** Earlier versions printed the full artifact inline *and* wrote the scratch file — the same long artifact landed twice, cluttering the session. Delivery is now exactly one mode: the file by default (path reported), inline-only when invoked with `inline`.
 - **Trusting "tests pass" over the static gate.** Formatting / lint / type-check are usually the *required*, fail-fast CI gates and the cheapest to trip. Discover them from the repo and run them locally — and remember a `--no-verify` commit skipped the pre-commit formatter, so it must be run by hand before push. Record format / lint / type-check / tests separately so a later "known issue" note points at the gate that's actually red.
 
 ## Adaptation notes

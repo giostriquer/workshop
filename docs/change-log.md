@@ -2,6 +2,20 @@
 
 ## 2026-07-07
 
+### handoff-pr — single-mode delivery: tmp artifact by default, `inline` writes no file
+
+The deliver step used to both print the full artifact inline and write the
+`tmp/handoff-pr-<branch-slug>.md` scratch file, landing the same long artifact
+twice in every run. Delivery is now a conditional on the invocation argument:
+default writes the file and reports the path plus PR title (no inline dump);
+`/handoff-pr inline` prints the artifact in-session and writes no file. A rule
+pins it to exactly one mode, and the `description` names the option (matching
+`handoff-review`'s argument-documenting style). Canonical copy is
+`plugins/toolkit/skills/handoff-pr/SKILL.md` only; origin doc updated for
+parity. `toolkit` `0.12.1` → `0.12.2` across all four manifests; the validator
+passes. See
+[`docs/decisions/handoff-pr-delivery-modes.md`](decisions/handoff-pr-delivery-modes.md).
+
 ### claim-check — verdict evidence bulleted, prior/parallel work opens with a status word
 
 The run right after the readiness reshape showed the same shaping failure one
