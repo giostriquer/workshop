@@ -1,5 +1,29 @@
 # Change Log
 
+## 2026-07-12
+
+### handoff-goal v2 — self-carrying split contract (`goal.md` + `plan.md`)
+
+The emitted goal document becomes a **contract directory**:
+`tmp/<YYYY-MM-DD>-<goal-slug>/` holding `goal.md` (frozen — the pursuer may not
+edit it, making the goalpost-moving tripwire mechanical) and `plan.md` (living —
+phases, ledger, next action, maintained by the pursuer). Absorbed the design
+rigor of a Codex-native "ultragoal" skill rather than shipping a second
+overlapping piece: a producer-side goal-fit check, a recorded baseline, a
+primary verifier named on the real interaction surface with a capability
+inventory (gaps become named blocked items, never silent downgrades), approval
+gates, a red-team pass before delivery, stakes-scaled delegation lanes, and a
+critique mode that tightens an existing contract in place. The contract carries
+its own pursuit discipline plus an activation note, so any runtime — including
+Codex goal mode via `create_goal` — can pursue it. Canonical copy is
+`plugins/toolkit/skills/handoff-goal/SKILL.md` only; origin doc and both skills
+rosters updated for parity. `toolkit` `0.12.2` → `0.12.3` across all four
+manifests; the validator passes; a sample contract emission smoke-tested both
+templates. See
+[`docs/decisions/handoff-goal-split-contract.md`](decisions/handoff-goal-split-contract.md)
+and its
+[implementation plan](decisions/handoff-goal-split-contract-implementation-plan.md).
+
 ## 2026-07-07
 
 ### handoff-pr — single-mode delivery: tmp artifact by default, `inline` writes no file

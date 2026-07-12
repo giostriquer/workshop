@@ -4,7 +4,9 @@
 
 The third handoff the maintainer kept writing by hand: not handing a finished branch *backward* to a reviewer (`handoff-review`) or a PR opener (`handoff-pr`), but handing work *forward* — "here's the goal, here's where we are, here are the working rules; new session, go pursue it." Written ad hoc, the doc carried the goal but lost the rules: preferences stated once in chat (commit style, push policy, PR target) made it into the file inconsistently, and nothing told the pursuing session what to do when its own context compacted mid-goal.
 
-`handoff-goal` formalizes that forward handoff into a goal document a new session picks up and pursues autonomously.
+`handoff-goal` formalizes that forward handoff into a goal contract a new session picks up and pursues autonomously.
+
+A second pressure arrived from outside: a Codex-native goal skill ("ultragoal"), grown in real use alongside Codex goal mode, carried design rigor the handoff lacked — a goal-fit check, a recorded baseline, a primary verifier on the real interaction surface, approval gates, a red-team pass, and a goal/plan file split. Rather than ship a second, overlapping skill, `handoff-goal` absorbed the rigor and its emitted contract became the shared format any runtime can pursue — including Codex goal mode activating it directly (see `docs/decisions/handoff-goal-split-contract.md`).
 
 ## Problem
 
@@ -17,26 +19,36 @@ The ad-hoc flow fails in four characteristic ways. The first three are about *co
 
 ## Solution shape
 
-A document generator, not an executor. It resolves the goal from one of three sources — inferred from the session's trajectory (then confirmed), scoped to referenced existing work (a plan, slices, a spec), or shaped from a brand-new description (asking only what's needed to make it actionable). It re-derives current state from the repo rather than session memory, gathers operating rules (repo rule files + operator statements, asking for what's still open), and writes `tmp/<YYYY-MM-DD>-<goal-slug>.md`.
+A contract generator, not an executor. It resolves the goal from one of three sources — inferred from the session's trajectory (then confirmed), scoped to referenced existing work (a plan, slices, a spec), or shaped from a brand-new description (asking only what's needed to make it actionable) — after a **fit check**: goal handoffs pay off when pursuit is a loop (repeatable attempts, checks that can fail, no fresh preference decision after each failure); when the shape is wrong it recommends a lighter tool instead. It re-derives current state *and the baseline* from the repo rather than session memory, gathers operating rules (repo rule files + operator statements, asking for what's still open), red-teams the draft, and writes a **split contract**:
 
-The document is built on **two rules**, not one:
+```
+tmp/<YYYY-MM-DD>-<goal-slug>/
+├─ goal.md   — the frozen contract; the pursuer may not edit it
+└─ plan.md   — the living route; the pursuer maintains it
+```
 
-1. *The document is the only context that survives.* The pursuing session starts with zero access to the producing session and compacts while it works, so everything it needs — goal, state, operating rules — lives in the file, and the file tells it to keep coming back.
-2. *The document is the goal's defense against its own pursuer.* It defines done as checks the pursuer can't fake, forbids the cheap proxies, forces verification the pursuer didn't judge itself, logs the evidence, and names the temptations that mean *escalate, don't reinterpret*. The discipline is injected **into the document** — the skill does not assume the target repo supplies it.
+The contract is built on **two rules**:
 
-Concretely the emitted document carries: **verifiable acceptance checks** (each with a verify command + expected evidence, and a refutation/mutation form for behavior changes) in place of prose done; an **integrity rules** block (don't weaken / skip / rename-away tests or gates; don't narrow scope or reinterpret the goal — escalate; evidence before claims; report failures faithfully); an operator-set **quality posture** line (default: reliability over speed); **independent verification** baked into the loop shape (act → verify with an independent pass → record evidence → repeat); stakes-scaled **invariants / must-not-break** and **non-goals** sections; a **progress ledger** (each entry: which check it advanced, the verification run, decisions + rationale — authoritative over post-compaction recollection); explicit **when-to-stop** conditions including the anti-degradation tripwire ("tempted to change the goal, the checks, or the scope to make done reachable" → escalate, not edit); and a compaction ritual that is a *drift check* (re-read Goal + Acceptance checks + Integrity rules after every compaction and before declaring any check done).
+1. *The contract is the only context that survives.* The pursuing session starts with zero access to the producing session and compacts while it works, so everything it needs — goal, state, operating rules — lives in the files, and the files tell it to keep coming back.
+2. *The contract is the goal's defense against its own pursuer.* It defines done as checks the pursuer can't fake, forbids the cheap proxies, forces verification the pursuer didn't judge itself, logs the evidence, and names the temptations that mean *escalate, don't reinterpret*. The discipline is injected **into the contract** — the skill does not assume the target repo supplies it. The file split makes one defense **mechanical**: routine writes never touch `goal.md`, so the urge to edit it *is* the redefinition tripwire firing.
+
+Concretely, `goal.md` carries: the goal as an outcome; the **baseline** (the exact failing command + output, or starting metric — the fixed reference "done" is measured against); **verifiable acceptance checks** (each with a verify command + expected evidence, and a refutation/mutation form for behavior changes) with the **primary verifier** flagged — the strongest check, exercised on the real surface where the outcome matters (running app, real workflow, rendered page; unit tests and builds support it, never replace it), and any capability the pursuer will lack named as an explicit blocked item rather than silently downgraded; an **integrity rules** block (don't edit `goal.md`; don't weaken / skip / rename-away tests or gates; don't narrow scope or reinterpret the goal — escalate; evidence before claims; report failures faithfully); stakes-scaled **approval gates** (irreversible, public, shared, or costly actions go back to the operator even mid-goal), **invariants**, and **non-goals**; operating rules with an operator-set **quality posture** (default: reliability over speed); **when-to-stop** conditions including the tripwire; and an **activation note** — on a runtime with durable goal support (e.g. Codex `create_goal`), the contract activates with a one-line objective pointing at both files; elsewhere a session adopts it directly.
+
+`plan.md` carries the pursuit discipline: the loop shape (act → verify with an independent pass → record evidence → repeat); **plan-update events** (operator steering, material new evidence, a failed verification, a completed phase → re-read both files and revise before continuing); **current state** (the handoff snapshot, evolving with pursuit); **phases** (status / implementation / verification / exit criteria, at most one in progress); stakes-scaled **delegation lanes** (bounded lanes with their own objective, verifier, and stop condition; integration and completion stay with the pursuer); the append-only **progress ledger**; and the single **next action**.
+
+A **critique mode** rounds it out: pointed at an existing goal directory, the skill audits the contract against its own bar (red-team questions, verifiable checks, real-surface verifier, concrete rules, split honored, apparatus matched to stakes) and tightens it in place instead of writing anew.
 
 The goal is still stated as an outcome the pursuing session owns and may optimize — the acceptance checks pin *what done means*, not *how to get there*.
 
 ## Calibration
 
-The defense scales with the goal's stakes and the operator's quality posture — a one-file utility shouldn't be wrapped in a full invariant matrix. **Four parts are always on**, whatever the goal, because they are what convert a fast-but-plausible loop into a slower-but-reliable one: verifiable acceptance checks, integrity rules, independent verification, and the redefinition tripwire. Everything else — an explicit invariants section, a non-goals list, a full reviewer-grade independent pass — scales up with stakes.
+The defense scales with the goal's stakes and the operator's quality posture — a one-file utility shouldn't be wrapped in a full invariant matrix. **Four parts are always on** in the contract, because they are what convert a fast-but-plausible loop into a slower-but-reliable one: verifiable acceptance checks, integrity rules, independent verification, and the redefinition tripwire. Three steps are always on *producer-side* — the fit check, the baseline capture, and the red-team pass cost the producing session a moment, not the contract a section. Everything else — approval gates, delegation lanes, an explicit invariants section, a non-goals list, a full reviewer-grade independent pass — scales up with stakes.
 
 ## Real invocation snippet
 
 > /handoff-goal
 
-Infers the goal from the session (the active plan, the work in progress), confirms it with the operator, and writes the goal document.
+Infers the goal from the session (the active plan, the work in progress), confirms it with the operator, and writes the goal contract.
 
 > /handoff-goal slices 3-9 of the relay-sync plan
 
@@ -44,21 +56,28 @@ Scopes the goal to exactly those slices, reading the plan file rather than recal
 
 > /handoff-goal I want a CLI that mirrors issue comments between two trackers...
 
-No plan exists; asks only what's needed to make the goal actionable, then shapes it into the document.
+No plan exists; asks only what's needed to make the goal actionable, then shapes it into the contract.
+
+> /handoff-goal critique tmp/2026-07-12-relay-sync/
+
+Audits an existing contract against the skill's bar and tightens it in place.
 
 ## Pitfalls observed
 
 - **Vague rules.** "Follow the usual conventions" survives compaction as nothing. Rules carry concrete values — the actual branch, the actual PR target — each sourced from a repo rule file or the operator.
-- **Invented rules.** The baseline failure above. If neither the repo nor the operator stated it, it doesn't go in the document.
+- **Invented rules.** The baseline failure above. If neither the repo nor the operator stated it, it doesn't go in the contract.
 - **Prose definition of done.** "X works" is the gameable proxy. Done is a checklist of checks the pursuer can run, each with how to verify it; behavior changes carry the mutation that should turn them red.
-- **Assuming the repo supplies the discipline.** The integrity rules ride in the document precisely because the target repo may mandate nothing. Don't omit them on the assumption that "the repo's CLAUDE.md handles it."
+- **Assuming the repo supplies the discipline.** The integrity rules ride in the contract precisely because the target repo may mandate nothing. Don't omit them on the assumption that "the repo's CLAUDE.md handles it."
+- **Living state in `goal.md`.** The split only defends if routine writes never touch the contract: current state, phase status, and evidence live in `plan.md`; `goal.md` freezes at handoff.
+- **Silently downgraded verifier.** When the pursuing session won't have the capability the real-surface check needs, the temptation is to swap in a unit test and move on. Name the gap as a blocked item with the manual test the operator must run instead.
 - **Fortress for a one-liner.** The opposite failure: loading a trivial goal with the full apparatus. Gate it on stakes and quality posture; ship the always-on four and add the rest as warranted.
-- **Treating it as an executor.** It writes the document; pursuing the goal belongs to the new session. Starting the work in the producing session defeats the handoff.
-- **Restating the plan.** The document links to plan / spec files; copying their content in creates a second source of truth that goes stale.
+- **Treating it as an executor.** It writes the contract; pursuing the goal belongs to the new session. Starting the work in the producing session defeats the handoff.
+- **Restating the plan.** The contract links to plan / spec files; copying their content in creates a second source of truth that goes stale.
 
 ## Adaptation notes
 
 - The operating-rules categories (branch / commits / push-PR / validation / quality-posture / scope) are portable; the *values* come from each project's own rule files and operator, so the skill adapts automatically.
-- The integrity apparatus is the generalized form of a repo's Regression-Prevention Gate. A project that already mandates gates and mutation proofs can lean on its own rule files; a project that doesn't gets the discipline from the document itself.
-- The scratch path (`tmp/...`) is a default; point it at whatever scratch dir your project uses, and gitignore it.
+- The integrity apparatus is the generalized form of a repo's Regression-Prevention Gate. A project that already mandates gates and mutation proofs can lean on its own rule files; a project that doesn't gets the discipline from the contract itself.
+- The scratch path (`tmp/<YYYY-MM-DD>-<goal-slug>/`) is a default; point it at whatever scratch dir your project uses, and gitignore it.
+- A runtime-side goal-mode skill (e.g. a personal Codex "ultragoal") can consume the contract: design and critique stay here; activation is one `create_goal` call carrying the objective from `goal.md`'s Activation section.
 - Pairs naturally with its siblings: pursue the goal, then `handoff-review` for a fresh-eyes review, then `handoff-pr` to package the PR.
