@@ -1,6 +1,6 @@
 # Agent Workshop
 
-Ready-to-use AI agents and skills for Claude Code and Codex, extracted from real projects and packaged as installable plugins. You get review agents that catch problems in specs, tests, and code, plus workflow skills for handoffs and reports — without building any of it yourself.
+Ready-to-use AI agents and skills for Claude Code and Codex, extracted from real projects and packaged as installable plugins. You get review agents that catch problems in specs, tests, and code, plus workflow skills for handoffs and reports.
 
 ## Install
 
@@ -47,5 +47,3 @@ One guided skill, `agent-workshop-onboard`, for adopting the **project-coupled**
 - [`docs/agents/`](docs/agents/) and [`docs/skills/`](docs/skills/) — the origin story of every agent and skill: what problem it solved and how it's used in practice.
 - [`docs/conventions/`](docs/conventions/) — the portable working rules the agents rely on.
 - [`docs/adoption/README.md`](docs/adoption/README.md) — the pack catalog, maturity labels, and host support.
-
-Everything here came from months of lived-in use on real projects, sanitized to be portable. It's not a framework or a methodology — adopt the pieces that earn their keep in your project and skip the rest.

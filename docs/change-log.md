@@ -1,5 +1,30 @@
 # Change Log
 
+## 2026-07-13
+
+### doc-to-html — four recipes adopted from a comparative skill evaluation
+
+An external general-purpose "information-first HTML artifact" skill
+(Tailwind-CDN, authoring-oriented) was evaluated against `doc-to-html` to see
+what it knew that ours didn't. Most of it fell to the skill's recorded
+non-goals (renderer not author, opens from disk, renders what the markdown
+says); four recipes survived the scope filter and were folded in, translated
+into the skill's own vocabulary: per-section **surface picked by reader
+action** (replacing the bare "tables over walls" bullet, with an
+anti-sameness line), the **never-invent-numbers** inverse of the
+derived-numbers rule (hero stat cells only carry source-backed stats;
+checklist extended), a **~80ch running-prose measure** floor, and a
+**narrow-screen collapse** of the fixed 288px sidebar — that last one a
+genuine defect in the mandated reference shell, now a media query plus
+checklist item 9. Tailwind-CDN styling, IA/content-discipline guidance,
+`bg-white`, and the prohibition-formed anti-AI-tell lists were rejected with
+reasons recorded. Canonical copy is
+`plugins/toolkit/skills/doc-to-html/SKILL.md` only; origin doc updated for
+parity. `toolkit` `0.12.3` → `0.12.4` across all four manifests; the
+validator passes. See
+[`docs/decisions/doc-to-html.md`](decisions/doc-to-html.md) (2026-07-13
+amendment).
+
 ## 2026-07-12
 
 ### handoff-goal v2 — self-carrying split contract (`goal.md` + `plan.md`)

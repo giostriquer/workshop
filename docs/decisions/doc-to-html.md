@@ -199,6 +199,69 @@ paragraph, solution-shape additions, five new pitfalls). `toolkit` `0.11.0` →
 `0.11.1` across all four manifests (Claude/Codex/Cursor plugin manifests and
 the Claude marketplace entry).
 
+## Amendment (2026-07-13): comparative evaluation against an external artifact-authoring skill
+
+The operator brought an external general-purpose skill definition
+("simple-html-artifact": Tailwind-CDN, information-first single-page HTML,
+`bg-white` default, posture/brief step, surface-choice matrix, content
+discipline) and asked what it knew that `doc-to-html` didn't. The evaluation
+frame was the Non-goals below: this skill is a *renderer with edit
+governance*, not an author — it opens from disk and renders what the
+markdown says.
+
+**Rejected as out of scope (each against a recorded boundary):**
+
+- **Tailwind CDN styling** — an external asset; breaks the opens-from-disk /
+  print / archive contract (and `cdn.tailwindcss.com` is explicitly not for
+  production). The self-contained architecture stays.
+- **Brief/posture step and web-search-for-comparables** — authoring concerns.
+  Step 0 (house-style detection) already fills the "constrain taste before
+  styling" role, and this skill's posture is fixed: technical report.
+- **Information-architecture guidance** (digestibility ladder, reader-job
+  ordering, 4–6 section budget) **and content discipline** (convert prose to
+  labels, cut examples/definitions) — both violate "renders and maintains
+  what the markdown says" and the no-dropped-content checklist item.
+- **`bg-white` default** — the skill's identity is the dark report page; a
+  light mood is already an allowed per-document adaptation.
+- **Anti-AI-tell prohibition lists** (gradient heroes, glass cards, civic
+  drift) — aimed at marketing-page failure modes this skill doesn't have, and
+  prohibition-formed; per writing-skills' form-matching, shaping problems get
+  recipes, not prohibition lists. The one transferable insight inside them
+  (visual sameness) was adopted as a recipe below.
+
+**Adopted — four recipes, translated into this skill's own vocabulary:**
+
+1. **Surface by reader action.** The bare "tables over walls" bullet becomes
+   a per-section surface picker (shared attributes → table, ordered process →
+   stepper, findings → card contract, nuance → caveat box, bulk output →
+   terminal/appendix) plus the anti-sameness line: an unbroken run of
+   identical cards is a flat hierarchy.
+2. **Never invent numbers.** The derived-numbers rigid rule gains its
+   inverse — the layout never creates data the source doesn't back; the
+   `.hero`/`.stat-grid` note says three real stats beat four with one
+   invented; checklist item 6 extended.
+3. **~80ch prose measure.** Readability floor next to bright-text:
+   `p,li{max-width:80ch}` in the reference shell; tables, terminal blocks,
+   and the stat grid still span the column.
+4. **Narrow-screen collapse.** A media query in the reference shell collapses
+   the fixed 288px sidebar below ~900px; added to the non-waivable
+   architecture list and as checklist item 9. This one is less "adopted" than
+   "exposed": the mandated reference shell was genuinely unreadable at phone
+   width — a defect verifiable in the CSS itself.
+
+Micro-fix riding along: checklist item 1 gains "sequential heading levels."
+
+Honesty note: unlike the prior amendments, these additions are comparative
+rather than field-failure-driven (except the phone-width defect). They were
+kept minimal and recipe-formed for exactly that reason; the next real render
+is their validation run.
+
+Packaging: one canonical copy (`plugins/toolkit/`). Origin doc
+`docs/skills/doc-to-html.md` updated for parity (fourth-round paragraph,
+solution-shape additions, four new pitfalls). `toolkit` `0.12.3` → `0.12.4`
+in the three plugin manifests and the Claude marketplace entry.
+`scripts/validate-native-plugin.ps1` passes.
+
 ## Non-goals
 
 - Not a general frontend-design skill — scope is the report/document page

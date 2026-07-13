@@ -22,26 +22,26 @@ The design system below is the **fallback for when no sibling report exists** �
 Every page gets:
 
 - **Single self-contained file.** Inline CSS and JS, no external assets, no build step. The page must open from disk.
-- **Sticky TOC sidebar** (~288px) with an active-item highlight (scroll-spy) and keyboard navigation (`j`/`k` or arrow keys) driven by one explicit array of section ids in document order. A thin top progress bar is a nice touch.
-- **Tables over walls.** Short enumerable facts go in tables; explanation lives in the surrounding prose, not in the cells.
+- **Sticky TOC sidebar** (~288px) with an active-item highlight (scroll-spy) and keyboard navigation (`j`/`k` or arrow keys) driven by one explicit array of section ids in document order. A thin top progress bar is a nice touch. Below ~900px the sidebar collapses into static flow (reference CSS) — a fixed 288px rail otherwise eats a phone's whole viewport.
+- **Surface picked by reader action.** Choose how each section renders by what the reader does with it: facts sharing attributes → a table (explanation lives in the surrounding prose, not in the cells); an ordered process → the stepper; findings/claims → the finding card; nuance/caveat → the dashed caveat box; bulk raw output → terminal block or appendix. Consecutive sections carrying different kinds of content should not all render as the same shape — an unbroken run of identical cards is a flat hierarchy, however polished each card looks.
 - **Verified links only.** Don't ship a link you didn't fetch; annotate the result inline (small green/red run next to the link). Enrichment links are optional — but whatever ships is verified. Note: some canonical-looking doc URLs are JS-rendered and 404 to a server-side fetch (e.g. client-side error-code decoders) — confirm a URL actually serves content before relying on it. Relative/companion links (a sibling file, the source md): verify the target file exists.
 - **Styled scrollbars.** Every scroll container — the page, the sidebar, and especially overflowing `.term`/code blocks and wide tables — gets themed scrollbars, never the raw OS default (CSS below).
 - **Print media query.** White background, dark text, hide the nav and keyboard hints (reference CSS below; it's on the checklist).
 
 **Evidence appendix — conditional, not standing.** When the source carries bulk raw evidence (transcripts, terminal dumps, long excerpts), it moves to an appendix at the end and the body cites it with a small `→ A1` cite-chip — the body stays readable without dropping the proof. When the evidence is already compact (`file:line` refs, short quotes), it stays inline in the cards; an appendix of one-liners is empty ceremony. Either way, a footer listing the artifacts the work produced is high-value for audit/research output.
 
-**What yields to house style, what doesn't.** Step 0's sibling governs *visual treatment* — link-annotation style, nav chrome, chip/card/table shapes all follow the house look, including where it disagrees with the defaults below. It never waives the architecture itself: single self-contained file, working TOC/scroll-spy/keyboard nav, print stylesheet, and verified links ship on every page regardless of aesthetic.
+**What yields to house style, what doesn't.** Step 0's sibling governs *visual treatment* — link-annotation style, nav chrome, chip/card/table shapes all follow the house look, including where it disagrees with the defaults below. It never waives the architecture itself: single self-contained file, working TOC/scroll-spy/keyboard nav, print stylesheet, a readable narrow-screen collapse, and verified links ship on every page regardless of aesthetic.
 
 ## Design system — defaults (fallback only)
 
 Use these only when Step 0 finds no house style. They reproduce a rich, card-and-chip dark report; keep the readability floors even if you change the mood.
 
-- **Canvas + type.** Dark blue-gray canvas (`--bg:#0e1117` family); **sans-serif** body (serif reads muddy on dark) at ~16px with generous line-height. Body text must be bright (`#d0d8e0`+) — gray-on-dark is the #1 readability killer; when in doubt, brighten.
+- **Canvas + type.** Dark blue-gray canvas (`--bg:#0e1117` family); **sans-serif** body (serif reads muddy on dark) at ~16px with generous line-height. Body text must be bright (`#d0d8e0`+) — gray-on-dark is the #1 readability killer; when in doubt, brighten. Cap running prose at ~80ch (`p,li{max-width:80ch}`); tables, terminal blocks, and the stat grid may span the full column, but full-column paragraph lines (~120ch) are the quiet cousin of gray-on-dark.
 - **Readable chips/code.** Inline code and chips ~0.9em, near-white text on a clearly lighter chip.
 - **One accent family** used sparingly (active TOC item, headline callout, section-number badge) plus semantic green/red/amber ONLY inside terminal blocks, link-result runs, and cost/severity pills.
 - **Component vocabulary** (the look adopters actually expect):
   - `.sec-num` — mono section-number badge, aligned with its heading (see alignment rule).
-  - `.hero` + a 4-up `.stat-grid` for the verdict / TL;DR.
+  - `.hero` + a `.stat-grid` (up to 4-up) for the verdict / TL;DR — stat cells carry only numbers the document itself backs; three real stats beat four with one invented.
   - `.card` + `.pid` (mono id badge) + colored `.chip`s (severity, evidence tier, disposition).
   - `.claim` — a quote box (❝) carrying the one-line finding.
   - `.term` — terminal/code block with `ok`/`bad`/`dim`/`warn` spans, horizontal scroll, styled scrollbar.
@@ -63,21 +63,22 @@ For reports that carry findings (audit, QA, review):
 
 - **Default output path.** Same directory as the source, same basename, `.html` extension — unless the user or the document itself names a different target.
 - **One pass.** Generate the full HTML in one pass from the markdown.
-- **Derived numbers are recomputed.** Totals and per-section counts come from the items actually rendered, not from the source's prose. When the source's stated numbers disagree — with the items, or with each other — render the recomputed values and flag the divergence to the user in the completion summary; never silently ship either side.
+- **Derived numbers are recomputed.** Totals and per-section counts come from the items actually rendered, not from the source's prose. When the source's stated numbers disagree — with the items, or with each other — render the recomputed values and flag the divergence to the user in the completion summary; never silently ship either side. The inverse is equally rigid: the layout never invents numbers — no stat cell, percentage, or count the source doesn't back, even when a grid slot looks empty without one.
 - **Targeted edit vs clean rewrite.** Content tweaks are targeted edits. A change of design DIRECTION — including switching to match a house style found late — is always a full clean rewrite; incrementally restyling markup built for a different aesthetic compounds into a mess.
 - **One knob at a time.** If the user dislikes the result, ask which specific element fails (contrast, density, hierarchy) and turn that one knob; don't swing the whole design.
 - **Renumbering procedure.** When an insert, move, drop, sort, or re-group forces renumbering: renumber via descending replace-all or a temp placeholder (avoid collisions), then update every cross-reference, TOC entry, element id, and the keyboard-nav order array, and verify with a grep that ids are sequential and references resolve.
 
 ## Pre-finish checklist
 
-1. Parse-check the HTML (balanced tags); no garbage/stray CSS tokens.
+1. Parse-check the HTML (balanced tags, sequential heading levels); no garbage/stray CSS tokens.
 2. Every TOC target id exists; the keyboard-nav order array matches document order.
 3. Findings are ordered most-severe-first; skill-assigned ids run top-down (source-owned id schemes are preserved as-is).
 4. Every scroll container has a styled scrollbar (no raw OS bars).
 5. Section-number badges align with their headings; cost pills sit in one consistent place across all cards.
-6. No markdown content dropped — spot-check section count and headline statements; derived totals/counts match the rendered items, and any divergence from the source's stated numbers is flagged in the completion summary.
+6. No markdown content dropped — spot-check section count and headline statements; derived totals/counts match the rendered items, any divergence from the source's stated numbers is flagged in the completion summary, and no number was invented to fill a layout slot.
 7. Every shipped external link was fetched and annotated; every relative link's target file exists.
 8. Print media query present: white background, dark text, nav and keyboard hints hidden, cards avoid page breaks.
+9. Narrow-screen check: at phone width the sidebar collapses to static flow and nothing overflows horizontally except intentional scroll containers.
 
 ## Reference markup
 
@@ -116,6 +117,13 @@ main{flex:1;min-width:0;padding:40px 48px 80px}
 table{width:100%;border-collapse:collapse;font-size:14px;margin:14px 0}
 th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line)}
 th{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.07em}
+p,li{max-width:80ch}
+@media(max-width:900px){
+  .layout{display:block}
+  nav{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line)}
+  main{padding:28px 20px 60px}
+  .stat-grid{grid-template-columns:repeat(2,1fr)}
+}
 ```
 
 Section / card header row — the number badge and its heading must share a centerline. Use `align-items:center` (NOT `baseline`) whenever the badge and heading font sizes differ, or the number floats high/low:
