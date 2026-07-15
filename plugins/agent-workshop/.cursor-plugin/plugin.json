@@ -1,7 +1,7 @@
 {
   "name": "agent-workshop",
   "displayName": "Agent Workshop",
-  "version": "0.1.18",
+  "version": "0.1.19",
   "description": "Onboard repo-local AI agent scaffolding from Agent Workshop with one guided skill.",
   "author": {
     "name": "Agent Workshop"

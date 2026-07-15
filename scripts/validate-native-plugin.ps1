@@ -168,7 +168,7 @@ function Assert-ToolkitPlugin {
     if (-not (Test-Path -LiteralPath $skillsDir -PathType Container)) {
         Fail "toolkit must contain a skills directory"
     }
-    $expectedSkills = @("claim-check", "code-quality-review", "doc-to-html", "empirical-proof", "get-pr-comments", "handoff-goal", "handoff-pr", "handoff-review", "qa-sweep")
+    $expectedSkills = @("claim-check", "code-quality-review", "doc-to-html", "empirical-proof", "get-pr-comments", "handoff-goal", "handoff-pr", "handoff-review", "qa-sweep", "ui-demo-video")
     $actualSkills = @(Get-ChildItem -LiteralPath $skillsDir -Directory | Select-Object -ExpandProperty Name | Sort-Object)
     Assert-SameFileList $expectedSkills $actualSkills "toolkit skills"
     foreach ($skillName in $expectedSkills) {
@@ -195,7 +195,7 @@ function Assert-CodexToolkitPlugin {
     if (-not (Test-Path -LiteralPath $skillsDir -PathType Container)) {
         Fail "Codex toolkit must contain a skills directory"
     }
-    $expectedSkills = @("claim-check", "code-quality-review", "doc-to-html", "empirical-proof", "get-pr-comments", "handoff-goal", "handoff-pr", "handoff-review", "qa-sweep")
+    $expectedSkills = @("claim-check", "code-quality-review", "doc-to-html", "empirical-proof", "get-pr-comments", "handoff-goal", "handoff-pr", "handoff-review", "qa-sweep", "ui-demo-video")
     $actualSkills = @(Get-ChildItem -LiteralPath $skillsDir -Directory | Select-Object -ExpandProperty Name | Sort-Object)
     Assert-SameFileList $expectedSkills $actualSkills "Codex toolkit skills"
 }

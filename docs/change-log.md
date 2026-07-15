@@ -1,5 +1,29 @@
 # Change Log
 
+## 2026-07-15
+
+### ui-demo-video — new toolkit skill with a bundled Playwright recording harness
+
+Adopted a lived-in skill for recording Playwright-driven walkthroughs of a
+running app after UI work: per-scene PNG frames the model Reads to verify the
+UI itself (the mandatory feedback loop — fix and re-record until the frames
+show the expected result), plus a webm/mp4 as the human-shareable PR demo.
+Sanitization replaced the origin project's specifics (hardcoded port, package
+manager, Prisma backup path, internal fixture API with credentials,
+tracker-specific delivery rule) with conditionals on what any project
+observably has — the documented run path, the app's real API surface. First
+toolkit skill to ship a supporting script: `scripts/harness.mjs`, copied into
+the adopting project so Node resolves its Playwright install; the harness
+gained dual `@playwright/test`/`playwright` resolution and a generic
+`hideSelectors` option alongside the Next.js dev-overlay default. GREEN test:
+the sanitized harness ran end-to-end against a neutral static page (scenes,
+frames read back, webm + mp4, manifest). Canonical copy is
+`plugins/toolkit/skills/ui-demo-video/` only; origin doc, rosters, and READMEs
+updated. `toolkit` `0.12.4` → `0.13.0` across all four manifests;
+`agent-workshop` `0.1.18` → `0.1.19` (its bundled skills-roster README copy
+changed); the validator passes. See
+[`docs/decisions/ui-demo-video.md`](decisions/ui-demo-video.md).
+
 ## 2026-07-13
 
 ### doc-to-html — four recipes adopted from a comparative skill evaluation

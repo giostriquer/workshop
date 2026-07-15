@@ -1,7 +1,7 @@
 # toolkit
 
 A direct-use Claude Code plugin from [Agent Workshop](https://github.com/giostriquer/agent-workshop):
-six curated agents (code review, governance, and CI monitoring) plus nine direct-use skills you can run in any repo with **no setup**.
+six curated agents (code review, governance, and CI monitoring) plus ten direct-use skills you can run in any repo with **no setup**.
 The agents read your code, specs, tests, and CI and report findings — they never modify your files.
 Three skills produce structured handoff artifacts (review briefs, PR opens, and goal documents
 for a new session to pursue); `doc-to-html` renders a markdown report as a standalone dark HTML page;
@@ -9,7 +9,8 @@ for a new session to pursue); `doc-to-html` renders a markdown report as a stand
 `qa-sweep` fans a QA team over a broad surface and corroborates every finding firsthand before it counts;
 `empirical-proof` proves a just-finished change at the running software — real MCP/HTTP calls, probe scenarios, raw evidence — and reports verified / broken / blocked without fixing anything;
 `code-quality-review` runs an unusually strict, structure-first maintainability review over a branch's diff and pushes for restructurings that delete complexity rather than rearrange it;
-`get-pr-comments` fetches and triages the active PR's review comments into a prioritized action list (read-only — it never replies unless you ask).
+`get-pr-comments` fetches and triages the active PR's review comments into a prioritized action list (read-only — it never replies unless you ask);
+`ui-demo-video` records a Playwright walkthrough of the running app after UI work — per-scene PNG frames the model reads to verify the UI, plus a shareable mp4 for the PR.
 
 ## Install
 
@@ -31,7 +32,7 @@ codex plugin add toolkit@agent-workshop
 
 Codex plugins do not currently expose standalone custom agents from plugin
 manifests. The Codex `toolkit` package exposes `handoff-review`, `handoff-pr`,
-`handoff-goal`, `doc-to-html`, `claim-check`, `qa-sweep`, `empirical-proof`, `code-quality-review`, and `get-pr-comments` as skills and bundles the agent files inertly; use the
+`handoff-goal`, `doc-to-html`, `claim-check`, `qa-sweep`, `empirical-proof`, `code-quality-review`, `get-pr-comments`, and `ui-demo-video` as skills and bundles the agent files inertly; use the
 `agent-workshop` onboarding plugin when you want to copy true `.codex/agents/`
 wrappers into a target repo.
 
@@ -41,8 +42,8 @@ Repo** (`giostriquer/agent-workshop`) — then install `toolkit` from **Customiz
 the sidebar.
 
 After install, the six agents are available, namespaced `toolkit:<agent>` —
-e.g. `toolkit:spec-reviewer`. The nine skills are available as `handoff-review`,
-`handoff-pr`, `handoff-goal`, `doc-to-html`, `claim-check`, `qa-sweep`, `empirical-proof`, `code-quality-review`, and `get-pr-comments` (skills are invoked by name, not namespaced). The same marketplace also
+e.g. `toolkit:spec-reviewer`. The ten skills are available as `handoff-review`,
+`handoff-pr`, `handoff-goal`, `doc-to-html`, `claim-check`, `qa-sweep`, `empirical-proof`, `code-quality-review`, `get-pr-comments`, and `ui-demo-video` (skills are invoked by name, not namespaced). The same marketplace also
 hosts the `agent-workshop` onboarding plugin (`/plugin install agent-workshop@agent-workshop`)
 for the full scaffold-adoption flow.
 
@@ -72,6 +73,7 @@ All six are advisory and read-only (no `Edit`/`Write`) — the reviewers use `Re
 | `empirical-proof` | a runtime proof of a just-finished change — gates on the app genuinely running (health-checked, right build), fans probe scenarios out to subagents under a raw-evidence contract (real MCP client connections and real HTTP only, never mocks or in-process harnesses), corroborates firsthand, and returns a verdict-first `verified` / `broken` / `blocked` report; never fixes local setup or the bugs it finds |
 | `code-quality-review` | an unusually strict, structure-first maintainability review over a branch's diff — hunts for "code judo" reframes that delete complexity, treats file-size explosions, spaghetti-branch growth, boundary leaks, and unearned abstractions as presumptive blockers, and prefers a few high-conviction structural findings over cosmetic nits |
 | `get-pr-comments` | a severity-grouped, prioritized action list from the active PR's conversation / review / inline comments, plus the open questions — read-only; never replies to, resolves, or reacts to a comment unless you explicitly ask |
+| `ui-demo-video` | a Playwright-driven video walkthrough of the running app after UI work — a PNG frame per scene the model reads to verify the UI itself (fix and re-record until the frames show the expected result), plus a webm/mp4 for the PR description; bundles the recording harness (`scripts/harness.mjs`, copied into the project) |
 
 ## Not included
 

@@ -5,16 +5,16 @@
   "plugins": [
     {
       "name": "agent-workshop",
-      "version": "0.1.18",
+      "version": "0.1.19",
       "source": "./plugins/agent-workshop",
       "description": "Onboard repo-local agent scaffolding with one guided skill",
       "author": { "name": "Agent Workshop" }
     },
     {
       "name": "toolkit",
-      "version": "0.12.4",
+      "version": "0.13.0",
       "source": "./plugins/toolkit",
-      "description": "Use a curated set of standalone review, governance, and CI-monitoring agents plus direct-use skills (PR/review/goal handoffs, premise investigations, doc-to-html report pages, team-scale QA sweeps, post-change runtime proofs, strict code-quality reviews, PR comment triage), without onboarding.",
+      "description": "Use a curated set of standalone review, governance, and CI-monitoring agents plus direct-use skills (PR/review/goal handoffs, premise investigations, doc-to-html report pages, team-scale QA sweeps, post-change runtime proofs, strict code-quality reviews, PR comment triage, UI demo videos), without onboarding.",
       "author": { "name": "Agent Workshop" }
     }
   ]

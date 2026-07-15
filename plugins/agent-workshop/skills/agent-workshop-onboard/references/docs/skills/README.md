@@ -1,6 +1,6 @@
 # Skills
 
-Origin docs for the fifteen skills the scaffold ships (across the `toolkit` and `agent-workshop` plugins). Each doc covers:
+Origin docs for the sixteen skills the scaffold ships (across the `toolkit` and `agent-workshop` plugins). Each doc covers:
 
 - **Origin** — the pressure that created the skill.
 - **Problem** — what specifically it solves.
@@ -30,6 +30,7 @@ Each skill's canonical `SKILL.md` lives in the plugin that ships it — `plugins
 | [`empirical-proof`](empirical-proof.md) | Proves a just-finished change at the running software — gates on the app genuinely running, fans probe scenarios out to subagents under a raw-evidence contract (real MCP client connections and real HTTP only), corroborates firsthand, and returns a verdict-first `verified` / `broken` / `blocked`. Never fixes local setup or the bugs it finds. |
 | [`code-quality-review`](code-quality-review.md) | Runs an unusually strict, structure-first maintainability review over a branch's diff; hunts for "code judo" reframes that delete complexity, treats file-size explosions, spaghetti-branch growth, boundary leaks, and unearned abstractions as presumptive blockers, and prefers a few high-conviction structural findings over cosmetic nits. |
 | [`get-pr-comments`](get-pr-comments.md) | Fetches conversation, review, and inline comments on the active PR via `gh` and returns a severity-grouped, prioritized action list plus the open questions; read-only — never replies to, resolves, or reacts to a comment unless explicitly asked. |
+| [`ui-demo-video`](ui-demo-video.md) | Records a Playwright-driven walkthrough of the running app after UI work — per-scene PNG frames as the model's visual feedback loop (read, fix, re-record until they show the expected result), webm/mp4 as the human-shareable PR evidence; bundles the recording harness. |
 
 ## Composition
 
@@ -48,6 +49,7 @@ Skills here pair naturally with agents:
 - `empirical-proof` is a verification primitive one notch below `qa-sweep`: a single just-finished change instead of a decomposable surface, with the same corroboration DNA. It closes the implementation loop — "done" claims become runtime evidence; a `broken` verdict feeds the operator's fix step, a `blocked` verdict hands the environment gap back rather than fabricating around it. It pairs forward with `handoff-pr` (proof in hand before the PR).
 - `code-quality-review` is a strict review primitive — a deep, structure-first maintainability pass the main session runs directly over a diff. It is the maintainability counterpart to `pattern-reviewer` (pattern conformance) and the correctness-focused review path: it owns structural ambition and codebase-health specifically. It pairs forward with `handoff-pr` (a clean structural verdict before a PR) and naturally precedes `qa-sweep`'s runtime pass — design first, behavior second.
 - `get-pr-comments` is a read-only PR-feedback triage primitive — it summarizes conversation, review, and inline comments into a prioritized action list and never responds to them unless asked. It stands alone (no orchestration); it pairs forward with the implementation-review and fix loop, and sits naturally alongside the `ci-watcher` agent (comments vs. CI) for working a PR.
+- `ui-demo-video` is a visual-evidence primitive — the UI sibling of `empirical-proof`'s behavioral proof: `empirical-proof` drives the real API boundary and asserts, `ui-demo-video` drives the real UI and shows what rendered. It stands alone (a bundled harness, no orchestration) and pairs forward with `handoff-pr` — the mp4 is the PR demo, with GitHub's browser-only attachment caveat noted.
 
 ## Adoption
 
