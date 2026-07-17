@@ -50,7 +50,7 @@ Whatever the source, the contract states the goal as an **outcome with a definit
 3. **Turn the definition of done into acceptance checks.** Not prose ("X works") — a checklist where each check carries *how to verify it*: a command and the evidence that proves it passed. For any behavior change, add the **refutation form** — the mutation that should turn it red ("revert the change → test T fails"). A check with no way to verify it is a proxy the pursuer will game; rewrite it until it's executable, or mark it explicitly as operator-judged.
 4. **Name the primary verifier — on the real surface.** Among the checks, one is the strongest independent signal of success, and it must live on the surface where the outcome actually matters: the running app, the real workflow, the rendered page. Unit tests, builds, and inspection are supporting evidence, not substitutes for exercising an interactive outcome. Then inventory capability: will the pursuing session actually have the access and tools that verifier needs (running environment, credentials, browser, devices)? A gap is named in `goal.md` as an explicit blocked item with the exact manual test and evidence the operator must supply — never silently downgraded to a weaker check.
 5. **Capture baseline and current state from the repo, not memory.** The baseline is the fixed reference "done" is measured against — the exact failing command and its current output, or the starting metric — frozen in `goal.md`. Current state (branch, what exists, what's done / half-done, decisions already made) opens `plan.md` and evolves with pursuit. Verify both with `git status` / `git log` / the files — session recollection drifts.
-6. **Gather the operating rules, including the quality posture.** Take what the repo already mandates (`CLAUDE.md` / `AGENTS.md` / convention docs) and what the operator stated this session; ask for whatever is still open — typically: branch or worktree, commit cadence and message style, push policy, PR policy (whether, when, target), validation gates, what triggers stop-and-ask, and the **quality posture** (default: reliability over speed). Record **concrete values** ("PRs target `develop`, only after all checks pass"). Never invent a rule the operator didn't state and the repo doesn't mandate.
+6. **Gather the operating rules, including the quality posture.** Take what the repo already mandates (`CLAUDE.md` / `AGENTS.md` / convention docs) and what the operator stated this session; ask for whatever is still open — typically: branch or worktree, commit cadence and message style, push policy, PR policy (whether, when, target), validation gates, what triggers stop-and-ask, and the **quality posture** (default: reliability over speed). Record **concrete values** ("PRs target `develop`, only after all checks pass"). Never invent a rule the operator didn't state and the repo doesn't mandate — with two exceptions that ship skill defaults when nobody states them: the quality posture above, and the **commit cadence** (commit at every verified checkpoint). A contract silent on commits leaves the pursuer treating git as someone else's decision and hoarding a giant uncommitted diff across phases; the default exists so no contract is ever silent.
 7. **Size the integrity apparatus** (see *How much apparatus*). The always-on four ship in every `goal.md`; add **Approval gates** when consequential actions are plausible, **Delegation lanes** when separable lanes exist and subagents are available, Invariants / Non-goals as stakes warrant.
 8. **Assemble the contract** from the two templates into `tmp/<YYYY-MM-DD>-<goal-slug>/` (today's date, short kebab-case goal name): `goal.md` and `plan.md`, cross-referencing each other.
 9. **Red-team the draft before delivery.** Can success be faked by weakening a check? Could the words be satisfied while missing the operator's real outcome? Are consequential actions gated? Does the loop say what happens after a failed attempt? Is completion observable to someone other than the pursuer? Fix what fails, then deliver.
@@ -99,7 +99,7 @@ Whatever the source, the contract states the goal as an **outcome with a definit
 >
 > ## Operating rules
 > - **Branch / worktree:** `<where the work happens>`
-> - **Commits:** `<cadence, message style>`
+> - **Commits:** `<message style + any operator/repo cadence — default when unstated: commit at every verified checkpoint, at minimum at each completed phase>`. Local commits are routine, never consequential actions: they need no approval, and each green commit is the recovery point a later failure rolls back to. Never carry uncommitted work across a phase boundary; only **Push / PR** below is separately governed.
 > - **Push / PR:** `<push policy; whether, when, and where a PR opens>`
 > - **Validation:** `<gates that must pass, and when>`
 > - **Quality posture:** `<operator-set — default: reliability over speed: never skip a gate or weaken a check to save time; a slower correct path beats a fast plausible one; when uncertain, verify or ask rather than guess>`
@@ -118,7 +118,7 @@ Whatever the source, the contract states the goal as an **outcome with a definit
 
 > # Plan — `<title>` (route for [`goal.md`](./goal.md))
 >
-> **To the pursuing session:** this file is yours to maintain — the route, not the contract; the finish line lives in `goal.md` and only the operator changes it. Work the loop, not a straight line: **act → verify with an independent pass → record evidence in the ledger → repeat**. An "independent pass" means the check is confirmed by something other than the judgment that did the work — a fresh subagent prompted to *refute* done, or at minimum a clean re-run from the Verify command — never just "I believe it works."
+> **To the pursuing session:** this file is yours to maintain — the route, not the contract; the finish line lives in `goal.md` and only the operator changes it. Work the loop, not a straight line: **act → verify with an independent pass → record evidence in the ledger → commit the checkpoint → repeat**. An "independent pass" means the check is confirmed by something other than the judgment that did the work — a fresh subagent prompted to *refute* done, or at minimum a clean re-run from the Verify command — never just "I believe it works."
 >
 > **Update this file before continuing whenever:** the operator steers, material new evidence lands, a verification fails, or a phase completes — re-read `goal.md` and this file, revise the affected phases and **Next action**, then resume. Keep at most one phase in progress. Check implementation boxes only when done; check verification boxes only after the declared check passed. Record failed checks without erasing evidence.
 >
@@ -137,13 +137,14 @@ Whatever the source, the contract states the goal as an **outcome with a definit
 > - [ ] `<the acceptance check(s) this phase exercises, or the phase-level check — command + pass evidence>`
 >
 > Exit criteria
+> - [ ] Phase work committed — `<sha + message>` (a phase with uncommitted work is not complete)
 > - [ ] `<what must be true before the next phase starts>`
 >
 > ## Delegation lanes  <!-- include only when separable lanes exist and subagents are available -->
 > `<each lane: objective, non-goals, verifier, stop condition, evidence to return. Lanes are separable work — research, independent verification, an alternative approach; integration, conflicts, and completion stay with the pursuer.>`
 >
 > ## Progress ledger
-> `<append-only. Each entry: which acceptance check it advanced · the verification run (command + result) · any decision + why. An entry that advances no check needs a reason. This ledger outranks post-compaction recollection.>`
+> `<append-only. Each entry: which acceptance check it advanced · the verification run (command + result) · the checkpoint commit sha, when work landed · any decision + why. An entry that advances no check needs a reason. This ledger outranks post-compaction recollection.>`
 >
 > ## Next action
 > `<the single next concrete action>`
@@ -156,6 +157,7 @@ Pointed at an existing goal directory (or asked to critique a draft), don't writ
 - every acceptance check verifiable (command + evidence), refutation present for behavior changes;
 - primary verifier named, on the real surface, capability gaps declared rather than papered over;
 - operating rules carry concrete values, none invented;
+- commit discipline mechanical — a concrete Commits rule (skill default if nobody stated one), the commit step in the loop, the committed-work exit criterion in each phase;
 - the split honored — no living state in `goal.md`, no contract terms living only in `plan.md`;
 - the always-on four present; stakes-scaled sections match the actual stakes, both ways (missing where needed, fortress where trivial).
 
@@ -169,5 +171,5 @@ Report what was tightened and why; flag anything that needs the operator (a rule
 - `goal.md` is frozen at handoff and off-limits to the pursuer; `plan.md` is the pursuer's to maintain. All routine writes land in `plan.md`.
 - The **always-on four** ship in every contract: verifiable acceptance checks, integrity rules, independent verification, and the redefinition tripwire. Fit check, baseline capture, and the red-team pass always run producer-side. Approval gates, Delegation lanes, Invariants, and Non-goals scale with stakes.
 - **Inject the discipline into the contract** — don't assume the target repo mandates gates, mutation proofs, or "no weakening tests."
-- Operating rules carry concrete values sourced from the repo's rule files or the operator — never "follow the usual conventions," and never a rule you invented. The quality posture is operator-set; default to reliability over speed.
+- Operating rules carry concrete values sourced from the repo's rule files or the operator — never "follow the usual conventions," and never a rule you invented. Two rules ship skill defaults when neither repo nor operator sets them: the quality posture (reliability over speed) and the commit cadence (commit at every verified checkpoint; never carry uncommitted work across a phase boundary).
 - Confirm an inferred or newly-shaped goal with the operator before writing the contract.

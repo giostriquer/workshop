@@ -1,5 +1,25 @@
 # Change Log
 
+## 2026-07-17
+
+### handoff-goal — every contract now ships commit discipline
+
+Live goal pursuit showed pursuers hoarding 50–70k-line uncommitted diffs
+across phases: the "never invent a rule nobody stated" doctrine left the
+`Commits:` slot blank, the pursuit loop had no commit step, and a gate-heavy
+contract read as "git is the operator's call." Commit cadence is now the
+second skill-shipped operating-rule default (after quality posture): commit
+at every verified checkpoint, local commits named routine and never
+approval-gated (push/PR stays gated), the loop gains a
+commit-the-checkpoint step, each phase gains a standing "work committed —
+sha" exit criterion, ledger entries record the checkpoint sha, and critique
+mode audits all of it. Micro-tested per writing-skills: 5/5 control reps
+committed only after deriving permission from silence and flagging it as a
+deviation; 5/5 treatment reps committed as rule-following, converging on one
+shape. `toolkit` `0.13.0` → `0.13.1` across all four manifests; validator
+passes. See
+[`docs/decisions/handoff-goal-commit-discipline.md`](decisions/handoff-goal-commit-discipline.md).
+
 ## 2026-07-15
 
 ### ui-demo-video — new toolkit skill with a bundled Playwright recording harness
