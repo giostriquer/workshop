@@ -1,6 +1,6 @@
 {
   "name": "toolkit",
-  "version": "0.13.1",
+  "version": "0.13.2",
   "description": "Codex-ready handoff, claim-check, qa-sweep, empirical-proof, code-quality-review, doc-to-html, and ui-demo-video skills and bundled agent files (reviewers + ci-watcher) from Agent Workshop.",
   "author": {
     "name": "Agent Workshop",

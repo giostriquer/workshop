@@ -1,5 +1,26 @@
 # Change Log
 
+## 2026-07-19
+
+### handoff-goal — plan.md is now boot-sized; history archives to ledger.md
+
+Live goal pursuit grew `plan.md` to ~40k lines: the template's append-only,
+rich-entry progress ledger sat inside the file the pursuer re-reads at every
+boot and compaction, so every boot paid for the goal's entire history and the
+loop visibly slowed. The contract now ships three files — `goal.md` (frozen),
+`plan.md` (steering state only), and `ledger.md` (append-only archive, never
+re-read at boot). Ledger entries are one line with the checkpoint sha as the
+evidence pointer (command output is never pasted); each phase gains a standing
+"ledger rolled up" exit criterion that appends the phase's entries to
+`ledger.md` and collapses them to one summary line in `plan.md`; critique mode
+audits boot-size and retrofits bloated in-flight contracts by performing the
+overdue rollups. Micro-tested per writing-skills: 5/5 control reps appended
+another multi-line prose entry with no shedding mechanism; 5/5 treatment reps
+converged on one-line entry + rollup, with `plan.md` shrinking at phase
+completion. `toolkit` `0.13.1` → `0.13.2` across all four manifests; validator
+passes. See
+[`docs/decisions/handoff-goal-bounded-plan.md`](decisions/handoff-goal-bounded-plan.md).
+
 ## 2026-07-17
 
 ### handoff-goal — every contract now ships commit discipline
