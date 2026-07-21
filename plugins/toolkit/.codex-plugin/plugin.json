@@ -1,7 +1,7 @@
 {
   "name": "toolkit",
-  "version": "0.13.2",
-  "description": "Codex-ready handoff, claim-check, qa-sweep, empirical-proof, code-quality-review, doc-to-html, and ui-demo-video skills and bundled agent files (reviewers + ci-watcher) from Agent Workshop.",
+  "version": "0.14.0",
+  "description": "Codex-ready handoff, claim-check, qa-sweep, empirical-proof, code-quality-review, doc-to-html, ui-demo-video, and route-work skills and bundled agent files (reviewers + ci-watcher) from Agent Workshop.",
   "author": {
     "name": "Agent Workshop",
     "url": "https://github.com/giostriquer/agent-workshop"
@@ -14,7 +14,7 @@
   "interface": {
     "displayName": "Toolkit",
     "shortDescription": "Review handoff and doc-to-html skills for Codex.",
-    "longDescription": "A Codex manifest for the Agent Workshop toolkit plugin. Codex exposes the handoff-review, handoff-pr, handoff-goal, doc-to-html, claim-check, qa-sweep, empirical-proof, code-quality-review, get-pr-comments, and ui-demo-video skills from this package; the agent files (the reviewers plus ci-watcher) are bundled in the payload for Claude Code and reference, but Codex standalone custom agents still need repo-local .codex/agents wrappers.",
+    "longDescription": "A Codex manifest for the Agent Workshop toolkit plugin. Codex exposes the handoff-review, handoff-pr, handoff-goal, doc-to-html, claim-check, qa-sweep, empirical-proof, code-quality-review, get-pr-comments, ui-demo-video, and route-work skills from this package; the agent files (the reviewers plus ci-watcher) are bundled in the payload for Claude Code and reference, but Codex standalone custom agents still need repo-local .codex/agents wrappers.",
     "developerName": "Agent Workshop",
     "category": "Productivity",
     "capabilities": ["Skills"],
@@ -30,6 +30,7 @@
       "Run a strict code quality review on the current branch.",
       "Summarize the active PR's review comments into a prioritized action list.",
       "Record a UI demo video of a change in the running app.",
+      "Recommend a model and effort route for a task before dispatching it.",
       "Explain how to install reviewer agents for Codex."
     ]
   }

@@ -1,6 +1,6 @@
 # Skills
 
-Origin docs for the sixteen skills the scaffold ships (across the `toolkit` and `agent-workshop` plugins). Each doc covers:
+Origin docs for the seventeen skills the scaffold ships (across the `toolkit` and `agent-workshop` plugins). Each doc covers:
 
 - **Origin** — the pressure that created the skill.
 - **Problem** — what specifically it solves.
@@ -31,6 +31,7 @@ Each skill's canonical `SKILL.md` lives in the plugin that ships it — `plugins
 | [`code-quality-review`](code-quality-review.md) | Runs an unusually strict, structure-first maintainability review over a branch's diff; hunts for "code judo" reframes that delete complexity, treats file-size explosions, spaghetti-branch growth, boundary leaks, and unearned abstractions as presumptive blockers, and prefers a few high-conviction structural findings over cosmetic nits. |
 | [`get-pr-comments`](get-pr-comments.md) | Fetches conversation, review, and inline comments on the active PR via `gh` and returns a severity-grouped, prioritized action list plus the open questions; read-only — never replies to, resolves, or reacts to a comment unless explicitly asked. |
 | [`ui-demo-video`](ui-demo-video.md) | Records a Playwright-driven walkthrough of the running app after UI work — per-scene PNG frames as the model's visual feedback loop (read, fix, re-record until they show the expected result), webm/mp4 as the human-shareable PR evidence; bundles the recording harness. |
+| [`route-work`](route-work.md) | Grades a task about to be dispatched against a five-axis rubric (repo precedent, ambiguity, failure visibility, taste surface, blast radius) and returns a three-line route — model + effort + process pattern + why; carries the canonical model × effort table as its single source of truth. Recommends only — never dispatches. |
 
 ## Composition
 
@@ -50,6 +51,7 @@ Skills here pair naturally with agents:
 - `code-quality-review` is a strict review primitive — a deep, structure-first maintainability pass the main session runs directly over a diff. It is the maintainability counterpart to `pattern-reviewer` (pattern conformance) and the correctness-focused review path: it owns structural ambition and codebase-health specifically. It pairs forward with `handoff-pr` (a clean structural verdict before a PR) and naturally precedes `qa-sweep`'s runtime pass — design first, behavior second.
 - `get-pr-comments` is a read-only PR-feedback triage primitive — it summarizes conversation, review, and inline comments into a prioritized action list and never responds to them unless asked. It stands alone (no orchestration); it pairs forward with the implementation-review and fix loop, and sits naturally alongside the `ci-watcher` agent (comments vs. CI) for working a PR.
 - `ui-demo-video` is a visual-evidence primitive — the UI sibling of `empirical-proof`'s behavioral proof: `empirical-proof` drives the real API boundary and asserts, `ui-demo-video` drives the real UI and shows what rendered. It stands alone (a bundled harness, no orchestration) and pairs forward with `handoff-pr` — the mp4 is the PR demo, with GitHub's browser-only attachment caveat noted.
+- `route-work` is a routing primitive — it grades a task and recommends the dispatch route (model, effort, process pattern) but never dispatches. It sits *before* the dispatch boundary: its recommendation feeds an implementation-dispatch skill (in the origin setup, `codex-implement`) or an Agent/Workflow call, and its table is the single source of truth the operator's always-injected rules file points to instead of duplicating.
 
 ## Adoption
 

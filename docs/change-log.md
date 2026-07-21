@@ -1,5 +1,33 @@
 # Change Log
 
+## 2026-07-20
+
+### route-work — new toolkit skill: model/effort routing decision procedure
+
+The operator's always-injected model-selection rules file carried a model
+table that went stale (it still listed a retired GPT tier) and doctrine
+without a decision procedure — so every dispatched task defaulted to the top
+tier at max effort, overpaying in wall-clock and weekly-limit burn.
+`route-work` lands in `plugins/toolkit` as the fix: invoked with a task
+description, the session grades it on five axes (repo precedent, ambiguity,
+failure visibility, taste surface, blast radius) and returns a three-line
+route — model + effort + process pattern (direct dispatch / plan-review
+checkpoint / judge loop / taste pass) + why. The canonical model × effort
+table is the skill's single source of truth — operator-confirmed row by row
+and benchmark-anchored (AA Intelligence Index, DeepSWE, SWE-bench Pro,
+Frontend Arena, 2026-07); the notable calibration call is that mid-tier
+models (opus-4.8, gpt-5.6-terra) are cost lanes a class below the sol
+ladder on both axes — taste included — while sol's own taste sits just
+under fable's. The
+always-injected rules file is slimmed (outside this repo) to the hard
+invariants plus a pointer here. GREEN test: two fresh subagents given only
+the SKILL.md graded differentially — a mechanical migration routed to sol
+medium · direct dispatch; a silent-failure copy task escalated to fable-5.
+`toolkit` `0.13.2` → `0.14.0` and `agent-workshop` `0.1.19` → `0.1.20`
+(bundled roster copy) across all manifests; validator skill lists widened
+and passing. See
+[`docs/decisions/route-work.md`](decisions/route-work.md).
+
 ## 2026-07-19
 
 ### handoff-goal — plan.md is now boot-sized; history archives to ledger.md
