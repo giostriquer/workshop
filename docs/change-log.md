@@ -2,6 +2,33 @@
 
 ## 2026-07-31
 
+### structure-view — new toolkit skill: derive-and-render architectural pages
+
+The recurring want — "I'm mid-refactor and want to see what's moving, but
+there's no doc to render" — had no owner: `doc-to-html` is a renderer bound
+to a source document (its own round-four boundary: authoring belongs to an
+author, not a renderer). `structure-view` lands in `plugins/toolkit` as the
+doc-less sibling: it *derives* the representation — a refactor in flight, an
+existing subsystem, or a proposed design — and renders a self-contained
+architectural HTML page: containment-first layouts, role palette with a
+mandatory legend, change-state coloring with the refactor's invariant
+stated, provenance stamps, and a traceability rule (every box and edge
+traces to a real file / symbol / diff hunk; proposed elements dashed).
+Ephemeral-first in `tmp/` with a promote-to-durable pass; the two skills'
+descriptions cross-point so sessions route by input, not topic. Designed
+first at the operator's call (not incubated), with GREEN tests
+compensating: two fresh subagents produced conforming pages — a
+plugin-system subsystem map, and a before/after of refactor `36ef5ff` whose
+probe proved the invariant by blob-hash survivor analysis and declined to
+render a claim the commit's own decision doc makes but its diff doesn't
+back. The round caught one defect — a provenance stamp taken from the
+session's stale startup snapshot — fixed by requiring live `git rev-parse`
+at generation time, and recorded as the origin doc's first observed pitfall.
+`toolkit` `0.14.1` → `0.15.0` and `agent-workshop` `0.1.20` → `0.1.21`
+(bundled roster copy) across all manifests; validator skill lists widened
+and passing; both READMEs at twelve skills. See
+[`docs/decisions/structure-view.md`](decisions/structure-view.md).
+
 ### route-work — code axis joins the table; opus-5 lands, opus-4.8 retires
 
 Opus 5 (launched 2026-07-24) was inexpressible in the three-axis table:

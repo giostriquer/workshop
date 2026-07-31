@@ -1,8 +1,8 @@
 {
   "name": "toolkit",
   "displayName": "Toolkit",
-  "version": "0.14.1",
-  "description": "Curated standalone review, governance, and CI-monitoring agents plus direct-use skills (PR/review/goal handoffs, premise investigations, doc-to-html report pages, team-scale QA sweeps, post-change runtime proofs, strict code-quality reviews, PR comment triage, UI demo videos, model/effort routing) from Agent Workshop, usable directly without onboarding.",
+  "version": "0.15.0",
+  "description": "Curated standalone review, governance, and CI-monitoring agents plus direct-use skills (PR/review/goal handoffs, premise investigations, doc-to-html report pages, doc-less architectural structure views, team-scale QA sweeps, post-change runtime proofs, strict code-quality reviews, PR comment triage, UI demo videos, model/effort routing) from Agent Workshop, usable directly without onboarding.",
   "author": {
     "name": "Agent Workshop"
   },

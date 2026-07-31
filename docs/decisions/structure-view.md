@@ -4,8 +4,18 @@
 
 ## Status
 
-Approved design — not yet implemented. Implementation plan to follow as
-`structure-view-implementation-plan.md`.
+Implemented (2026-07-31). Executed directly from this spec per the repo's
+Spec → Execute workflow — no separate implementation-plan doc was needed.
+GREEN-tested before landing: two fresh subagents, given only the SKILL.md
+and a real scenario, produced conforming pages — a subsystem map of this
+repo's plugin system (2 views, legend, live-verified provenance, all 8
+checklist items run) and a before/after of refactor `36ef5ff` (182 files;
+the probe proved the invariant via an exhaustive blob-hash survivor check
+and declined to render a claim the commit's own decision doc makes but its
+diff doesn't back). The round surfaced one skill defect — a "repo HEAD"
+provenance stamp taken from the session's stale startup snapshot, which the
+original "commit hash real" checklist wording failed to catch — fixed by
+requiring every stamped hash be read live at generation time.
 
 ## Context
 

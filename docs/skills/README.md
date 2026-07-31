@@ -1,6 +1,6 @@
 # Skills
 
-Origin docs for the seventeen skills the scaffold ships (across the `toolkit` and `agent-workshop` plugins). Each doc covers:
+Origin docs for the eighteen skills the scaffold ships (across the `toolkit` and `agent-workshop` plugins). Each doc covers:
 
 - **Origin** — the pressure that created the skill.
 - **Problem** — what specifically it solves.
@@ -32,6 +32,7 @@ Each skill's canonical `SKILL.md` lives in the plugin that ships it — `plugins
 | [`get-pr-comments`](get-pr-comments.md) | Fetches conversation, review, and inline comments on the active PR via `gh` and returns a severity-grouped, prioritized action list plus the open questions; read-only — never replies to, resolves, or reacts to a comment unless explicitly asked. |
 | [`ui-demo-video`](ui-demo-video.md) | Records a Playwright-driven walkthrough of the running app after UI work — per-scene PNG frames as the model's visual feedback loop (read, fix, re-record until they show the expected result), webm/mp4 as the human-shareable PR evidence; bundles the recording harness. |
 | [`route-work`](route-work.md) | Grades a task about to be dispatched against a five-axis rubric (repo precedent, ambiguity, failure visibility, taste surface, blast radius) and returns a three-line route — model + effort + process pattern + why; carries the canonical model × effort table as its single source of truth. Recommends only — never dispatches. |
+| [`structure-view`](structure-view.md) | Derives an architectural representation when no source doc exists — a refactor in flight, an existing subsystem, or a proposed design — and renders it as a self-contained architectural HTML page: containment-first layouts, role palette with mandatory legend, change-state coloring for refactors, provenance stamps, every box and edge traceable to a real file / symbol / diff hunk. Ephemeral-first (`tmp/`) with a promote-to-durable pass. |
 
 ## Composition
 
@@ -52,6 +53,7 @@ Skills here pair naturally with agents:
 - `get-pr-comments` is a read-only PR-feedback triage primitive — it summarizes conversation, review, and inline comments into a prioritized action list and never responds to them unless asked. It stands alone (no orchestration); it pairs forward with the implementation-review and fix loop, and sits naturally alongside the `ci-watcher` agent (comments vs. CI) for working a PR.
 - `ui-demo-video` is a visual-evidence primitive — the UI sibling of `empirical-proof`'s behavioral proof: `empirical-proof` drives the real API boundary and asserts, `ui-demo-video` drives the real UI and shows what rendered. It stands alone (a bundled harness, no orchestration) and pairs forward with `handoff-pr` — the mp4 is the PR demo, with GitHub's browser-only attachment caveat noted.
 - `route-work` is a routing primitive — it grades a task and recommends the dispatch route (model, effort, process pattern) but never dispatches. It sits *before* the dispatch boundary: its recommendation feeds an implementation-dispatch skill (in the origin setup, `codex-implement`) or an Agent/Workflow call, and its table is the single source of truth the operator's always-injected rules file points to instead of duplicating.
+- `structure-view` is a derive-and-render primitive — the doc-less sibling of `doc-to-html`. They split by *input*, not topic: `doc-to-html` renders a finished markdown document and may never invent content; `structure-view` authors the representation from the repo, a diff, or a plan and must trace every element to something real. An architecture *document* still renders via `doc-to-html`; a doc-less structural question goes to `structure-view`.
 
 ## Adoption
 
