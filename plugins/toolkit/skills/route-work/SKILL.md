@@ -29,38 +29,49 @@ session's own model (the operator's call at launch).
 Scores are 1–10, higher is better. **Cost is subscription-limit burn plus
 wall-clock, not dollars** — both sides run on subscriptions, so a low cost
 score means "slow and eats the weekly limit," not "expensive per token."
-Intelligence is how hard a problem the model can carry unsupervised. Taste
-covers UI/UX, code quality, API design, and copy.
+Intelligence is how hard a problem the model can carry unsupervised. Code is
+coding craft — how correct and how well-built the implementation comes out
+when the work is code. Taste covers the user-facing surfaces only — UI/UX,
+copy, API shape, docs voice.
 
-| model + effort | cost | intelligence | taste |
-|---|---|---|---|
-| gpt-5.6-sol low/medium | 8 | 6.5 | 8.5 |
-| gpt-5.6-sol high | 7 | 7 | 8.5 |
-| gpt-5.6-sol xhigh | 5 | 7.5 | 8.5 |
-| gpt-5.6-sol ultra/max | 4 | 8 | 8.5 |
-| gpt-5.6-terra (default: xhigh) | 9 | 6 | 6 |
-| opus-4.8 | 8 | 6 | 7 |
-| fable-5 | 2 | 9 | 9.5 |
+| model + effort | cost | intelligence | taste | code |
+|---|---|---|---|---|
+| gpt-5.6-sol low/medium | 8 | 6.5 | 8.5 | 7.5 |
+| gpt-5.6-sol high | 7 | 7 | 8.5 | 7.5 |
+| gpt-5.6-sol xhigh | 5 | 7.5 | 8.5 | 8 |
+| gpt-5.6-sol ultra/max | 4 | 8 | 8.5 | 8 |
+| gpt-5.6-terra (default: xhigh) | 9 | 6 | 6 | 7 |
+| opus-5 | 5 | 8.5 | 8.5 | 9 |
+| fable-5 | 2 | 9 | 9.5 | 9 |
 
-Calibration notes (operator-lived, benchmark-anchored 2026-07): fable-5 is
-the only frontier row — one point smarter than sol at ultra/max (AA
-Intelligence Index 60 vs 59), far ahead where routing actually hurts
-(SWE-bench Pro 80% vs 64.6%), and the taste ceiling. sol is the all-rounder:
-its taste sits just under fable's (Frontend Arena 1618 vs 1631, above
-opus-4.8's 1562), so user-facing work does not automatically leave the
-ladder. opus-4.8 and terra are **cost lanes, not quality lanes** — a class
-below sol on both axes (DeepSWE 59.0 / 69.6 vs sol's 72.7): terra is the
-cheapest dispatch going, and opus-4.8 earns its slot as the Claude-side lane
-(Agent/Workflow fan-outs, courier duty) rather than on any axis. The values
-are the operator's calibration: adopters swap rows for their own fleet and
-re-grade — the rubric below survives any fleet.
+Calibration notes (operator-lived, benchmark-anchored 2026-07, revised at
+the Opus 5 launch): the frontier is now a band of two. fable-5 keeps the
+intelligence and taste ceilings — in lived use it still carries the hardest
+problems unsupervised, whatever the index says (AA Intelligence Index 60 to
+opus-5's nominal 61) — and remains the voice-and-polish pass (Frontend
+Arena 1631). opus-5 joins as the Claude-side near-frontier lane: it ties
+fable on code (SWE-bench Pro ~79% vs 80.0%, both far above sol's 64.6%) at
+a fraction of the burn, and inherits every role opus-4.8 held — Claude-side
+implementer, Agent/Workflow fan-outs, courier duty. opus-4.8 leaves the
+table: with opus-5 in the fleet the operator routes nothing to it. sol
+remains the all-rounder ladder — taste just under fable's (Frontend Arena
+1618), code 8 at xhigh and above — and terra the cheapest dispatch going.
+One cross-ladder caveat: the GPT and Claude rows burn **different
+subscriptions**, so a row that dominates on paper does not retire its
+counterpart — when one pool's weekly limit is the constraint, the other
+ladder is the relief valve. The values are the operator's calibration:
+adopters swap rows for their own fleet and re-grade — the rubric below
+survives any fleet.
 
 Dispatch mechanics:
 
 - **GPT rows** run through Codex CLI (`codex exec`) — the `codex-implement`
   skill wraps it. Config default is sol at high; override per dispatch with
   `-c model_reasoning_effort=<tier>` and `-c model="gpt-5.6-terra"`.
-- **Claude rows** run via the Agent/Workflow `model` (and `effort`) params.
+- **Claude rows** run via the Agent/Workflow `model` (and `effort`) params —
+  `opus` resolves to the newest Opus the harness ships (opus-5 on current
+  builds); pin a full model ID in agent frontmatter when an older harness
+  still maps it elsewhere.
 - **GPT inside an Agent/Workflow fan-out** (the model param takes Claude
   models only): a thin opus courier wrapper whose prompt writes a
   self-contained codex brief, runs the codex wrapper via Bash, and returns
@@ -72,7 +83,7 @@ Mirrored in the operator's always-injected rules file; change them in both
 places or not at all.
 
 - **Never Haiku or Sonnet — any task, no exceptions.** Bulk work routes to
-  the sol ladder; anything that must be Claude runs on opus-4.8 or fable-5.
+  the sol ladder; anything that must be Claude runs on opus-5 or fable-5.
 - **Orchestration stays home.** Decomposing, dispatching, and judging a set
   of work always run on the session's own model — never a weaker-model
   subagent.
@@ -95,9 +106,9 @@ Grade the task on five axes — a word each is enough:
    catch a mediocre result) or `silent` (taste, calibration, judgment calls
    no gate can see)?
 4. **Taste surface** — `none`, or `user-facing` (UI, copy, API shape, docs)?
-   A shipping taste surface needs taste ≥ 7 — that rules out terra (6) and
-   makes opus-4.8 (7) borderline; sol (8.5) carries most surfaces, and
-   flagship voice-and-polish work gets a fable-5 pass before ship.
+   A shipping taste surface needs taste ≥ 7 — that rules out terra (6); sol
+   and opus-5 (8.5) carry most surfaces, and flagship voice-and-polish work
+   gets a fable-5 pass before ship.
 5. **Blast radius** — `contained`, or `wide` (later work builds on this
    being right; a wrong foundation outcosts any routing savings)?
 
@@ -108,17 +119,20 @@ Grade the task on five axes — a word each is enough:
   truly mechanical bulk (clear-spec migrations, data grinding, log
   crunching).
 - **One axis warm** (novel-ish, a few open decisions, medium blast) → climb
-  the sol ladder (xhigh, then ultra/max) before switching models — effort is
-  cheaper than a hop to the frontier, and the mid-tier rows add nothing the
-  ladder lacks.
-- **High ambiguity or silent failure** → top tier (**fable-5**) — or the
+  the sol ladder (xhigh, then ultra/max) before leaving it — effort is
+  cheaper than a model hop. When the warm axis is the *code itself* (a hard
+  implementation, correctness under complexity), the step after the ladder
+  is **opus-5** (code 9), not more sol effort.
+- **High ambiguity or silent failure** → the frontier band — **fable-5** for
+  judgment- and taste-critical work, **opus-5** when the hard part is the
+  implementation (it ties fable on code at far lower burn) — or the
   **leverage pattern**: a cheap implementer plus a high-tier plan-review
   checkpoint *before* implementation proceeds. Top-tier judgment at the plan
   costs a fraction of top-tier tokens on every line.
 - **Taste surface, problem not hard** → stay on sol — at taste 8.5 it
   carries most user-facing surfaces; reserve **fable-5** (direct, or as a
   taste pass) for flagship surfaces where voice and polish are the point.
-  terra and opus-4.8 are not taste routes.
+  terra is not a taste route.
 - **Wide blast radius** → add a checkpoint before and a review after,
   whatever the implementer tier.
 - **Output misses the bar** → escalate a tier and rerun; that permission is

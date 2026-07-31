@@ -51,11 +51,17 @@ A direct-use skill with three parts and a set of carried invariants:
   model's effort levels are separate rows, so "climb the ladder before
   hopping models" is expressible). Values are the operator's lived
   calibration, anchored against public benchmarks and confirmed row by row
-  before freezing. The structural insight the calibration surfaced: the
-  mid-tier models are *cost lanes, not quality lanes* — a class below the
-  workhorse ladder on both intelligence and taste — while the workhorse's
-  own taste sits close enough to the frontier that user-facing work doesn't
-  automatically escalate.
+  before freezing. The structural insight the original calibration surfaced:
+  the mid-tier models are *cost lanes, not quality lanes* — a class below
+  the workhorse ladder — while the workhorse's own taste sits close enough
+  to the frontier that user-facing work doesn't automatically escalate. A
+  later fleet change (a near-frontier Claude-side coder arriving at mid
+  cost) exposed a conflation in the original three axes: *taste* had been
+  covering both user-facing polish and coding craft, and could not express
+  "same intelligence, better coder." The table grew a fourth axis — **code**
+  (coding craft) — and taste narrowed to user-facing surfaces only. Rows
+  also leave the table when the fleet retires their niche; a dead lane kept
+  "for reference" is the same staleness the skill exists to kill.
 - **The grading rubric** — five axes: repo precedent, ambiguity, failure
   visibility, taste surface, blast radius. Cool across the board → cheapest
   capable tier at modest effort. High ambiguity or silent-failure risk →

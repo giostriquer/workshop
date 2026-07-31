@@ -2,6 +2,28 @@
 
 ## 2026-07-31
 
+### route-work — code axis joins the table; opus-5 lands, opus-4.8 retires
+
+Opus 5 (launched 2026-07-24) was inexpressible in the three-axis table:
+sol-ultra-class intelligence with near-fable coding would have made its row
+numerically identical to gpt-5.6-sol ultra/max except cost, its actual
+distinguishing strength (SWE-bench Pro ~79% vs sol's 64.6%) invisible. The
+canonical table gains a fourth axis — **code** (coding craft) — and *taste*
+narrows to user-facing surfaces, resolving its conflation with the rubric's
+taste-surface axis. `opus-5` lands at cost 5 / intelligence 8.5 / taste 8.5 /
+code 9 (operator-confirmed, per the skill's freeze rule) and inherits every
+Claude-side role; `opus-4.8` leaves the table — with opus-5 in the fleet,
+nothing routes to it. Routing guidance updated: code-warm work steps from the
+sol ladder to opus-5; "high ambiguity or silent failure" routes to the
+frontier *band* (fable-5 for judgment and taste, opus-5 for implementation);
+the calibration notes carry the cross-ladder caveat that GPT and Claude rows
+burn different subscription pools. The hard-invariant sentence changed in
+both mirrors ("opus-4.8 or fable-5" → "opus-5 or fable-5" in the skill and
+the operator's always-injected rules file). `toolkit` `0.14.0` → `0.14.1`
+across the three plugin manifests and the marketplace entry; validator
+passes. See
+[`docs/decisions/route-work-code-axis.md`](decisions/route-work-code-axis.md).
+
 ### handoff-goal — description declares the defined-work scope
 
 The frontmatter description listed "a brand-new idea" as a valid goal source,
