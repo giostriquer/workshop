@@ -1,5 +1,22 @@
 # Change Log
 
+## 2026-07-31
+
+### handoff-goal — description declares the defined-work scope
+
+The frontmatter description listed "a brand-new idea" as a valid goal source,
+which read as an invitation to hand off exploratory work — exactly what the
+skill's own fit check excludes. The description (the only part a session reads
+before invoking) now scopes the trigger to already-defined work — outcome
+stateable up front, done verifiable by checks that can fail — and names the
+NOT-for case (open-ended research, "look into X" investigations) with the
+lighter tools to use instead (a plain task, or a `handoff-review` continue
+brief). Body unchanged — the fit check already carried the rule. Probe check:
+an exploratory scenario bounced to a plain brief citing the new clause
+verbatim; a defined-slices-with-failable-checks scenario picked handoff-goal.
+See
+[`docs/decisions/handoff-goal-description-scope.md`](decisions/handoff-goal-description-scope.md).
+
 ## 2026-07-20
 
 ### route-work — new toolkit skill: model/effort routing decision procedure
