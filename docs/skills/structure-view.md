@@ -155,7 +155,21 @@ Provisional until hardened by real rounds — expect these to move:
 - The **genre test** in Step 0 (structural graphics dominate) has not yet
   had to classify a hard case.
 
-Record rounds here as they land, the way `doc-to-html`'s origin doc did.
+**Round 1 (2026-07-31) — cross-repo field exercise.** A fresh session
+derived a three-view page of a real external codebase (the artifact landing
+in this repo's `tmp/`). All checks passed — provenance read live from the
+*source* repo, the house-style sibling correctly adopted from the *output*
+repo — and five gaps folded back into the skill: cross-repo resolution for
+Step 0 (glob both, output repo wins) and for provenance (analyzed repo's
+hashes); the uniform fan-out pattern (one labeled edge or a caption, never
+a partial subset); a prescribed parse-check method; an orphan-box check
+(edge-free boxes must be deliberate); and architecture/dependency-rule
+tests named as the highest-fidelity edge source in Derive. The field agent
+also confirmed the view-economy discipline in practice: three derived-but-
+unchosen views were named in the page intro rather than drawn.
+
+Record further rounds here as they land, the way `doc-to-html`'s origin doc
+did.
 
 ## Adaptation notes
 

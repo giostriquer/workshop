@@ -44,6 +44,10 @@ cards, chips) is a *different genre* and does not set the style for an
 architectural page. If a qualifying arch-page sibling exists, match its
 palette and component shapes; the defaults below are the no-sibling fallback.
 
+When the analyzed repo and the output repo differ (the page lands somewhere
+other than the code it describes), glob **both**; a qualifying sibling in
+the **output** repo wins — the page must sit well next to its neighbors.
+
 ## The pipeline
 
 ### 1 — Derive
@@ -52,9 +56,12 @@ Mine the input for boxes (modules, components, layers) and edges (calls,
 imports, data flow). By input shape:
 
 - **Subsystem:** find entry points, then the modules behind them, then the
-  edges between modules and out to external dependencies. Read the code;
-  for large surfaces, fan out read-only explore subagents per area and merge
-  their findings.
+  edges between modules and out to external dependencies. Look for
+  architecture / dependency-rule tests first (an `architecture.test` file, a
+  lint boundary config) — **enforced** rules are the highest-fidelity edge
+  source, better than current imports. Then read the code; for large
+  surfaces, fan out read-only explore subagents per area and merge their
+  findings.
 - **Refactor:** classify the diff into adds / removes / moves / renames;
   reconstruct the old shape and the new; identify **the invariant** — what
   does *not* change — it is the single most orienting fact and the page must
@@ -106,8 +113,11 @@ provenance stamp updated.
   importance to the story, not its file count.
 - **Edges are scarce.** Prefer adjacency and shared-band placement to imply
   relations; draw an SVG edge only where a connection is the point. Bundle
-  parallel edges. The overlay redraws on container resize (reference JS
-  below — this is the classic bug).
+  parallel edges. A **uniform fan-out** (one hub, many identical relations —
+  routes → every service, every service → the database) is either one
+  labeled representative edge or a band caption — never a partial subset of
+  edges, which reads as "only these connect." The overlay redraws on
+  container resize (reference JS below — this is the classic bug).
 - **Role palette.** One consistent accent per architectural role — entry /
   domain / infra / external — reused across every page this skill produces
   (tokens below), so pages stay mutually legible.
@@ -138,7 +148,9 @@ provenance stamp updated.
   go stale; the stamp says stale-as-of-what. Read every hash **live at
   generation time** (`git rev-parse --short HEAD`, or the analyzed range's
   own hashes) — never from the session's startup snapshot, which goes stale
-  as the session works.
+  as the session works. When the analyzed repo differs from the output repo,
+  the stamp carries the **analyzed** repo's hashes (run `git rev-parse`
+  there).
 - **View economy.** At most 3 views per page, each stating its question.
 - **Zoom discipline.** A view caps at ~30 visible boxes. Beyond that, group
   (one box per cluster, expandable or linked to a deeper page) — never a
@@ -152,11 +164,14 @@ provenance stamp updated.
 
 ## Pre-finish checklist
 
-1. Parse-check the HTML; no stray CSS/JS tokens.
+1. Parse-check the HTML — balanced tags and valid inline JS (e.g. feed each
+   `<script>` body to `node -e "new Function(...)"` or run a DOM parser over
+   the file); no stray CSS/JS tokens.
 2. Legend complete — every color, border style, and shape used on the page
    appears in it.
 3. Every edge endpoint resolves to a rendered box id (the `EDGES` array and
-   the DOM agree).
+   the DOM agree), and every edge-free box is *deliberately* so — its
+   relations carried by band adjacency or a caption, not forgotten.
 4. Provenance stamp present on every view; every hash read live at
    generation time (`git rev-parse`), not from the session's startup
    snapshot — a real-but-stale hash is still a false stamp.

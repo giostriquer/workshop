@@ -29,6 +29,16 @@ at generation time, and recorded as the origin doc's first observed pitfall.
 and passing; both READMEs at twelve skills. See
 [`docs/decisions/structure-view.md`](decisions/structure-view.md).
 
+Same-day field round 1: a cross-repo exercise — a fresh session derived a
+three-view page of a real external codebase, the artifact landing in this
+repo's `tmp/` — passed all checks (provenance read live from the *source*
+repo; house-style sibling correctly taken from the *output* repo) and fed
+five refinements back into the skill: cross-repo resolution for Step 0 and
+provenance, the uniform fan-out pattern, a prescribed parse-check method,
+the orphan-box check, and architecture/dependency-rule tests named as the
+highest-fidelity edge source. Recorded as Round 1 in the origin doc's
+Maturity section; `toolkit` `0.15.0` → `0.15.1`.
+
 ### route-work — code axis joins the table; opus-5 lands, opus-4.8 retires
 
 Opus 5 (launched 2026-07-24) was inexpressible in the three-axis table:
