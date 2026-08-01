@@ -76,4 +76,3 @@ Sort descending (critical first), then the renumbering procedure so ids run top-
 - The process rules are the portable half — they apply unchanged to any theme, including light ones.
 - The reference markup is a starting point, not a component library; adapt class names and tokens to taste, keep the shapes. It uses generic placeholders (`F-1`, `AUTH-1`, neutral finding text) on purpose — the skill is system-agnostic, so no real product, ticket, or path names belong in it.
 - Pairs naturally with `visual-advisor` when the page's look needs art-direction judgment beyond the defaults — `doc-to-html` governs structure and process, not taste exploration.
-- Sibling boundary: `structure-view` owns the doc-less cases — deriving an architectural page from the repo, a diff, or a plan when no source document exists. `doc-to-html` stays a renderer bound to a source; an architecture *document* still belongs here.

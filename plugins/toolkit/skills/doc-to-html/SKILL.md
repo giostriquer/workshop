@@ -1,6 +1,6 @@
 ---
 name: doc-to-html
-description: Use when turning a markdown report, audit, review, or research/findings document into a polished standalone dark-themed HTML page, or when revising such a page — content tweaks, inserting/moving/renumbering sections, ordering findings by severity, matching the repo's existing report style, or "this looks noisy / unreadable / ugly / off" feedback. NOT for deriving an architectural representation from code, a diff, or a plan when no source document exists — that is structure-view.
+description: Use when turning a markdown report, audit, review, or research/findings document into a polished standalone dark-themed HTML page, or when revising such a page — content tweaks, inserting/moving/renumbering sections, ordering findings by severity, matching the repo's existing report style, or "this looks noisy / unreadable / ugly / off" feedback.
 ---
 
 # Doc to HTML

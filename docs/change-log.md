@@ -2,6 +2,21 @@
 
 ## 2026-07-31
 
+### structure-view — withdrawn from the toolkit plugin pending more thought
+
+Operator call after first real use — the cross-repo cadence exercise and two
+full design generations of its output (dark report-style, then a light and a
+dark "fiche technique") — the skill's output is not where it needs to be,
+and the design conventions need more thought before this ships. Same-day
+withdrawal: the SKILL.md draft (with the GREEN-round and round-1
+refinements) is parked at
+[`docs/decisions/structure-view-skill-draft.md`](decisions/structure-view-skill-draft.md),
+the origin doc keeps a draft banner, doc-to-html's cross-pointer is
+reverted, and the roster / READMEs / validator are back to eleven toolkit
+skills. The spec and decision records stay — the thinking is kept, the
+shipping is paused. `toolkit` `0.15.1` → `0.15.2`, `agent-workshop`
+`0.1.21` → `0.1.22` (bundled roster copy).
+
 ### structure-view — new toolkit skill: derive-and-render architectural pages
 
 The recurring want — "I'm mid-refactor and want to see what's moving, but

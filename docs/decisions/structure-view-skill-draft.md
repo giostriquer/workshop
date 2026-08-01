@@ -1,3 +1,8 @@
+> **Parked draft (2026-07-31).** Withdrawn from the toolkit plugin the day it
+> landed — the operator wants more thought before this ships. Includes the
+> GREEN-round and round-1 refinements. Spec of record: `structure-view.md`
+> in this folder; origin doc: `../skills/structure-view.md`.
+
 ---
 name: structure-view
 description: Use when the operator wants to understand structure visually and no source document exists — a refactor in flight (branch or diff, current or planned — before/after structural change), an existing subsystem (repo state — modules, dependencies, data flow as they are today), or a proposed design (a plan or conversation — target-state view) — or when revising such a page. Derives the representation itself and renders a self-contained architectural HTML page: containment-first layouts, a role palette with a mandatory legend, change-state coloring for refactors, provenance stamps, every box and edge traceable to a real file, symbol, or diff hunk. Ephemeral-first (lands in tmp/ as an orientation aid) with a promote-to-durable pass on request. NOT for rendering an existing markdown report, audit, or findings doc — that is doc-to-html.

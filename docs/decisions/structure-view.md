@@ -4,8 +4,17 @@
 
 ## Status
 
-Implemented (2026-07-31). Executed directly from this spec per the repo's
-Spec → Execute workflow — no separate implementation-plan doc was needed.
+**Withdrawn from shipping (2026-07-31, same day it landed).** After the
+first cross-repo exercise and two design generations of its output, the
+operator pulled the skill from the toolkit payload: more thought is needed
+before it ships. The draft SKILL.md (including the GREEN-round and round-1
+refinements) is parked at `structure-view-skill-draft.md`; the origin doc
+carries a draft banner; packaging reverted (toolkit `0.15.2`, roster back to
+eleven skills, doc-to-html cross-pointer removed). This spec remains the
+design of record for whenever work resumes.
+
+Prior state — implemented (2026-07-31), executed directly from this spec per
+the repo's Spec → Execute workflow, no separate implementation-plan doc.
 GREEN-tested before landing: two fresh subagents, given only the SKILL.md
 and a real scenario, produced conforming pages — a subsystem map of this
 repo's plugin system (2 views, legend, live-verified provenance, all 8

@@ -1,5 +1,13 @@
 # structure-view
 
+> **Status: unshipped draft.** Withdrawn from the toolkit plugin on
+> 2026-07-31 — the day it landed — pending more design thought (operator
+> call after the first cross-repo exercise and two design generations of
+> its output). The SKILL.md draft is parked at
+> [`../decisions/structure-view-skill-draft.md`](../decisions/structure-view-skill-draft.md);
+> the spec of record is [`../decisions/structure-view.md`](../decisions/structure-view.md).
+> Not listed in the roster; this doc is retained for when work resumes.
+
 ## Origin
 
 The recurring want: *"I'm mid-refactor and I want to see what's moving —
