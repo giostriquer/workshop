@@ -4,14 +4,14 @@
 
 ## Status
 
-**Withdrawn from shipping (2026-07-31, same day it landed).** After the
-first cross-repo exercise and two design generations of its output, the
-operator pulled the skill from the toolkit payload: more thought is needed
-before it ships. The draft SKILL.md (including the GREEN-round and round-1
-refinements) is parked at `structure-view-skill-draft.md`; the origin doc
-carries a draft banner; packaging reverted (toolkit `0.15.2`, roster back to
-eleven skills, doc-to-html cross-pointer removed). This spec remains the
-design of record for whenever work resumes.
+**Shipped 2026-08-05 as `arch-map`** (`toolkit` `0.16.0`). Canonical:
+`plugins/toolkit/skills/arch-map/SKILL.md`; origin: `docs/skills/arch-map.md`;
+rename + visual language: `arch-map-rename-and-visual.md`. Historical draft
+at `structure-view-skill-draft.md`; former origin at
+`docs/skills/deprecated/structure-view.md`. This file remains the
+**historical design of record** for pipeline / process rules; visual
+language of record is the 2026-08-05 rename decision + specimen
+`tmp/architecture-overview.html`.
 
 Prior state — implemented (2026-07-31), executed directly from this spec per
 the repo's Spec → Execute workflow, no separate implementation-plan doc.
@@ -90,30 +90,33 @@ Three phases; the first two are what `doc-to-html` deliberately lacks.
 
 ## Visual language
 
-- **Containment-first.** Layers as horizontal bands, swimlanes, nested
-  module cards via CSS grid/flex — HTML's native strength. Hand-authored
-  inline SVG only for cross-cutting arrows, kept few (bundle edges; prefer
-  adjacency and shared-band positioning to imply relations).
-- **Refactor semantics.** added (green) / removed (red, ghosted) / moved
-  (amber, with "from X" provenance) / unchanged (dim). Larger changes get
-  before/after panes with hover-linked highlighting; small refactors get a
-  single delta view.
-- **Role palette.** One consistent accent-per-architectural-role scheme
-  (entry / domain / infra / external) reused across pages, with a
-  **mandatory legend** — every color and shape used on the page appears in
-  it.
-- **Own aesthetic.** Map-like and quieter than doc-to-html's report
-  furniture; dark, but boxes are the primary surface. The house-style Step 0
-  is inherited *adapted*: only a sibling **arch page** counts as house
-  style — a report sibling is a different genre and does not govern.
-- **Mermaid escape hatch.** Only for genuinely graph-shaped views (dense
-  dependency webs) where hand layout fails. Preferred form: pre-render at
-  authoring time via `mmdc` to inline SVG (self-contained, small,
-  restylable). Vendored-inline mermaid script is the fallback when `mmdc`
-  is unavailable; accept the file-size cost knowingly.
-- **Interactivity.** Hover highlights a node/edge neighborhood; layers
-  collapse; tooltips carry the file paths behind a box; keyboard nav
-  between views.
+**Superseded 2026-08-05** — see `arch-map-rename-and-visual.md` and specimen
+`tmp/architecture-overview.html`. Historical dual-grammar notes below
+(retained for archaeology):
+
+**Dual layout grammars** (2026-08-05 redesign — see
+`structure-view-visual-dual-grammar.md` and the working specimen
+`tmp/2026-08-05-structure-view-visual-specimen.html`):
+
+- **Containment / strata.** Layers as stacked bands with role rails and
+  nested module cards via CSS — HTML's native strength. No SVG edges by
+  default; adjacency and shared-band placement imply relations.
+- **Flow / wires.** Swimlane columns; thick labeled SVG edges (≥2.75px) are
+  first-class. Overlay redraws on resize (classic drift bug pinned). Hover
+  isolates neighborhood.
+- **Refactor semantics.** Change chrome outranks role: fill + border +
+  corner badge. added / removed (ghosted + strikethrough) / moved (with
+  "from X") / unchanged (dim ~0.38). Larger changes → before/after linked
+  panes; small → delta overlay.
+- **Role palette.** entry / domain / infra / external with rail + tinted
+  wash; **mandatory legend** trimmed to what the page uses.
+- **Own aesthetic.** Map-like orientation aid; dark high-contrast canvas;
+  boxes are the primary surface. Step 0: only a sibling **arch page**
+  counts as house style.
+- **Mermaid escape hatch.** Dense graph-shaped views only; `mmdc` → inline
+  SVG preferred; vendored script fallback; never CDN.
+- **Interactivity.** Flow neighborhood focus; before/after `data-key`
+  linking; tooltips carry paths; panes/lanes stack at phone width.
 
 ## Process rules
 
@@ -150,18 +153,13 @@ per the repo's sanitization rule — no real product or path names.
 
 ## Packaging
 
-- Canonical (only) copy at `plugins/toolkit/skills/structure-view/SKILL.md`
+- Canonical (only) copy at `plugins/toolkit/skills/arch-map/SKILL.md`
   — direct-use, self-contained; not mirrored to `.claude/`, not in the
   onboarding bundle.
-- Origin doc at `docs/skills/structure-view.md` (recording the design-first
-  birth and which conventions await field rounds); roster entry in
-  `docs/skills/README.md`.
-- `doc-to-html` description gains the cross-pointer clause; its origin doc
-  notes the sibling split.
-- `toolkit` `0.14.1` → `0.15.0` (new skill = minor bump) in the three plugin
-  manifests + the Claude marketplace entry; validator `$expectedSkills`
-  widened; root and plugin `README.md` skill lists; Codex manifest prose and
-  `defaultPrompt` gain the new entry.
+- Origin doc: `docs/skills/arch-map.md` (active) /
+  `docs/skills/deprecated/structure-view.md` (old name).
+- `doc-to-html` description cross-points at `arch-map`.
+- Shipped as `toolkit` `0.16.0` / `agent-workshop` `0.1.23` (bundled roster).
 
 ## Proof before landing
 

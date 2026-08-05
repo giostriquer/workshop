@@ -14,7 +14,7 @@ It adopts the scaffolding worth localizing — the agents and workflow skills th
 benefit from per-repo adaptation (profile slots, conventions, host wrappers),
 which is exactly the set in `references/catalog.json` and the bundled
 `references/`. The self-contained, direct-use skills (`handoff-*`, `doc-to-html`,
-`claim-check`, `qa-sweep`, `code-quality-review`) and the self-contained
+`claim-check`, `qa-sweep`, `code-quality-review`, `arch-map`) and the self-contained
 `code-quality-reviewer` agent are **not** bundled here — they ship ready-to-use in
 the separate `toolkit` plugin; point the operator there for those. (The review
 agents that *are* in the catalog can be adopted repo-local here, or used directly

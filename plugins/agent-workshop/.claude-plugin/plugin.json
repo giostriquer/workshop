@@ -1,7 +1,7 @@
 {
   "name": "agent-workshop",
   "description": "Onboard repo-local AI agent scaffolding from Agent Workshop.",
-  "version": "0.1.22",
+  "version": "0.1.23",
   "author": { "name": "Agent Workshop" },
   "homepage": "https://github.com/giostriquer/agent-workshop",
   "repository": "https://github.com/giostriquer/agent-workshop",

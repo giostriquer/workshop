@@ -1,12 +1,18 @@
-# structure-view
+# structure-view (deprecated name)
 
-> **Status: unshipped draft.** Withdrawn from the toolkit plugin on
-> 2026-07-31 — the day it landed — pending more design thought (operator
-> call after the first cross-repo exercise and two design generations of
-> its output). The SKILL.md draft is parked at
-> [`../decisions/structure-view-skill-draft.md`](../decisions/structure-view-skill-draft.md);
-> the spec of record is [`../decisions/structure-view.md`](../decisions/structure-view.md).
-> Not listed in the roster; this doc is retained for when work resumes.
+> **Renamed 2026-08-05 → [`arch-map`](../arch-map.md).** Kept here so the
+> history of the design-first birth and Round 1 field notes stay findable
+> under the old name. Do not resume work under this name — use
+> `docs/skills/arch-map.md` and
+> `docs/decisions/arch-map-skill-draft.md`.
+>
+> Withdrawn from the toolkit plugin on 2026-07-31 — the day it landed —
+> pending more design thought. Historical parked draft:
+> [`../../decisions/structure-view-skill-draft.md`](../../decisions/structure-view-skill-draft.md).
+> Spec of record (historical):
+> [`../../decisions/structure-view.md`](../../decisions/structure-view.md).
+> Current visual + rename decision:
+> [`../../decisions/arch-map-rename-and-visual.md`](../../decisions/arch-map-rename-and-visual.md).
 
 ## Origin
 
@@ -82,16 +88,17 @@ render contract:
   **provenance stamp** ("derived from `<paths/diff-range>` at `<commit>`"),
   so a stale page at least says stale-as-of-what.
 
-The visual language is containment-first — layers as bands, swimlanes,
-nested module cards; CSS is the layout engine — with scarce hand-authored
-SVG edges (redrawn on resize; the classic drift bug is pinned in the
-reference JS), a consistent role palette (entry / domain / infra /
-external), change-state semantics for refactors (added / removed-ghosted /
-moved-with-provenance / unchanged-dim), and a **mandatory legend** covering
-every color, border style, and shape used. Mermaid exists only as an escape
-hatch for genuinely graph-shaped views, pre-rendered to inline SVG via
-`mmdc` (vendored script as the knowing fallback) — never a CDN. Zoom
-discipline caps a view at ~30 visible boxes; beyond that, group and link
+Visual language evolved after withdrawal — see current `arch-map` origin
+and `arch-map-rename-and-visual.md`. The paragraphs below preserve the
+pre-rename dual-grammar / role-palette design for history:
+
+The visual language is **dual-grammar** — pick one layout engine per view:
+containment uses stacked strata (HTML nesting, scarce edges); flow uses
+swimlanes with thick labeled SVG wires; refactors use linked panes or a
+delta overlay with fill+badge change chrome that outranks role color. Role
+palette (entry / domain / infra / external) stays consistent; legend
+mandatory; Mermaid only as graph escape hatch via `mmdc` inline SVG.
+Zoom discipline caps a view at ~30 visible boxes; beyond that, group and link
 deeper.
 
 Process rules inherited from `doc-to-html` where renderer-agnostic: one-pass
@@ -159,7 +166,8 @@ Provisional until hardened by real rounds — expect these to move:
 - The **view cap (3)** and **box cap (~30)** are design-review numbers, not
   field-calibrated ones.
 - The **role taxonomy** (entry / domain / infra / external) is a first cut;
-  real codebases may demand different or per-repo roles.
+  real codebases may demand different or per-repo roles. *(Superseded for
+  the active skill: role rainbow rejected 2026-08-05.)*
 - The **genre test** in Step 0 (structural graphics dominate) has not yet
   had to classify a hard case.
 
@@ -176,20 +184,18 @@ tests named as the highest-fidelity edge source in Derive. The field agent
 also confirmed the view-economy discipline in practice: three derived-but-
 unchosen views were named in the page intro rather than drawn.
 
-Record further rounds here as they land, the way `doc-to-html`'s origin doc
-did.
+Record further rounds on the active [`arch-map`](../arch-map.md) origin.
 
 ## Adaptation notes
 
 - The role palette is a default taxonomy, not a claim about your
   architecture — swap the roles (and tokens) for the ones your codebase
   actually has; keep the rule that the palette is consistent across pages
-  and fully covered by the legend.
+  and fully covered by the legend. *(Active skill dropped role paints.)*
 - The output path (`tmp/`, promote to `docs/`) follows this scaffold's
   scratch conventions; point both at your project's equivalents.
 - The traceability rule, provenance stamp, view economy, and zoom
   discipline are the portable half — they apply to any visual style.
 - Sibling boundary: `doc-to-html` renders finished documents (including
-  documents *about* architecture); `structure-view` owns the doc-less
-  cases. The two descriptions cross-point so sessions route by input, not
-  topic.
+  documents *about* architecture); `structure-view` / now `arch-map` owns
+  the doc-less cases.

@@ -2,6 +2,28 @@
 
 ## 2026-08-05
 
+### arch-map — ship to toolkit (renamed from structure-view)
+
+Parked skill ships as **`arch-map`** in `plugins/toolkit` (`0.15.2` →
+`0.16.0`; `agent-workshop` `0.1.22` → `0.1.23` for bundled roster). Mental-model
+SVG first, Cursor-dark high contrast, scarce color, CDNs for fonts/icons/Mermaid;
+`doc-to-html` description cross-points again. Validator / READMEs / marketplace
+at twelve toolkit skills. See
+[`docs/decisions/arch-map-rename-and-visual.md`](decisions/arch-map-rename-and-visual.md),
+[`docs/skills/arch-map.md`](skills/arch-map.md).
+
+### arch-map — rename + visual language from overview specimen
+
+Parked skill formerly `structure-view` renamed to **`arch-map`** (easier to
+type; purpose obvious). Draft rewritten around the lived specimen
+`tmp/architecture-overview.html`: mental-model SVG first, Cursor-like dark
+high contrast, scarce color (accent + ✓/✕ only), CDNs for fonts/icons/Mermaid.
+Still not re-shipped to the toolkit. See
+[`docs/decisions/arch-map-rename-and-visual.md`](decisions/arch-map-rename-and-visual.md),
+[`docs/decisions/arch-map-skill-draft.md`](decisions/arch-map-skill-draft.md),
+[`docs/skills/arch-map.md`](skills/arch-map.md). Former origin →
+[`docs/skills/deprecated/structure-view.md`](skills/deprecated/structure-view.md).
+
 ### Cursor marketplace — use pluginRoot short sources
 
 Aligned `.cursor-plugin/marketplace.json` with Cursor's multi-plugin convention:

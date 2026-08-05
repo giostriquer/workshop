@@ -1,11 +1,13 @@
-> **Parked draft (2026-07-31).** Withdrawn from the toolkit plugin the day it
-> landed — the operator wants more thought before this ships. Includes the
-> GREEN-round and round-1 refinements. Spec of record: `structure-view.md`
-> in this folder; origin doc: `../skills/structure-view.md`.
+> **Superseded 2026-08-05.** Renamed to **`arch-map`**. Active parked draft:
+> [`arch-map-skill-draft.md`](arch-map-skill-draft.md). Rename + visual
+> language: [`arch-map-rename-and-visual.md`](arch-map-rename-and-visual.md).
+> Origin: [`../skills/arch-map.md`](../skills/arch-map.md). This file is the
+> historical `structure-view` SKILL.md (dual-grammar era) kept for
+> archaeology — do not resume from it.
 
 ---
 name: structure-view
-description: Use when the operator wants to understand structure visually and no source document exists — a refactor in flight (branch or diff, current or planned — before/after structural change), an existing subsystem (repo state — modules, dependencies, data flow as they are today), or a proposed design (a plan or conversation — target-state view) — or when revising such a page. Derives the representation itself and renders a self-contained architectural HTML page: containment-first layouts, a role palette with a mandatory legend, change-state coloring for refactors, provenance stamps, every box and edge traceable to a real file, symbol, or diff hunk. Ephemeral-first (lands in tmp/ as an orientation aid) with a promote-to-durable pass on request. NOT for rendering an existing markdown report, audit, or findings doc — that is doc-to-html.
+description: Use when the operator wants to understand structure visually and no source document exists — a refactor in flight (branch or diff, current or planned — before/after structural change), an existing subsystem (repo state — modules, dependencies, data flow as they are today), or a proposed design (a plan or conversation — target-state view) — or when revising such a page. Derives the representation itself and renders a self-contained architectural HTML page using dual layout grammars (containment=strata, flow=wires, refactor=loud delta chrome), a role palette with a mandatory legend, provenance stamps, every box and edge traceable to a real file, symbol, or diff hunk. Ephemeral-first (lands in tmp/ as an orientation aid) with a promote-to-durable pass on request. NOT for rendering an existing markdown report, audit, or findings doc — that is doc-to-html.
 ---
 
 # Structure View
@@ -112,37 +114,70 @@ provenance stamp updated.
 
 ## Visual language
 
-- **Containment first.** Layers as horizontal bands, swimlanes as columns,
-  modules as nested cards — CSS grid/flex is the layout engine, and HTML is
-  genuinely good at containment. A box's visual weight reflects its
-  importance to the story, not its file count.
-- **Edges are scarce.** Prefer adjacency and shared-band placement to imply
-  relations; draw an SVG edge only where a connection is the point. Bundle
-  parallel edges. A **uniform fan-out** (one hub, many identical relations —
-  routes → every service, every service → the database) is either one
-  labeled representative edge or a band caption — never a partial subset of
-  edges, which reads as "only these connect." The overlay redraws on
-  container resize (reference JS below — this is the classic bug).
-- **Role palette.** One consistent accent per architectural role — entry /
-  domain / infra / external — reused across every page this skill produces
-  (tokens below), so pages stay mutually legible.
-- **Change-state semantics** (refactor pages only): added = green; removed =
-  red, ghosted; moved = amber with a `from <old path>` provenance line;
-  unchanged = dim. Before/after panes link by hover: the same element
-  highlights in both panes.
-- **Legend is mandatory.** Every color, border style, and shape used on the
-  page appears in the legend. A reader who has never seen this skill's
-  output must be able to decode the page from the legend alone.
-- **Mermaid escape hatch — graph-shaped views only.** For a genuinely
-  graph-shaped view (a dense dependency web where hand layout would be
-  miserable), pre-render at authoring time to SVG and inline the SVG —
-  `npx -y @mermaid-js/mermaid-cli -i graph.mmd -o graph.svg` — which stays
-  self-contained, small, and restylable. Vendoring the mermaid script inline
-  is the fallback when `mmdc` is unavailable; accept the multi-megabyte file
-  knowingly. Never a CDN reference — the page must open from disk.
-- **Interactivity.** Hovering a module highlights its edges and neighbors
-  and dims the rest; tooltips carry the file paths behind a box; panes
-  stack at phone width.
+**Glanceability is the product.** Nesting, edges, and change state must read
+before any label is parsed. Aesthetic taste is secondary — these are local
+orientation pages.
+
+### Dual layout grammars
+
+Pick **one** grammar per view from the view type. Do not hybridize inside a
+view (that is how edges and nesting both go mushy):
+
+| View | Grammar | Layout engine |
+|---|---|---|
+| Containment / layers | **A · strata** | Stacked HTML bands + nested cards; relations by adjacency |
+| Flow | **B · wires** | Swimlane columns + thick SVG edges (edges are the point) |
+| Before / after panes | **C · linked panes** | Two panes, shared `data-key`, loud delta chrome |
+| Delta overlay | **D · delta** | One canvas; change-state is primary; unchanged dims hard |
+
+Worked specimen (match this when no house-style sibling exists):
+`tmp/2026-08-05-structure-view-visual-specimen.html`.
+
+### Shared rules (every grammar)
+
+- **Role palette.** entry / domain / infra / external — 4px left rail +
+  tinted card wash (tokens below). Same taxonomy across pages.
+- **Change chrome outranks role.** On refactor views, added / removed /
+  moved use fill + border + corner badge (`add`/`del`/`mov`). Role wash
+  yields; never a thin left-accent alone for change.
+- **Proposed** = dashed border; never silently mixed with observed.
+- **Legend is mandatory.** Every color, border style, wire, and shape used
+  appears in it. Trim to what the page actually uses.
+- **Provenance** footer on every view; **invariant** callout on refactor
+  pages (what does *not* change).
+- **Mermaid escape hatch** — dense graph-shaped views only: pre-render via
+  `mmdc` to inline SVG; vendored mermaid script is the knowing fallback;
+  never a CDN.
+- **Interactivity.** Flow: hover isolates neighborhood (dim rest, hot wire).
+  Before/after: hover lights the shared `data-key` in both panes. Tooltips /
+  `title` carry file paths. Panes and lanes stack at phone width.
+- **Uniform fan-out** — one labeled representative edge or a caption; never
+  a partial subset of identical edges.
+
+### Grammar A — strata (containment)
+
+Stacked `.band` layers with a 5px role rail and dashed separators. Nest
+related modules inside `.nest` groups. **No SVG edges by default** —
+adjacency and shared band carry relations. Visual weight follows story
+importance, not file count.
+
+### Grammar B — wires (flow)
+
+Column swimlanes (`.lane`). Edges are first-class: stroke ≥2.75px, labeled,
+arrowheaded, redrawn on resize via ResizeObserver into a `<g>` (never wipe
+`<defs>`). Hover focus dims non-neighbors. Prefer side-exit / side-entry
+beziers between lanes.
+
+### Grammar C — linked panes (large refactor)
+
+`.panes` grid: Before | After. Shared `data-key` hover. Change badges and
+fills must beat role color at a glance. State the invariant above the panes.
+
+### Grammar D — delta overlay (small refactor)
+
+Single row/canvas. Unchanged at ~0.38 opacity + desaturate. Added / removed
+/ moved use the same fill+badge vocabulary as C. Use when two panes would
+be overkill.
 
 ## Process rules (rigid)
 
@@ -190,186 +225,210 @@ provenance stamp updated.
 
 ## Reference markup
 
+Full worked page (all four grammars): 
+`tmp/2026-08-05-structure-view-visual-specimen.html` — open it, match it.
+Below are the load-bearing recipes to copy into generated pages.
+
 Tokens and role palette:
 
 ```css
 :root{
-  --bg:#0b0e13; --panel:#12161d; --card:#151b24; --line:#232a35;
-  --text:#d7dee8; --muted:#93a0b0; --faint:#5d6774;
-  --entry:#5aa7ff; --domain:#8f7dff; --infra:#3fb98f; --ext:#c98f4a;
-  --add:#46c061; --del:#f0635a; --move:#e3a93c;
-  --mono:'SFMono-Regular',Consolas,Menlo,monospace;
+  --bg:#0a0d12; --bg-elev:#0f1319; --panel:#141a22; --panel-2:#1a222c;
+  --card:#1c2530; --line:#2e3a4a; --line-strong:#4a5d73;
+  --text:#e8eef6; --muted:#9aabbf; --faint:#6a7c90;
+  --entry:#4db0ff; --entry-dim:#1a3a55;
+  --domain:#3dcea0; --domain-dim:#163a2e;
+  --infra:#e0b04a; --infra-dim:#3a3014;
+  --ext:#e8894a; --ext-dim:#3a2414;
+  --add:#3dd68c; --add-bg:#0f2a1c; --add-line:#1f6b45;
+  --del:#ff6b5c; --del-bg:#2a1210; --del-line:#7a2e28;
+  --move:#f0b429; --move-bg:#2a220c; --move-line:#7a5c14;
+  --wire:#6a849e; --wire-hot:#7ec4ff;
+  --sans:"Segoe UI","Helvetica Neue",system-ui,sans-serif;
+  --mono:"Cascadia Code","SFMono-Regular",Consolas,Menlo,monospace;
 }
-body{margin:0;background:var(--bg);color:var(--text);font:15.5px/1.6 system-ui,'Segoe UI',sans-serif}
-main{max-width:1200px;margin:0 auto;padding:36px 40px 72px}
-*{scrollbar-width:thin;scrollbar-color:#33415c transparent}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.55 var(--sans)}
+main{max-width:1180px;margin:0 auto;padding:40px 36px 96px}
+*{scrollbar-width:thin;scrollbar-color:#3a4d66 transparent}
 ::-webkit-scrollbar{width:10px;height:10px}
 ::-webkit-scrollbar-thumb{background:#2c3a52;border-radius:6px;border:2px solid var(--bg)}
+.mod{position:relative;z-index:2;background:var(--card);border:1px solid var(--line);
+  border-radius:5px;padding:11px 13px;min-width:140px}
+.mod h4{font:650 14px/1.25 var(--sans);margin:0}
+.mod .path{font:11px/1.35 var(--mono);color:var(--faint);margin-top:4px}
+.mod .from{font:11px var(--mono);color:var(--move);margin-top:5px}
+.mod .from::before{content:"← "}
+.mod .badge{position:absolute;top:-7px;right:8px;font:700 9px/1 var(--mono);
+  letter-spacing:.06em;text-transform:uppercase;padding:3px 6px;border-radius:2px;color:var(--bg)}
+.mod[data-role=entry]{border-left:4px solid var(--entry);background:linear-gradient(90deg,var(--entry-dim),var(--card) 28%)}
+.mod[data-role=domain]{border-left:4px solid var(--domain);background:linear-gradient(90deg,var(--domain-dim),var(--card) 28%)}
+.mod[data-role=infra]{border-left:4px solid var(--infra);background:linear-gradient(90deg,var(--infra-dim),var(--card) 28%)}
+.mod[data-role=ext]{border-left:4px solid var(--ext);background:linear-gradient(90deg,var(--ext-dim),var(--card) 28%)}
+.mod.add{border-color:var(--add-line);background:var(--add-bg);border-left:4px solid var(--add)}
+.mod.add .badge{background:var(--add)}
+.mod.del{border-color:var(--del-line);background:var(--del-bg);border-left:4px solid var(--del);opacity:.72}
+.mod.del h4{text-decoration:line-through;color:var(--muted)}
+.mod.del .badge{background:var(--del)}
+.mod.mov{border-color:var(--move-line);background:var(--move-bg);border-left:4px solid var(--move)}
+.mod.mov .badge{background:var(--move);color:#1a1400}
+.mod.dim{opacity:.38;filter:saturate(.4)}
+.mod.proposed{border-style:dashed;border-width:1.5px;border-left-width:4px}
+.mod.hot{outline:2px solid var(--wire-hot);outline-offset:2px}
+.prov{font:11.5px var(--mono);color:var(--faint);border-top:1px solid var(--line);margin-top:18px;padding-top:10px}
+.view-head .invariant{margin:10px 0 0;padding:8px 12px;border-left:3px solid var(--move);
+  background:var(--move-bg);font-size:13.5px}
 ```
 
-View header (the question), layer bands, module cards:
+Grammar A — strata bands (no SVG edges):
 
 ```html
-<section class="view">
-  <h2>Sync subsystem</h2>
-  <p class="q">How is the sync subsystem organized, and what talks to what?</p>
-  <div class="canvas">
-    <div class="band"><h3>Entry</h3>
-      <div class="row">
-        <div class="mod" data-role="entry" id="api" title="src/api/routes.ts">
-          <h4>API routes</h4><div class="path">src/api/</div>
-        </div>
-      </div>
+<div class="strata">
+  <div class="band" data-layer="entry"><h3>Entry</h3>
+    <div class="row">
+      <div class="mod" data-role="entry" id="api" title="src/api/"><h4>API</h4><div class="path">src/api/</div></div>
     </div>
-    <div class="band"><h3>Domain</h3>
-      <div class="row">
-        <div class="mod" data-role="domain" id="core" title="src/sync/engine.ts">
-          <h4>Sync engine</h4><div class="path">src/sync/</div>
-          <ul><li>reconcile()</li><li>applyDelta()</li></ul>
-        </div>
-      </div>
-    </div>
-    <svg class="edges" aria-hidden="true">
-      <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4"
-        markerWidth="7" markerHeight="7" orient="auto">
-        <path d="M0,0L8,4L0,8z" fill="#3c4a5e"/></marker></defs>
-      <g class="glinks"></g>
-    </svg>
   </div>
-  <footer class="prov">derived from <code>src/api/</code> + <code>src/sync/</code> at <code>abc1234</code></footer>
-</section>
+  <div class="band" data-layer="domain"><h3>Domain</h3>
+    <div class="row">
+      <div class="nest"><div class="nest-lbl">core</div>
+        <div class="mod" data-role="domain" id="core" title="src/sync/"><h4>Engine</h4><div class="path">src/sync/</div></div>
+      </div>
+    </div>
+  </div>
+</div>
 ```
 
 ```css
-.view{margin:36px 0}
-.view h2{font-size:21px;margin:0 0 2px}
-.view .q{color:var(--muted);font-size:13.5px;margin:0 0 16px}
-.canvas{position:relative}
-.band{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:16px}
-.band>h3{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin:0 0 10px}
+.strata{display:flex;flex-direction:column}
+.band{position:relative;background:var(--panel);border:1px solid var(--line);border-bottom:none;padding:16px 16px 18px 20px}
+.band:first-child{border-radius:8px 8px 0 0}
+.band:last-of-type{border-bottom:1px solid var(--line);border-radius:0 0 8px 8px}
+.band + .band{border-top:1px dashed var(--line-strong)}
+.band::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--band)}
+.band[data-layer=entry]{--band:var(--entry);background:linear-gradient(90deg,var(--entry-dim),var(--panel) 12%)}
+.band[data-layer=domain]{--band:var(--domain);background:linear-gradient(90deg,var(--domain-dim),var(--panel) 12%)}
+.band[data-layer=infra]{--band:var(--infra);background:linear-gradient(90deg,var(--infra-dim),var(--panel) 12%)}
+.band[data-layer=ext]{--band:var(--ext);background:linear-gradient(90deg,var(--ext-dim),var(--panel) 12%)}
+.band>h3{font:700 11px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--band);margin:0 0 12px}
 .row{display:flex;flex-wrap:wrap;gap:10px}
-.mod{position:relative;z-index:2;background:var(--card);border:1px solid var(--line);border-left:3px solid var(--muted);border-radius:8px;padding:10px 14px;min-width:130px}
-.mod[data-role=entry]{border-left-color:var(--entry)}
-.mod[data-role=domain]{border-left-color:var(--domain)}
-.mod[data-role=infra]{border-left-color:var(--infra)}
-.mod[data-role=ext]{border-left-color:var(--ext)}
-.mod h4{font-size:14.5px;margin:0}
-.mod .path{font:11px var(--mono);color:var(--faint);margin-top:3px}
-.mod ul{margin:8px 0 0;padding-left:16px;font-size:12.5px;color:var(--muted)}
-.prov{font:12px var(--mono);color:var(--faint);border-top:1px solid var(--line);margin-top:16px;padding-top:9px}
-@media(max-width:900px){main{padding:24px 18px 56px}.row{flex-direction:column}}
+.nest{flex:1 1 220px;background:var(--panel-2);border:1px solid var(--line);border-radius:5px;padding:10px;display:flex;flex-direction:column;gap:8px}
+.nest-lbl{font:10px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
 ```
 
-Change states (refactor pages) and proposed elements:
-
-```css
-.mod.add{border-color:#2c5e3b;background:#101d15;border-left-color:var(--add)}
-.mod.del{border-color:#5c2925;background:#1c1210;opacity:.55}
-.mod.del h4{text-decoration:line-through}
-.mod.mov{border-left-color:var(--move)}
-.mod.mov .from{font:11px var(--mono);color:var(--move);margin-top:3px}
-.mod.dim{opacity:.6}
-.mod.proposed{border-style:dashed}
-```
-
-Edge overlay — declared as data, drawn between element centers, redrawn on
-resize. The two classic bugs are pinned shut: `innerHTML` on the whole SVG
-would wipe the `<defs>` (draw into the `<g>` instead), and a static overlay
-drifts when content reflows (ResizeObserver redraws):
+Grammar B — flow wires (edges first-class). Draw into `<g class="glinks">`;
+ResizeObserver redraws; never `innerHTML` the whole SVG (wipes `<defs>`):
 
 ```html
+<div class="flow" id="flow-canvas">
+  <svg class="edges" aria-hidden="true">
+    <defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0,0L10,5L0,10z" fill="#6a849e"/></marker></defs>
+    <g class="glinks"></g>
+  </svg>
+  <div class="lanes">
+    <div class="lane"><h3>Input</h3>
+      <div class="mod" data-role="entry" id="src"><h4>Source</h4></div>
+    </div>
+    <div class="lane"><h3>Domain</h3>
+      <div class="mod" data-role="domain" id="core"><h4>Core</h4></div>
+    </div>
+  </div>
+</div>
 <script>
-const EDGES=[['api','core','calls'],['core','store','reads/writes']];
-function draw(cv){
-  const g=cv.querySelector('.glinks'),svg=cv.querySelector('.edges'),
-        r0=cv.getBoundingClientRect();
+const EDGES=[['src','core','calls']];
+function drawFlow(){
+  const cv=document.getElementById('flow-canvas'),g=cv.querySelector('.glinks'),
+        svg=cv.querySelector('.edges'),r0=cv.getBoundingClientRect();
   svg.setAttribute('width',cv.scrollWidth);svg.setAttribute('height',cv.scrollHeight);
   g.innerHTML=EDGES.map(([a,b,label])=>{
     const A=document.getElementById(a)?.getBoundingClientRect(),
           B=document.getElementById(b)?.getBoundingClientRect();
-    if(!A||!B)return '';                       // checklist item 3 catches this
-    const x1=A.left-r0.left+A.width/2,y1=A.bottom-r0.top,
-          x2=B.left-r0.left+B.width/2,y2=B.top-r0.top,my=(y1+y2)/2;
-    return `<path d="M${x1},${y1} C${x1},${my} ${x2},${my} ${x2},${y2}" data-a="${a}" data-b="${b}"/>`
-      +(label?`<text x="${(x1+x2)/2}" y="${my-5}">${label}</text>`:'');
+    if(!A||!B)return '';
+    const x1=A.right-r0.left,y1=A.top-r0.top+A.height/2,
+          x2=B.left-r0.left,y2=B.top-r0.top+B.height/2,mx=(x1+x2)/2;
+    return `<path d="M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}" data-a="${a}" data-b="${b}"/>`
+      +(label?`<text class="edge-label" x="${mx}" y="${(y1+y2)/2-6}" text-anchor="middle">${label}</text>`:'');
   }).join('');
 }
-const cv=document.querySelector('.canvas');
-new ResizeObserver(()=>draw(cv)).observe(cv);
-addEventListener('load',()=>draw(cv));
+new ResizeObserver(drawFlow).observe(document.getElementById('flow-canvas'));
+addEventListener('load',drawFlow);
 </script>
 ```
 
 ```css
-.edges{position:absolute;inset:0;pointer-events:none;z-index:1}
-.edges path{fill:none;stroke:#3c4a5e;stroke-width:1.5;marker-end:url(#arr)}
-.edges text{fill:var(--faint);font:10.5px var(--mono);text-anchor:middle}
-.canvas.focus .edges path{stroke:#242e3d}
-.canvas.focus .edges path.hot{stroke:var(--entry);stroke-width:2}
-.canvas.focus .mod{opacity:.35}
-.canvas.focus .mod.hot{opacity:1}
+.flow{position:relative;background:var(--bg-elev);border:1px solid var(--line);border-radius:8px;padding:20px 16px 28px}
+.flow .lanes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;position:relative;z-index:2}
+.lane>h3{font:700 10px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin:0 0 8px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.flow .edges{position:absolute;inset:0;pointer-events:none;z-index:1}
+.flow .edges path{fill:none;stroke:var(--wire);stroke-width:2.75;marker-end:url(#arr)}
+.flow .edges path.hot{stroke:var(--wire-hot);stroke-width:3.25}
+.edge-label{font:10.5px/1 var(--mono);fill:var(--text);paint-order:stroke fill;stroke:var(--bg);stroke-width:4px}
+.flow.focus .edges path{opacity:.18}
+.flow.focus .edges path.hot{opacity:1}
+.flow.focus .mod{opacity:.28}
+.flow.focus .mod.hot{opacity:1}
+@media(max-width:900px){.flow .lanes{grid-template-columns:1fr 1fr}}
 ```
 
-Hover neighborhood highlight:
+Hover neighborhood (flow) and linked panes (before/after):
 
 ```html
 <script>
-document.querySelectorAll('.mod[id]').forEach(m=>{
+document.querySelectorAll('#flow-canvas .mod[id]').forEach(m=>{
   m.addEventListener('mouseenter',()=>{
-    const cv=m.closest('.canvas');cv.classList.add('focus');
+    const cv=m.closest('.flow');cv.classList.add('focus');
     const hot=new Set([m.id]);
-    EDGES.forEach(([a,b])=>{if(a===m.id)hot.add(b);if(b===m.id)hot.add(a);});
+    EDGES.forEach(([a,b])=>{if(a===m.id)hot.add(b);if(b===m.id)hot.add(a)});
     cv.querySelectorAll('.mod[id]').forEach(x=>x.classList.toggle('hot',hot.has(x.id)));
     cv.querySelectorAll('.edges path').forEach(p=>
       p.classList.toggle('hot',p.dataset.a===m.id||p.dataset.b===m.id));
   });
   m.addEventListener('mouseleave',()=>{
-    const cv=m.closest('.canvas');cv.classList.remove('focus');
+    const cv=m.closest('.flow');cv.classList.remove('focus');
     cv.querySelectorAll('.hot').forEach(x=>x.classList.remove('hot'));
   });
 });
-</script>
-```
-
-Before/after panes with linked highlighting (elements sharing a `data-key`
-light up together):
-
-```html
-<div class="panes">
-  <div class="pane"><h3>Before</h3>
-    <div class="mod" data-key="parser"><h4>Parser</h4><div class="path">src/legacy/parser.ts</div></div>
-  </div>
-  <div class="pane"><h3>After</h3>
-    <div class="mod mov" data-key="parser"><h4>Parser</h4>
-      <div class="path">src/input/parser.ts</div>
-      <div class="from">from src/legacy/parser.ts</div></div>
-  </div>
-</div>
-<script>
-document.querySelectorAll('[data-key]').forEach(el=>{
+document.querySelectorAll('.panes [data-key]').forEach(el=>{
   el.addEventListener('mouseenter',()=>document.querySelectorAll(
-    `[data-key="${el.dataset.key}"]`).forEach(x=>x.classList.add('hot')));
-  el.addEventListener('mouseleave',()=>document.querySelectorAll('.hot')
+    `.panes [data-key="${el.dataset.key}"]`).forEach(x=>x.classList.add('hot')));
+  el.addEventListener('mouseleave',()=>document.querySelectorAll('.panes .hot')
     .forEach(x=>x.classList.remove('hot')));
 });
 </script>
 ```
 
-```css
-.panes{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-.pane>h3{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin:0 0 10px}
-.mod.hot{outline:2px solid var(--entry);outline-offset:1px}
-@media(max-width:900px){.panes{grid-template-columns:1fr}}
+Grammar C — before/after panes:
+
+```html
+<div class="panes">
+  <div class="pane"><h3>Before</h3>
+    <div class="mod del" data-key="parser"><span class="badge">del</span>
+      <h4>Parser</h4><div class="path">src/legacy/parser.ts</div></div>
+  </div>
+  <div class="pane after"><h3>After</h3>
+    <div class="mod mov" data-key="parser"><span class="badge">mov</span>
+      <h4>Parser</h4><div class="path">src/input/parser.ts</div>
+      <div class="from">src/legacy/parser.ts</div></div>
+  </div>
+</div>
 ```
 
-Legend and print:
+```css
+.panes{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.pane{padding:16px;background:var(--panel)}
+.pane + .pane{border-left:1px solid var(--line-strong)}
+.pane>h3{font:700 11px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin:0 0 14px}
+@media(max-width:900px){.panes{grid-template-columns:1fr}.pane + .pane{border-left:none;border-top:1px solid var(--line-strong)}}
+```
+
+Legend and print (trim swatches to what the page uses):
 
 ```html
 <div class="legend">
-  <span><i class="sw" style="--c:var(--entry)"></i>entry</span>
-  <span><i class="sw" style="--c:var(--domain)"></i>domain</span>
-  <span><i class="sw" style="--c:var(--infra)"></i>infra</span>
-  <span><i class="sw" style="--c:var(--ext)"></i>external</span>
+  <span><i class="sw rail" style="--c:var(--entry)"></i>entry</span>
+  <span><i class="sw rail" style="--c:var(--domain)"></i>domain</span>
+  <span><i class="sw rail" style="--c:var(--infra)"></i>infra</span>
+  <span><i class="sw rail" style="--c:var(--ext)"></i>external</span>
   <span><i class="sw" style="--c:var(--add)"></i>added</span>
   <span><i class="sw" style="--c:var(--del)"></i>removed</span>
   <span><i class="sw" style="--c:var(--move)"></i>moved</span>
@@ -378,19 +437,17 @@ Legend and print:
 ```
 
 ```css
-.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12.5px;color:var(--muted);margin:8px 0 20px}
-.legend .sw{display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--c,#666);margin-right:6px;vertical-align:-1px}
+.legend{display:flex;flex-wrap:wrap;gap:10px 18px;padding:12px 14px;background:var(--bg-elev);
+  border:1px solid var(--line);border-radius:6px;font-size:12.5px;color:var(--muted)}
+.legend .sw{display:inline-block;width:11px;height:11px;border-radius:2px;background:var(--c,#666);margin-right:6px;vertical-align:-1px}
+.legend .sw.rail{width:4px;height:14px;border-radius:1px;vertical-align:-3px}
 .legend .sw.dashed{background:none;border:1.5px dashed var(--muted)}
 @media print{
   body{background:#fff;color:#111}
-  .band,.mod{background:#fff;border-color:#bbb;break-inside:avoid}
-  .edges path{stroke:#888} .edges text{fill:#666}
-  a{color:#134a9e}
+  .band,.mod,.flow,.panes{background:#fff!important;border-color:#bbb;break-inside:avoid}
+  .edges path{stroke:#555!important}
 }
 ```
-
-Trim the legend to the swatches the page actually uses — a subsystem map
-carries no change-state swatches, a refactor page carries them all.
 
 ## Suggested invocation
 
