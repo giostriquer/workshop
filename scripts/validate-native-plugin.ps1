@@ -373,11 +373,15 @@ if (-not $cursorOnboardEntry) {
 if (-not $cursorToolkitEntry) {
     Fail "Cursor marketplace must contain the toolkit plugin"
 }
-if ($cursorOnboardEntry.source -ne "plugins/agent-workshop") {
-    Fail "Cursor agent-workshop marketplace source must be plugins/agent-workshop"
+$cursorPluginRoot = $cursorMarketplace.metadata.pluginRoot
+if ($cursorPluginRoot -ne "plugins") {
+    Fail "Cursor marketplace metadata.pluginRoot must be plugins"
 }
-if ($cursorToolkitEntry.source -ne "plugins/toolkit") {
-    Fail "Cursor toolkit marketplace source must be plugins/toolkit"
+if ($cursorOnboardEntry.source -ne "agent-workshop") {
+    Fail "Cursor agent-workshop marketplace source must be agent-workshop (relative to metadata.pluginRoot)"
+}
+if ($cursorToolkitEntry.source -ne "toolkit") {
+    Fail "Cursor toolkit marketplace source must be toolkit (relative to metadata.pluginRoot)"
 }
 
 $cursorOnboardManifest = Read-JsonFile "plugins/agent-workshop/.cursor-plugin/plugin.json"

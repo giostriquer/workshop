@@ -23,7 +23,8 @@ carrying the version, metadata, and `skills` / `agents` directory pointers.
 ## What was added
 
 - `.cursor-plugin/marketplace.json` (root) — owner + `metadata.description` + a
-  `plugins` array pointing `source` at `plugins/agent-workshop` and `plugins/toolkit`.
+  `plugins` array. Uses `metadata.pluginRoot: "plugins"` with short plugin `source`
+  names (`agent-workshop`, `toolkit`), matching Cursor's multi-plugin convention.
 - `plugins/agent-workshop/.cursor-plugin/plugin.json` (`skills: ./skills/`) and
   `plugins/toolkit/.cursor-plugin/plugin.json` (`skills: ./skills/`, `agents:
   ./agents/`). Versions mirror the existing manifests — `agent-workshop` `0.1.18`,

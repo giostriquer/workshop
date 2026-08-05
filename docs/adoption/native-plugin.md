@@ -61,6 +61,18 @@ Marketplaces → Add Marketplace → Import from Repo**, point it at
 [cursor.com/marketplace](https://cursor.com/marketplace) install with `/add-plugin`
 or the **Add to Cursor** button.)
 
+The Cursor marketplace manifest uses `metadata.pluginRoot: "plugins"` with short
+plugin `source` names (`agent-workshop`, `toolkit`). That matches Cursor's
+multi-plugin convention and differs from the Claude/Codex manifests, which use
+full relative paths.
+
+Cursor loads Claude marketplace plugins through a compatibility path
+(`loadClaudePlugin`). That path exposes toolkit **skills** but not the toolkit
+**agents** — agents require a Cursor-native install (Team Marketplace, or a copy
+under `~/.cursor/plugins/local/<name>/`) because only `.cursor-plugin/plugin.json`
+declares `"agents": "./agents/"`. Opening this repo as a workspace does not
+auto-install its Cursor plugins.
+
 `toolkit` is the Codex-native counterpart to the Claude Code
 `toolkit` plugin. Codex plugins distribute skills, apps, and MCP servers, so
 the active Codex surface is the `handoff-review`, `handoff-pr`,

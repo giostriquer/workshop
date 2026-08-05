@@ -1,5 +1,17 @@
 # Change Log
 
+## 2026-08-05
+
+### Cursor marketplace — use pluginRoot short sources
+
+Aligned `.cursor-plugin/marketplace.json` with Cursor's multi-plugin convention:
+`metadata.pluginRoot: "plugins"` plus short entry `source` names (`agent-workshop`,
+`toolkit`) instead of full `plugins/...` paths. Updated the native-plugin validator
+and adoption docs to match, and documented that Claude-compat loading exposes
+toolkit skills but not agents (agents need a Cursor-native install). See
+[`docs/decisions/cursor-plugin-surface.md`](decisions/cursor-plugin-surface.md) and
+[`docs/adoption/native-plugin.md`](adoption/native-plugin.md).
+
 ## 2026-07-31
 
 ### structure-view — withdrawn from the toolkit plugin pending more thought

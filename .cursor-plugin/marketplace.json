@@ -4,17 +4,18 @@
     "name": "Agent Workshop"
   },
   "metadata": {
-    "description": "Agent Workshop plugins for Cursor: a guided onboarding scaffold plus a direct-use toolkit of review, governance, and CI-monitoring agents and skills."
+    "description": "Agent Workshop plugins for Cursor: a guided onboarding scaffold plus a direct-use toolkit of review, governance, and CI-monitoring agents and skills.",
+    "pluginRoot": "plugins"
   },
   "plugins": [
     {
       "name": "agent-workshop",
-      "source": "plugins/agent-workshop",
+      "source": "agent-workshop",
       "description": "Onboard repo-local agent scaffolding with one guided skill."
     },
     {
       "name": "toolkit",
-      "source": "plugins/toolkit",
+      "source": "toolkit",
       "description": "Direct-use review, governance, and CI-monitoring agents plus skills, runnable in any repo without onboarding."
     }
   ]
