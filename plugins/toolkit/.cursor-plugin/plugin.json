@@ -11,7 +11,5 @@
   "license": "MIT",
   "keywords": ["agents", "skills", "code-review", "governance", "handoff"],
   "category": "developer-tools",
-  "tags": ["review", "governance", "ci", "quality", "automation"],
-  "skills": "./skills/",
-  "agents": "./agents/"
+  "tags": ["review", "governance", "ci", "quality", "automation"]
 }

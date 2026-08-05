@@ -5,6 +5,7 @@
   },
   "metadata": {
     "description": "Agent Workshop plugins for Cursor: a guided onboarding scaffold plus a direct-use toolkit of review, governance, and CI-monitoring agents and skills.",
+    "version": "0.1.0",
     "pluginRoot": "plugins"
   },
   "plugins": [

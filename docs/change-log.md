@@ -8,7 +8,10 @@ Aligned `.cursor-plugin/marketplace.json` with Cursor's multi-plugin convention:
 `metadata.pluginRoot: "plugins"` plus short entry `source` names (`agent-workshop`,
 `toolkit`) instead of full `plugins/...` paths. Updated the native-plugin validator
 and adoption docs to match, and documented that Claude-compat loading exposes
-toolkit skills but not agents (agents need a Cursor-native install). See
+toolkit skills but not agents (agents need a Cursor-native install). Dropped
+explicit `skills`/`agents` path fields from the Cursor per-plugin manifests so
+Cursor auto-discovers the default folders (Team Marketplace after 2.6 silently
+rejects some `./`-prefixed path forms). See
 [`docs/decisions/cursor-plugin-surface.md`](decisions/cursor-plugin-surface.md) and
 [`docs/adoption/native-plugin.md`](adoption/native-plugin.md).
 

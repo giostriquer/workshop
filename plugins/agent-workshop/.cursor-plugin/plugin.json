@@ -11,6 +11,5 @@
   "license": "MIT",
   "keywords": ["agents", "skills", "scaffold", "onboarding"],
   "category": "developer-tools",
-  "tags": ["onboarding", "scaffold", "adoption"],
-  "skills": "./skills/"
+  "tags": ["onboarding", "scaffold", "adoption"]
 }
