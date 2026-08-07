@@ -2,6 +2,18 @@
 
 ## 2026-08-07
 
+### arch-map — overflow/fit hardening + layout harness
+
+Mechanical pass fixing the idoso pattern's overflow failure modes: SVG box
+text now must fit its box (short labels, size-box-to-text budget, `text-anchor`
+middle, `textLength` last resort), and long paths/tokens wrap via
+`overflow-wrap:anywhere` on `code`, `.mod .path/.cap`, and `.chip`. Added a
+headless-chromium layout harness (`scripts/arch-map-harness/`) that measures
+every SVG `.title`/`.sub` `getBBox()` against its box plus HTML/page overflow at
+1280/1024/768/390; new checklist item 12 + **Fit** process rule reference it.
+Corpus (cadence, conosterm, forge) re-rendered clean. `toolkit` `0.16.1` →
+`0.16.2`.
+
 ### arch-map — idoso visual language as skill fallback
 
 `arch-map` rigid defaults switch from Cursor-dark to the **idoso** deep-dark

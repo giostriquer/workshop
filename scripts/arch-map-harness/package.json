@@ -1,0 +1,16 @@
+{
+  "name": "arch-map-harness",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Layout pressure-test harness for arch-map skill output: detects SVG text overflow, HTML card overflow, and horizontal page overflow across viewport widths.",
+  "bin": {
+    "arch-check": "check.mjs"
+  },
+  "scripts": {
+    "check": "node check.mjs"
+  },
+  "dependencies": {
+    "playwright": "^1.48.0"
+  }
+}

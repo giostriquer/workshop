@@ -118,6 +118,7 @@ code{
   font-family:var(--mono);font-size:.86em;
   background:rgba(10,15,26,.9);border:1px solid var(--line-strong);
   border-radius:6px;padding:.08em .4em;color:#7dd3fc;
+  overflow-wrap:anywhere;word-break:break-word; /* long paths must not force page scroll */
 }
 ```
 
@@ -173,6 +174,29 @@ owners.
 .arch-svg .wire-label{fill:#cbd5e1;font-family:var(--mono);font-weight:600}
 ```
 
+**SVG text must fit its box — SVG never wraps or clips.** This is the #1
+mechanical defect. Rules:
+
+- **Short labels only.** Box titles are one noun; `.sub` is a short path or
+  tag (`src/web · :5173`), never an enumeration. Push detailed lists
+  (`layout · session · routes · persistence …`) into the HTML layer cards
+  below, not into SVG text.
+- **Size the box to its text**, not the reverse. Rough budget at the idoso
+  `.sub` size (12px mono): ≈ 7.2 user-units per character. A 330u box holds
+  ~40 chars with padding; leave ≥ 5u slack each side.
+- **Center with `text-anchor="middle"`** at the box's mid-x so growth is
+  symmetric and overflow is obvious.
+- **Last resort for an unavoidably long label:** add
+  `textLength="<box-width-minus-pad>" lengthAdjust="spacingAndGlyphs"` to
+  compress-fit, or split into two `<tspan>` lines — do not let it bleed.
+- **Wrap the diagram, don't break the page.** The stage gets
+  `overflow-x:auto`; give a dense `.arch-svg` a `min-width` so it scrolls
+  *inside the stage* at narrow widths instead of forcing a horizontal page
+  scroll.
+
+The harness (`scripts/arch-map-harness`) measures every `.title`/`.sub`
+`getBBox()` against its box and fails the page on any overflow.
+
 ### Refactor chrome (Today | Target)
 
 Glass panes with rose/emerald borders (not a 2px top bar alone). Chips +
@@ -185,6 +209,7 @@ lede.
 .panel-today{border-color:rgba(244,63,94,.28)}
 .panel-target{border-color:rgba(52,211,153,.28)}
 .chip{font:500 11px/1.3 var(--mono);padding:3px 8px;border-radius:9999px;
+  white-space:normal;overflow-wrap:anywhere;max-width:100%;
   border:1px solid var(--line-strong);background:var(--raised);color:var(--soft)}
 .chip-good{border-color:rgba(52,211,153,.35);background:var(--ok-wash);color:#a7f3d0}
 .chip-bad{border-color:rgba(244,63,94,.35);background:var(--no-wash);color:#fecdd3}
@@ -207,6 +232,9 @@ dense import/dependency graphs only.
 - **Zoom** — ~30 visible boxes per view; group beyond that.
 - **Invariant** — required on refactor pages.
 - **Language** — English only for all generated chrome and copy.
+- **Fit** — SVG text stays inside its box; long paths/tokens (`code`,
+  `.mod .path`, `.chip`) wrap via `overflow-wrap:anywhere`; the page never
+  scrolls horizontally at 1280 / 1024 / 768 / 390. Verify with the harness.
 - **One pass; direction change = clean rewrite; one knob at a time.**
 
 ## Pre-finish checklist
@@ -224,6 +252,10 @@ dense import/dependency graphs only.
 10. Sticky TOC (if present) works; stacks at phone width; print stylesheet
     present when the page is long.
 11. No non-English UI chrome.
+12. **Layout harness passes** — every SVG `.title`/`.sub` fits its box and no
+    element forces horizontal page scroll at 1280 / 1024 / 768 / 390. Run
+    `node scripts/arch-map-harness/check.mjs <page.html>` (headless-chromium
+    `getBBox` + `scrollWidth` measurement), or an equivalent headless check.
 
 ## Reference markup (load-bearing scraps)
 
@@ -300,8 +332,8 @@ Module card + layer band (neutral):
 .layer-head h3{font:700 12px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:#e2e8f0;margin:0}
 .mod{background:var(--raised);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
 .mod h4{font:700 14.5px/1.25 var(--sans);margin:0 0 3px;color:var(--ink)}
-.mod .path{font:500 12px/1.3 var(--mono);color:var(--muted)}
-.mod .cap{margin:7px 0 0;font-size:13px;color:var(--soft)}
+.mod .path{font:500 12px/1.3 var(--mono);color:var(--muted);overflow-wrap:anywhere;word-break:break-word}
+.mod .cap{margin:7px 0 0;font-size:13px;color:var(--soft);overflow-wrap:anywhere}
 ```
 
 Rule verdicts:
