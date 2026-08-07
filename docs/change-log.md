@@ -1,5 +1,16 @@
 # Change Log
 
+## 2026-08-07
+
+### arch-map — idoso visual language as skill fallback
+
+`arch-map` rigid defaults switch from Cursor-dark to the **idoso** deep-dark
+glass pattern (near-black gradient, glass cards, Inter + JetBrains Mono, sky
+accent, scarce emerald/rose). Specimens:
+`tmp/cadence-overview-idoso.html`, `tmp/forge-architecture-cadence-idoso.html`.
+`toolkit` `0.16.0` → `0.16.1`. See
+[`docs/decisions/arch-map-idoso-visual.md`](decisions/arch-map-idoso-visual.md).
+
 ## 2026-08-05
 
 ### arch-map — ship to toolkit (renamed from structure-view)

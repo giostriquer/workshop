@@ -4,8 +4,10 @@
 
 ## Status
 
-Shipped to the toolkit as `arch-map` (`toolkit` `0.16.0`). Canonical:
-`plugins/toolkit/skills/arch-map/SKILL.md`.
+Shipped to the toolkit as `arch-map` (`toolkit` `0.16.0`). Visual chrome
+**superseded 2026-08-07** by idoso — see `arch-map-idoso-visual.md`. This
+file remains the rename + mental-model-first decision of record; token values
+below are historical.
 
 ## Rename
 

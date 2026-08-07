@@ -1,8 +1,7 @@
-> **Shipped 2026-08-05 as `arch-map`.** Canonical copy:
-> `plugins/toolkit/skills/arch-map/SKILL.md`. This file is the pre-ship draft
-> retained for archaeology (same body as ship day, with parked banner).
-> Decision: `arch-map-rename-and-visual.md`. Historical design notes remain
-> under `structure-view.md` / deprecated origin.
+> **Shipped 2026-08-05 as `arch-map`.** Canonical:
+> `plugins/toolkit/skills/arch-map/SKILL.md`. Visual chrome updated
+> 2026-08-07 to **idoso** (`arch-map-idoso-visual.md`) — this draft body
+> is the pre-idoso Cursor-dark archaeology copy. Do not resume from it.
 
 ---
 name: arch-map
