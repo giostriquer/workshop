@@ -1,10 +1,12 @@
 # arch-map
 
 > Canonical skill: [`plugins/toolkit/skills/arch-map/SKILL.md`](../../plugins/toolkit/skills/arch-map/SKILL.md).
-> Visual language (idoso):
+> Visual language (deep-dark glass):
 > [`../decisions/arch-map-idoso-visual.md`](../decisions/arch-map-idoso-visual.md);
-> specimens `tmp/cadence-overview-idoso.html`,
-> `tmp/forge-architecture-cadence-idoso.html`. Historical Cursor-dark note:
+> shipped specimens
+> `plugins/toolkit/skills/arch-map/references/subsystem-specimen.html`,
+> `plugins/toolkit/skills/arch-map/references/refactor-specimen.html`.
+> Historical Cursor-dark note:
 > [`../decisions/arch-map-rename-and-visual.md`](../decisions/arch-map-rename-and-visual.md).
 > Pipeline history: [`../decisions/structure-view.md`](../decisions/structure-view.md).
 > Former name: [`deprecated/structure-view.md`](deprecated/structure-view.md).
@@ -40,11 +42,12 @@ quiet-light passes were rejected. Cursor-dark specimen
 `tmp/architecture-overview.html` established mental-model-first + scarce
 color.
 
-**Idoso final pattern (2026-08-07).** Operator selected the deep-dark glass
-language from `tmp/cadence-overview-idoso.html` /
-`tmp/forge-architecture-cadence-idoso.html` as the skill fallback: near-black
-gradient, glass cards, Inter + JetBrains Mono, sky accent `#38bdf8`, emerald
-eyebrow, rose/emerald refactor panes. See `arch-map-idoso-visual.md`.
+**Deep-dark glass final pattern (2026-08-07).** Operator selected the
+deep-dark glass language as the skill fallback: near-black gradient, glass
+cards, Inter + JetBrains Mono, sky accent `#38bdf8`, emerald eyebrow,
+rose/emerald refactor panes. Specimens were later sanitized and shipped
+inside the skill package (`references/`) so adopters do not depend on
+workshop-local `tmp/` files. See `arch-map-idoso-visual.md`.
 
 ## Problem
 
@@ -96,10 +99,12 @@ render contract:
   **promote** pass when durable. Every view footed with **provenance**
   (live `git rev-parse` at generation time).
 
-Visual defaults (see `arch-map-idoso-visual.md`): deep-dark idoso glass —
+Visual defaults (see `arch-map-idoso-visual.md`): deep-dark glass —
 near-black gradient, Inter + JetBrains Mono, accent `#38bdf8`, green/red
 only for rules and refactor good/bad; **no role rainbow**; SVG or
-Today|Target graph first, inventory after.
+Today|Target graph first, inventory after. Worked specimens ship with the
+skill under `references/`. Fit rules are part of the skill contract (short
+SVG labels, wrap CSS, spot-check) — no runtime harness required to use it.
 
 Process rules inherited from `doc-to-html` where renderer-agnostic: one-pass
 generation, direction change = clean rewrite, one knob at a time, styled
@@ -177,8 +182,10 @@ from the *output* repo — and five gaps folded back into the skill. See
 deprecated origin for the full round write-up.
 
 **Visual iteration (2026-08-05 → 2026-08-07).** Dual-grammar rainbow → quiet
-light → scratch rebuild → Cursor-dark specimen → **idoso** deep-dark glass
-accepted as skill fallback (`arch-map-idoso-visual.md`).
+light → scratch rebuild → Cursor-dark specimen → deep-dark glass accepted as
+skill fallback. **Package self-containment (same day):** sanitized specimens
+ship inside the skill package so plugin adopters are not pointed at
+workshop-local `tmp/` files (`arch-map-idoso-visual.md`).
 
 Record further rounds here as they land.
 

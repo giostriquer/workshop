@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Arch Map — subsystem specimen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@0.469.0"></script>
+<style>
+:root{
+  --bg-gradient:radial-gradient(circle at 50% 0%,rgba(56,189,248,.08),transparent 35rem),
+                linear-gradient(180deg,#020408 0%,#050811 100%);
+  --surface:rgba(10,15,26,.85); --raised:rgba(0,0,0,.45);
+  --ink:#f1f5f9; --soft:#cbd5e1; --muted:#94a3b8;
+  --line:rgba(255,255,255,.07); --line-strong:rgba(255,255,255,.12);
+  --accent:#38bdf8; --ok:#34d399; --ok-wash:rgba(6,78,59,.4);
+  --sans:"Inter",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg-gradient);background-attachment:fixed;color:var(--ink);
+  font:16px/1.55 var(--sans);min-height:100vh}
+.wrap{max-width:1100px;margin:0 auto;padding:28px 22px 72px}
+code{font-family:var(--mono);font-size:.86em;background:rgba(10,15,26,.9);
+  border:1px solid var(--line-strong);border-radius:6px;padding:.08em .4em;color:#7dd3fc;
+  overflow-wrap:anywhere;word-break:break-word}
+.glass-card{background:rgba(10,15,26,.75);border:1px solid rgba(255,255,255,.07);
+  box-shadow:0 20px 50px rgba(0,0,0,.7);backdrop-filter:blur(20px)}
+.hero{padding:28px;border-radius:24px;margin-bottom:28px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font:600 12px/1 var(--mono);
+  letter-spacing:.08em;text-transform:uppercase;color:#34d399;padding:6px 12px;
+  border-radius:999px;background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.3)}
+.hero h1{font:800 36px/1.1 var(--sans);letter-spacing:-.03em;margin:12px 0 8px;color:#f8fafc}
+.lede{margin:0;max-width:68ch;color:var(--soft)}
+.facts{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 0;padding:0}
+.fact{background:rgba(0,0,0,.55);border:1px solid var(--line);border-radius:14px;padding:10px 14px}
+.fact dt{font:700 10.5px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.fact dd{margin:0;font:600 13.5px/1.2 var(--sans)}
+.sec-head{display:flex;align-items:baseline;gap:12px;margin:0 0 6px}
+.sec-num{font:700 13px/1 var(--mono);color:var(--accent)}
+.sec-head h2{font:700 22px/1.15 var(--sans);margin:0}
+.sec-q{margin:0 0 16px;color:var(--muted);font-size:14px}
+.stage{padding:18px;border-radius:20px;overflow-x:auto;margin-bottom:28px}
+.arch-svg{display:block;width:100%;min-width:720px;height:auto}
+.arch-svg .band{fill:rgba(0,0,0,.45);stroke:rgba(255,255,255,.07)}
+.arch-svg .box{fill:#050811;stroke:rgba(255,255,255,.2);stroke-width:1.25}
+.arch-svg .box-emph{fill:rgba(14,165,233,.22);stroke:#38bdf8;stroke-width:1.75}
+.arch-svg .box-ext{fill:rgba(0,0,0,.55);stroke:#94a3b8;stroke-dasharray:5 4}
+.arch-svg .title{fill:#f1f5f9;font:700 14px var(--sans)}
+.arch-svg .sub,.arch-svg .lane-label{fill:#94a3b8;font:600 11px var(--mono)}
+.arch-svg .wire{stroke:#94a3b8;stroke-width:1.75;fill:none}
+.arch-svg .wire-accent{stroke:#38bdf8;stroke-width:2.25;fill:none}
+.arch-svg .wire-label{fill:#cbd5e1;font:600 11px var(--mono)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin:14px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:8px;font:500 12px/1 var(--mono);color:var(--soft)}
+.lg{width:24px;height:14px;border-radius:3px;flex:none}
+.lg-emph{background:rgba(14,165,233,.22);border:1.75px solid #38bdf8}
+.lg-box{background:#050811;border:1.25px solid rgba(255,255,255,.4)}
+.lg-ext{background:rgba(0,0,0,.55);border:1.5px dashed #94a3b8}
+.layers{display:flex;flex-direction:column;gap:12px;margin-bottom:28px}
+.layer{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+.layer-head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.layer-head h3{font:700 12px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;margin:0;color:#e2e8f0}
+.hint{font:500 11px/1 var(--mono);color:var(--muted)}
+.mods{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.mod{background:var(--raised);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.mod h4{font:700 14px/1.25 var(--sans);margin:0 0 3px}
+.mod .path{font:500 11.5px/1.3 var(--mono);color:var(--muted);overflow-wrap:anywhere;word-break:break-word}
+.mod .cap{margin:7px 0 0;font-size:12.8px;color:var(--soft);overflow-wrap:anywhere}
+.rules{display:flex;flex-direction:column;gap:10px;margin-bottom:28px}
+.rule{display:flex;gap:12px;background:var(--ok-wash);border:1px solid rgba(52,211,153,.28);
+  border-left:3px solid var(--ok);border-radius:14px;padding:12px 14px}
+.rule .mark{font:700 14px/1 var(--mono);color:var(--ok)}
+.rule .body strong{display:block;font-size:13.5px;margin-bottom:3px}
+.rule .body p{margin:0;font-size:13px;color:var(--soft)}
+.prov{padding:16px 18px;border-radius:16px;font-size:12.5px;color:var(--muted)}
+.prov h3{font:700 11px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin:0 0 8px}
+.prov ul{margin:0;padding-left:18px}
+@media(max-width:760px){.hero h1{font-size:28px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero glass-card">
+    <p class="eyebrow"><i data-lucide="layout-panel-left"></i> Subsystem specimen</p>
+    <h1>SampleApp — layered composition</h1>
+    <p class="lede">Generic worked example of a subsystem architecture map.
+      One composition shell on top of single-concern modules; dashed boxes are
+      external boundaries. Replace every label with real paths from the analyzed repo.</p>
+    <dl class="facts">
+      <div class="fact"><dt>Genre</dt><dd>Subsystem map</dd></div>
+      <div class="fact"><dt>Mental model</dt><dd>SVG system map</dd></div>
+      <div class="fact"><dt>Verified</dt><dd><code>abc1234</code></dd></div>
+    </dl>
+  </header>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">§ 01</span><h2>Mental model</h2></div>
+    <p class="sec-q">"How do I hold this in my head?" — short SVG labels only; details live in the layer cards below.</p>
+    <div class="stage glass-card">
+      <svg class="arch-svg" viewBox="0 0 1040 420" role="img" aria-label="Sample layered architecture">
+        <defs>
+          <marker id="ah" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8 Z" fill="#94a3b8"/>
+          </marker>
+          <marker id="aha" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8 Z" fill="#38bdf8"/>
+          </marker>
+        </defs>
+        <rect class="band" x="24" y="20" width="992" height="88" rx="10"/>
+        <text class="lane-label" x="40" y="42">Client</text>
+        <rect class="box-emph" x="56" y="52" width="200" height="42" rx="8"/>
+        <text class="title" x="156" y="70" text-anchor="middle">App shell ★</text>
+        <text class="sub" x="156" y="86" text-anchor="middle">src/web · :5173</text>
+        <rect class="box" x="280" y="52" width="140" height="42" rx="8"/>
+        <text class="title" x="350" y="70" text-anchor="middle">Views</text>
+        <text class="sub" x="350" y="86" text-anchor="middle">tabs</text>
+        <rect class="box" x="444" y="52" width="160" height="42" rx="8"/>
+        <text class="title" x="524" y="70" text-anchor="middle">API client</text>
+        <text class="sub" x="524" y="86" text-anchor="middle">Zod in/out</text>
+
+        <path class="wire-accent" d="M524,94 L524,132" marker-end="url(#aha)"/>
+        <text class="wire-label" x="536" y="120">HTTP /api</text>
+
+        <rect class="band" x="24" y="136" width="992" height="78" rx="10"/>
+        <text class="lane-label" x="40" y="158">API</text>
+        <rect class="box-emph" x="56" y="168" width="220" height="32" rx="8"/>
+        <text class="title" x="166" y="189" text-anchor="middle">HTTP server · src/api</text>
+        <rect class="box" x="300" y="168" width="200" height="32" rx="8"/>
+        <text class="title" x="400" y="189" text-anchor="middle">contracts.ts</text>
+        <rect class="box" x="524" y="168" width="200" height="32" rx="8"/>
+        <text class="title" x="624" y="189" text-anchor="middle">composition root</text>
+
+        <path class="wire-accent" d="M166,200 L166,240" marker-end="url(#aha)"/>
+
+        <rect class="band" x="24" y="244" width="992" height="78" rx="10"/>
+        <text class="lane-label" x="40" y="266">Capabilities</text>
+        <rect class="box" x="56" y="276" width="150" height="34" rx="8"/>
+        <text class="title" x="131" y="298" text-anchor="middle">Feature A</text>
+        <rect class="box" x="230" y="276" width="150" height="34" rx="8"/>
+        <text class="title" x="305" y="298" text-anchor="middle">Feature B</text>
+        <rect class="box-emph" x="404" y="276" width="170" height="34" rx="8"/>
+        <text class="title" x="489" y="298" text-anchor="middle">Runner ★</text>
+        <rect class="box" x="598" y="276" width="150" height="34" rx="8"/>
+        <text class="title" x="673" y="298" text-anchor="middle">Store</text>
+
+        <path class="wire" d="M489,310 L489,348" marker-end="url(#ah)"/>
+        <path class="wire" d="M673,310 L673,348" marker-end="url(#ah)"/>
+
+        <rect class="band" x="24" y="352" width="992" height="52" rx="10"/>
+        <text class="lane-label" x="40" y="372">External</text>
+        <rect class="box-ext" x="404" y="362" width="170" height="30" rx="6"/>
+        <text class="title" x="489" y="382" text-anchor="middle">child process</text>
+        <rect class="box-ext" x="598" y="362" width="150" height="30" rx="6"/>
+        <text class="title" x="673" y="382" text-anchor="middle">data/*.db</text>
+      </svg>
+      <ul class="legend">
+        <li><span class="lg lg-emph"></span> Process owner (★)</li>
+        <li><span class="lg lg-box"></span> Internal module</li>
+        <li><span class="lg lg-ext"></span> External boundary</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">§ 02</span><h2>Layers</h2></div>
+    <p class="sec-q">"How is it organized?" — detailed inventory lives here, not in SVG text.</p>
+    <div class="layers">
+      <div class="layer">
+        <div class="layer-head"><h3>Client · src/web/</h3><span class="hint">contracts only</span></div>
+        <div class="mods">
+          <div class="mod" title="src/web/App.tsx"><h4>App shell</h4><div class="path">App.tsx · main.tsx</div><p class="cap">Window composition and routing.</p></div>
+          <div class="mod" title="src/web/api.ts"><h4>API client</h4><div class="path">api.ts</div><p class="cap">Typed fetch + Zod parse.</p></div>
+        </div>
+      </div>
+      <div class="layer">
+        <div class="layer-head"><h3>API · src/api/</h3><span class="hint">composition root</span></div>
+        <div class="mods">
+          <div class="mod" title="src/api/index.ts"><h4>Server</h4><div class="path">index.ts</div><p class="cap">HTTP surface; wires capabilities.</p></div>
+          <div class="mod" title="src/api/contracts.ts"><h4>Contracts</h4><div class="path">contracts.ts</div><p class="cap">Shared Zod DTOs.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">§ 03</span><h2>Boundary rules</h2></div>
+    <div class="rules">
+      <div class="rule"><span class="mark">✓</span><div class="body">
+        <strong><code>src/web/</code> → <code>contracts.ts</code> only</strong>
+        <p>No database, filesystem, or capability imports in the client.</p>
+      </div></div>
+    </div>
+  </section>
+
+  <footer class="prov glass-card">
+    <h3>Provenance</h3>
+    <ul>
+      <li>Specimen shipped with the <code>arch-map</code> skill — generic placeholders only.</li>
+      <li>Replace every path and label with traced sources from the analyzed repo.</li>
+    </ul>
+  </footer>
+</div>
+<script>if(window.lucide){lucide.createIcons();}</script>
+</body>
+</html>

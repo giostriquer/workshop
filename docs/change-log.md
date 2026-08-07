@@ -2,6 +2,17 @@
 
 ## 2026-08-07
 
+### arch-map — self-contained skill package (no workshop-only deps)
+
+Skill was pointing adopters at workshop-local `tmp/*.html` specimens — those
+paths do not ship with the plugin, so style guidance was a no-op for anyone
+integrating toolkit. Fix: sanitize and ship specimens under
+`plugins/toolkit/skills/arch-map/references/` (subsystem + refactor), rewrite
+`SKILL.md` so tokens/scraps/fit rules are the complete contract (no private
+nicknames/domain names, no dependency on a shipped harness), and keep any
+layout pressure-test tooling workshop-only under `scripts/arch-map-harness/`.
+`toolkit` `0.16.2` → `0.16.3`.
+
 ### arch-map — overflow/fit hardening + layout harness
 
 Mechanical pass fixing the idoso pattern's overflow failure modes: SVG box

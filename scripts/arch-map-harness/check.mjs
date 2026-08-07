@@ -5,13 +5,14 @@
 // container, and horizontal page overflow — across several viewport widths.
 //
 // Usage:
-//   node check.mjs <file-or-glob> [more...]        (defaults to the idoso corpus)
+//   node check.mjs <file-or-glob> [more...]   (defaults to skill-shipped specimens)
 //   node check.mjs --json report.json <files...>
 //
+// Workshop-only maintainer tooling — not part of the plugin payload.
 // Exit code is non-zero when any ERROR-level finding exists.
 
 import { chromium } from 'playwright';
-import { pathToFileURL } from 'node:url';
+import { pathToFileURL, fileURLToPath } from 'node:url';
 import { globSync } from 'node:fs';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -30,10 +31,10 @@ function parseArgs(argv) {
   return { files, jsonOut };
 }
 
+const HERE = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_CORPUS = [
-  path.resolve('../../tmp/cadence-overview-idoso.html'),
-  path.resolve('../../tmp/forge-architecture-cadence-idoso.html'),
-  path.resolve('../../tmp/forge-architecture-idoso.html'),
+  path.resolve(HERE, '../../plugins/toolkit/skills/arch-map/references/subsystem-specimen.html'),
+  path.resolve(HERE, '../../plugins/toolkit/skills/arch-map/references/refactor-specimen.html'),
 ];
 
 function resolveFiles(patterns) {

@@ -1,6 +1,6 @@
 ---
 name: arch-map
-description: Use when you need a visual architecture map of a codebase and no finished source doc exists — an existing subsystem (how it is structured today), a refactor in flight (what moves), or a proposed design (target state). Derives boxes and edges from the repo, diff, or plan, then renders a self-contained HTML page whose first job is a graphical mental model (SVG system map or before/after flow graph), followed by supporting inventory. Deep-dark "idoso" chrome (near-black gradient, glass cards, Inter + JetBrains Mono, sky accent, scarce green/red); CDNs allowed for fonts/icons/Mermaid/Tailwind. Ephemeral in tmp/ with promote-to-durable on request. NOT for rendering an existing markdown report — that is doc-to-html. Formerly structure-view.
+description: Use when you need a visual architecture map of a codebase and no finished source doc exists — an existing subsystem (how it is structured today), a refactor in flight (what moves), or a proposed design (target state). Derives boxes and edges from the repo, diff, or plan, then renders a self-contained HTML page whose first job is a graphical mental model (SVG system map or before/after flow graph), followed by supporting inventory. Deep-dark glass chrome (near-black gradient, glass cards, Inter + JetBrains Mono, sky accent, scarce green/red); CDNs allowed for fonts/icons/Mermaid/Tailwind. Worked specimens ship with this skill under references/. Ephemeral output in the project's tmp/ with promote-to-durable on request. NOT for rendering an existing markdown report — that is doc-to-html. Formerly structure-view.
 ---
 
 # Arch Map
@@ -26,18 +26,32 @@ Three input shapes, all doc-less:
 Not for: rendering existing markdown (use `doc-to-html`); freeform diagrams
 disconnected from this repo's code, diff, or plan.
 
+## Skill package layout
+
+Everything an adopting project needs ships **next to this file**:
+
+| Path | Role |
+|---|---|
+| `references/subsystem-specimen.html` | Worked subsystem page (SVG mental model + layers + rules) |
+| `references/refactor-specimen.html` | Worked refactor page (Today\|Target graph + stages) |
+
+Resolve these relative to the skill directory the host loaded (plugin cache
+or repo checkout). Do **not** look for workshop-local `tmp/` specimens —
+they are not part of this package. The CSS tokens, markup scraps, and fit
+rules in this file are the complete contract; following them is enough.
+
 ## Step 0 — house style
 
-Glob `tmp/` and `docs/` for a hand-authored standalone `.html` architecture
-page (inline styles; exclude `node_modules/`, `dist/`, etc.). **Genre test:**
-structural graphics dominate (system map, layers, legend, before/after flow)
-— not a `doc-to-html` report. If a sibling exists, match its tokens and
-component shapes. Otherwise use the **idoso** defaults below.
-
-Preferred specimens in this scaffold (match either):
-
-- `tmp/cadence-overview-idoso.html` — subsystem map + inventory
-- `tmp/forge-architecture-cadence-idoso.html` — refactor before/after graph
+1. Glob the **output project's** `tmp/` and `docs/` for a hand-authored
+   standalone `.html` architecture page (inline styles; exclude
+   `node_modules/`, `dist/`, etc.). **Genre test:** structural graphics
+   dominate (system map, layers, legend, before/after flow) — not a
+   `doc-to-html` report. If a sibling exists, match its tokens and component
+   shapes.
+2. Otherwise use the **deep-dark glass** defaults below, copying structure
+   and tokens from the shipped specimens:
+   - Subsystem → `references/subsystem-specimen.html`
+   - Refactor → `references/refactor-specimen.html`
 
 When analyzed repo ≠ output repo, glob both; **output repo sibling wins**.
 
@@ -79,17 +93,17 @@ not draw a fourth diagram.
 ### 3 — Render
 
 Single HTML file (CDNs allowed: Inter/JetBrains fonts, Lucide, Mermaid,
-optional Tailwind for layout grids). Default:
+optional Tailwind for layout grids). Default output in the **project**:
 `tmp/<YYYY-MM-DD>-<slug>.html`. **Promote** on request: re-verify traces,
 full checklist, move to `docs/`. **English only** for all UI chrome and
 copy.
 
-## Visual language — idoso (rigid defaults)
+## Visual language — deep-dark glass (rigid defaults)
 
 ### Deep dark + glass
 
 Near-black canvas with a subtle sky neon at the top; panels are translucent
-glass, not flat Cursor `#181818` chrome.
+glass, not flat `#181818` chrome.
 
 ```css
 :root{
@@ -118,12 +132,12 @@ code{
   font-family:var(--mono);font-size:.86em;
   background:rgba(10,15,26,.9);border:1px solid var(--line-strong);
   border-radius:6px;padding:.08em .4em;color:#7dd3fc;
-  overflow-wrap:anywhere;word-break:break-word; /* long paths must not force page scroll */
+  overflow-wrap:anywhere;word-break:break-word;
 }
 ```
 
 Fonts: **Inter** (UI) + **JetBrains Mono** (paths/chips) via Google Fonts.
-No Source Serif. Lucide CDN for icons. Mermaid when needed (theme below).
+Lucide CDN for icons. Mermaid when needed (theme below).
 
 **Body text is `--ink` / `--soft`.** Use `--muted` for captions/paths only —
 never mid-grey paragraphs on black.
@@ -160,7 +174,7 @@ skill.
 
 Layered bands (`.band`), boxes (`.box` / `.box-emph` process owners /
 `.box-ext` dashed external), wires + markers, lane labels. ★ for spawn
-owners.
+owners. Match `references/subsystem-specimen.html`.
 
 ```css
 .arch-svg .band{fill:rgba(0,0,0,.45);stroke:rgba(255,255,255,.07)}
@@ -178,12 +192,11 @@ owners.
 mechanical defect. Rules:
 
 - **Short labels only.** Box titles are one noun; `.sub` is a short path or
-  tag (`src/web · :5173`), never an enumeration. Push detailed lists
-  (`layout · session · routes · persistence …`) into the HTML layer cards
-  below, not into SVG text.
-- **Size the box to its text**, not the reverse. Rough budget at the idoso
-  `.sub` size (12px mono): ≈ 7.2 user-units per character. A 330u box holds
-  ~40 chars with padding; leave ≥ 5u slack each side.
+  tag (`src/web · :5173`), never an enumeration. Push detailed lists into
+  the HTML layer cards below, not into SVG text.
+- **Size the box to its text**, not the reverse. Rough budget at 12px mono:
+  ≈ 7.2 user-units per character. A 330u box holds ~40 chars with padding;
+  leave ≥ 5u slack each side.
 - **Center with `text-anchor="middle"`** at the box's mid-x so growth is
   symmetric and overflow is obvious.
 - **Last resort for an unavoidably long label:** add
@@ -194,14 +207,11 @@ mechanical defect. Rules:
   *inside the stage* at narrow widths instead of forcing a horizontal page
   scroll.
 
-The harness (`scripts/arch-map-harness`) measures every `.title`/`.sub`
-`getBBox()` against its box and fails the page on any overflow.
-
 ### Refactor chrome (Today | Target)
 
 Glass panes with rose/emerald borders (not a 2px top bar alone). Chips +
 HTML connectors carry the graph. State the **invariant** above or in the
-lede.
+lede. Match `references/refactor-specimen.html`.
 
 ```css
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:18px;
@@ -234,7 +244,9 @@ dense import/dependency graphs only.
 - **Language** — English only for all generated chrome and copy.
 - **Fit** — SVG text stays inside its box; long paths/tokens (`code`,
   `.mod .path`, `.chip`) wrap via `overflow-wrap:anywhere`; the page never
-  scrolls horizontally at 1280 / 1024 / 768 / 390. Verify with the harness.
+  scrolls horizontally at common widths. Enforce by construction (short
+  labels, box sized to text, wrap CSS above) — spot-check three boxes and
+  a phone-width resize before finishing.
 - **One pass; direction change = clean rewrite; one knob at a time.**
 
 ## Pre-finish checklist
@@ -252,10 +264,10 @@ dense import/dependency graphs only.
 10. Sticky TOC (if present) works; stacks at phone width; print stylesheet
     present when the page is long.
 11. No non-English UI chrome.
-12. **Layout harness passes** — every SVG `.title`/`.sub` fits its box and no
-    element forces horizontal page scroll at 1280 / 1024 / 768 / 390. Run
-    `node scripts/arch-map-harness/check.mjs <page.html>` (headless-chromium
-    `getBBox` + `scrollWidth` measurement), or an equivalent headless check.
+12. **Fit holds** — every SVG `.title`/`.sub` sits inside its box (≥ 5u slack);
+    `code` / `.mod .path` / `.chip` use `overflow-wrap:anywhere`; no horizontal
+    page scroll when the viewport is narrowed to phone width. Spot-check at
+    least three boxes against their rects.
 
 ## Reference markup (load-bearing scraps)
 
@@ -373,15 +385,10 @@ HTML flow connector:
 .conn-bad .conn-arrow{border-top-color:var(--no)}
 ```
 
-Worked specimens (copy structure + tokens):
-
-- Subsystem: `tmp/cadence-overview-idoso.html`
-- Refactor graph: `tmp/forge-architecture-cadence-idoso.html`
-
 ## Suggested invocation
 
 - Map how the plugin system is structured. → subsystem: derive, mental
-  model SVG, layers, `tmp/` page
+  model SVG, layers, project `tmp/` page
 - Show what this refactor branch actually moves. → diff, invariant,
   Today|Target panes
 - Draw the target architecture we just discussed. → proposed (dashed) +
