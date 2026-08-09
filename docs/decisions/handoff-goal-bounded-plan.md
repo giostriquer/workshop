@@ -4,7 +4,11 @@
 
 ## Status
 
-Implemented.
+Implemented; **superseded** by
+[`handoff-goal-status-only-plan.md`](./handoff-goal-status-only-plan.md)
+(2026-08-09) — live pursuit showed the bounded ledger still bloating the
+boot path, so pursuit-side plan writes became status flips only and
+`ledger.md` was eliminated.
 
 ## Context
 

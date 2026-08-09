@@ -1,5 +1,24 @@
 # Change Log
 
+## 2026-08-09
+
+### handoff-goal — status-only plan; evidence never lands in contract files
+
+Live pursuit defeated the `0.13.2` bounded-ledger design: a 450,388-character
+`plan.md` treated as "the authoritative append-only ledger" consumed entire
+post-compaction sessions in full re-reads. Operator-mandated fix: pursuit-side
+writes to `plan.md` are **status flips only** (at most one phase `in progress`,
+`done` when verified, `blocked`; checkbox ticks) — no prose, evidence, output,
+or history; `ledger.md` is eliminated (two-file contract again); git commits +
+re-runnable Verify commands are the durable record; resumption is by status,
+not history replay; route changes escalate to the operator. Critique mode
+migrates legacy contracts by cutting accumulated history and deleting evidence
+files. `toolkit` `0.16.3` → `0.16.4`; validator green. See
+[`docs/decisions/handoff-goal-status-only-plan.md`](decisions/handoff-goal-status-only-plan.md)
+(supersedes
+[`handoff-goal-bounded-plan.md`](decisions/handoff-goal-bounded-plan.md)),
+[`docs/skills/handoff-goal.md`](skills/handoff-goal.md).
+
 ## 2026-08-07
 
 ### arch-map — self-contained skill package (no workshop-only deps)
