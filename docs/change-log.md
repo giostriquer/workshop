@@ -2,6 +2,19 @@
 
 ## 2026-08-09
 
+### handoff-goal — review cadence scaled to landed work
+
+Live pursuit over-dispatched reviewer subagents on every small task while the
+completed phase's cumulative diff had no mandated review slot. Operator-set
+cadence, now in the plan template's boot path: a small task's independent pass
+is a clean Verify re-run (never a per-task reviewer dispatch); reviewers come
+in after a substantial chunk (feature / bug fix / risky refactor); each
+completed phase gets an **adversarial code-quality review** of its cumulative
+diff (`code-quality-review` skill where available), held by a standing exit
+criterion. Critique mode audits the cadence both ways. `toolkit` `0.16.4` →
+`0.16.5`; validator green. See
+[`docs/decisions/handoff-goal-review-cadence.md`](decisions/handoff-goal-review-cadence.md).
+
 ### handoff-goal — status-only plan; evidence never lands in contract files
 
 Live pursuit defeated the `0.13.2` bounded-ledger design: a 450,388-character

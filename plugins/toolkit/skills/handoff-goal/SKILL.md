@@ -118,7 +118,7 @@ Whatever the source, the contract states the goal as an **outcome with a definit
 
 > # Plan — `<title>` (route for [`goal.md`](./goal.md))
 >
-> **To the pursuing session:** this file is your route, not your notebook; the finish line lives in `goal.md` and only the operator changes it. Work the loop, not a straight line: **act → verify with an independent pass → commit the checkpoint → flip the status → repeat**. An "independent pass" means the check is confirmed by something other than the judgment that did the work — a fresh subagent prompted to *refute* done, or at minimum a clean re-run of the Verify command — never just "I believe it works."
+> **To the pursuing session:** this file is your route, not your notebook; the finish line lives in `goal.md` and only the operator changes it. Work the loop, not a straight line: **act → verify with an independent pass → commit the checkpoint → flip the status → repeat**. An "independent pass" means the check is confirmed by something other than the judgment that did the work — never just "I believe it works" — and its weight scales with the work: for a small routine task, a clean re-run of the Verify command is the pass; do **not** dispatch reviewer agents for every small task. Bring in the reviewers after a substantial chunk lands — a feature, a bug fix, a risky refactor. And when a phase completes, run an **adversarial code-quality review** of the phase's cumulative diff — the `code-quality-review` skill where the runtime ships it, otherwise a fresh reviewer prompted to attack the diff's correctness and maintainability — before the phase is marked done.
 >
 > **You may edit this file only to update statuses.** The permitted writes, exactly: set a phase's `Status:` line (keep at most one `in progress`; `done` only when its verification passed; `blocked` as it occurs) and tick checkboxes whose condition verifiably holds. Nothing else — no prose entries, no evidence, no command output, no history, no notes, no new sections or files. The durable record is **git**: each verified checkpoint is a commit, and the commit message carries what a note here would have carried. What can't be expressed as a status flip or a commit goes to the operator, not into this file. If the phases themselves no longer match reality — wrong, missing, obsolete — stop and ask the operator to revise the route; rewriting it yourself is not a permitted write.
 >
@@ -140,6 +140,7 @@ Whatever the source, the contract states the goal as an **outcome with a definit
 >
 > Exit criteria
 > - [ ] Phase work committed — the commit message names the phase and what was verified (a phase with uncommitted work is not done)
+> - [ ] Adversarial code-quality review of the phase's cumulative diff passed — findings fixed or explicitly operator-accepted
 > - [ ] `<what must be true before the next phase starts>`
 >
 > ## Delegation lanes  <!-- include only when separable lanes exist and subagents are available -->
@@ -154,6 +155,7 @@ Pointed at an existing goal directory (or asked to critique a draft), don't writ
 - primary verifier named, on the real surface, capability gaps declared rather than papered over;
 - operating rules carry concrete values, none invented;
 - commit discipline mechanical — a concrete Commits rule (skill default if nobody stated one), the commit step in the loop, the committed-work exit criterion in each phase;
+- review cadence right-sized — no per-task reviewer dispatches mandated (a small task's independent pass is the Verify re-run); reviewers after substantial chunks; the adversarial code-quality-review exit criterion present in each phase;
 - the split honored — no living state in `goal.md`, no contract terms living only in `plan.md`;
 - `plan.md` status-only — statuses and checkbox ticks are the only pursuit-side mutations the template sanctions (the permitted-writes paragraph present in the preamble, statuses `pending | in progress | blocked | done`, no ledger / log / next-action sections); a contract carrying accumulated history — prose entries, evidence, pasted output, or a legacy `ledger.md` — is migrated by **cutting the history** (git and the operator's session already hold it), re-deriving each phase's status and checkboxes from the repo and `git log`, and deleting any evidence file, so what remains is exactly the status-tracked route;
 - the always-on four present; stakes-scaled sections match the actual stakes, both ways (missing where needed, fortress where trivial).
