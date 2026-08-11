@@ -82,4 +82,4 @@ Audits an existing contract against the skill's bar and tightens it in place.
 - The integrity apparatus is the generalized form of a repo's Regression-Prevention Gate. A project that already mandates gates and mutation proofs can lean on its own rule files; a project that doesn't gets the discipline from the contract itself.
 - The scratch path (`tmp/<YYYY-MM-DD>-<goal-slug>/`) is a default; point it at whatever scratch dir your project uses, and gitignore it.
 - A runtime-side goal-mode skill (e.g. a personal Codex "ultragoal") can consume the contract: design and critique stay here; activation is one `create_goal` call carrying the objective from `goal.md`'s Activation section.
-- Pairs naturally with its siblings: pursue the goal, then `handoff-review` for a fresh-eyes review, then `handoff-pr` to package the PR.
+- Pairs naturally with `handoff-pr`: pursue the goal, then package the PR. (`handoff-review`, the former fresh-eyes sibling, was retired to the attic 2026-08-10.)

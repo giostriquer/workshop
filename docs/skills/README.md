@@ -1,6 +1,6 @@
 # Skills
 
-Origin docs for the eighteen skills the scaffold ships (across the `toolkit` and `agent-workshop` plugins). Each doc covers:
+Origin docs for the seventeen skills the scaffold ships (across the `toolkit` and `agent-workshop` plugins). Each doc covers:
 
 - **Origin** — the pressure that created the skill.
 - **Problem** — what specifically it solves.
@@ -21,7 +21,6 @@ Each skill's canonical `SKILL.md` lives in the plugin that ships it — `plugins
 | [`push`](push.md) | Branch-aware commit and push; pulls before staging; uses `change-log` as message source when relevant. |
 | [`research`](research.md) | Forward-looking research orchestration; thin skill, heavy `research` agent. |
 | [`visual-advisor`](visual-advisor.md) | Visual taste advisor; mode-aware (refinement / exploration / rebaseline) prompt shaping. |
-| [`handoff-review`](handoff-review.md) | Produces a self-contained brief for a separate agent/session to independently verify a branch (task-vs-code, rules, info-leak, correctness) and, in `continue` mode, continue it from a verified foundation; spawns a reviewer or writes a scratch file. |
 | [`handoff-pr`](handoff-pr.md) | Produces a structured PR handoff artifact for a separately-authorized session; derives the body from the repo's own PR template when one exists, keeping opener-only fields (validation, review, the `gh` command) out of the public body; never opens the PR. |
 | [`handoff-goal`](handoff-goal.md) | Produces a self-contained goal contract directory — `goal.md`, the frozen contract (outcome, baseline, real-surface primary verifier, integrity rules, approval gates, operating rules), plus `plan.md`, the living route the pursuer maintains — for a new session on any runtime (incl. Codex goal mode) to pursue autonomously across compactions; also critiques existing contracts; never pursues the goal itself. |
 | [`doc-to-html`](doc-to-html.md) | Renders a markdown report as a standalone dark HTML page; design defaults are adaptable, editing process rules (rewrite-on-direction-change, renumbering, pre-finish checks) are rigid. |
@@ -34,6 +33,8 @@ Each skill's canonical `SKILL.md` lives in the plugin that ships it — `plugins
 | [`route-work`](route-work.md) | Grades a task about to be dispatched against a five-axis rubric (repo precedent, ambiguity, failure visibility, taste surface, blast radius) and returns a three-line route — model + effort + process pattern + why; carries the canonical model × effort table as its single source of truth. Recommends only — never dispatches. |
 | [`arch-map`](arch-map.md) | Derives a visual architecture map when no source doc exists — subsystem, refactor in flight, or proposed design — and renders a self-contained HTML page: mental-model SVG first, Cursor-dark high contrast, scarce color, provenance stamps, every box and edge traceable to a real file / symbol / diff hunk. Ephemeral-first (`tmp/`) with a promote-to-durable pass. |
 
+Deprecated (origin docs kept under [`deprecated/`](deprecated/)): [`handoff-review`](deprecated/handoff-review.md) — retired 2026-08-10, spec parked in `attic/skills/handoff-review/`; [`structure-view`](deprecated/structure-view.md) — renamed to `arch-map` 2026-08-05.
+
 ## Composition
 
 Skills here pair naturally with agents:
@@ -45,7 +46,7 @@ Skills here pair naturally with agents:
 - `visual-advisor` is the advisor counterpart to `visual-implementer`.
 - `push` stands alone — it's a workflow primitive, not a multi-stage orchestration.
 - `doc-to-html` stands alone — a rendering and page-maintenance primitive; it pairs with `visual-advisor` only when the page needs art direction beyond its defaults.
-- `handoff-review`, `handoff-pr`, and `handoff-goal` are handoff primitives — each emits a self-contained artifact a *different* session consumes; they stand alone, not orchestrating other skills. `handoff-pr` packages a finished branch into a PR; `handoff-goal` hands work forward (a goal to pursue); `handoff-review` hands a branch to a fresh session to verify unbiased and — in `continue` mode — continue from a verified foundation, escalating substantial forward work to `handoff-goal`.
+- `handoff-pr` and `handoff-goal` are handoff primitives — each emits a self-contained artifact a *different* session consumes; they stand alone, not orchestrating other skills. `handoff-pr` packages a finished branch into a PR; `handoff-goal` hands work forward (a goal to pursue). (`handoff-review`, formerly the third primitive, was retired to the attic 2026-08-10.)
 - `claim-check` is an investigation primitive — it runs the search itself, fanning out to subagents rather than orchestrating other skills. It pairs forward with `handoff-goal`: a `confirmed`, ready-to-work verdict feeds its dossier straight into a goal handoff.
 - `qa-sweep` is a verification primitive — it runs the sweep itself, fanning a QA team over a decomposable surface and corroborating their findings firsthand rather than orchestrating other skills. It is the team-scale, runtime sibling of `claim-check`'s single-premise investigation; it pairs forward with `handoff-pr` / `handoff-goal` (a ship verdict or a blocker list feeds the next session's work).
 - `empirical-proof` is a verification primitive one notch below `qa-sweep`: a single just-finished change instead of a decomposable surface, with the same corroboration DNA. It closes the implementation loop — "done" claims become runtime evidence; a `broken` verdict feeds the operator's fix step, a `blocked` verdict hands the environment gap back rather than fabricating around it. It pairs forward with `handoff-pr` (proof in hand before the PR).

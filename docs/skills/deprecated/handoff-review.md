@@ -1,4 +1,11 @@
-# handoff-review
+# handoff-review (deprecated)
+
+> **Deprecated 2026-08-10.** Retired from the `toolkit` plugin (last shipped in
+> 0.16.5); the spec is parked verbatim at
+> [`attic/skills/handoff-review/SKILL.md`](../../../attic/skills/handoff-review/SKILL.md)
+> and no plugin or host ships it. For handing substantial forward work to a new
+> session use [`handoff-goal`](../handoff-goal.md); for a pre-PR fresh-eyes pass,
+> dispatch a reviewer directly. Kept here so the origin story stays findable.
 
 ## Origin
 

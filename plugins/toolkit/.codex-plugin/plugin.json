@@ -1,6 +1,6 @@
 {
   "name": "toolkit",
-  "version": "0.16.5",
+  "version": "0.17.0",
   "description": "Codex-ready handoff, claim-check, qa-sweep, empirical-proof, code-quality-review, doc-to-html, ui-demo-video, route-work, and arch-map skills and bundled agent files (reviewers + ci-watcher) from Agent Workshop.",
   "author": {
     "name": "Agent Workshop",
@@ -13,14 +13,13 @@
   "skills": "./skills",
   "interface": {
     "displayName": "Toolkit",
-    "shortDescription": "Review handoff and doc-to-html skills for Codex.",
-    "longDescription": "A Codex manifest for the Agent Workshop toolkit plugin. Codex exposes the handoff-review, handoff-pr, handoff-goal, doc-to-html, claim-check, qa-sweep, empirical-proof, code-quality-review, get-pr-comments, ui-demo-video, route-work, and arch-map skills from this package; the agent files (the reviewers plus ci-watcher) are bundled in the payload for Claude Code and reference, but Codex standalone custom agents still need repo-local .codex/agents wrappers.",
+    "shortDescription": "Handoff and doc-to-html skills for Codex.",
+    "longDescription": "A Codex manifest for the Agent Workshop toolkit plugin. Codex exposes the handoff-pr, handoff-goal, doc-to-html, claim-check, qa-sweep, empirical-proof, code-quality-review, get-pr-comments, ui-demo-video, route-work, and arch-map skills from this package; the agent files (the reviewers plus ci-watcher) are bundled in the payload for Claude Code and reference, but Codex standalone custom agents still need repo-local .codex/agents wrappers.",
     "developerName": "Agent Workshop",
     "category": "Productivity",
     "capabilities": ["Skills"],
     "websiteURL": "https://github.com/giostriquer/agent-workshop",
     "defaultPrompt": [
-      "Prepare a review handoff brief.",
       "Prepare a PR handoff artifact.",
       "Prepare a goal handoff document.",
       "Turn a markdown report into a standalone HTML page.",

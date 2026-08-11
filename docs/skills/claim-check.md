@@ -178,7 +178,7 @@ Surfaced by early lived-in use on real tickets:
 
 - The substance-fetch step degrades gracefully across trackers (ClickUp / Linear
   / Jira) — integration if present, operator paste otherwise — the same pattern
-  `handoff-review` uses.
+  the retired `handoff-review` used.
 - The six-bucket verdict taxonomy (`confirmed` · `partially-confirmed` ·
   `refuted/obsolete` · `mis-scoped` · `confirmed-but-blocked` · `inconclusive`) is
   portable; rename to match how your team talks about outcomes.

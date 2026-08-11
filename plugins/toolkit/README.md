@@ -1,9 +1,9 @@
 # toolkit
 
 A direct-use Claude Code plugin from [Agent Workshop](https://github.com/giostriquer/agent-workshop):
-six curated agents (code review, governance, and CI monitoring) plus twelve direct-use skills you can run in any repo with **no setup**.
+six curated agents (code review, governance, and CI monitoring) plus eleven direct-use skills you can run in any repo with **no setup**.
 The agents read your code, specs, tests, and CI and report findings — they never modify your files.
-Three skills produce structured handoff artifacts (review briefs, PR opens, and goal documents
+Two skills produce structured handoff artifacts (PR opens and goal documents
 for a new session to pursue); `doc-to-html` renders a markdown report as a standalone dark HTML page;
 `claim-check` runs an unbiased, evidence-grounded investigation of a premise and returns a verdict plus a readiness dossier;
 `qa-sweep` fans a QA team over a broad surface and corroborates every finding firsthand before it counts;
@@ -33,8 +33,8 @@ codex plugin add toolkit@agent-workshop
 ```
 
 Codex plugins do not currently expose standalone custom agents from plugin
-manifests. The Codex `toolkit` package exposes `handoff-review`, `handoff-pr`,
-`handoff-goal`, `doc-to-html`, `claim-check`, `qa-sweep`, `empirical-proof`, `code-quality-review`, `get-pr-comments`, `ui-demo-video`, `route-work`, and `arch-map` as skills and bundles the agent files inertly; use the
+manifests. The Codex `toolkit` package exposes `handoff-pr`, `handoff-goal`,
+`doc-to-html`, `claim-check`, `qa-sweep`, `empirical-proof`, `code-quality-review`, `get-pr-comments`, `ui-demo-video`, `route-work`, and `arch-map` as skills and bundles the agent files inertly; use the
 `agent-workshop` onboarding plugin when you want to copy true `.codex/agents/`
 wrappers into a target repo.
 
@@ -44,8 +44,8 @@ Repo** (`giostriquer/agent-workshop`) — then install `toolkit` from **Customiz
 the sidebar.
 
 After install, the six agents are available, namespaced `toolkit:<agent>` —
-e.g. `toolkit:spec-reviewer`. The twelve skills are available as `handoff-review`,
-`handoff-pr`, `handoff-goal`, `doc-to-html`, `claim-check`, `qa-sweep`, `empirical-proof`, `code-quality-review`, `get-pr-comments`, `ui-demo-video`, `route-work`, and `arch-map` (skills are invoked by name, not namespaced). The same marketplace also
+e.g. `toolkit:spec-reviewer`. The eleven skills are available as `handoff-pr`,
+`handoff-goal`, `doc-to-html`, `claim-check`, `qa-sweep`, `empirical-proof`, `code-quality-review`, `get-pr-comments`, `ui-demo-video`, `route-work`, and `arch-map` (skills are invoked by name, not namespaced). The same marketplace also
 hosts the `agent-workshop` onboarding plugin (`/plugin install agent-workshop@agent-workshop`)
 for the full scaffold-adoption flow.
 
@@ -66,7 +66,6 @@ All six are advisory and read-only (no `Edit`/`Write`) — the reviewers use `Re
 
 | Skill | Produces |
 | --- | --- |
-| `handoff-review` | a self-contained brief for a separate agent/session to independently verify a branch (task-vs-code, rules, info-leak, correctness) before a PR — and, in `continue` mode, continue the work from a verified foundation |
 | `handoff-pr` | a structured PR handoff artifact (title, body, ticket links, status) for a separately-authorized session to open — never opens the PR itself |
 | `handoff-goal` | a self-contained goal contract directory — `goal.md` (frozen: outcome, baseline, acceptance checks with a real-surface primary verifier, integrity rules, approval gates, operating rules) plus `plan.md` (status-tracked phases the pursuer advances by status flips only — evidence lives in git, never in contract files) — for a new session to pursue autonomously across compactions; activatable directly by Codex goal mode; never pursues the goal itself |
 | `doc-to-html` | a standalone dark-themed HTML page rendered from a markdown report / audit / findings doc (TOC, keyboard nav, evidence appendix, print stylesheet), with a rigid editing discipline for later revisions |

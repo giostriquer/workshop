@@ -1,5 +1,28 @@
 # Change Log
 
+## 2026-08-10
+
+### attic/ introduced; handoff-review deprecated; orchestrate parked
+
+New top-level `attic/` holds skills that live in the repo but ship in no plugin
+and run on no host — in-progress drafts and deprecated pieces — instead of
+being deleted or stranded in machine-local global configs. `handoff-review`
+retired from `toolkit` (operator call): spec parked verbatim at
+`attic/skills/handoff-review/`, origin doc moved to
+[`docs/skills/deprecated/handoff-review.md`](skills/deprecated/handoff-review.md),
+cross-references scrubbed (`handoff-goal` fit-check, `handoff-pr` Review field,
+READMEs, adoption docs, manifests — the adoption docs' Codex-surface lists were
+also three skills stale and were trued up to eleven). The personal
+`orchestrate` and `codex-implement` skills moved from the global
+`~/.claude/skills/` scope into `attic/skills/` as in-progress (verified absent
+from Codex/Cursor global scopes); the always-injected
+`~/.claude/rules/model-selection.md` parked beside `orchestrate` in the attic
+(routing invariants stay live via the shipped `route-work` skill); the empty
+`~/.codex/skills/codex-primary-runtime/` remnant was deleted. `CLAUDE.md` /
+`AGENTS.md` § boundaries and the deprecation workflow now name the attic.
+`toolkit` `0.16.5` → `0.17.0`; validator green.
+See [`docs/decisions/attic-parked-skills.md`](decisions/attic-parked-skills.md).
+
 ## 2026-08-09
 
 ### handoff-goal — review cadence scaled to landed work

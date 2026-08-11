@@ -44,7 +44,7 @@ The spec is the contract. The origin doc is the explanation. They must not drift
 
 ## Cross-host parity
 
-Canonical definitions live in the plugins (see `CLAUDE.md` § "Source-of-truth boundaries"), not in a universal `.claude/`. This repo's own host dirs — `.claude/`, `.codex/`, `.opencode/` — carry only the small set the repo runs (`change-log`, `push`, `wiki-maintainer`, `vigil`). The onboarding plugin bundles the full host-wrapper templates for the adoptable agents under `references/wrappers/{codex,gemini,opencode}/`.
+Canonical definitions live in the plugins (see `CLAUDE.md` § "Source-of-truth boundaries"), not in a universal `.claude/`. This repo's own host dirs — `.claude/`, `.codex/`, `.opencode/` — carry only the small set the repo runs (`change-log`, `push`, `wiki-maintainer`, `vigil`). Parked pieces — in-progress drafts and deprecated skills — live in `attic/` (see `attic/README.md`): in the repo, shipped by no plugin, discovered by no host, exempt from the docs symmetry until promoted. The onboarding plugin bundles the full host-wrapper templates for the adoptable agents under `references/wrappers/{codex,gemini,opencode}/`.
 
 The portable conventions adopters apply in *their* repos are unchanged: **thin wrappers for agents** (each non-Claude wrapper points at the adopter's `.claude/agents/<name>.md`) and **full mirroring for skills** (each host carries its own SKILL.md). See [`docs/conventions/cross-host-wrappers.md`](docs/conventions/cross-host-wrappers.md) and [`docs/conventions/skill-parity.md`](docs/conventions/skill-parity.md). Gemini and OpenCode remain supported **adoption** targets (onboarding generates their wrappers); this repo simply doesn't keep its own `.gemini/` instance.
 

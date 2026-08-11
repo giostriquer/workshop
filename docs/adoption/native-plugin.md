@@ -75,9 +75,9 @@ auto-install its Cursor plugins.
 
 `toolkit` is the Codex-native counterpart to the Claude Code
 `toolkit` plugin. Codex plugins distribute skills, apps, and MCP servers, so
-the active Codex surface is the `handoff-review`, `handoff-pr`,
-`handoff-goal`, `doc-to-html`, `claim-check`, `qa-sweep`, `empirical-proof`,
-`code-quality-review`, and `get-pr-comments` skills. The
+the active Codex surface is the `handoff-pr`, `handoff-goal`, `doc-to-html`,
+`claim-check`, `qa-sweep`, `empirical-proof`, `code-quality-review`,
+`get-pr-comments`, `ui-demo-video`, `route-work`, and `arch-map` skills. The
 reviewer agent files are bundled in the plugin payload for Claude Code and
 reference, but Codex custom agents still need repo-local `.codex/agents/`
 wrappers from onboarding.

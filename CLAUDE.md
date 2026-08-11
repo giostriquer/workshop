@@ -48,6 +48,11 @@ are **independent** — they need not carry the same set, and there is no univer
   runs** — currently `change-log`, `push` (skills) and `wiki-maintainer`, `vigil`
   (agents) — kept byte-identical to their onboarding-bundle templates. Do not expect
   every scaffold piece to appear here.
+- `attic/skills/<name>/` — parked pieces: in-progress drafts not yet earning
+  inclusion, and deprecated pieces retired from the plugins. Shipped by no plugin,
+  run by no host, ignored by the validator; exempt from the docs symmetry until
+  promoted (a deprecated piece's origin doc lives at `docs/skills/deprecated/`).
+  See `attic/README.md`.
 - `docs/agents/<name>.md`, `docs/skills/<name>.md` — origin story for **every** piece.
   Reference, not adopted.
 - `docs/conventions/<name>.md` — portable rules. Adopting projects pick which to include.
@@ -77,7 +82,7 @@ working code; the **docs** describe them. If they diverge, fix the doc.
 The scaffold should not accumulate. If a piece stops earning its keep in real use:
 
 1. Move its origin doc to `docs/agents/deprecated/<name>.md` (or skills equivalent), not delete. The history is part of the lesson.
-2. Remove the canonical spec from the plugin(s) that ship it (and from `.claude/`/`.codex/`/`.opencode/` if the repo ran it).
+2. Move the canonical spec out of the plugin(s) that ship it and into `attic/skills/<name>/` (removing it from `.claude/`/`.codex/`/`.opencode/` if the repo ran it). The attic keeps the spec versioned without shipping it; delete outright only when the text has no residual value.
 3. Add a short note in the deprecated origin doc explaining what changed, what replaced it (if anything), and why.
 4. Update `README.md` to reflect the current set.
 
