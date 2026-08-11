@@ -1,4 +1,16 @@
-# handoff-pr
+# handoff-pr (deprecated — evolved into `file-pr`, 2026-08-11)
+
+> **Deprecation note.** `handoff-pr` existed for an authorization split: the
+> implementing session couldn't open the PR, so it packaged an artifact for a
+> session that could. The operator's environments converged on fully-authorized
+> sessions, which turned the artifact into ceremony — the next action after "here's
+> the artifact" was always "open it and watch CI." With `fix-ci` landing the
+> autonomous CI loop, the whole tail became automatable, and the skill evolved into
+> [`file-pr`](../file-pr.md): same template-derived body, ticket detection, and gate
+> discovery, but it **opens the PR itself** and tends it (CI fixes via `fix-ci`,
+> merge-based conflict resolution) until green and mergeable. Teams that still have
+> the authorization split can recover the artifact behavior from this doc and the
+> skill's git history (`plugins/toolkit/skills/handoff-pr/`, pre-2026-08-11).
 
 ## Origin
 

@@ -116,6 +116,6 @@ with transcripts.
 - The verdict taxonomy (`verified` / `broken` / `blocked`) is deliberately
   three-valued; teams that want severity can grade inside `broken` rather than
   adding buckets.
-- Pairs forward with `handoff-pr` (proof in hand before the PR) and sits one
+- Pairs forward with `file-pr` (proof in hand before the PR is filed) and sits one
   notch below `qa-sweep` (single change vs. decomposable surface — same
   corroboration DNA).

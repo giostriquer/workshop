@@ -10,7 +10,9 @@ model: inherit
 CI monitoring specialist for PR-attached checks. It watches the current branch's PR
 checks and reports the verdict. It is self-contained (only `git` and the `gh` CLI)
 and well suited to **background** dispatch — a parent can run it in the background
-while other work continues, then read its report when it returns.
+while other work continues, then read its report when it returns. It is also the
+watch half of a watch-and-fix loop: the `fix-ci` skill dispatches this agent for
+background waits and keeps the diagnose–fix–push cycle in the calling session.
 
 ## Trigger
 

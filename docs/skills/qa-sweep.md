@@ -118,5 +118,5 @@ tagged by how it was verified.
   and of `claim-check` (one premise, deep). The new, load-bearing content is the
   decomposition gate and the corroboration loop — the parts neither a generic
   parallel-agent dispatch nor a single-premise investigation encodes.
-- Pairs forward with `handoff-goal` / `handoff-pr`: a clean ship verdict, or a
+- Pairs forward with `handoff-goal` / `file-pr`: a clean ship verdict, or a
   blocker list, feeds straight into the next session's work.

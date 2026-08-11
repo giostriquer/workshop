@@ -91,12 +91,26 @@ When this skill is called by a repo-local agent (such as `wiki-maintainer`) rath
 
 ## Format
 
-Keep date sections in reverse chronological order. If today's section exists, append a new titled entry there. If not, create it near the top.
+Sections run newest-first. How they are keyed depends on what the repository ships:
 
-**Idempotency:** if today's section already contains an entry with the same title or covering the same change, amend that entry rather than adding a duplicate.
+- **Versioned-product repos** — the primary deliverable is a versioned artifact (a
+  plugin, package, or extension): key each section by the **release that ships the
+  change** — `## <artifact> <X.Y.Z> — YYYY-MM-DD` — one section per released
+  version, entries as `###` titles inside it. When the change being recorded bumps
+  a version, create that version's section at the top and put the entry there.
+  Work that ships in no release (packaging, repo structure, docs-only) goes under
+  a `## repo — YYYY-MM-DD` section in chronological position. Companion-artifact
+  bumps that merely ride the release (mirror re-syncs) are noted inside the entry,
+  not given their own section.
+- **Date-keyed repos** (everything else): key sections by date — `## YYYY-MM-DD`.
+  If today's section exists, append a new titled entry there; if not, create it
+  near the top.
+
+**Idempotency:** if the target section already contains an entry with the same title or covering the same change, amend that entry rather than adding a duplicate.
 
 ```md
-## YYYY-MM-DD
+## toolkit 1.4.0 — YYYY-MM-DD    (versioned-product repo)
+## YYYY-MM-DD                    (date-keyed repo)
 
 ### Short title
 

@@ -2,7 +2,7 @@
 
 ## Origin
 
-The third handoff the maintainer kept writing by hand: not handing a finished branch *backward* to a reviewer (`handoff-review`) or a PR opener (`handoff-pr`), but handing work *forward* — "here's the goal, here's where we are, here are the working rules; new session, go pursue it." Written ad hoc, the doc carried the goal but lost the rules: preferences stated once in chat (commit style, push policy, PR target) made it into the file inconsistently, and nothing told the pursuing session what to do when its own context compacted mid-goal.
+The third handoff the maintainer kept writing by hand: not handing a finished branch *backward* to a reviewer (`handoff-review`) or a PR opener (`handoff-pr`, since evolved into the self-filing `file-pr`), but handing work *forward* — "here's the goal, here's where we are, here are the working rules; new session, go pursue it." Written ad hoc, the doc carried the goal but lost the rules: preferences stated once in chat (commit style, push policy, PR target) made it into the file inconsistently, and nothing told the pursuing session what to do when its own context compacted mid-goal.
 
 `handoff-goal` formalizes that forward handoff into a goal contract a new session picks up and pursues autonomously.
 
@@ -82,4 +82,4 @@ Audits an existing contract against the skill's bar and tightens it in place.
 - The integrity apparatus is the generalized form of a repo's Regression-Prevention Gate. A project that already mandates gates and mutation proofs can lean on its own rule files; a project that doesn't gets the discipline from the contract itself.
 - The scratch path (`tmp/<YYYY-MM-DD>-<goal-slug>/`) is a default; point it at whatever scratch dir your project uses, and gitignore it.
 - A runtime-side goal-mode skill (e.g. a personal Codex "ultragoal") can consume the contract: design and critique stay here; activation is one `create_goal` call carrying the objective from `goal.md`'s Activation section.
-- Pairs naturally with `handoff-pr`: pursue the goal, then package the PR. (`handoff-review`, the former fresh-eyes sibling, was retired to the attic 2026-08-10.)
+- Pairs naturally with `file-pr`: pursue the goal, then file and tend the PR. (`handoff-review`, the former fresh-eyes sibling, was retired to the attic 2026-08-10; `handoff-pr` evolved into `file-pr` 2026-08-11.)

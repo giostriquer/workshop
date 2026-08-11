@@ -29,7 +29,7 @@ The Codex marketplace ships the same onboarding plugin plus a Codex-native
 review package:
 
 - **`agent-workshop`** — exposes only `agent-workshop-onboard`.
-- **`toolkit`** — exposes `handoff-pr`, `handoff-goal`, `doc-to-html`, `claim-check`, `qa-sweep`, `empirical-proof`, `code-quality-review`, `get-pr-comments`, `ui-demo-video`, `route-work`, and `arch-map` as Codex skills.
+- **`toolkit`** — exposes `file-pr`, `handoff-goal`, `doc-to-html`, `claim-check`, `qa-sweep`, `empirical-proof`, `code-quality-review`, `get-pr-comments`, `ui-demo-video`, `route-work`, `arch-map`, and `fix-ci` as Codex skills.
   The reviewer agent files are bundled in the plugin payload, but Codex plugins
   do not register standalone custom agents from top-level plugin agent files. For
   true Codex subagent files, use onboarding to copy `.codex/agents/*.toml` into

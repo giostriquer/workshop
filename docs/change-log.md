@@ -1,6 +1,70 @@
 # Change Log
 
-## 2026-08-10
+Sections are keyed by the **released plugin version** that shipped the change —
+`## toolkit X.Y.Z — date` (the primary product; `reviewers` before the 2026-06-16
+rename), `## agent-workshop X.Y.Z — date` for onboarding-plugin-only releases —
+newest first. `agent-workshop` bumps that merely ride a toolkit release (mirror
+re-syncs) are noted inside the toolkit entry. Repo work that shipped no plugin
+version (packaging, structure, docs) sits under `## repo — date` sections in
+chronological position.
+
+## agent-workshop 0.1.26 — 2026-08-11
+
+### change-log re-keyed by plugin release; skill learns the version-keyed format
+
+This log's sections are now keyed by the **released plugin version** (see the
+preamble above) instead of by date — the repo's product is its plugins, and nearly
+every entry already recorded its bump inline, so the diary was release notes in a
+diary's clothes. The entire history was re-keyed with entry bodies verbatim; two
+archaeology calls (the `ci-watcher` `0.10.0` entry reordered above the `0.9.0`
+batch; the 2026-07-31 description-scope change confirmed bump-less via git) are
+recorded in the decision note. The `change-log` skill's Format section now carries
+the rule generically — versioned-product repos key by release, with `## repo`
+sections for unshipped work; date-keyed stays the default elsewhere — propagated
+hash-identical to `.claude/`, `.codex/`, and the onboarding-bundle template, with
+the origin doc updated for parity. `agent-workshop` `0.1.25` → `0.1.26` (bundle
+template changed); `toolkit` unchanged. See
+[`docs/decisions/change-log-version-keyed.md`](decisions/change-log-version-keyed.md).
+
+## toolkit 0.19.0 — 2026-08-11
+
+### handoff-pr → file-pr — the PR skill now files and tends, not hands off
+
+`handoff-pr` evolved into `file-pr`
+([`plugins/toolkit/skills/file-pr/SKILL.md`](../plugins/toolkit/skills/file-pr/SKILL.md)):
+the authorization split that justified the artifact hand-off is gone from the
+operator's environments, so the skill now opens the PR itself and sees it through —
+base sync and the repo's own gates run *before* filing, template-verbatim body
+(machinery inherited unchanged), `gh pr create`, then a tend loop: CI fixes composed
+through `fix-ci`, merge-based conflict resolution (semantic collisions reported,
+never guessed), at most two base re-syncs, ending **green and mergeable** — never
+merging. Old origin doc moved to
+[`docs/skills/deprecated/handoff-pr.md`](skills/deprecated/handoff-pr.md) with the
+artifact behavior recoverable from git history. Live references updated repo-wide;
+the adoption docs' Codex-surface lists (stale again — missing `fix-ci`) trued up to
+twelve; mirrors re-synced. `toolkit` `0.18.0` → `0.19.0`, `agent-workshop`
+`0.1.24` → `0.1.25`; validator green. See
+[`docs/decisions/file-pr.md`](decisions/file-pr.md).
+
+## toolkit 0.18.0 — 2026-08-11
+
+### fix-ci — CI watch-and-fix loop lands as a toolkit skill
+
+New direct-use skill `fix-ci`
+([`plugins/toolkit/skills/fix-ci/SKILL.md`](../plugins/toolkit/skills/fix-ci/SKILL.md)):
+the invocable form of "CI is failing, take a look" — watch the branch's CI (PR
+checks, or push runs on direct-to-main workflows) to a verdict; on red, pull the
+failing log, triage flake vs. fault, apply a minimal in-session fix, push per repo
+conventions, re-watch. Hard cap of two fix attempts (plus one flake rerun); never
+force-pushes; never weakens a failing check. Deliberately a **skill, not a wider
+`ci-watcher`**: toolkit agents stay read-only, the fix runs with session context
+and session authority, and the agent remains the loop's background wait-absorber.
+Origin doc [`docs/skills/fix-ci.md`](skills/fix-ci.md); rosters, READMEs, and all
+four manifests updated; skills roster re-mirrored to the onboarding bundle.
+`toolkit` `0.17.0` → `0.18.0`, `agent-workshop` `0.1.23` → `0.1.24`; validator
+green. See [`docs/decisions/fix-ci.md`](decisions/fix-ci.md).
+
+## toolkit 0.17.0 — 2026-08-10
 
 ### attic/ introduced; handoff-review deprecated; orchestrate parked
 
@@ -23,7 +87,7 @@ from Codex/Cursor global scopes); the always-injected
 `toolkit` `0.16.5` → `0.17.0`; validator green.
 See [`docs/decisions/attic-parked-skills.md`](decisions/attic-parked-skills.md).
 
-## 2026-08-09
+## toolkit 0.16.5 — 2026-08-09
 
 ### handoff-goal — review cadence scaled to landed work
 
@@ -37,6 +101,8 @@ diff (`code-quality-review` skill where available), held by a standing exit
 criterion. Critique mode audits the cadence both ways. `toolkit` `0.16.4` →
 `0.16.5`; validator green. See
 [`docs/decisions/handoff-goal-review-cadence.md`](decisions/handoff-goal-review-cadence.md).
+
+## toolkit 0.16.4 — 2026-08-09
 
 ### handoff-goal — status-only plan; evidence never lands in contract files
 
@@ -55,7 +121,7 @@ files. `toolkit` `0.16.3` → `0.16.4`; validator green. See
 [`handoff-goal-bounded-plan.md`](decisions/handoff-goal-bounded-plan.md)),
 [`docs/skills/handoff-goal.md`](skills/handoff-goal.md).
 
-## 2026-08-07
+## toolkit 0.16.3 — 2026-08-07
 
 ### arch-map — self-contained skill package (no workshop-only deps)
 
@@ -67,6 +133,8 @@ integrating toolkit. Fix: sanitize and ship specimens under
 nicknames/domain names, no dependency on a shipped harness), and keep any
 layout pressure-test tooling workshop-only under `scripts/arch-map-harness/`.
 `toolkit` `0.16.2` → `0.16.3`.
+
+## toolkit 0.16.2 — 2026-08-07
 
 ### arch-map — overflow/fit hardening + layout harness
 
@@ -80,6 +148,8 @@ every SVG `.title`/`.sub` `getBBox()` against its box plus HTML/page overflow at
 Corpus (cadence, conosterm, forge) re-rendered clean. `toolkit` `0.16.1` →
 `0.16.2`.
 
+## toolkit 0.16.1 — 2026-08-07
+
 ### arch-map — idoso visual language as skill fallback
 
 `arch-map` rigid defaults switch from Cursor-dark to the **idoso** deep-dark
@@ -89,7 +159,7 @@ accent, scarce emerald/rose). Specimens:
 `toolkit` `0.16.0` → `0.16.1`. See
 [`docs/decisions/arch-map-idoso-visual.md`](decisions/arch-map-idoso-visual.md).
 
-## 2026-08-05
+## toolkit 0.16.0 — 2026-08-05
 
 ### arch-map — ship to toolkit (renamed from structure-view)
 
@@ -100,6 +170,8 @@ SVG first, Cursor-dark high contrast, scarce color, CDNs for fonts/icons/Mermaid
 at twelve toolkit skills. See
 [`docs/decisions/arch-map-rename-and-visual.md`](decisions/arch-map-rename-and-visual.md),
 [`docs/skills/arch-map.md`](skills/arch-map.md).
+
+## repo — 2026-08-05
 
 ### arch-map — rename + visual language from overview specimen
 
@@ -126,7 +198,7 @@ rejects some `./`-prefixed path forms). See
 [`docs/decisions/cursor-plugin-surface.md`](decisions/cursor-plugin-surface.md) and
 [`docs/adoption/native-plugin.md`](adoption/native-plugin.md).
 
-## 2026-07-31
+## toolkit 0.15.2 — 2026-07-31
 
 ### structure-view — withdrawn from the toolkit plugin pending more thought
 
@@ -142,6 +214,8 @@ reverted, and the roster / READMEs / validator are back to eleven toolkit
 skills. The spec and decision records stay — the thinking is kept, the
 shipping is paused. `toolkit` `0.15.1` → `0.15.2`, `agent-workshop`
 `0.1.21` → `0.1.22` (bundled roster copy).
+
+## toolkit 0.15.0 / 0.15.1 — 2026-07-31
 
 ### structure-view — new toolkit skill: derive-and-render architectural pages
 
@@ -180,6 +254,8 @@ the orphan-box check, and architecture/dependency-rule tests named as the
 highest-fidelity edge source. Recorded as Round 1 in the origin doc's
 Maturity section; `toolkit` `0.15.0` → `0.15.1`.
 
+## toolkit 0.14.1 — 2026-07-31
+
 ### route-work — code axis joins the table; opus-5 lands, opus-4.8 retires
 
 Opus 5 (launched 2026-07-24) was inexpressible in the three-axis table:
@@ -202,7 +278,12 @@ across the three plugin manifests and the marketplace entry; validator
 passes. See
 [`docs/decisions/route-work-code-axis.md`](decisions/route-work-code-axis.md).
 
+## repo — 2026-07-31
+
 ### handoff-goal — description declares the defined-work scope
+
+*(Shipped without its own version bump — the changed description first reached
+installs with the next release, `0.14.1`.)*
 
 The frontmatter description listed "a brand-new idea" as a valid goal source,
 which read as an invitation to hand off exploratory work — exactly what the
@@ -217,7 +298,7 @@ verbatim; a defined-slices-with-failable-checks scenario picked handoff-goal.
 See
 [`docs/decisions/handoff-goal-description-scope.md`](decisions/handoff-goal-description-scope.md).
 
-## 2026-07-20
+## toolkit 0.14.0 — 2026-07-20
 
 ### route-work — new toolkit skill: model/effort routing decision procedure
 
@@ -245,7 +326,7 @@ medium · direct dispatch; a silent-failure copy task escalated to fable-5.
 and passing. See
 [`docs/decisions/route-work.md`](decisions/route-work.md).
 
-## 2026-07-19
+## toolkit 0.13.2 — 2026-07-19
 
 ### handoff-goal — plan.md is now boot-sized; history archives to ledger.md
 
@@ -266,7 +347,7 @@ completion. `toolkit` `0.13.1` → `0.13.2` across all four manifests; validator
 passes. See
 [`docs/decisions/handoff-goal-bounded-plan.md`](decisions/handoff-goal-bounded-plan.md).
 
-## 2026-07-17
+## toolkit 0.13.1 — 2026-07-17
 
 ### handoff-goal — every contract now ships commit discipline
 
@@ -286,7 +367,7 @@ shape. `toolkit` `0.13.0` → `0.13.1` across all four manifests; validator
 passes. See
 [`docs/decisions/handoff-goal-commit-discipline.md`](decisions/handoff-goal-commit-discipline.md).
 
-## 2026-07-15
+## toolkit 0.13.0 — 2026-07-15
 
 ### ui-demo-video — new toolkit skill with a bundled Playwright recording harness
 
@@ -310,7 +391,7 @@ updated. `toolkit` `0.12.4` → `0.13.0` across all four manifests;
 changed); the validator passes. See
 [`docs/decisions/ui-demo-video.md`](decisions/ui-demo-video.md).
 
-## 2026-07-13
+## toolkit 0.12.4 — 2026-07-13
 
 ### doc-to-html — four recipes adopted from a comparative skill evaluation
 
@@ -335,7 +416,7 @@ validator passes. See
 [`docs/decisions/doc-to-html.md`](decisions/doc-to-html.md) (2026-07-13
 amendment).
 
-## 2026-07-12
+## toolkit 0.12.3 — 2026-07-12
 
 ### handoff-goal v2 — self-carrying split contract (`goal.md` + `plan.md`)
 
@@ -359,7 +440,7 @@ templates. See
 and its
 [implementation plan](decisions/handoff-goal-split-contract-implementation-plan.md).
 
-## 2026-07-07
+## toolkit 0.12.2 — 2026-07-07
 
 ### handoff-pr — single-mode delivery: tmp artifact by default, `inline` writes no file
 
@@ -374,6 +455,8 @@ pins it to exactly one mode, and the `description` names the option (matching
 parity. `toolkit` `0.12.1` → `0.12.2` across all four manifests; the validator
 passes. See
 [`docs/decisions/handoff-pr-delivery-modes.md`](decisions/handoff-pr-delivery-modes.md).
+
+## toolkit 0.12.1 — 2026-07-07
 
 ### claim-check — verdict evidence bulleted, prior/parallel work opens with a status word
 
@@ -396,7 +479,7 @@ parity. `toolkit` `0.12.0` → `0.12.1` across all four manifests; the validator
 passes. See
 [`docs/decisions/claim-check-verdict-and-priorwork-shape.md`](decisions/claim-check-verdict-and-priorwork-shape.md).
 
-## 2026-07-03
+## toolkit 0.12.0 — 2026-07-03
 
 ### empirical-proof — new toolkit skill: post-change runtime proof with anti-cheating teeth
 
@@ -418,6 +501,8 @@ expected-skills lists extended and passing. See
 [`docs/decisions/empirical-proof.md`](decisions/empirical-proof.md) and the
 origin doc [`docs/skills/empirical-proof.md`](skills/empirical-proof.md).
 
+## toolkit 0.11.2 — 2026-07-03
+
 ### claim-check — readiness section reshaped for scanning
 
 An operator flagged a real claim-check report whose verdict and prior/parallel-work
@@ -435,7 +520,7 @@ left gotchas as dense prose in five of five. Canonical copy is
 `toolkit` `0.11.1` → `0.11.2` across all four manifests; the validator passes. See
 [`docs/decisions/claim-check-readiness-shape.md`](decisions/claim-check-readiness-shape.md).
 
-## 2026-07-02
+## toolkit 0.11.1 — 2026-07-02
 
 ### doc-to-html — nine field findings from an end-to-end run patched in
 
@@ -455,7 +540,7 @@ origin doc updated for parity. `toolkit` `0.11.0` → `0.11.1` across all four
 manifests; the validator passes. See
 [`docs/decisions/doc-to-html.md`](decisions/doc-to-html.md) (2026-07-02 amendment).
 
-## 2026-06-30
+## repo — 2026-06-30
 
 ### Add a Cursor plugin marketplace surface + per-plugin LICENSEs
 
@@ -478,6 +563,8 @@ custom repos, Teams/Enterprise admin) were added to the root, `toolkit`, and
 packaging at the versions already in flight. See
 [`docs/decisions/cursor-plugin-surface.md`](decisions/cursor-plugin-surface.md).
 
+## toolkit 0.11.0 — 2026-06-30
+
 ### get-pr-comments — new toolkit skill for PR-comment triage
 
 Added `get-pr-comments`, a small, self-contained skill that pulls the active PR's
@@ -498,7 +585,31 @@ tools. See [`docs/decisions/get-pr-comments.md`](decisions/get-pr-comments.md).
   Codex enumeration, and the skills roster updated. `toolkit` `0.10.0` → `0.11.0`,
   `agent-workshop` `0.1.17` → `0.1.18`. The validator passes.
 
-## 2026-06-29
+## toolkit 0.10.0 — 2026-06-29
+
+### ci-watcher — new toolkit agent for PR CI monitoring
+
+Added `ci-watcher`, a small, self-contained agent that watches the current branch's
+PR checks via `gh` and reports a pass/fail verdict with the failing-log excerpt or
+check link — dispatch it (ideally in the background) instead of babysitting the
+checks tab. It's the toolkit's first **utility** agent (neither review nor
+governance), so the plugin's identity broadened to "review, governance, and
+CI-monitoring agents." Because it's self-contained (works in any repo with a GitHub
+PR + authenticated `gh`, no profile), it ships **direct-use in the `toolkit` plugin**
+and is not part of the onboarding adoption set. The spec was operator-provided in
+another host's format and adapted: dropped `is_background` (moved to prose), mapped
+dropped `model: fast` for `model: inherit` (the scaffold never names models), and added `tools: Bash, Read` (read-only). See
+[`docs/decisions/ci-watcher.md`](decisions/ci-watcher.md).
+
+- Canonical `plugins/toolkit/agents/ci-watcher.md` (the only copy); origin doc
+  `docs/agents/ci-watcher.md`. `scripts/validate-native-plugin.ps1` toolkit-agents
+  list widened to six. `plugins/toolkit/README.md`, root `README.md`, and the agent
+  roster updated (roster also fixed a decouple leftover — `code-quality-reviewer`'s
+  Pack column now reads `toolkit`, not `review-core`). `toolkit` `0.9.0` → `0.10.0`
+  (new agent), `agent-workshop` `0.1.16` → `0.1.17` (bundled roster doc grew). The
+  validator passes.
+
+## toolkit 0.9.0 — 2026-06-29
 
 ### code-quality-review — new strict, structure-first maintainability skill
 
@@ -564,6 +675,8 @@ See [`docs/decisions/code-quality-reviewer.md`](decisions/code-quality-reviewer.
   `scripts/validate-native-plugin.ps1` widened. Rides the same unreleased batch as the
   skill — `toolkit` `0.9.0`, `agent-workshop` `0.1.16`, no further bump. The validator
   passes.
+
+## repo — 2026-06-29
 
 ### Repo cleanup — drop the redundant root onboarding skill tree
 
@@ -664,29 +777,7 @@ onboarding-bundle mirror) to `docs/adoption/`, retitled the index
 links. The validator's bundled-doc check now iterates `adoption`. The host
 marketplaces keep their (correct) names. No version change; the validator passes.
 
-### ci-watcher — new toolkit agent for PR CI monitoring
-
-Added `ci-watcher`, a small, self-contained agent that watches the current branch's
-PR checks via `gh` and reports a pass/fail verdict with the failing-log excerpt or
-check link — dispatch it (ideally in the background) instead of babysitting the
-checks tab. It's the toolkit's first **utility** agent (neither review nor
-governance), so the plugin's identity broadened to "review, governance, and
-CI-monitoring agents." Because it's self-contained (works in any repo with a GitHub
-PR + authenticated `gh`, no profile), it ships **direct-use in the `toolkit` plugin**
-and is not part of the onboarding adoption set. The spec was operator-provided in
-another host's format and adapted: dropped `is_background` (moved to prose), mapped
-dropped `model: fast` for `model: inherit` (the scaffold never names models), and added `tools: Bash, Read` (read-only). See
-[`docs/decisions/ci-watcher.md`](decisions/ci-watcher.md).
-
-- Canonical `plugins/toolkit/agents/ci-watcher.md` (the only copy); origin doc
-  `docs/agents/ci-watcher.md`. `scripts/validate-native-plugin.ps1` toolkit-agents
-  list widened to six. `plugins/toolkit/README.md`, root `README.md`, and the agent
-  roster updated (roster also fixed a decouple leftover — `code-quality-reviewer`'s
-  Pack column now reads `toolkit`, not `review-core`). `toolkit` `0.9.0` → `0.10.0`
-  (new agent), `agent-workshop` `0.1.16` → `0.1.17` (bundled roster doc grew). The
-  validator passes.
-
-## 2026-06-24
+## toolkit 0.8.4 — 2026-06-24
 
 ### handoff-review — add a verify-then-continue mode for clean restarts
 
@@ -713,7 +804,7 @@ and its [implementation plan](decisions/handoff-review-verify-and-continue-imple
   `0.8.3` → `0.8.4`, `agent-workshop` `0.1.14` → `0.1.15` (patch).
   `scripts/validate-native-plugin.ps1` passes.
 
-## 2026-06-19
+## toolkit 0.8.3 — 2026-06-19
 
 ### handoff-pr — follow the repo PR template instead of replacing it
 
@@ -742,6 +833,8 @@ ticket scheme, review bot, branch scopes, colleague names) and was deliberately
   reference roots. `toolkit` `0.8.2` → `0.8.3`, `agent-workshop` `0.1.13` →
   `0.1.14` (patch; a new release step after the earlier batch already shipped).
   `scripts/validate-native-plugin.ps1` passes.
+
+## toolkit 0.8.2 — 2026-06-19
 
 ### handoff-goal — make the document defend the goal, not just preserve context
 
@@ -826,7 +919,7 @@ Rules carry it; the body stays tool-agnostic by discovery. See
   reference roots. Rides the same `toolkit` `0.8.2` / `agent-workshop` `0.1.13`
   batch bump — no additional bump. `scripts/validate-native-plugin.ps1` passes.
 
-## 2026-06-18
+## toolkit 0.8.1 — 2026-06-18
 
 ### handoff-pr — derive the PR body from the repo's own PR template
 
@@ -853,7 +946,7 @@ bots, or AI assistants; no "generated by" footers). See
   `agent-workshop` `0.1.11` → `0.1.12` (onboarding payload mirrors changed). No skill
   added or removed; `scripts/validate-native-plugin.ps1` passes.
 
-## 2026-06-17
+## toolkit 0.8.0 — 2026-06-17
 
 ### qa-sweep — new team-scale, corroborated QA skill
 
@@ -881,6 +974,8 @@ the skill body. See [`docs/decisions/qa-sweep.md`](decisions/qa-sweep.md).
   `0.1.11` (onboarding payload mirrors grew). Both `$expectedSkills` arrays in
   `scripts/validate-native-plugin.ps1` widened; the validator passes.
 
+## toolkit 0.7.1 — 2026-06-17
+
 ### doc-to-html — house-style-first, deeper findings cards, render-bug fixes
 
 Reworked `doc-to-html` from a second round of lived-in feedback (`toolkit` `0.7.0`
@@ -906,7 +1001,7 @@ placeholders, no real product/ticket/path names. See the amendment in
   `docs/skills/doc-to-html.md` updated and re-mirrored.
   `scripts/validate-native-plugin.ps1` passes.
 
-## 2026-06-16
+## toolkit 0.7.0 — 2026-06-16
 
 ### Renamed the `reviewers` plugin to `toolkit`
 
@@ -927,7 +1022,7 @@ only). See [`docs/decisions/rename-reviewers-to-toolkit.md`](decisions/rename-re
   agent assertions are untouched — singular `-reviewer` is the agent, plural
   `reviewers` was the plugin. `scripts/validate-native-plugin.ps1` passes.
 
-## 2026-06-16
+## reviewers 0.6.3 — 2026-06-16
 
 ### claim-check — output trimmed to three parts
 
@@ -942,6 +1037,8 @@ the echoed `Source` line is gone; and prior/parallel work stays its own section
 but is trimmed to what bears on the verdict and lifted back above readiness. An
 explicit "Do not" list in the skill pins the four cuts. See the amendment in
 [`docs/decisions/claim-check.md`](decisions/claim-check.md).
+
+## reviewers 0.6.2 — 2026-06-16
 
 ### claim-check — depth gate and inconclusive verdict
 
@@ -962,6 +1059,8 @@ gated so it cannot become a lazy escape from digging. See the amendment in
 
 - Skill body propagated to all six mirrors (single shared hash); origin doc
   updated and re-mirrored; `scripts/validate-native-plugin.ps1` passes.
+
+## reviewers 0.6.1 — 2026-06-16
 
 ### claim-check — refinements from first runs
 
@@ -984,7 +1083,7 @@ claim's blast radius, and `mis-scoped` gets a corrected-framing slot.
 - Skill body propagated to all six mirrors (single shared hash); origin doc
   updated and re-mirrored; `scripts/validate-native-plugin.ps1` passes.
 
-## 2026-06-15
+## reviewers 0.6.0 — 2026-06-15
 
 ### claim-check skill — unbiased premise investigation
 
@@ -1015,7 +1114,7 @@ with evidence, plus a readiness dossier or exactly what is missing. See
   is queryable, and the skill must say the backlog was not swept when it is not
   reachable — rather than implying it was. Propagated to all six mirrors.
 
-## 2026-06-11
+## reviewers 0.5.0 — 2026-06-11
 
 ### doc-to-html skill — markdown to standalone dark HTML page
 
@@ -1050,7 +1149,7 @@ structures is embedded in the skill. See
   cross-references, TOC, keyboard array, grep verification), the
   rewrite-on-direction-change rule, and the full pre-finish checklist.
 
-## 2026-06-10
+## reviewers 0.4.0 — 2026-06-10
 
 ### handoff-goal skill — forward handoff in the reviewers plugin
 
@@ -1078,7 +1177,7 @@ See [`docs/decisions/handoff-goal.md`](decisions/handoff-goal.md).
   user-mandated rule; with the skill, producer and zero-context consumer runs
   passed both checks.
 
-## 2026-06-08
+## agent-workshop 0.1.2 — 2026-06-08
 
 ### Codex marketplace install path
 
@@ -1094,6 +1193,8 @@ Claude Code reviewers payload. It installs from the same marketplace and exposes
 `handoff-review` / `handoff-pr` as Codex skills; the reviewer agent files remain
 bundled for Claude Code and reference rather than active Codex plugin agents. See
 [`docs/decisions/codex-reviewers-plugin.md`](decisions/codex-reviewers-plugin.md).
+
+## reviewers 0.3.0 — 2026-06-08
 
 ### Handoff skills in the reviewers plugin
 
@@ -1115,7 +1216,7 @@ task from the ticket + diff, not from the implementing session's context. See
   `.gemini/`, the `reviewers` payload, and the onboarding reference trees; origin docs
   added to `docs/skills/` and listed in the skills roster (now eight skills).
 
-## 2026-06-05
+## reviewers 0.2.0 — 2026-06-05
 
 ### pattern-reviewer comment-noise check
 
@@ -1131,7 +1232,7 @@ re-synced across the `reviewers` payload and the onboarding reference mirrors. S
 [`docs/decisions/pattern-reviewer-comment-noise.md`](decisions/pattern-reviewer-comment-noise.md).
 Bumped the `reviewers` plugin to `0.2.0` to ship the new capability.
 
-## 2026-05-29
+## reviewers introduced — 2026-05-29
 
 ### Direct-use agents plugin
 
@@ -1159,7 +1260,7 @@ non-goal for a bounded, curated subset; see
   portably in any context.
 - Claude Code only this slice; Codex/Gemini/OpenCode delivery deferred.
 
-## 2026-05-24
+## agent-workshop 0.1.1 — 2026-05-24
 
 ### Slim native plugin payload
 
@@ -1172,7 +1273,7 @@ filenames so plugin hosts do not discover them as active skills. Plugin metadata
 is bumped to `0.1.1` so hosts can install a fresh payload instead of reusing the
 old `0.1.0` cache.
 
-## 2026-05-23
+## agent-workshop 0.1.0 — 2026-05-23
 
 ### Native onboarding plugin
 
@@ -1180,6 +1281,8 @@ Added Claude Code and Codex marketplace packaging for a single guided
 `agent-workshop-onboard` skill. The plugin keeps scaffold agents as bundled
 references, defaults to read-only `mode: plan`, gates writes behind approved
 `mode: apply`, and includes a validator for manifest shape and reference parity.
+
+## repo — 2026-05-23
 
 ### Manifest-backed agent marketplace
 

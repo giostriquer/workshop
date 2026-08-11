@@ -18,9 +18,11 @@ The skill enforces structure (one paragraph + optional bullets, idempotent withi
 
 ## Solution shape
 
-Workflow: read the diff, identify meaningful changes, read the change-log, decide whether log-worthy, add or amend an entry under the correct date section, link to stronger source-of-truth docs when relevant.
+Workflow: read the diff, identify meaningful changes, read the change-log, decide whether log-worthy, add or amend an entry under the correct section, link to stronger source-of-truth docs when relevant.
 
-**Idempotency** is load-bearing: if today's section already contains an entry for the same change, amend it; do not duplicate. This matters most when an agent invokes the skill multiple times during one workflow.
+**Section keying is repo-dependent** (added 2026-08-11, from this scaffold's own log refactor): a repo whose primary deliverable is a versioned artifact (a plugin, package, extension) keys sections by the **release that ships the change** (`## <artifact> <X.Y.Z> — date`, with `## repo — date` for work no release ships); other repos key by date. A versioned product's log is release notes — "what did 0.18.0 change?" — not a diary.
+
+**Idempotency** is load-bearing: if the target section already contains an entry for the same change, amend it; do not duplicate. This matters most when an agent invokes the skill multiple times during one workflow.
 
 **Spec / plan lifecycle update on landing:** when an entry records a feature shipping, also flip the corresponding spec / plan frontmatter from `status: active` to `status: landed` and `git mv` it to `landed/`. The active spec / plan directories stay scoped to in-flight work.
 
@@ -50,4 +52,5 @@ The skill is also preloaded into `wiki-maintainer` and `visual-implementer` via 
 - The spec / plan lifecycle flip is project-specific to projects using a `docs/superpowers/specs/` + `landed/` convention. If your project doesn't track specs and plans this way, drop the section.
 - The skill-mirror update reminder applies only to projects that mirror skills across hosts (Codex / Gemini / etc.). Single-host projects can drop the reminder.
 - The "Parent wiki impact" note convention is for projects with an upstream wiki layer. If your project doesn't have one, drop it.
-- The format (one paragraph + optional bullets, date-grouped reverse-chronological) is the durable shape. Do not let entries grow into tables or subheadings — that's the signal that the content belongs elsewhere.
+- The format (one paragraph + optional bullets, reverse-chronological sections) is the durable shape. Do not let entries grow into tables or subheadings — that's the signal that the content belongs elsewhere.
+- Pick the section key by what the repo ships: version-keyed for a versioned deliverable (this scaffold switched 2026-08-11, re-keying its whole history by plugin release), date-keyed otherwise.

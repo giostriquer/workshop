@@ -1,7 +1,7 @@
 {
   "name": "toolkit",
-  "version": "0.17.0",
-  "description": "Codex-ready handoff, claim-check, qa-sweep, empirical-proof, code-quality-review, doc-to-html, ui-demo-video, route-work, and arch-map skills and bundled agent files (reviewers + ci-watcher) from Agent Workshop.",
+  "version": "0.19.0",
+  "description": "Codex-ready PR-filing, goal-handoff, claim-check, qa-sweep, empirical-proof, code-quality-review, doc-to-html, ui-demo-video, route-work, arch-map, and fix-ci skills and bundled agent files (reviewers + ci-watcher) from Agent Workshop.",
   "author": {
     "name": "Agent Workshop",
     "url": "https://github.com/giostriquer/agent-workshop"
@@ -14,13 +14,13 @@
   "interface": {
     "displayName": "Toolkit",
     "shortDescription": "Handoff and doc-to-html skills for Codex.",
-    "longDescription": "A Codex manifest for the Agent Workshop toolkit plugin. Codex exposes the handoff-pr, handoff-goal, doc-to-html, claim-check, qa-sweep, empirical-proof, code-quality-review, get-pr-comments, ui-demo-video, route-work, and arch-map skills from this package; the agent files (the reviewers plus ci-watcher) are bundled in the payload for Claude Code and reference, but Codex standalone custom agents still need repo-local .codex/agents wrappers.",
+    "longDescription": "A Codex manifest for the Agent Workshop toolkit plugin. Codex exposes the file-pr, handoff-goal, doc-to-html, claim-check, qa-sweep, empirical-proof, code-quality-review, get-pr-comments, ui-demo-video, route-work, arch-map, and fix-ci skills from this package; the agent files (the reviewers plus ci-watcher) are bundled in the payload for Claude Code and reference, but Codex standalone custom agents still need repo-local .codex/agents wrappers.",
     "developerName": "Agent Workshop",
     "category": "Productivity",
     "capabilities": ["Skills"],
     "websiteURL": "https://github.com/giostriquer/agent-workshop",
     "defaultPrompt": [
-      "Prepare a PR handoff artifact.",
+      "File the branch's PR and see it through to green and mergeable.",
       "Prepare a goal handoff document.",
       "Turn a markdown report into a standalone HTML page.",
       "Investigate whether a ticket or claim still holds.",
@@ -31,6 +31,7 @@
       "Record a UI demo video of a change in the running app.",
       "Recommend a model and effort route for a task before dispatching it.",
       "Draw an architecture map of a subsystem or refactor as a standalone page.",
+      "Watch the current branch's CI and fix whatever breaks.",
       "Explain how to install reviewer agents for Codex."
     ]
   }

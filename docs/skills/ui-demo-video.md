@@ -124,5 +124,5 @@ run path, re-record.
 - Pairs with `empirical-proof` as the visual sibling of its behavioral proof:
   `empirical-proof` drives the real API boundary and asserts, `ui-demo-video`
   drives the real UI and shows. A UI-heavy change may warrant both.
-- The mp4 feeds `handoff-pr` naturally — the demo video is PR-description
+- The mp4 feeds `file-pr` naturally — the demo video is PR-description
   material, with the drag-drop caveat noted in the artifact.

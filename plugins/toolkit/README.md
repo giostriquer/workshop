@@ -1,10 +1,10 @@
 # toolkit
 
 A direct-use Claude Code plugin from [Agent Workshop](https://github.com/giostriquer/agent-workshop):
-six curated agents (code review, governance, and CI monitoring) plus eleven direct-use skills you can run in any repo with **no setup**.
+six curated agents (code review, governance, and CI monitoring) plus twelve direct-use skills you can run in any repo with **no setup**.
 The agents read your code, specs, tests, and CI and report findings — they never modify your files.
-Two skills produce structured handoff artifacts (PR opens and goal documents
-for a new session to pursue); `doc-to-html` renders a markdown report as a standalone dark HTML page;
+`file-pr` files the branch's PR with a template-true body and tends it — CI fixes via `fix-ci`, merge-based conflict resolution — until green and mergeable;
+`handoff-goal` produces a goal-contract directory for a new session to pursue autonomously; `doc-to-html` renders a markdown report as a standalone dark HTML page;
 `claim-check` runs an unbiased, evidence-grounded investigation of a premise and returns a verdict plus a readiness dossier;
 `qa-sweep` fans a QA team over a broad surface and corroborates every finding firsthand before it counts;
 `empirical-proof` proves a just-finished change at the running software — real MCP/HTTP calls, probe scenarios, raw evidence — and reports verified / broken / blocked without fixing anything;
@@ -12,7 +12,8 @@ for a new session to pursue); `doc-to-html` renders a markdown report as a stand
 `get-pr-comments` fetches and triages the active PR's review comments into a prioritized action list (read-only — it never replies unless you ask);
 `ui-demo-video` records a Playwright walkthrough of the running app after UI work — per-scene PNG frames the model reads to verify the UI, plus a shareable mp4 for the PR;
 `route-work` grades a task about to be dispatched and returns a model + effort + process-pattern route, carrying the canonical model × effort table as its single source of truth;
-`arch-map` derives a visual architecture map when no source doc exists — subsystem maps, refactor before/afters, proposed designs — mental-model SVG first, every box and edge traced to real code.
+`arch-map` derives a visual architecture map when no source doc exists — subsystem maps, refactor before/afters, proposed designs — mental-model SVG first, every box and edge traced to real code;
+`fix-ci` watches the current branch's CI through to a verdict and fixes red in-session — failing-log diagnosis, flake-vs-fault triage, minimal fix, conventional push, re-watch, capped at two attempts.
 
 ## Install
 
@@ -33,8 +34,8 @@ codex plugin add toolkit@agent-workshop
 ```
 
 Codex plugins do not currently expose standalone custom agents from plugin
-manifests. The Codex `toolkit` package exposes `handoff-pr`, `handoff-goal`,
-`doc-to-html`, `claim-check`, `qa-sweep`, `empirical-proof`, `code-quality-review`, `get-pr-comments`, `ui-demo-video`, `route-work`, and `arch-map` as skills and bundles the agent files inertly; use the
+manifests. The Codex `toolkit` package exposes `file-pr`, `handoff-goal`,
+`doc-to-html`, `claim-check`, `qa-sweep`, `empirical-proof`, `code-quality-review`, `get-pr-comments`, `ui-demo-video`, `route-work`, `arch-map`, and `fix-ci` as skills and bundles the agent files inertly; use the
 `agent-workshop` onboarding plugin when you want to copy true `.codex/agents/`
 wrappers into a target repo.
 
@@ -44,8 +45,8 @@ Repo** (`giostriquer/agent-workshop`) — then install `toolkit` from **Customiz
 the sidebar.
 
 After install, the six agents are available, namespaced `toolkit:<agent>` —
-e.g. `toolkit:spec-reviewer`. The eleven skills are available as `handoff-pr`,
-`handoff-goal`, `doc-to-html`, `claim-check`, `qa-sweep`, `empirical-proof`, `code-quality-review`, `get-pr-comments`, `ui-demo-video`, `route-work`, and `arch-map` (skills are invoked by name, not namespaced). The same marketplace also
+e.g. `toolkit:spec-reviewer`. The twelve skills are available as `file-pr`,
+`handoff-goal`, `doc-to-html`, `claim-check`, `qa-sweep`, `empirical-proof`, `code-quality-review`, `get-pr-comments`, `ui-demo-video`, `route-work`, `arch-map`, and `fix-ci` (skills are invoked by name, not namespaced). The same marketplace also
 hosts the `agent-workshop` onboarding plugin (`/plugin install agent-workshop@agent-workshop`)
 for the full scaffold-adoption flow.
 
@@ -66,7 +67,7 @@ All six are advisory and read-only (no `Edit`/`Write`) — the reviewers use `Re
 
 | Skill | Produces |
 | --- | --- |
-| `handoff-pr` | a structured PR handoff artifact (title, body, ticket links, status) for a separately-authorized session to open — never opens the PR itself |
+| `file-pr` | a filed-and-tended PR from the current branch — body derived verbatim from the repo's own PR template, gates run locally before filing, then an autonomous loop that fixes red CI (via `fix-ci`) and merges the base in on conflicts until the PR is green and mergeable; bounded attempts, never force-pushes, never merges the PR (formerly `handoff-pr`, which stopped at a handoff artifact) |
 | `handoff-goal` | a self-contained goal contract directory — `goal.md` (frozen: outcome, baseline, acceptance checks with a real-surface primary verifier, integrity rules, approval gates, operating rules) plus `plan.md` (status-tracked phases the pursuer advances by status flips only — evidence lives in git, never in contract files) — for a new session to pursue autonomously across compactions; activatable directly by Codex goal mode; never pursues the goal itself |
 | `doc-to-html` | a standalone dark-themed HTML page rendered from a markdown report / audit / findings doc (TOC, keyboard nav, evidence appendix, print stylesheet), with a rigid editing discipline for later revisions |
 | `claim-check` | an unbiased, evidence-grounded investigation of a premise (ticket / hunch / question) against the current repo — a validity verdict with evidence plus a readiness dossier (or exactly what's missing); never implements the work |
@@ -77,6 +78,7 @@ All six are advisory and read-only (no `Edit`/`Write`) — the reviewers use `Re
 | `ui-demo-video` | a Playwright-driven video walkthrough of the running app after UI work — a PNG frame per scene the model reads to verify the UI itself (fix and re-record until the frames show the expected result), plus a webm/mp4 for the PR description; bundles the recording harness (`scripts/harness.mjs`, copied into the project) |
 | `route-work` | a three-line routing recommendation (`route:` / `why:` / `grades:`) for a task about to be dispatched — grades it on repo precedent, ambiguity, failure visibility, taste surface, and blast radius against the canonical model × effort table (kept in the skill as its single source of truth), and names the process pattern (direct dispatch / plan-review checkpoint / judge loop / taste pass); recommends only, never dispatches |
 | `arch-map` | a self-contained HTML architecture map derived when no source doc exists — subsystem (mental-model SVG + layers), refactor in flight (before/after or delta, with the invariant stated), or proposed design (dashed) — Cursor-dark high contrast, scarce color, every box and edge traceable to a real file / symbol / diff hunk; ephemeral-first in `tmp/`, with a promote-to-durable pass on request |
+| `fix-ci` | a watch-and-fix loop over the current branch's CI (PR checks, or push runs on direct-to-main workflows) — watches to a verdict (dispatching `ci-watcher` in the background when other work continues), and on red pulls the failing log, separates flake from fault, applies a minimal in-session fix, pushes per repo conventions, and re-watches; hard cap of two fix attempts, never force-pushes, never weakens a failing check to get to green |
 
 ## Not included
 

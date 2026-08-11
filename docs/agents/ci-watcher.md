@@ -66,7 +66,9 @@ Wire it into a project's post-push flow (`CLAUDE.md` / `AGENTS.md`):
 - **Blocking the main session on the watch.** Its whole point is to run unattended;
   dispatch it in the background rather than foregrounding a long `--watch`.
 - **Acting on it.** It is read-only — it reports; re-running, fixing, or pushing is
-  the caller's job.
+  the caller's job. When the caller wants that loop handled too, the `fix-ci` skill
+  is the tool: it dispatches this agent for the waiting and keeps the
+  diagnose–fix–push cycle in the session.
 
 ## Adaptation notes
 
@@ -78,4 +80,5 @@ Wire it into a project's post-push flow (`CLAUDE.md` / `AGENTS.md`):
   spec's `fast` intent is dropped — a CI monitor is light enough that the session
   model is fine.
 - It is read-only (`Bash, Read`). Keep it that way; a watcher that retries or pushes
-  is a different, higher-authority tool.
+  is a different, higher-authority tool — that tool now exists as the `fix-ci`
+  skill, which runs the fix in the main session and uses this agent only to watch.
