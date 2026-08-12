@@ -12,7 +12,7 @@
     },
     {
       "name": "toolkit",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "source": "./plugins/toolkit",
       "description": "Optional artifact-making utilities for the workshop: html-report (report to a polished dark HTML page, from a doc or from session findings), arch-map (derived architecture maps), ui-demo-video (Playwright walkthroughs with verification frames), and writing-skills (TDD for skill authoring, derived from obra/superpowers, MIT). Install alongside workbench when you want them; skip to keep sessions lean.",
       "author": { "name": "Agent Workshop" }

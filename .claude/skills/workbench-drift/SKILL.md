@@ -46,11 +46,16 @@ that is a manifest edit plus, for adoptions, the port workflow below.
    one-line rationale anchored to the diff. Dropped-piece churn is reported as
    the FYI count only, unless a change is so significant it argues for reopening
    a disposition — then say so explicitly and leave the call to the operator.
-5. **Apply what the operator approves.** Any adopted text passes the adaptation
+5. **Apply what the operator approves.** Any *adopted* text passes the adaptation
    filter on the way in (defang imperatives, de-pipeline cross-references, carry
    only needed references, keep the provenance footer) — adopting upstream text
    is never a copy. Land it in the piece's `localPath`, and record the new
    adaptation in the manifest entry if it changed.
+   **`mirrored` pieces are the exception**: they carry no adaptations by operator
+   choice, so there is nothing to judge and no filter to apply. Re-copy the
+   upstream tree wholesale, including files it gained or lost. The trade is
+   recorded in the piece's manifest entry — fidelity to upstream over local
+   correctness, dead cross-references included.
 6. **Advance the pin.** Set `upstream.lastReviewed.commit` to the reported head
    — only after the review completed, including the ignores; an advanced pin
    asserts "everything up to here was seen."

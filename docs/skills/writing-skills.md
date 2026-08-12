@@ -101,12 +101,28 @@ These load on demand — the skill points at them; they are not read up front.
 | `persuasion-principles.md` | Why authority, commitment, scarcity, social proof, and unity framing change compliance — research background for discipline skills |
 | `graphviz-conventions.dot` | Style rules for the flowcharts the skill permits |
 | `render-graphs.js` | Renders a skill's `dot` blocks to SVG so a human can look at the flow. Needs graphviz installed. |
+| `examples/CLAUDE_MD_TESTING.md` | A full worked test campaign, testing CLAUDE.md documentation variants |
 
 ## Common questions
 
-**Two known defects in the bundled corpus, current as of this writing.**
+**This skill is mirrored from upstream, byte for byte.** Alone among the
+superpowers-derived skills here, it carries no local adaptations: the package is
+a verbatim copy of `skills/writing-skills/` from
+[obra/superpowers](https://github.com/obra/superpowers) (MIT, © Jesse Vincent).
+Every other derived skill passes an adaptation filter that defangs imperatives
+and re-points cross-references; this one is exempt by choice, so what you read
+is what upstream ships.
 
-*The description guidance contradicts itself across files.* `SKILL.md` says the
+That has a visible cost. The mirror carries five references to
+`superpowers:`-namespaced skills and one relative link to
+`../using-superpowers/`, a piece this repo deliberately does not ship. **Those
+six references resolve to nothing in an installed environment.** Read them as
+pointing at `test-driven-development` and `systematic-debugging`, which ship
+unprefixed in the `workbench` plugin. It also means upstream's own defects
+arrive unfiltered — see the next entry.
+
+**A known defect in the bundled corpus: the description guidance contradicts
+itself across files.** `SKILL.md` says the
 description "describes ONLY when to use (NOT what it does)" and "**NEVER
 summarize the skill's process or workflow**." The bundled
 `anthropic-best-practices.md` says the opposite: "The `description` field enables
@@ -122,12 +138,11 @@ triggers and disambiguation only, cutting their listing cost from roughly 1,447
 to 535 tokens while a fresh-context routing probe still scored 8 of 8
 ([decision](../decisions/description-trim-sdo.md)).
 
-*A pointer in the testing reference is broken.*
-`testing-skills-with-subagents.md` says "**Complete worked example:** See
-examples/CLAUDE_MD_TESTING.md for a full test campaign testing CLAUDE.md
-documentation variants." There is no `examples/` directory in the skill package
-and no such file anywhere in this repository. The rest of that reference stands
-on its own; the worked example simply isn't there.
+**Where is the worked test-campaign example?** In
+`examples/CLAUDE_MD_TESTING.md`, which `testing-skills-with-subagents.md` points
+at. It is present. This pointer was dangling for a while: an earlier partial port
+carried the reference but not the directory, so the file it named existed only
+upstream. The mirror brought the whole tree, so it resolves now.
 
 **Do I really need a baseline for a two-line edit?** By the skill's own terms,
 yes — the Iron Law explicitly covers edits, and "Write skill before testing?

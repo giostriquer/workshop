@@ -102,7 +102,7 @@ const changes = rawStatus
     return { status, path: paths[paths.length - 1], from: paths.length > 1 ? paths[0] : null };
   });
 
-const groups = { reviewRequired: new Map(), droppedFyi: new Map(), unmapped: [] };
+const groups = { reviewRequired: new Map(), remirror: new Map(), droppedFyi: new Map(), unmapped: [] };
 for (const c of changes) {
   const piece = pieceFor(c.path) ?? (c.from ? pieceFor(c.from) : null);
   if (!piece) {
@@ -110,6 +110,11 @@ for (const c of changes) {
   } else if (piece.disposition === "adopted") {
     if (!groups.reviewRequired.has(piece.upstreamPath)) groups.reviewRequired.set(piece.upstreamPath, { piece, files: [] });
     groups.reviewRequired.get(piece.upstreamPath).files.push(c);
+  } else if (piece.disposition === "mirrored") {
+    // Mirrored pieces are copied verbatim — no diff to judge, but they must not
+    // fall into the dropped bucket, which would silently ignore upstream changes.
+    if (!groups.remirror.has(piece.upstreamPath)) groups.remirror.set(piece.upstreamPath, { piece, files: [] });
+    groups.remirror.get(piece.upstreamPath).files.push(c);
   } else {
     groups.droppedFyi.set(piece.upstreamPath, (groups.droppedFyi.get(piece.upstreamPath) ?? 0) + 1);
   }
@@ -132,6 +137,11 @@ const result = {
   head,
   upToDate: changes.length === 0,
   reviewRequired: reviewBlocks,
+  remirror: [...groups.remirror.values()].map(({ piece, files }) => ({
+    upstreamPath: piece.upstreamPath,
+    localPath: piece.localPath,
+    changedFiles: files.length,
+  })),
   intentionallyDropped: [...groups.droppedFyi.entries()].map(([p, n]) => ({ upstreamPath: p, changedFiles: n })),
   unmapped: groups.unmapped,
 };
@@ -156,7 +166,11 @@ for (const b of reviewBlocks) {
   console.log(`Files: ${b.files.map((f) => `${f.status} ${f.path}`).join(", ")}\n`);
   console.log("```diff\n" + b.diff + "\n```\n");
 }
-console.log(`## Intentionally dropped (FYI only) — ${result.intentionallyDropped.length}\n`);
+console.log(`## Re-mirror (mirrored pieces — copy upstream wholesale, do not adapt) — ${result.remirror.length}\n`);
+for (const m of result.remirror) {
+  console.log(`- ${m.upstreamPath} → ${m.localPath} — ${m.changedFiles} changed file(s); re-copy the upstream tree verbatim`);
+}
+console.log(`\n## Intentionally dropped (FYI only) — ${result.intentionallyDropped.length}\n`);
 for (const d of result.intentionallyDropped) {
   console.log(`- ${d.upstreamPath} — ${d.changedFiles} changed file(s); disposition stands unless the operator reopens it`);
 }

@@ -26,5 +26,6 @@ Portions of this plugin (the writing-skills skill and its bundled reference file
 derived from "superpowers" (https://github.com/obra/superpowers),
 Copyright (c) Jesse Vincent, and are used under the MIT License. The above
 permission and warranty notices apply to those portions as required by that
-license. Adaptations are documented at
+license. They are mirrored from upstream without modification; the provenance
+and review process are documented at
 https://github.com/giostriquer/agent-workshop/blob/main/docs/decisions/workbench-system.md

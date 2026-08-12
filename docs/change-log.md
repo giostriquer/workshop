@@ -8,6 +8,34 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## toolkit 0.3.0 — 2026-08-12
+
+- **`writing-skills` is now mirrored from upstream byte-for-byte**, at
+  `b36e082`, including the `examples/` directory the earlier partial port left
+  behind. That omission was the cause of the dangling
+  `examples/CLAUDE_MD_TESTING.md` pointer — the file was valid upstream all
+  along, so the fork was the bug.
+- **Two fixes arrive with the mirror.** The worked test-campaign example
+  resolves again, and `render-graphs.js` picks up upstream's Windows-safe
+  graphviz probe — ours still ran `execSync('which dot')`, which upstream had
+  already replaced precisely because `which` is not a command on Windows.
+- **Accepted cost, recorded rather than hidden:** the verbatim copy carries five
+  `superpowers:`-namespaced references and one link to `../using-superpowers/`,
+  a dropped piece. Those six resolve to nothing in an installed environment.
+  Fidelity to upstream was chosen over local correctness; the skill's usage page
+  says so.
+- **The drift manifest gains a `mirrored` disposition.** `drift-check.mjs`
+  branched on `adopted` and sent everything else to the dropped/FYI bucket, so
+  the new label would have made future reviews silently skip this piece; it now
+  reports a Re-mirror section, and `workbench-drift` states that mirrored pieces
+  bypass the adaptation filter. The reviewed-commit pin was deliberately **not**
+  advanced — `brainstorming` has unreviewed upstream changes, and an advanced
+  pin would assert they had been seen.
+- Unchanged: the description contradiction inside `anthropic-best-practices.md`.
+  That file is byte-identical to upstream, so it is upstream's defect; mirroring
+  neither causes nor fixes it.
+  ([decision](decisions/writing-skills-mirrored-verbatim.md))
+
 ## workbench 0.20.12 — 2026-08-12
 
 - **`empirical-proof` no longer absorbs exploratory runtime work.** It was the
