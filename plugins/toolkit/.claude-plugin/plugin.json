@@ -1,7 +1,7 @@
 {
   "name": "toolkit",
-  "description": "Optional artifact-making utilities from Agent Workshop: doc-to-html report pages, ui-demo-video Playwright walkthroughs, arch-map architecture maps, and writing-skills (TDD for skill authoring, derived from obra/superpowers, MIT). Install alongside toolkit when you want them; skip it to keep sessions lean.",
-  "version": "0.1.0",
+  "description": "Optional artifact-making utilities for the workshop: doc-to-html (markdown report to a polished dark HTML page), arch-map (derived architecture maps), ui-demo-video (Playwright walkthroughs with verification frames), and writing-skills (TDD for skill authoring, derived from obra/superpowers, MIT). Install alongside workbench when you want them; skip to keep sessions lean.",
+  "version": "0.1.1",
   "author": { "name": "Agent Workshop" },
   "homepage": "https://github.com/giostriquer/agent-workshop",
   "repository": "https://github.com/giostriquer/agent-workshop",

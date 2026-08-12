@@ -5,16 +5,16 @@
   "plugins": [
     {
       "name": "workbench",
-      "version": "0.20.1",
+      "version": "0.20.2",
       "source": "./plugins/workbench",
-      "description": "The process core: standalone review and CI-monitoring agents plus direct-use skills (PR filing with autonomous CI/conflict tending, goal handoffs, premise investigations, team-scale QA sweeps, post-change runtime proofs, strict code-quality reviews, PR comment triage, model/effort routing, CI watch-and-fix) and the workbench flow skills (derived from obra/superpowers, MIT) — without onboarding.",
+      "description": "A complete process system for how work starts, gets designed, gets verified, and lands: user-sized audits, brainstorming that ends at your route pick (rawdog / plan / goal handoff), implementation discipline (TDD, systematic debugging, evidence-gated readiness), one adversarial review, and landing that files the PR and tends CI to green. Backed by five read-only review agents. Core process skills derived from obra/superpowers (MIT) — no hooks, no dispatcher; skills fire on relevance.",
       "author": { "name": "Agent Workshop" }
     },
     {
       "name": "toolkit",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "source": "./plugins/toolkit",
-      "description": "Optional artifact-making utilities: doc-to-html report pages, ui-demo-video Playwright walkthroughs, arch-map architecture maps, and writing-skills (skill authoring, derived from obra/superpowers, MIT). Install alongside workbench when wanted.",
+      "description": "Optional artifact-making utilities for the workshop: doc-to-html (markdown report to a polished dark HTML page), arch-map (derived architecture maps), ui-demo-video (Playwright walkthroughs with verification frames), and writing-skills (TDD for skill authoring, derived from obra/superpowers, MIT). Install alongside workbench when you want them; skip to keep sessions lean.",
       "author": { "name": "Agent Workshop" }
     }
   ]

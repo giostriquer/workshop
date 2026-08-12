@@ -5,6 +5,29 @@ Sections are keyed by the **released plugin version** that shipped the change
 work that ships no release (packaging, structure, docs) sits under `## repo — date` sections in
 chronological position.
 
+## workbench 0.20.2 — 2026-08-11
+
+### manifests tell the process-system story
+
+Operator flag: the plugin descriptions and Codex starter prompts still carried
+the old toolkit-era identity (agent-list-first, laundry-list parentheticals,
+"without onboarding"). Descriptions rewritten identity-first across all three
+manifests and the marketplace — the flow's arc (audits → route pick →
+implementation discipline → one adversarial review → landing that tends CI),
+the agents as backing, the no-hooks/no-dispatcher stance. Codex `defaultPrompt`
+reordered to walk the flow and now opens with "How does the workbench flow
+work?"; the stale reviewer-install prompt dropped.
+
+## toolkit 0.1.1 — 2026-08-11
+
+### description accuracy pass
+
+Same sweep: the Claude manifest's swap-era self-reference ("install alongside
+toolkit") fixed to workbench, the Codex `longDescription`'s matching
+self-reference fixed, and one identity-first description (per-skill
+one-liners, "install alongside workbench, skip to keep sessions lean") now
+consistent across all three manifests and the marketplace.
+
 ## workbench 0.20.1 — 2026-08-11
 
 ### using-workbench — session-start orientation for discoverability
