@@ -23,7 +23,21 @@ confirms what it flagged, and this skill routes what comes out.
    | **deep audit** | the `claim-check` skill | one premise investigated to evidence-graded verdict: a bug to pin down, a ticket to validate, "is the refactor complete?" |
    | **team sweep** | the `qa-sweep` skill | a broad, decomposable surface: a release, a feature area, corroborated findings at team scale |
 
-   Recommend a tier with one line of reasoning, but the pick is the user's.
+   Ask with a structured question tool (`AskUserQuestion` or the host's
+   equivalent) when one is available — one option per tier, the recommended
+   tier first and marked; otherwise present the tiers as a numbered list and
+   wait for the pick. Recommend a tier with one line of reasoning, but the
+   pick is the user's.
+
+   **Runtime modality flag.** The tiers size breadth; this flags *where the
+   evidence must come from*. When the thing to check is behavior a real
+   client can drive — an endpoint, a flow in the running app, a CLI — code
+   reading alone cannot settle it: say so in the recommendation and confirm,
+   as part of the same sizing question, whether the check should drive the
+   booted app. A confirmed runtime check is part of the workload handed to
+   the engine (a team sweep is runtime by construction; for the other tiers,
+   pass the confirmation along so the evidence comes from the running
+   surface, not reading alone).
 
 2. **Run the engine.** Quick look: investigate inline and keep it genuinely
    quick — if it starts growing past its size, stop and say so; growing the
@@ -52,7 +66,8 @@ confirms what it flagged, and this skill routes what comes out.
 
 ## Output
 
-- The sized tier and engine that ran.
+- The sized tier and engine that ran, with the runtime modality when it was
+  flagged.
 - Findings, verdict-first; flagged uncertainties with the user's resolutions.
 - The exit taken: report-and-done, handed to brainstorming, or at the route
   gate.

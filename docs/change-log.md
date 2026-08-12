@@ -5,6 +5,22 @@ Sections are keyed by the **released plugin version** that shipped the change
 work that ships no release (packaging, structure, docs) sits under `## repo — date` sections in
 chronological position.
 
+## workbench 0.20.3 — 2026-08-12
+
+### audit — structured sizing ask + runtime-modality flag
+
+Operator review of the audit↔qa-sweep interaction found sizing was breadth-only:
+runtime verification happened only by accident of tier (team sweep boots the app
+by construction; a runtime-demanding request sized lower silently became code
+reading). Step 1 now asks the tier question via `AskUserQuestion` (or the host's
+equivalent) with the recommended tier marked, falling back to a numbered list —
+and carries a **runtime modality flag**: when the target is behavior a real
+client can drive, the same question confirms whether the check should drive the
+booted app, with the confirmation handed to the engine as part of the workload.
+Engines untouched (`claim-check` unchanged by operator directive). Rationale:
+[`audit-sizing-ask-and-runtime-modality.md`](decisions/audit-sizing-ask-and-runtime-modality.md);
+origin doc `docs/skills/audit.md` updated in step.
+
 ## workbench 0.20.2 — 2026-08-11
 
 ### manifests tell the process-system story
