@@ -25,8 +25,16 @@ that is a manifest edit plus, for adoptions, the port workflow below.
 
 1. **Run the script:** `node scripts/drift-check.mjs` (add `--json` when you want
    machine-readable output; `--manifest` / `--cache` to override paths). It
-   clones or fetches upstream, diffs `lastReviewed..HEAD` over the watched paths,
-   and groups every change by the manifest's dispositions.
+   clones or fetches upstream, diffs `lastReviewed..target` over the watched
+   paths, and groups every change by the manifest's dispositions.
+
+   **The target is upstream's newest published release, never the branch tip.**
+   A branch tip is whatever was committed last — half-finished work, experiments,
+   things the author has not shipped. Reviewing or mirroring that imports churn
+   upstream never stood behind. Commits sitting past the release are reported as
+   a count and excluded. If upstream ever stops tagging releases the script stops
+   rather than silently falling back; `upstream.track: "branch"` is the explicit
+   opt-out.
 2. **Initial-pin mode** (manifest has no reviewed commit yet): the script reports
    coverage — upstream entries vs manifest pieces. Resolve every unmapped entry
    to a disposition with the operator, fix any stale mappings, then set
@@ -56,9 +64,11 @@ that is a manifest edit plus, for adoptions, the port workflow below.
    upstream tree wholesale, including files it gained or lost. The trade is
    recorded in the piece's manifest entry — fidelity to upstream over local
    correctness, dead cross-references included.
-6. **Advance the pin.** Set `upstream.lastReviewed.commit` to the reported head
-   — only after the review completed, including the ignores; an advanced pin
-   asserts "everything up to here was seen."
+6. **Advance the pin.** Set `upstream.lastReviewed.commit` to the reviewed
+   release's commit, and `release` to its tag — only after the review completed,
+   including the ignores; an advanced pin asserts "everything up to here was
+   seen." Land the pin on a release, never on a loose commit: a pin between
+   releases cannot be described to anyone, including a later you.
 7. **Report:** verdict-first — up-to-date / N changes reviewed (adopted /
    adapted / ignored) / unmapped pieces needing dispositions — with the applied
    edits listed.

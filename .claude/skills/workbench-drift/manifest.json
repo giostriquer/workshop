@@ -4,14 +4,17 @@
   "upstream": {
     "repo": "https://github.com/obra/superpowers",
     "ref": "main",
+    "track": "releases",
+    "tagPattern": "v*",
     "license": "MIT",
     "author": "Jesse Vincent (obra)",
     "watchPaths": ["skills", "hooks"],
+    "trackingNote": "Drift is measured against upstream's published releases, never the branch tip. Unreleased commits on `ref` are work in progress: they get reported as a count and excluded from review and from mirroring. Set track to \"branch\" only if upstream stops tagging releases.",
     "lastReviewed": {
       "commit": "44c9b2d6e889982ac18c27d05a19fefe335194e1",
-      "release": "6.2.0+",
+      "release": "v6.2.0+1 (unreleased)",
       "date": "2026-08-11",
-      "note": "Pinned at the phase-B port: the six adopted skills were ported from this upstream commit (head at port time), so everything up to here has been reviewed by construction."
+      "note": "Pinned at the phase-B port: the six adopted skills were ported from this commit, so everything up to here has been reviewed by construction. It is one commit past v6.2.0 — an unreleased state, pinned before release tracking existed. The next completed review should land the pin on a release tag."
     }
   },
   "adaptationFilter": "docs/decisions/workbench-system.md#2-the-adaptation-filter — defang the description; de-pipeline the body; carry only needed references; provenance footer. Applies to every adoption, initial and future.",
@@ -63,7 +66,7 @@
       "localPath": "plugins/toolkit/skills/writing-skills/",
       "disposition": "mirrored",
       "why": "The RED→GREEN skill-authoring loop; the operator authors skills constantly. Ships in the toolkit plugin.",
-      "adaptations": "None — operator call: this piece is mirrored byte-for-byte from upstream, exempt from the adaptation filter. Mirrored at b36e0829c6d0140e93cfef2ca599b1b07d4a7797, which added the bundled examples/ directory (fixing a dangling pointer created by the earlier partial port) and a Windows-safe graphviz probe (execFileSync instead of `which dot`). Accepted cost: the mirror carries five `superpowers:`-namespaced skill references and one relative link to `../using-superpowers/`, a dropped piece — all dead in an installed environment. Re-porting under the adaptation filter would fix them; the operator chose fidelity over local correctness. Drift handling for this piece is re-mirror, not judge-and-adapt."
+      "adaptations": "None — operator call: this piece is mirrored byte-for-byte from upstream, exempt from the adaptation filter. Mirrored at the published release v6.3.0 (b36e0829c6d0140e93cfef2ca599b1b07d4a7797), which added the bundled examples/ directory (fixing a dangling pointer created by the earlier partial port) and a Windows-safe graphviz probe (execFileSync instead of `which dot`). Accepted cost: the mirror carries five `superpowers:`-namespaced skill references and one relative link to `../using-superpowers/`, a dropped piece — all dead in an installed environment. Re-porting under the adaptation filter would fix them; the operator chose fidelity over local correctness. Drift handling for this piece is re-mirror, not judge-and-adapt."
     },
     {
       "upstreamPath": "skills/receiving-code-review/",

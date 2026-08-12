@@ -24,6 +24,10 @@ const manifestPath = resolve(argValue("--manifest") ?? join(scriptDir, "..", "ma
 
 const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
 const { repo, ref, watchPaths, lastReviewed } = manifest.upstream;
+// Default to release tracking: unreleased commits on the branch are work in
+// progress, not something to review or mirror.
+const track = manifest.upstream.track ?? "releases";
+const tagPattern = manifest.upstream.tagPattern ?? "v*";
 const cacheDir = resolve(
   argValue("--cache") ?? join(tmpdir(), "workbench-drift", repo.replace(/[^a-zA-Z0-9]+/g, "-"))
 );
@@ -39,11 +43,43 @@ function git(cliArgs, opts = {}) {
 
 // -- sync the upstream clone -------------------------------------------------
 if (existsSync(join(cacheDir, ".git"))) {
-  git(["fetch", "origin", ref], { cwd: cacheDir });
+  git(["fetch", "--tags", "--force", "origin", ref], { cwd: cacheDir });
 } else {
   git(["clone", "--quiet", repo, cacheDir]);
 }
-const head = git(["rev-parse", `origin/${ref}`], { cwd: cacheDir });
+
+// -- resolve the target: the newest published release, not the branch tip -----
+// Comparing against a branch tip reviews work in progress. Releases are what
+// upstream actually ships, so they are the only thing worth reviewing or
+// mirroring.
+let head;
+let headRelease = null;
+if (track === "releases") {
+  const tags = git(["tag", "--list", tagPattern, "--sort=-v:refname"], { cwd: cacheDir })
+    .split("\n")
+    .map((t) => t.trim())
+    .filter(Boolean);
+  if (tags.length === 0) {
+    console.error(
+      `No tags matching "${tagPattern}" in ${repo}. Upstream publishes no releases, ` +
+        `so there is nothing to compare against. Set upstream.track to "branch" in the ` +
+        `manifest to fall back to the ${ref} tip.`
+    );
+    process.exit(2);
+  }
+  headRelease = tags[0];
+  // Annotated tags resolve to a tag object; ^{commit} gets the commit it points at.
+  head = git(["rev-parse", `${headRelease}^{commit}`], { cwd: cacheDir });
+} else {
+  head = git(["rev-parse", `origin/${ref}`], { cwd: cacheDir });
+}
+
+// How far the branch has run past the release we are targeting — reported so an
+// operator can see there is unreleased work, without it entering the review.
+const unreleasedCount =
+  track === "releases"
+    ? Number(git(["rev-list", "--count", `${head}..origin/${ref}`], { cwd: cacheDir, allowFail: true }) || 0)
+    : 0;
 
 // -- map an upstream path to its manifest piece (longest prefix wins) --------
 function pieceFor(path) {
@@ -71,12 +107,16 @@ if (!lastReviewed.commit) {
   const missing = manifest.pieces.filter(
     (p) => ![...seen].some((e) => e.startsWith(p.upstreamPath) || p.upstreamPath.startsWith(e))
   );
-  const result = { mode: "initial-pin", head, upstreamEntries: [...seen].sort(), unmapped, missing: missing.map((p) => p.upstreamPath) };
+  const result = { mode: "initial-pin", head, headRelease, track, upstreamEntries: [...seen].sort(), unmapped, missing: missing.map((p) => p.upstreamPath) };
   if (asJson) {
     console.log(JSON.stringify(result, null, 2));
   } else {
     console.log(`# workbench-drift — initial pin\n`);
-    console.log(`Upstream: ${repo} @ \`${head}\` (ref \`${ref}\`)\n`);
+    console.log(
+      headRelease
+        ? `Upstream: ${repo} @ ${headRelease} (\`${head}\`)\n`
+        : `Upstream: ${repo} @ \`${head}\` (branch tip \`${ref}\`)\n`
+    );
     console.log(`Manifest has no reviewed commit yet (seeded from release ${lastReviewed.release ?? "?"}).`);
     console.log(`Coverage check against the live repo:\n`);
     console.log(`- upstream entries under watched paths: ${result.upstreamEntries.length}`);
@@ -134,7 +174,10 @@ const result = {
   repo,
   ref,
   lastReviewed: lastReviewed.commit,
+  track,
   head,
+  headRelease,
+  unreleasedCommits: unreleasedCount,
   upToDate: changes.length === 0,
   reviewRequired: reviewBlocks,
   remirror: [...groups.remirror.values()].map(({ piece, files }) => ({
@@ -152,10 +195,22 @@ if (asJson) {
 }
 
 console.log(`# workbench-drift — upstream drift report\n`);
-console.log(`Upstream: ${repo} (ref \`${ref}\`)`);
-console.log(`Reviewed: \`${lastReviewed.commit}\` → head \`${head}\`\n`);
+if (track === "releases") {
+  console.log(`Upstream: ${repo} — tracking published releases (\`${tagPattern}\`)`);
+  console.log(`Target:   ${headRelease} (\`${head}\`)`);
+} else {
+  console.log(`Upstream: ${repo} (branch tip \`${ref}\`)`);
+  console.log(`Target:   \`${head}\``);
+}
+console.log(`Reviewed: \`${lastReviewed.commit}\`${lastReviewed.release ? ` (${lastReviewed.release})` : ""}\n`);
+if (unreleasedCount > 0) {
+  console.log(
+    `> ${unreleasedCount} unreleased commit(s) sit on \`${ref}\` past ${headRelease}. ` +
+      `Excluded — work in progress is not reviewed or mirrored.\n`
+  );
+}
 if (result.upToDate) {
-  console.log(`No changes under watched paths. Up to date.`);
+  console.log(`No changes under watched paths since the last review. Up to date.`);
   process.exit(0);
 }
 console.log(`## Review required (adopted pieces) — ${reviewBlocks.length}\n`);
