@@ -4,20 +4,20 @@
     "name": "Agent Workshop"
   },
   "metadata": {
-    "description": "Agent Workshop plugins for Cursor: a guided onboarding scaffold plus a direct-use toolkit of review, governance, and CI-monitoring agents and skills.",
+    "description": "Agent Workshop for Cursor: the toolkit of review agents, everyday skills, and the workbench process layer, plus the optional workbench of artifact-making utilities.",
     "version": "0.1.0",
     "pluginRoot": "plugins"
   },
   "plugins": [
     {
-      "name": "agent-workshop",
-      "source": "agent-workshop",
-      "description": "Onboard repo-local agent scaffolding with one guided skill."
+      "name": "workbench",
+      "source": "workbench",
+      "description": "The process core: review and CI-monitoring agents plus everyday and workbench flow skills, runnable in any repo."
     },
     {
       "name": "toolkit",
       "source": "toolkit",
-      "description": "Direct-use review, governance, and CI-monitoring agents plus skills, runnable in any repo without onboarding."
+      "description": "Optional artifact-making utilities: doc-to-html, ui-demo-video, arch-map, writing-skills."
     }
   ]
 }

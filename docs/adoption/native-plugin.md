@@ -78,7 +78,10 @@ auto-install its Cursor plugins.
 the active Codex surface is the `file-pr`, `handoff-goal`, `doc-to-html`,
 `claim-check`, `qa-sweep`, `empirical-proof`, `code-quality-review`,
 `get-pr-comments`, `ui-demo-video`, `route-work`, `arch-map`, and `fix-ci`
-skills. The
+skills plus the method set (`audit`, `brainstorming`,
+`test-driven-development`, `systematic-debugging`,
+`verification-before-completion`, `receiving-code-review`, `writing-skills`,
+`using-method`). The
 reviewer agent files are bundled in the plugin payload for Claude Code and
 reference, but Codex custom agents still need repo-local `.codex/agents/`
 wrappers from onboarding.

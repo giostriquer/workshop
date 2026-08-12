@@ -1,0 +1,10 @@
+{
+  "name": "workbench",
+  "description": "Curated standalone review and CI-monitoring agents plus direct-use skills (PR filing with autonomous CI/conflict tending, goal handoffs, premise investigations, team-scale QA sweeps, post-change runtime proofs, strict code-quality reviews, PR comment triage, model/effort routing, CI watch-and-fix) from Agent Workshop, plus the workbench process skills (audit protocol, brainstorming, TDD, systematic debugging, verification, review reception — derived from obra/superpowers, MIT). Usable directly without onboarding.",
+  "version": "0.20.0",
+  "author": { "name": "Agent Workshop" },
+  "homepage": "https://github.com/giostriquer/agent-workshop",
+  "repository": "https://github.com/giostriquer/agent-workshop",
+  "license": "MIT",
+  "keywords": ["agents", "code-review", "spec-review", "test-quality", "handoff"]
+}

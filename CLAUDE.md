@@ -6,7 +6,7 @@ This is `agent-workshop` — a scaffolding repo holding agent definitions, skill
 
 This file (`CLAUDE.md`) governs Claude's behavior **when working inside `agent-workshop` itself** — maintaining, extending, sanitizing, or refining the scaffold. It is **not** the file you copy into adopting projects; those projects write their own `CLAUDE.md` describing their domain.
 
-If you're looking for the file that adopting projects' Claude sessions should read, you're in the wrong place — see `README.md`'s install section and the `agent-workshop-onboard` onboarding plugin.
+If you're looking for the file that adopting projects' Claude sessions should read, you're in the wrong place — see `README.md`'s install section (the `workbench` plugin is the adoption path; `toolkit` is optional).
 
 ## Maintenance stance
 
@@ -31,49 +31,40 @@ If a change is meaningful enough to land a `change-log.md` entry, use the `chang
 
 ## Source-of-truth boundaries
 
-Each piece's canonical definition lives in the plugin that ships it. The two plugins
-are **independent** — they need not carry the same set, and there is no universal
-`.claude/` master.
+The marketplace ships **two plugins**: `workbench` (the process core — review
+agents, everyday skills, and the workbench flow layer) and `toolkit` (optional
+artifact-making utilities). (The onboarding `agent-workshop` plugin was deleted
+2026-08-11 — its worthwhile pieces are parked in the attic.)
 
-- `plugins/toolkit/skills/<name>/SKILL.md`, `plugins/toolkit/agents/<name>.md` —
-  canonical for the **toolkit** (direct-use, self-contained) set.
-- `plugins/agent-workshop/skills/agent-workshop-onboard/references/…` — canonical for
-  the **onboarding** (project-coupled, copy-and-adapt) set: agent specs under
-  `references/agents/`, host-wrapper templates under `references/wrappers/<host>/`,
-  flattened skill specs under `references/skills/`, and the canonical pack catalog at
-  `references/catalog.json`.
-- A piece that serves both roles (the reviewers) ships a copy in each plugin; the
-  copies are allowed to diverge.
+- `plugins/workbench/…` and `plugins/toolkit/…` — canonical for everything
+  shipped. **Shipped text may reference only what an installed environment can
+  reach**: public URLs, never repo-relative paths or repo-local tooling.
 - `.claude/`, `.codex/`, `.opencode/` hold **only the small set this repo itself
-  runs** — currently `change-log`, `push` (skills) and `wiki-maintainer`, `vigil`
-  (agents) — kept byte-identical to their onboarding-bundle templates. Do not expect
-  every scaffold piece to appear here.
-- `attic/skills/<name>/` — parked pieces: in-progress drafts not yet earning
-  inclusion, and deprecated pieces retired from the plugins. Shipped by no plugin,
+  runs** — `change-log`, `push`, `workbench-drift` (skills) and `wiki-maintainer`
+  (agent). **`.claude/` is canonical for these**; they ship in no plugin and
+  mirror nowhere. Do not expect every scaffold piece to appear here.
+- `attic/skills/<name>/`, `attic/agents/<name>.md` — parked pieces: in-progress
+  drafts, deprecated pieces, and the former onboarding set. Shipped by no plugin,
   run by no host, ignored by the validator; exempt from the docs symmetry until
-  promoted (a deprecated piece's origin doc lives at `docs/skills/deprecated/`).
+  promoted (a retired piece's doc lives under `docs/*/deprecated/`).
   See `attic/README.md`.
-- `docs/agents/<name>.md`, `docs/skills/<name>.md` — origin story for **every** piece.
-  Reference, not adopted.
+- `docs/agents/<name>.md`, `docs/skills/<name>.md` — the doc for **every** live
+  piece. Reference, not adopted.
 - `docs/conventions/<name>.md` — portable rules. Adopting projects pick which to include.
-- `plugins/agent-workshop/skills/agent-workshop-onboard/references/catalog.json` —
-  the onboarding pack catalog (the only copy; no top-level `marketplace/` master).
-  Its `canonicalPath` / `wrapperPaths` describe where a piece **lands in an adopting project**
-  (`.claude/agents/<name>.md`, `.codex/agents/<name>.toml`, …), not where it lives here.
-- `README.md` — repo intro and adoption entry point. `AGENTS.md` — the non-Claude
+- `README.md` — repo intro and install entry point. `AGENTS.md` — the non-Claude
   sibling of this file.
 
-`scripts/validate-native-plugin.ps1` enforces this: each plugin is internally
-consistent, the onboarding bundle is self-contained, and the repo's own working set
-stays in sync with its bundle templates. The agent and skill **definitions** are
-working code; the **docs** describe them. If they diverge, fix the doc.
+`scripts/validate-native-plugin.ps1` enforces this: the toolkit plugin is
+internally consistent and all three host marketplaces list exactly it. The agent
+and skill **definitions** are working code; the **docs** describe them. If they
+diverge, fix the doc.
 
 ## When adding a new agent or skill
 
 1. Decide it earns inclusion. The bar: *did this agent or skill prove its value in real lived-in use across at least one substantial project?* If not, leave it out — speculative additions dilute the scaffold.
-2. Write the canonical spec into the plugin that ships it: `plugins/toolkit/…` for a direct-use, self-contained piece, or the onboarding bundle (`plugins/agent-workshop/.../references/…` plus a `references/catalog.json` entry) for a project-coupled piece that needs adaptation. A piece that is both ships a copy in each. Only add it to `.claude/` (and `.codex/`/`.opencode/`) if this repo will itself run it.
+2. Write the canonical spec where it belongs: `plugins/workbench/…` (process) or `plugins/toolkit/…` (optional utility) for a shipped piece; `.claude/` (and `.codex/`/`.opencode/` if the repo runs it on those hosts) for repo-only tooling. Shipped text references only what an installed environment can reach.
 3. Sanitize. Strip project-specific names, paths, and domain references. Replace with generic placeholders or named-example callouts.
-4. Write the origin doc at `docs/agents/<name>.md` or `docs/skills/<name>.md`. Cover: origin pressure, problem, solution shape, real workflow snippet, observed pitfalls, adaptation notes.
+4. Write the doc. **Agents** (`docs/agents/<name>.md`): origin story — origin pressure, problem, solution shape, real workflow snippet, observed pitfalls, adaptation notes. **Skills** (`docs/skills/<name>.md`): small and usage-first — a one-or-two-line what-it-is (with lineage where derived), a **Use it** section (triggers, the load-bearing patterns, a compact example), and a **Don't** section (anti-patterns and boundaries). Rationale and history belong in `docs/decisions/`, linked, not restated in the skill doc.
 5. If the new piece relies on a convention not yet in `docs/conventions/`, add or update that convention.
 6. Update `README.md` if the piece introduces a new top-level capability worth flagging.
 
@@ -104,4 +95,4 @@ If a Claude session is working in an adopting project (not in `agent-workshop` i
 
 That separation matters: the scaffold's `CLAUDE.md` is about *maintaining the scaffold*; the adopting project's `CLAUDE.md` is about *the project's domain and workflow*. Mixing them defeats the point.
 
-See `README.md` and the `agent-workshop-onboard` onboarding plugin for the adoption flow.
+See `README.md` for the adoption flow (install `workbench`, optionally `toolkit`).

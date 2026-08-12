@@ -5,10 +5,10 @@
   },
   "plugins": [
     {
-      "name": "agent-workshop",
+      "name": "toolkit",
       "source": {
         "source": "local",
-        "path": "./plugins/agent-workshop"
+        "path": "./plugins/toolkit"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -17,10 +17,10 @@
       "category": "Productivity"
     },
     {
-      "name": "toolkit",
+      "name": "workbench",
       "source": {
         "source": "local",
-        "path": "./plugins/toolkit"
+        "path": "./plugins/workbench"
       },
       "policy": {
         "installation": "AVAILABLE",

@@ -1,15 +1,15 @@
 {
   "name": "toolkit",
   "displayName": "Toolkit",
-  "version": "0.19.0",
-  "description": "Curated standalone review, governance, and CI-monitoring agents plus direct-use skills (PR filing with autonomous CI/conflict tending, goal handoffs, premise investigations, doc-to-html report pages, arch-map architecture maps, team-scale QA sweeps, post-change runtime proofs, strict code-quality reviews, PR comment triage, UI demo videos, model/effort routing, CI watch-and-fix) from Agent Workshop, usable directly without onboarding.",
+  "version": "0.1.0",
+  "description": "Optional artifact-making utilities from Agent Workshop: doc-to-html report pages, ui-demo-video Playwright walkthroughs, arch-map architecture maps, and writing-skills (derived from obra/superpowers, MIT).",
   "author": {
     "name": "Agent Workshop"
   },
   "homepage": "https://github.com/giostriquer/agent-workshop",
   "repository": "https://github.com/giostriquer/agent-workshop",
   "license": "MIT",
-  "keywords": ["agents", "skills", "code-review", "governance", "handoff"],
+  "keywords": ["skills", "reports", "diagrams", "video", "skill-authoring"],
   "category": "developer-tools",
-  "tags": ["review", "governance", "ci", "quality", "automation"]
+  "tags": ["reports", "diagrams", "video", "authoring"]
 }

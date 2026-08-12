@@ -1,0 +1,37 @@
+{
+  "name": "workbench",
+  "version": "0.20.0",
+  "description": "Codex-ready PR-filing, goal-handoff, claim-check, qa-sweep, empirical-proof, code-quality-review, get-pr-comments, route-work, and fix-ci skills, the workbench process skills (audit, brainstorming, TDD, systematic-debugging, verification-before-completion, receiving-code-review, using-workbench; derived from obra/superpowers, MIT), and bundled agent files (reviewers + ci-watcher) from Agent Workshop.",
+  "author": {
+    "name": "Agent Workshop",
+    "url": "https://github.com/giostriquer/agent-workshop"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/giostriquer/agent-workshop",
+  "repository": "https://github.com/giostriquer/agent-workshop",
+  "keywords": ["agents", "skills", "code-review", "handoff"],
+  "skills": "./skills",
+  "interface": {
+    "displayName": "Workbench",
+    "shortDescription": "Workflow, review, and workbench process skills for Codex.",
+    "longDescription": "A Codex manifest for the Agent Workshop workbench plugin. Codex exposes the file-pr, handoff-goal, claim-check, qa-sweep, empirical-proof, code-quality-review, get-pr-comments, route-work, and fix-ci skills plus the workbench process set (audit, brainstorming, test-driven-development, systematic-debugging, verification-before-completion, receiving-code-review, using-workbench) from this package; the agent files (the reviewers plus ci-watcher) are bundled in the payload for Claude Code and reference, but Codex standalone custom agents still need repo-local .codex/agents wrappers.",
+    "developerName": "Agent Workshop",
+    "category": "Productivity",
+    "capabilities": ["Skills"],
+    "websiteURL": "https://github.com/giostriquer/agent-workshop",
+    "defaultPrompt": [
+      "File the branch's PR and see it through to green and mergeable.",
+      "Prepare a goal handoff document.",
+      "Investigate whether a ticket or claim still holds.",
+      "Run a team-scale QA sweep over a release and corroborate the findings.",
+      "Empirically prove a just-finished change at the running app.",
+      "Run a strict code quality review on the current branch.",
+      "Summarize the active PR's review comments into a prioritized action list.",
+      "Recommend a model and effort route for a task before dispatching it.",
+      "Watch the current branch's CI and fix whatever breaks.",
+      "Audit something: size the workload, run the right engine, confirm the flags.",
+      "Brainstorm a feature or refactor design before building it.",
+      "Explain how to install reviewer agents for Codex."
+    ]
+  }
+}

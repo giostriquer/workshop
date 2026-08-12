@@ -4,17 +4,17 @@
   "owner": { "name": "Agent Workshop" },
   "plugins": [
     {
-      "name": "agent-workshop",
-      "version": "0.1.26",
-      "source": "./plugins/agent-workshop",
-      "description": "Onboard repo-local agent scaffolding with one guided skill",
+      "name": "workbench",
+      "version": "0.20.0",
+      "source": "./plugins/workbench",
+      "description": "The process core: standalone review and CI-monitoring agents plus direct-use skills (PR filing with autonomous CI/conflict tending, goal handoffs, premise investigations, team-scale QA sweeps, post-change runtime proofs, strict code-quality reviews, PR comment triage, model/effort routing, CI watch-and-fix) and the workbench flow skills (derived from obra/superpowers, MIT) — without onboarding.",
       "author": { "name": "Agent Workshop" }
     },
     {
       "name": "toolkit",
-      "version": "0.19.0",
+      "version": "0.1.0",
       "source": "./plugins/toolkit",
-      "description": "Use a curated set of standalone review, governance, and CI-monitoring agents plus direct-use skills (PR filing with autonomous CI/conflict tending, goal handoffs, premise investigations, doc-to-html report pages, arch-map architecture maps, team-scale QA sweeps, post-change runtime proofs, strict code-quality reviews, PR comment triage, UI demo videos, model/effort routing, CI watch-and-fix), without onboarding.",
+      "description": "Optional artifact-making utilities: doc-to-html report pages, ui-demo-video Playwright walkthroughs, arch-map architecture maps, and writing-skills (skill authoring, derived from obra/superpowers, MIT). Install alongside workbench when wanted.",
       "author": { "name": "Agent Workshop" }
     }
   ]

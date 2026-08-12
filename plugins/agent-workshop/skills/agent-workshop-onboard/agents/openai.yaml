@@ -1,4 +1,0 @@
-interface:
-  display_name: "Agent Workshop Onboard"
-  short_description: "Plan or apply repo-local Agent Workshop adoption"
-  default_prompt: "Use $agent-workshop-onboard to inspect this target repo, recommend Agent Workshop packs and profile slots, and apply only an explicitly approved repo-local adoption plan. Default to mode: plan. Do not expose or install all scaffold agents globally."

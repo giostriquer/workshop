@@ -1,6 +1,6 @@
 ---
 name: arch-map
-description: Use when you need a visual architecture map of a codebase and no finished source doc exists — an existing subsystem (how it is structured today), a refactor in flight (what moves), or a proposed design (target state). Derives boxes and edges from the repo, diff, or plan, then renders a self-contained HTML page whose first job is a graphical mental model (SVG system map or before/after flow graph), followed by supporting inventory. Deep-dark glass chrome (near-black gradient, glass cards, Inter + JetBrains Mono, sky accent, scarce green/red); CDNs allowed for fonts/icons/Mermaid/Tailwind. Worked specimens ship with this skill under references/. Ephemeral output in the project's tmp/ with promote-to-durable on request. NOT for rendering an existing markdown report — that is doc-to-html. Formerly structure-view.
+description: Use when you need a visual architecture map of a codebase and no finished source document exists — an existing subsystem, a refactor in flight, or a proposed design — rendered as a self-contained HTML page. NOT for rendering an existing markdown report; that is doc-to-html. Formerly structure-view.
 ---
 
 # Arch Map

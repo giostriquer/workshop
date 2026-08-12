@@ -1,14 +1,98 @@
 # Change Log
 
-Sections are keyed by the **released plugin version** that shipped the change —
-`## toolkit X.Y.Z — date` (the primary product; `reviewers` before the 2026-06-16
-rename), `## agent-workshop X.Y.Z — date` for onboarding-plugin-only releases —
-newest first. `agent-workshop` bumps that merely ride a toolkit release (mirror
-re-syncs) are noted inside the toolkit entry. Repo work that shipped no plugin
-version (packaging, structure, docs) sits under `## repo — date` sections in
+Sections are keyed by the **released plugin version** that shipped the change
+(`eviewers` before the 2026-06-16 rename became `	oolkit`), newest first. Repo
+work that ships no release (packaging, structure, docs) sits under `## repo — date` sections in
 chronological position.
 
-## agent-workshop 0.1.26 — 2026-08-11
+## toolkit 0.1.0 — 2026-08-11
+
+### toolkit — optional utilities split out; plugin names swapped
+
+New plugin (operator call, name from the workshop family: tools in the kit,
+making at the bench): `doc-to-html`, `arch-map`, `ui-demo-video`, and
+`writing-skills` move out of toolkit so integrators opt into their token load —
+every installed skill's listing rides in each session's context. Expected to
+grow with future optional utilities. `writing-skills` was reclassified out of
+the workbench set (tag dropped; superpowers lineage and `workbench-drift` tracking
+continue at its new path), and each plugin now carries exactly its own
+attribution and LICENSE notice. Marketplaces list both plugins; the validator
+generalized to a per-plugin spec table. Boot cost: toolkit ≈ 1,784 tokens,
+workbench ≈ 378 opt-in. See
+[`docs/decisions/workbench-split.md`](decisions/workbench-split.md).
+
+## workbench 0.20.0 — 2026-08-11
+
+### vigil parked
+
+Operator call: `vigil` retired from the process payload (five agents now) and
+from the repo working set; spec preserved in `attic/agents/`, doc under
+`deprecated/`, "governance" dropped from manifest wording. See
+[`docs/decisions/park-vigil.md`](decisions/park-vigil.md).
+
+### shipped-text hygiene — no repo-internal references in the payload
+
+Operator rule: shipped skill text may reference only what an installed
+environment can reach. Sweep applied — method provenance footers now point at
+the GitHub blob URL of the decision doc; `using-workbench` dropped its
+`workbench-drift` mention and links the published flow model; toolkit README and
+LICENSE attribution links became absolute URLs. Rule recorded in `CLAUDE.md`
+§ boundaries.
+
+### description trim — six legacy skills cut to trigger-only listings
+
+A boot-context analysis (what a fresh session pays for the plugin's skill/agent
+listing: ≈ 3,166 tokens) found six legacy descriptions carrying ≈ 1,447 tokens
+of workflow summary — the exact pattern the newly-ported `writing-skills` SDO
+guidance names as a follow-the-description hazard, not just a cost.
+`handoff-goal`, `route-work`, `qa-sweep`, `empirical-proof`, `arch-map`, and
+`claim-check` rewritten to triggers + NOT-for disambiguation only (299–429
+chars each); an 8/8 fresh-context routing probe (including both disambiguation
+traps) verified the trimmed triggers before applying. Listing total ≈ 2,254
+tokens (−29%). See
+[`docs/decisions/description-trim-sdo.md`](decisions/description-trim-sdo.md).
+
+### workbench — superpowers replaced by a curated, drift-tracked skill set
+
+The **workbench** system (named **method** at landing, renamed the same day) lands in the process plugin: six process skills ported from
+[obra/superpowers](https://github.com/obra/superpowers) head `44c9b2d` (MIT,
+Jesse Vincent) through the adaptation filter — `brainstorming` (route-gate
+terminal replacing the writing-plans pipeline; visual-companion subsystem not
+carried), `test-driven-development` (default-where-harness per the flow),
+`systematic-debugging`, `verification-before-completion` (the "deemed ready"
+gate), `receiving-code-review`, `writing-skills` — plus the native `audit`
+protocol skill (size → engine → confirm-the-flags → shape-routed exit) and
+`workbench-drift`, the upstream watchdog (provenance manifest + bundled diff
+script), which after its initial-pin (18/18 mapped) and drift-mode ("up to
+date") runs both passed live settled as **repo-local tooling** at
+`.claude/skills/workbench-drift/` — fork maintenance is the workshop's job, so it
+ships in no plugin (validator-exempt from the bundle-template sync). The canonical flow the set
+implements — two optional doors, user-picked routes, agency left to
+user/harness, one adversarial review at readiness, outline-then-ask landing —
+was designed interactively on a whiteboard artifact and is recorded in the
+decision doc, with all eleven design questions operator-settled. Eight upstream
+pieces and the SessionStart hook layer are formally dropped with recorded
+rationale; attribution is carried in the toolkit README, LICENSE
+(derived-portions notice), every adapted SKILL.md, the origin docs, and the
+manifest. Skill docs ×8 in the new **compact usage-first format** (operator
+call, same day: what-it-is + lineage, "Use it", "Don't" — the convention now in
+`CLAUDE.md` §4 and the skills roster preamble; legacy docs migrate as touched),
+and the flow's mental model drawn canonically as a maintained pair —
+[`docs/workbench-flow.md`](workbench-flow.md) (mermaid, diffable) +
+[`docs/workbench-flow.html`](workbench-flow.html) (arch-map deep-dark-glass rendering:
+SVG system map, piece inventory, removed-pipeline rules, decisions ledger).
+Every method SKILL.md is tagged `metadata.system: workbench` in its frontmatter for
+greppable set membership. A third native piece, `using-workbench`, ships the flow
+map inside the payload as an on-demand orientation reference (the
+anti-`using-superpowers` — explains on request, no hook, never enforces), and
+the rules-layer doctrine snippet for fresh-session awareness lives at
+[`docs/workbench-doctrine.md`](workbench-doctrine.md), deliberately outside the
+plugin. Rosters, READMEs, adoption docs,
+validator (twenty toolkit skills), and all manifests updated. Cutover (install everywhere, uninstall
+superpowers) awaits operator sign-off. See
+[`docs/decisions/workbench-system.md`](decisions/workbench-system.md).
+
+## repo — 2026-08-11
 
 ### change-log re-keyed by plugin release; skill learns the version-keyed format
 
@@ -20,10 +104,8 @@ archaeology calls (the `ci-watcher` `0.10.0` entry reordered above the `0.9.0`
 batch; the 2026-07-31 description-scope change confirmed bump-less via git) are
 recorded in the decision note. The `change-log` skill's Format section now carries
 the rule generically — versioned-product repos key by release, with `## repo`
-sections for unshipped work; date-keyed stays the default elsewhere — propagated
-hash-identical to `.claude/`, `.codex/`, and the onboarding-bundle template, with
-the origin doc updated for parity. `agent-workshop` `0.1.25` → `0.1.26` (bundle
-template changed); `toolkit` unchanged. See
+sections for unshipped work; date-keyed stays the default elsewhere — with the
+usage doc updated for parity. See
 [`docs/decisions/change-log-version-keyed.md`](decisions/change-log-version-keyed.md).
 
 ## toolkit 0.19.0 — 2026-08-11
@@ -31,7 +113,7 @@ template changed); `toolkit` unchanged. See
 ### handoff-pr → file-pr — the PR skill now files and tends, not hands off
 
 `handoff-pr` evolved into `file-pr`
-([`plugins/toolkit/skills/file-pr/SKILL.md`](../plugins/toolkit/skills/file-pr/SKILL.md)):
+([`plugins/toolkit/skills/file-pr/SKILL.md`](../plugins/workbench/skills/file-pr/SKILL.md)):
 the authorization split that justified the artifact hand-off is gone from the
 operator's environments, so the skill now opens the PR itself and sees it through —
 base sync and the repo's own gates run *before* filing, template-verbatim body
@@ -42,8 +124,7 @@ merging. Old origin doc moved to
 [`docs/skills/deprecated/handoff-pr.md`](skills/deprecated/handoff-pr.md) with the
 artifact behavior recoverable from git history. Live references updated repo-wide;
 the adoption docs' Codex-surface lists (stale again — missing `fix-ci`) trued up to
-twelve; mirrors re-synced. `toolkit` `0.18.0` → `0.19.0`, `agent-workshop`
-`0.1.24` → `0.1.25`; validator green. See
+twelve; mirrors re-synced. `toolkit` `0.18.0` → `0.19.0`; validator green. See
 [`docs/decisions/file-pr.md`](decisions/file-pr.md).
 
 ## toolkit 0.18.0 — 2026-08-11
@@ -51,7 +132,7 @@ twelve; mirrors re-synced. `toolkit` `0.18.0` → `0.19.0`, `agent-workshop`
 ### fix-ci — CI watch-and-fix loop lands as a toolkit skill
 
 New direct-use skill `fix-ci`
-([`plugins/toolkit/skills/fix-ci/SKILL.md`](../plugins/toolkit/skills/fix-ci/SKILL.md)):
+([`plugins/toolkit/skills/fix-ci/SKILL.md`](../plugins/workbench/skills/fix-ci/SKILL.md)):
 the invocable form of "CI is failing, take a look" — watch the branch's CI (PR
 checks, or push runs on direct-to-main workflows) to a verdict; on red, pull the
 failing log, triage flake vs. fault, apply a minimal in-session fix, push per repo
@@ -60,8 +141,8 @@ force-pushes; never weakens a failing check. Deliberately a **skill, not a wider
 `ci-watcher`**: toolkit agents stay read-only, the fix runs with session context
 and session authority, and the agent remains the loop's background wait-absorber.
 Origin doc [`docs/skills/fix-ci.md`](skills/fix-ci.md); rosters, READMEs, and all
-four manifests updated; skills roster re-mirrored to the onboarding bundle.
-`toolkit` `0.17.0` → `0.18.0`, `agent-workshop` `0.1.23` → `0.1.24`; validator
+four manifests updated.
+`toolkit` `0.17.0` → `0.18.0`; validator
 green. See [`docs/decisions/fix-ci.md`](decisions/fix-ci.md).
 
 ## toolkit 0.17.0 — 2026-08-10
@@ -164,7 +245,7 @@ accent, scarce emerald/rose). Specimens:
 ### arch-map — ship to toolkit (renamed from structure-view)
 
 Parked skill ships as **`arch-map`** in `plugins/toolkit` (`0.15.2` →
-`0.16.0`; `agent-workshop` `0.1.22` → `0.1.23` for bundled roster). Mental-model
+`0.16.0`for bundled roster). Mental-model
 SVG first, Cursor-dark high contrast, scarce color, CDNs for fonts/icons/Mermaid;
 `doc-to-html` description cross-points again. Validator / READMEs / marketplace
 at twelve toolkit skills. See
@@ -188,8 +269,7 @@ Still not re-shipped to the toolkit. See
 ### Cursor marketplace — use pluginRoot short sources
 
 Aligned `.cursor-plugin/marketplace.json` with Cursor's multi-plugin convention:
-`metadata.pluginRoot: "plugins"` plus short entry `source` names (`agent-workshop`,
-`toolkit`) instead of full `plugins/...` paths. Updated the native-plugin validator
+`metadata.pluginRoot: "plugins"` plus short entry `source` names (`toolkit`) instead of full `plugins/...` paths. Updated the native-plugin validator
 and adoption docs to match, and documented that Claude-compat loading exposes
 toolkit skills but not agents (agents need a Cursor-native install). Dropped
 explicit `skills`/`agents` path fields from the Cursor per-plugin manifests so
@@ -212,8 +292,7 @@ refinements) is parked at
 the origin doc keeps a draft banner, doc-to-html's cross-pointer is
 reverted, and the roster / READMEs / validator are back to eleven toolkit
 skills. The spec and decision records stay — the thinking is kept, the
-shipping is paused. `toolkit` `0.15.1` → `0.15.2`, `agent-workshop`
-`0.1.21` → `0.1.22` (bundled roster copy).
+shipping is paused. `toolkit` `0.15.1` → `0.15.2`.
 
 ## toolkit 0.15.0 / 0.15.1 — 2026-07-31
 
@@ -239,8 +318,7 @@ render a claim the commit's own decision doc makes but its diff doesn't
 back. The round caught one defect — a provenance stamp taken from the
 session's stale startup snapshot — fixed by requiring live `git rev-parse`
 at generation time, and recorded as the origin doc's first observed pitfall.
-`toolkit` `0.14.1` → `0.15.0` and `agent-workshop` `0.1.20` → `0.1.21`
-(bundled roster copy) across all manifests; validator skill lists widened
+`toolkit` `0.14.1` → `0.15.0` across all manifests; validator skill lists widened
 and passing; both READMEs at twelve skills. See
 [`docs/decisions/structure-view.md`](decisions/structure-view.md).
 
@@ -321,8 +399,7 @@ always-injected rules file is slimmed (outside this repo) to the hard
 invariants plus a pointer here. GREEN test: two fresh subagents given only
 the SKILL.md graded differentially — a mechanical migration routed to sol
 medium · direct dispatch; a silent-failure copy task escalated to fable-5.
-`toolkit` `0.13.2` → `0.14.0` and `agent-workshop` `0.1.19` → `0.1.20`
-(bundled roster copy) across all manifests; validator skill lists widened
+`toolkit` `0.13.2` → `0.14.0` across all manifests; validator skill lists widened
 and passing. See
 [`docs/decisions/route-work.md`](decisions/route-work.md).
 
@@ -386,9 +463,7 @@ gained dual `@playwright/test`/`playwright` resolution and a generic
 the sanitized harness ran end-to-end against a neutral static page (scenes,
 frames read back, webm + mp4, manifest). Canonical copy is
 `plugins/toolkit/skills/ui-demo-video/` only; origin doc, rosters, and READMEs
-updated. `toolkit` `0.12.4` → `0.13.0` across all four manifests;
-`agent-workshop` `0.1.18` → `0.1.19` (its bundled skills-roster README copy
-changed); the validator passes. See
+updated. `toolkit` `0.12.4` → `0.13.0` across all four manifests; the validator passes. See
 [`docs/decisions/ui-demo-video.md`](decisions/ui-demo-video.md).
 
 ## toolkit 0.12.4 — 2026-07-13
@@ -544,22 +619,20 @@ manifests; the validator passes. See
 
 ### Add a Cursor plugin marketplace surface + per-plugin LICENSEs
 
-Published the two plugins (`agent-workshop`, `toolkit`) through Cursor's
+Published the plugins through Cursor's
 plugin-marketplace convention, a third parallel host surface alongside Claude Code
 (`.claude-plugin/marketplace.json`) and Codex (`.agents/plugins/marketplace.json`).
-Added `.cursor-plugin/marketplace.json` (root, lists the two plugins by `source`
+Added `.cursor-plugin/marketplace.json` (root, lists them by `source`
 folder) and per-plugin `plugins/<name>/.cursor-plugin/plugin.json` manifests
-(versions mirroring the existing ones — `agent-workshop` `0.1.18`, `toolkit`
-`0.11.0` — with `skills`/`agents` directory pointers), following the
+(versions mirroring the existing ones, with `skills`/`agents` directory pointers), following the
 [`cursor/plugins`](https://github.com/cursor/plugins) format. Also added
-`plugins/agent-workshop/LICENSE` and `plugins/toolkit/LICENSE` (MIT). The
+`plugins/toolkit/LICENSE` (MIT). The
 `scripts/validate-native-plugin.ps1` validator gained Cursor checks — the marketplace
-must list exactly the two plugins with the right sources, and each Cursor manifest's
+must list the plugins with the right sources, and each Cursor manifest's
 version is held in lockstep with its Claude/Codex manifest (the same drift guard the
 other surfaces get). `docs/adoption/native-plugin.md` lists the new surface, and
 Cursor install instructions (the Team-Marketplace "Import from Repo" flow for
-custom repos, Teams/Enterprise admin) were added to the root, `toolkit`, and
-`agent-workshop` READMEs and `native-plugin.md`. No version bump — additive
+custom repos, Teams/Enterprise admin) were added to the root and `toolkit` READMEs and `native-plugin.md`. No version bump — additive
 packaging at the versions already in flight. See
 [`docs/decisions/cursor-plugin-surface.md`](decisions/cursor-plugin-surface.md).
 
@@ -574,16 +647,14 @@ prioritized action list plus the open questions. Its load-bearing design choice 
 **read, never reply** boundary: it must not reply to, resolve, react to, or comment
 on the PR unless the operator explicitly asks for that specific action — summarizing
 feedback and answering it are different acts with different stakes. Self-contained
-(`gh` only, no profile), so it ships **direct-use in the `toolkit` plugin**, not the
-onboarding set; it sits alongside `ci-watcher` as the two read-only "state of my PR"
+(`gh` only, no profile), so it ships **direct-use in the `toolkit` plugin**; it sits alongside `ci-watcher` as the two read-only "state of my PR"
 tools. See [`docs/decisions/get-pr-comments.md`](decisions/get-pr-comments.md).
 
 - Canonical `plugins/toolkit/skills/get-pr-comments/SKILL.md` (the only copy); origin
   doc `docs/skills/get-pr-comments.md`. Both toolkit-skills lists in
   `scripts/validate-native-plugin.ps1` widened to eight. `plugins/toolkit/README.md`,
   root `README.md`, the Codex toolkit manifest, the `docs/adoption/native-plugin.md`
-  Codex enumeration, and the skills roster updated. `toolkit` `0.10.0` → `0.11.0`,
-  `agent-workshop` `0.1.17` → `0.1.18`. The validator passes.
+  Codex enumeration, and the skills roster updated. `toolkit` `0.10.0` → `0.11.0`. The validator passes.
 
 ## toolkit 0.10.0 — 2026-06-29
 
@@ -595,8 +666,7 @@ check link — dispatch it (ideally in the background) instead of babysitting th
 checks tab. It's the toolkit's first **utility** agent (neither review nor
 governance), so the plugin's identity broadened to "review, governance, and
 CI-monitoring agents." Because it's self-contained (works in any repo with a GitHub
-PR + authenticated `gh`, no profile), it ships **direct-use in the `toolkit` plugin**
-and is not part of the onboarding adoption set. The spec was operator-provided in
+PR + authenticated `gh`, no profile), it ships **direct-use in the `toolkit` plugin**. The spec was operator-provided in
 another host's format and adapted: dropped `is_background` (moved to prose), mapped
 dropped `model: fast` for `model: inherit` (the scaffold never names models), and added `tools: Bash, Read` (read-only). See
 [`docs/decisions/ci-watcher.md`](decisions/ci-watcher.md).
@@ -606,7 +676,7 @@ dropped `model: fast` for `model: inherit` (the scaffold never names models), an
   list widened to six. `plugins/toolkit/README.md`, root `README.md`, and the agent
   roster updated (roster also fixed a decouple leftover — `code-quality-reviewer`'s
   Pack column now reads `toolkit`, not `review-core`). `toolkit` `0.9.0` → `0.10.0`
-  (new agent), `agent-workshop` `0.1.16` → `0.1.17` (bundled roster doc grew). The
+  (new agent). The
   validator passes.
 
 ## toolkit 0.9.0 — 2026-06-29
@@ -636,11 +706,9 @@ phrases). Because the content was supplied rather than designed here, the
 not a derivation. See [`docs/decisions/code-quality-review.md`](decisions/code-quality-review.md).
 
 - Canonical `.claude/skills/code-quality-review/SKILL.md` propagated byte-identical
-  to all five mirrors (`.codex`, `.gemini`, `toolkit`, both onboarding reference
-  roots); origin doc `docs/skills/code-quality-review.md` written and mirrored;
+  to its mirrors (`.codex`, `.gemini`, `toolkit`); origin doc `docs/skills/code-quality-review.md` written and mirrored;
   roster, root README, toolkit README, and the marketplace-doc Codex skill
-  enumeration updated. `toolkit` `0.8.4` → `0.9.0` (new skill = minor),
-  `agent-workshop` `0.1.15` → `0.1.16` (onboarding payload mirrors grew). Both
+  enumeration updated. `toolkit` `0.8.4` → `0.9.0` (new skill = minor). Both
   `$expectedSkills` arrays in `scripts/validate-native-plugin.ps1` widened; the
   validator passes.
 
@@ -666,116 +734,14 @@ Claude-format frontmatter with thin `.codex` / `.gemini` / `.opencode` wrappers)
 See [`docs/decisions/code-quality-reviewer.md`](decisions/code-quality-reviewer.md).
 
 - Canonical `.claude/agents/code-quality-reviewer.md` + host wrappers propagated
-  byte-identical to `plugins/toolkit/agents/` and both onboarding reference roots
-  (canonical → `references/agents/`, wrappers → `references/wrappers/<host>/`); origin
+  byte-identical to `plugins/toolkit/agents/`; origin
   doc `docs/agents/code-quality-reviewer.md` written and mirrored. `marketplace/catalog.json`
   gains the agent (role `review-only`, maturity `core`, pack `review-core`) and the
   `review-core` pack list grows; re-mirrored. Agent roster, root README, and toolkit
   README (`four` → `five` agents) updated. The toolkit-agents list in
   `scripts/validate-native-plugin.ps1` widened. Rides the same unreleased batch as the
-  skill — `toolkit` `0.9.0`, `agent-workshop` `0.1.16`, no further bump. The validator
+  skill — `toolkit` `0.9.0`, no further bump. The validator
   passes.
-
-## repo — 2026-06-29
-
-### Repo cleanup — drop the redundant root onboarding skill tree
-
-Removed `skills/agent-workshop-onboard/`, an 86-file near-clone of the real
-marketplace payload at `plugins/agent-workshop/skills/agent-workshop-onboard/`. It
-was authored first, then duplicated into the plugin payload; the marketplace was
-pointed at the plugin copy and the root copy was frozen as a "source copy" kept
-alive only by the validator. It is not the marketplace source (both marketplaces
-point at `./plugins/agent-workshop`), not discoverable by Claude in this repo
-(`.claude/skills/` doesn't carry it), and not part of the `.codex`/`.gemini`
-cross-host parity convention — so it was pure maintenance tax: every new skill/agent
-had to mirror its references into both onboarding trees. Going forward there is one
-onboarding reference tree, not two. See
-[`docs/decisions/remove-root-onboarding-skill-tree.md`](decisions/remove-root-onboarding-skill-tree.md).
-
-- Deleted the root tree; `scripts/validate-native-plugin.ps1` lost its root-tree
-  checks (the reference-parity and cataloged-agent checks now run against the single
-  `plugins/agent-workshop/.../references` payload) and its now-unused
-  `Get-RelativeFileList` helper. `docs/marketplace/native-plugin.md` dropped the
-  "source copy" paragraph (kept the slim-payload rationale) and was re-mirrored. A
-  stray Codex caveat line was trimmed from the `README.md` install block. **No version
-  change** — the installable plugin payloads are untouched. The validator passes. The
-  larger duplication layers (the committed payload `references/` tree;
-  `.codex`/`.gemini` skill mirrors) are noted in the decision doc as a later pass.
-
-### Decouple the two plugins; drop the universal `.claude/` master
-
-Reorganized the scaffold's source-of-truth from "everything is a canonical copy in
-`.claude/`, mirrored everywhere and validated against it" to **each plugin is
-self-contained and authoritative for its own content, with no forced matching
-between them.** This fixes two things at once: `.claude/` no longer misrepresents
-the repo (it now holds only the few pieces the scaffold runs on itself —
-`change-log`, `push`, `wiki-maintainer`, `vigil`), and the onboarding plugin stops
-bundling the direct-use, self-contained skills it never adapts (adopters install
-`toolkit` for those). Pieces sort into three buckets — **toolkit-only** (the 7
-self-contained skills + `code-quality-reviewer`), **both** (the reviewers
-`spec`/`pattern`/`test`/`vigil`, a copy in each plugin, free to diverge), and
-**onboarding-only** (the project-coupled agents + workflow skills). An earlier
-in-session attempt to scope the repo's active set via `.claude/settings.json` was
-reverted in favor of this structural fix. See
-[`docs/decisions/decouple-plugins-self-contained.md`](decisions/decouple-plugins-self-contained.md).
-
-- Host dirs trimmed to the used-4 across `.claude/`, `.codex/`, `.opencode/`;
-  **`.gemini/` deleted entirely** (still an *adoption* target via the bundle's
-  `wrappers/gemini/` templates, just not a repo host dir). Onboarding bundle trimmed
-  to the adopt-set (8 agents, 6 skills); `code-quality-reviewer` removed from
-  `marketplace/catalog.json`. `scripts/validate-native-plugin.ps1` **rewritten** to a
-  per-plugin model (toolkit ships its declared sets; the onboarding bundle is
-  self-consistent; the repo's local set matches its bundle templates) — the
-  `.claude/`-master parity logic and the unused `Get-RelativeFileList` helper are
-  gone. `CLAUDE.md`, `AGENTS.md`, the rosters,
-  `docs/marketplace/{README,native-plugin}.md`, root `README.md`, and the onboarding
-  `SKILL.md` updated to the new layout; the portable convention docs are unchanged.
-  `docs/setup.md` (the manual copy-by-hand guide) was **removed** — the guided
-  onboarding skill is the adoption path, and its mechanics had become fiddly
-  post-decouple; its references were cleaned up. **No version bump** — installable
-  payloads are unchanged (`toolkit` `0.9.0`, `agent-workshop` `0.1.16`). The
-  validator passes.
-
-### Drop the redundant root `.claude-plugin/plugin.json`
-
-A plugin **marketplace** repo needs only `.claude-plugin/marketplace.json` at the
-root plus a `plugin.json` inside each plugin (`plugins/<name>/.claude-plugin/`); a
-root-level plugin manifest is not part of that structure and no host reads it
-(`/plugin install` resolves through the marketplace's plugin entries and their
-`source` dirs). Ours was a leftover the validator kept byte-in-sync with the
-payload manifest. Removed it — `scripts/validate-native-plugin.ps1` now treats the
-agent-workshop **payload** manifest
-(`plugins/agent-workshop/.claude-plugin/plugin.json`) as the source of truth for the
-plugin's name/version, and the marketplace-entry and Codex-manifest version checks
-anchor on it. `.claude-plugin/` now holds only `marketplace.json` (the correct
-marketplace structure). No version change; the validator passes.
-
-### Fold the pack catalog into the onboarding bundle; drop top-level `marketplace/`
-
-`marketplace/catalog.json` was the editable master that the onboarding bundle
-mirrored at `references/catalog.json` — but the only consumer (the
-`agent-workshop-onboard` skill) reads the **bundle** copy, and the master doesn't
-even ship in the plugin payload. So it was redundant, and its top-level
-`marketplace/` folder was confusingly named (it is not a host marketplace; the host
-marketplaces are `.claude-plugin/marketplace.json` and `.agents/plugins/marketplace.json`).
-Removed the master and made `references/catalog.json` the canonical pack catalog (it
-already lived in the bundle, where it's consumed and shipped). The validator dropped
-the catalog-mirror check and now reads the cataloged-agent list from the bundle copy;
-`CLAUDE.md`, the rosters, and `docs/marketplace/{README,packs}.md` re-point at the
-bundle path. The top-level `marketplace/` folder is gone. No version change; the
-validator passes.
-
-### Rename `docs/marketplace/` → `docs/adoption/`
-
-The `docs/marketplace/` doc folder collided with the *host* plugin marketplaces
-(`.claude-plugin/marketplace.json`, `.agents/plugins/marketplace.json`) — it
-actually holds the operator-facing **adoption** docs (pack selection, profile
-slots, native onboarding plugin, host support). Renamed it (and its
-onboarding-bundle mirror) to `docs/adoption/`, retitled the index
-(`# Agent Marketplace` → `# Adoption`) and `packs.md` (`# Marketplace Packs` →
-`# Adoption Packs`), and re-pointed the `README.md` / `docs/agents/README.md`
-links. The validator's bundled-doc check now iterates `adoption`. The host
-marketplaces keep their (correct) names. No version change; the validator passes.
 
 ## toolkit 0.8.4 — 2026-06-24
 
@@ -798,10 +764,9 @@ was kept (`handoff-review`) to avoid churning ~46 references. See
 and its [implementation plan](decisions/handoff-review-verify-and-continue-implementation-plan.md).
 
 - Canonical `.claude/skills/handoff-review/SKILL.md` propagated byte-identical to
-  all five mirrors; origin doc `docs/skills/handoff-review.md` and the
-  `docs/skills/README.md` roster / composition updated and mirrored to both
-  reference roots; `plugins/toolkit/README.md` skill row updated. `toolkit`
-  `0.8.3` → `0.8.4`, `agent-workshop` `0.1.14` → `0.1.15` (patch).
+  its mirrors; origin doc `docs/skills/handoff-review.md` and the
+  `docs/skills/README.md` roster / composition updated and mirrored; `plugins/toolkit/README.md` skill row updated. `toolkit`
+  `0.8.3` → `0.8.4`.
   `scripts/validate-native-plugin.ps1` passes.
 
 ## toolkit 0.8.3 — 2026-06-19
@@ -828,10 +793,7 @@ ticket scheme, review bot, branch scopes, colleague names) and was deliberately
 **not** absorbed; rejected items are listed in the decision note. See
 [`docs/decisions/handoff-pr-follow-not-replace-template.md`](decisions/handoff-pr-follow-not-replace-template.md).
 
-- Canonical `.claude/skills/handoff-pr/SKILL.md` propagated byte-identical to all
-  five mirrors; origin doc `docs/skills/handoff-pr.md` updated and mirrored to both
-  reference roots. `toolkit` `0.8.2` → `0.8.3`, `agent-workshop` `0.1.13` →
-  `0.1.14` (patch; a new release step after the earlier batch already shipped).
+- Canonical `.claude/skills/handoff-pr/SKILL.md` propagated byte-identical to its mirrors; origin doc `docs/skills/handoff-pr.md` updated and mirrored. `toolkit` `0.8.2` → `0.8.3`.
   `scripts/validate-native-plugin.ps1` passes.
 
 ## toolkit 0.8.2 — 2026-06-19
@@ -867,11 +829,9 @@ unchanged. See [`docs/decisions/handoff-goal-goal-defense.md`](decisions/handoff
   delta were the observable wins. Full account in the decision note, including a
   wording refinement applied off the test (the integrity rule's "rename-away" now
   names the actual dodge and allows a legitimate repoint-to-a-seam fix).
-- Canonical `.claude/skills/handoff-goal/SKILL.md` propagated byte-identical to all
-  five mirrors (`.codex`, `.gemini`, `toolkit`, both onboarding reference roots);
+- Canonical `.claude/skills/handoff-goal/SKILL.md` propagated byte-identical to its mirrors (`.codex`, `.gemini`, `toolkit`);
   origin doc `docs/skills/handoff-goal.md` updated and mirrored to both reference
-  roots. `toolkit` `0.8.1` → `0.8.2` (rework of an existing skill = patch),
-  `agent-workshop` `0.1.12` → `0.1.13` (onboarding payload mirrors changed). No
+  roots. `toolkit` `0.8.1` → `0.8.2` (rework of an existing skill = patch). No
   skill added or removed; `scripts/validate-native-plugin.ps1` passes.
 
 ### claim-check — STOP when the premise's source can't be reached
@@ -890,9 +850,7 @@ precondition failure, not a verdict bucket. The premise-resolution fallback and 
 Rules now cross-reference it. The `description` is unchanged. See
 [`docs/decisions/claim-check-access-precondition.md`](decisions/claim-check-access-precondition.md).
 
-- Canonical `.claude/skills/claim-check/SKILL.md` propagated byte-identical to all
-  five mirrors; origin doc `docs/skills/claim-check.md` updated and mirrored to both
-  reference roots. Rides the same `toolkit` `0.8.2` / `agent-workshop` `0.1.13`
+- Canonical `.claude/skills/claim-check/SKILL.md` propagated byte-identical to its mirrors; origin doc `docs/skills/claim-check.md` updated and mirrored. Rides the same `toolkit` `0.8.2`
   bump as the handoff-goal rework above — no additional bump, both reworks ship in
   one batch. `scripts/validate-native-plugin.ps1` passes.
 
@@ -914,9 +872,7 @@ the opener fixes the gate that's actually red. The validation-provenance field a
 Rules carry it; the body stays tool-agnostic by discovery. See
 [`docs/decisions/handoff-pr-prepush-validation-gate.md`](decisions/handoff-pr-prepush-validation-gate.md).
 
-- Canonical `.claude/skills/handoff-pr/SKILL.md` propagated byte-identical to all
-  five mirrors; origin doc `docs/skills/handoff-pr.md` updated and mirrored to both
-  reference roots. Rides the same `toolkit` `0.8.2` / `agent-workshop` `0.1.13`
+- Canonical `.claude/skills/handoff-pr/SKILL.md` propagated byte-identical to its mirrors; origin doc `docs/skills/handoff-pr.md` updated and mirrored. Rides the same `toolkit` `0.8.2`
   batch bump — no additional bump. `scripts/validate-native-plugin.ps1` passes.
 
 ## toolkit 0.8.1 — 2026-06-18
@@ -939,11 +895,9 @@ into the public PR description. A rule keeps the body tooling-agnostic (no named
 bots, or AI assistants; no "generated by" footers). See
 [`docs/decisions/handoff-pr-template-derived-body.md`](decisions/handoff-pr-template-derived-body.md).
 
-- Canonical `.claude/skills/handoff-pr/SKILL.md` propagated byte-identical to all five
-  mirrors (`.codex`, `.gemini`, `toolkit`, both onboarding reference roots); origin doc
+- Canonical `.claude/skills/handoff-pr/SKILL.md` propagated byte-identical to its mirrors (`.codex`, `.gemini`, `toolkit`); origin doc
   `docs/skills/handoff-pr.md` and the `docs/skills/README.md` one-liner updated and
-  mirrored. `toolkit` `0.8.0` → `0.8.1` (rework of an existing skill = patch),
-  `agent-workshop` `0.1.11` → `0.1.12` (onboarding payload mirrors changed). No skill
+  mirrored. `toolkit` `0.8.0` → `0.8.1` (rework of an existing skill = patch). No skill
   added or removed; `scripts/validate-native-plugin.ps1` passes.
 
 ## toolkit 0.8.0 — 2026-06-17
@@ -966,12 +920,10 @@ per-finding corroboration → synthesize, with inline `SLICE_SCHEMA` /
 `VERDICT_SCHEMA`). System-agnostic: no product, ticket, path, or harness names in
 the skill body. See [`docs/decisions/qa-sweep.md`](decisions/qa-sweep.md).
 
-- Canonical `.claude/skills/qa-sweep/SKILL.md` propagated byte-identical to all
-  five mirrors (`.codex`, `.gemini`, `toolkit`, both onboarding reference roots);
+- Canonical `.claude/skills/qa-sweep/SKILL.md` propagated byte-identical to its mirrors (`.codex`, `.gemini`, `toolkit`);
   origin doc `docs/skills/qa-sweep.md` written and mirrored; roster, root README,
   toolkit README, and the marketplace-doc Codex skill enumerations updated.
-  `toolkit` `0.7.1` → `0.8.0` (new skill = minor), `agent-workshop` `0.1.10` →
-  `0.1.11` (onboarding payload mirrors grew). Both `$expectedSkills` arrays in
+  `toolkit` `0.7.1` → `0.8.0` (new skill = minor). Both `$expectedSkills` arrays in
   `scripts/validate-native-plugin.ps1` widened; the validator passes.
 
 ## toolkit 0.7.1 — 2026-06-17
@@ -979,7 +931,7 @@ the skill body. See [`docs/decisions/qa-sweep.md`](decisions/qa-sweep.md).
 ### doc-to-html — house-style-first, deeper findings cards, render-bug fixes
 
 Reworked `doc-to-html` from a second round of lived-in feedback (`toolkit` `0.7.0`
-→ `0.7.1`, `agent-workshop` `0.1.9` → `0.1.10`). The biggest change is a new
+→ `0.7.1`). The biggest change is a new
 **Step 0 — match the repo's house style first**: glob `tmp/`/`docs/` for an
 existing standalone `.html` report and match its `<style>` and component
 vocabulary; the skill's own design system is relabelled **fallback-only** and its
@@ -996,8 +948,8 @@ a server-side fetch). The skill stays system-agnostic — all examples use gener
 placeholders, no real product/ticket/path names. See the amendment in
 [`docs/decisions/doc-to-html.md`](decisions/doc-to-html.md).
 
-- Skill body propagated byte-identical to all five mirrors
-  (`.codex`, `.gemini`, `toolkit`, both onboarding reference roots); origin doc
+- Skill body propagated byte-identical to its mirrors
+  (`.codex`, `.gemini`, `toolkit`); origin doc
   `docs/skills/doc-to-html.md` updated and re-mirrored.
   `scripts/validate-native-plugin.ps1` passes.
 
@@ -1008,12 +960,10 @@ placeholders, no real product/ticket/path names. See the amendment in
 The direct-use plugin began as four review/governance agents but has since
 accumulated five direct-use skills (only `handoff-review` is review-adjacent), so
 the name had outgrown its contents. Renamed `reviewers` → `toolkit` to match its
-real identity — direct-use, no-setup, runs in any repo — the contrast to the
-`agent-workshop` onboarding plugin that adopts the whole scaffold. Scope is
+real identity — direct-use, no-setup, runs in any repo. Scope is
 unchanged: same four agents, same five skills. Agents now resolve as
 `toolkit:<agent>`; install via `toolkit@agent-workshop`. Version `0.6.3` →
-`0.7.0`; `agent-workshop` `0.1.8` → `0.1.9` (its onboarding payload mirrors the
-updated marketplace docs). The switching cost was ~zero (operator's own machines
+`0.7.0`. The switching cost was ~zero (operator's own machines
 only). See [`docs/decisions/rename-reviewers-to-toolkit.md`](decisions/rename-reviewers-to-toolkit.md).
 
 - `git mv plugins/reviewers plugins/toolkit` (history preserved); both manifests,
@@ -1027,7 +977,7 @@ only). See [`docs/decisions/rename-reviewers-to-toolkit.md`](decisions/rename-re
 ### claim-check — output trimmed to three parts
 
 Restructured the report after a real run was hard to read (`reviewers` `0.6.2` →
-`0.6.3`, `agent-workshop` `0.1.7` → `0.1.8`). The cause was template slots the
+`0.6.3`). The cause was template slots the
 model dutifully filled, so the fix deletes them: the report is now **three parts
 and nothing else** — Verdict (+ how-verified), Prior/parallel work, Readiness —
 written as **plain text, not a blockquote**. The per-claim verdict table is gone
@@ -1045,8 +995,7 @@ explicit "Do not" list in the skill pins the four cuts. See the amendment in
 Addressed the central failure mode reported from real runs: two sessions
 concluded too early with confident verdicts that only got corrected after the
 operator pushed back. Since depth is the skill's whole purpose, `claim-check`
-gains a grounding gate (`reviewers` `0.6.1` → `0.6.2`, `agent-workshop` `0.1.6` →
-`0.1.7`). A new *Grounding a verdict* section defines an **evidence ladder** (ran
+gains a grounding gate (`reviewers` `0.6.1` → `0.6.2`). A new *Grounding a verdict* section defines an **evidence ladder** (ran
 a repro / read the source at the top; subagent summary and inference at the
 bottom): a `confirmed`/`refuted` verdict is earned only from the top rungs, a
 verdict is only as strong as its weakest load-bearing claim, and a **contest
@@ -1057,7 +1006,7 @@ deep search, required to name the wall and the breaching input, and explicitly
 gated so it cannot become a lazy escape from digging. See the amendment in
 [`docs/decisions/claim-check.md`](decisions/claim-check.md).
 
-- Skill body propagated to all six mirrors (single shared hash); origin doc
+- Skill body propagated to its mirrors (single shared hash); origin doc
   updated and re-mirrored; `scripts/validate-native-plugin.ps1` passes.
 
 ## reviewers 0.6.1 — 2026-06-16
@@ -1065,8 +1014,7 @@ gated so it cannot become a lazy escape from digging. See the amendment in
 ### claim-check — refinements from first runs
 
 Revised `claim-check` from two independent model runs on real tickets plus
-operator review (`reviewers` `0.6.0` → `0.6.1`, `agent-workshop` `0.1.5` →
-`0.1.6`). The output is now **verdict-first** (verdict + how-verified and
+operator review (`reviewers` `0.6.0` → `0.6.1`). The output is now **verdict-first** (verdict + how-verified and
 readiness lead; `Source` moves to the bottom) and reports per-claim evidence
 **lopsidedly** — settled claims collapse, only contested ones get space, and a
 uniform verdict needs no claim list. Two new investigation moves are explicit: a
@@ -1080,7 +1028,7 @@ claim's blast radius, and `mis-scoped` gets a corrected-framing slot.
   the search, not implementation. This revises the original terminal-state
   decision for code claims specifically — see the amendment in
   [`docs/decisions/claim-check.md`](decisions/claim-check.md).
-- Skill body propagated to all six mirrors (single shared hash); origin doc
+- Skill body propagated to its mirrors (single shared hash); origin doc
   updated and re-mirrored; `scripts/validate-native-plugin.ps1` passes.
 
 ## reviewers 0.6.0 — 2026-06-15
@@ -1101,18 +1049,16 @@ with evidence, plus a readiness dossier or exactly what is missing. See
 [`docs/decisions/claim-check.md`](decisions/claim-check.md) and the origin doc
 [`docs/skills/claim-check.md`](skills/claim-check.md).
 
-- Byte-identical mirrors in `.codex/` and `.gemini/` plus both onboarding
-  reference roots; the skills roster is now eleven skills and both READMEs name
+- Byte-identical mirrors in `.codex/` and `.gemini/`; the skills roster is now eleven skills and both READMEs name
   it. Shipped as an active `reviewers` plugin skill (`0.5.0` → `0.6.0`): payload
   copy, validator pin widened to the five skills, both reviewers manifests, the
   Claude marketplace entry, plugin README, root README, and the marketplace docs
-  updated. The onboarding payload's mirrored references changed too, so
-  `agent-workshop` bumps `0.1.4` → `0.1.5`. `scripts/validate-native-plugin.ps1`
+  updated. `scripts/validate-native-plugin.ps1`
   passes.
 - Refined the prior-work scan (step 3): git history (commits, merged PRs) is
   always searched; sibling/duplicate tickets are searched only when the tracker
   is queryable, and the skill must say the backlog was not swept when it is not
-  reachable — rather than implying it was. Propagated to all six mirrors.
+  reachable — rather than implying it was. Propagated to its mirrors.
 
 ## reviewers 0.5.0 — 2026-06-11
 
@@ -1131,18 +1077,13 @@ structures is embedded in the skill. See
 [`docs/decisions/doc-to-html.md`](decisions/doc-to-html.md) and the origin doc
 [`docs/skills/doc-to-html.md`](skills/doc-to-html.md).
 
-- Byte-identical mirrors in `.codex/` and `.gemini/` plus both onboarding
-  reference roots; the skills roster is now ten skills and the README skills
-  line names it. The reference files change the onboarding plugin payload
-  served by both the Claude and Codex marketplaces, so `agent-workshop` bumps
-  `0.1.2` → `0.1.3` (both payload manifests, root manifest, Claude marketplace
-  entry). `scripts/validate-native-plugin.ps1` passes.
+- Byte-identical mirrors in `.codex/` and `.gemini/`; the skills roster is now ten skills and the README skills
+  line names it. `scripts/validate-native-plugin.ps1` passes.
 - Shipped the same day as an active `reviewers` plugin skill (`0.4.0` →
   `0.5.0`) so already-installed instances update in place: payload copy,
   validator pin widened to the four skills, both reviewers manifests, the
   Claude marketplace entry, plugin README, root README, and marketplace docs
-  updated (the onboarding payload's mirrored marketplace docs changed too, so
-  `agent-workshop` is `0.1.4`). See the amendment in
+  updated. See the amendment in
   [`docs/decisions/doc-to-html.md`](decisions/doc-to-html.md).
 - GREEN-tested per the writing-skills discipline: a fresh agent given only the
   skill applied the one-knob rule, the renumbering procedure (ids,
@@ -1169,24 +1110,16 @@ See [`docs/decisions/handoff-goal.md`](decisions/handoff-goal.md).
 
 - Validator now requires the `reviewers` payload to expose exactly
   `handoff-goal`, `handoff-pr`, and `handoff-review`, each byte-identical to
-  canonical; mirrors landed in `.codex/`, `.gemini/`, the plugin payload, and
-  both onboarding reference roots; origin doc added and the skills roster is
+  canonical; mirrors landed in `.codex/`, `.gemini/`, and the plugin payload; origin doc added and the skills roster is
   now nine skills.
 - Authored test-first per the writing-skills discipline: a baseline (no-skill)
   run produced a doc with no compaction-survival mechanics and an invented
   user-mandated rule; with the skill, producer and zero-context consumer runs
   passed both checks.
 
-## agent-workshop 0.1.2 — 2026-06-08
+## repo — 2026-06-08
 
-### Codex marketplace install path
-
-Hardened the Codex onboarding plugin metadata and documented the separate-machine
-install flow. The `agent-workshop` onboarding plugin is now `0.1.2`, its Codex
-manifest includes starter prompts for Codex plugin presentation, and the README,
-native plugin doc, and plugin README show the Codex marketplace commands:
-`codex plugin marketplace add giostriquer/agent-workshop --ref main` followed by
-`codex plugin add agent-workshop@agent-workshop`.
+### reviewers on the Codex marketplace
 
 Added `reviewers` to the Codex marketplace with a Codex manifest on the existing
 Claude Code reviewers payload. It installs from the same marketplace and exposes
@@ -1213,7 +1146,7 @@ task from the ticket + diff, not from the implementing session's context. See
   exactly `handoff-pr` and `handoff-review`, each byte-identical to canonical —
   reversing the earlier "reviewers ships no skills" assertion.
 - Canonical skills live in `.claude/skills/`, mirrored byte-identical to `.codex/`,
-  `.gemini/`, the `reviewers` payload, and the onboarding reference trees; origin docs
+  `.gemini/`, the `reviewers` payload; origin docs
   added to `docs/skills/` and listed in the skills roster (now eight skills).
 
 ## reviewers 0.2.0 — 2026-06-05
@@ -1228,7 +1161,7 @@ comments that carry rationale, warnings, public-API intent, external references,
 legal headers, and `TODO`/`FIXME` markers. Unlike project-specific conventions it is
 reported as a finding even when undocumented; it defers to project-documented comment
 conventions when they exist. Folded into the spec, origin doc, and catalog note, and
-re-synced across the `reviewers` payload and the onboarding reference mirrors. See
+re-synced across the `reviewers` payload. See
 [`docs/decisions/pattern-reviewer-comment-noise.md`](decisions/pattern-reviewer-comment-noise.md).
 Bumped the `reviewers` plugin to `0.2.0` to ship the new capability.
 
@@ -1240,8 +1173,7 @@ Added a second Claude Code marketplace plugin, `reviewers`, for
 operators who want to use agents directly without onboarding the scaffold into a
 project. It ships four curated standalone-capable agents (`spec-reviewer`,
 `test-quality-reviewer`, `pattern-reviewer`, `vigil`) as active plugin agents and
-contains no skills — the `agent-workshop-onboard` skill stays exclusive to the
-bootstrapper plugin. This narrowly reverses the "no global scaffold agents"
+contains no skills. This narrowly reverses the "no global scaffold agents"
 non-goal for a bounded, curated subset; see
 [`docs/decisions/agent-workshop-direct-use-agents-plugin.md`](decisions/agent-workshop-direct-use-agents-plugin.md).
 
@@ -1249,7 +1181,7 @@ non-goal for a bounded, curated subset; see
   repo with no domain layout it discovers convention docs under `docs/` or infers
   conventions from sibling files, labelling findings lower-confidence rather than
   emitting a blanket coverage gap. Folded into the canonical spec, its origin doc,
-  and the catalog note (kept byte-identical across the onboarding reference mirrors).
+  and the catalog note.
 - The Claude marketplace now lists two plugins; `scripts/validate-native-plugin.ps1`
   validates the two-plugin marketplace and asserts the new payload has no skills and
   exactly four agents byte-identical to `.claude/agents/`.
@@ -1259,28 +1191,6 @@ non-goal for a bounded, curated subset; see
   curated plugin never points at agents absent from it and the canonical specs read
   portably in any context.
 - Claude Code only this slice; Codex/Gemini/OpenCode delivery deferred.
-
-## agent-workshop 0.1.1 — 2026-05-24
-
-### Slim native plugin payload
-
-Corrected native marketplace packaging so both Claude Code and Codex entries use
-the slim `plugins/agent-workshop/` payload instead of shipping the repository
-root. The payload exposes only `agent-workshop-onboard`; scaffold agents and
-skills remain nested onboarding references until an approved plan copies them
-into a target repo. Reference skill templates now avoid nested `SKILL.md`
-filenames so plugin hosts do not discover them as active skills. Plugin metadata
-is bumped to `0.1.1` so hosts can install a fresh payload instead of reusing the
-old `0.1.0` cache.
-
-## agent-workshop 0.1.0 — 2026-05-23
-
-### Native onboarding plugin
-
-Added Claude Code and Codex marketplace packaging for a single guided
-`agent-workshop-onboard` skill. The plugin keeps scaffold agents as bundled
-references, defaults to read-only `mode: plan`, gates writes behind approved
-`mode: apply`, and includes a validator for manifest shape and reference parity.
 
 ## repo — 2026-05-23
 

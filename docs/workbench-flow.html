@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>workbench — the flow, canonical</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@0.469.0"></script>
+<style>
+:root{
+  --bg-gradient:radial-gradient(circle at 50% 0%,rgba(56,189,248,.08),transparent 35rem),
+                linear-gradient(180deg,#020408 0%,#050811 100%);
+  --bg:#020408;
+  --surface:rgba(10,15,26,.85);
+  --raised:rgba(0,0,0,.45);
+  --ink:#f1f5f9; --soft:#cbd5e1; --muted:#94a3b8;
+  --line:rgba(255,255,255,.07); --line-strong:rgba(255,255,255,.12);
+  --accent:#38bdf8; --accent-wash:rgba(14,165,233,.16);
+  --ok:#34d399; --ok-wash:rgba(6,78,59,.4);
+  --no:#fb7185; --no-wash:rgba(136,19,55,.4);
+  --sans:"Inter",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  --radius:16px; --wire:#94a3b8;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg-gradient);background-color:var(--bg);color:var(--ink);font:16px/1.55 var(--sans);min-height:100vh}
+.wrap{max-width:1160px;margin:0 auto;padding:28px 20px 64px}
+.glass-card{background:rgba(10,15,26,.75);border:1px solid rgba(255,255,255,.07);box-shadow:0 20px 50px rgba(0,0,0,.7);backdrop-filter:blur(20px)}
+code{font-family:var(--mono);font-size:.86em;background:rgba(10,15,26,.9);border:1px solid var(--line-strong);border-radius:6px;padding:.08em .4em;color:#7dd3fc;overflow-wrap:anywhere;word-break:break-word}
+
+/* toc */
+.toc{position:sticky;top:12px;z-index:30;display:flex;gap:8px;flex-wrap:wrap;padding:8px 10px;border-radius:9999px;margin-bottom:20px}
+.toc a{font:600 12px/1 var(--mono);color:var(--soft);text-decoration:none;padding:8px 14px;border-radius:9999px;border:1px solid transparent}
+.toc a:hover{color:#7dd3fc;border-color:rgba(56,189,248,.3)}
+.toc .brand{color:#38bdf8;border:1px solid rgba(56,189,248,.3);background:rgba(56,189,248,.08)}
+
+/* hero */
+.hero{padding:28px;border-radius:24px;margin-bottom:26px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font:600 12px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:#34d399;padding:6px 12px;border-radius:999px;background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.3)}
+.eyebrow svg{width:14px;height:14px}
+.hero h1{font:800 40px/1.1 var(--sans);letter-spacing:-.03em;margin:12px 0;color:#f8fafc}
+.lede{max-width:74ch;color:var(--soft);margin:0 0 18px}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin:0}
+.fact{background:rgba(0,0,0,.55);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.fact dt{font:700 11px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
+.fact dd{margin:0;color:var(--ink);font-size:14px}
+
+/* sections */
+section{margin:34px 0}
+.sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:6px}
+.sec-num{font:700 13px/1 var(--mono);color:#38bdf8}
+h2{font:700 24px/1.2 var(--sans);letter-spacing:-.02em;margin:0;color:#f8fafc}
+.sec-q{color:var(--muted);font-size:14px;margin:2px 0 14px}
+
+/* svg stage */
+.stage{border-radius:20px;padding:18px;overflow-x:auto}
+.arch-svg{display:block;min-width:1000px;width:100%;height:auto}
+.arch-svg .band{fill:rgba(0,0,0,.45);stroke:rgba(255,255,255,.07)}
+.arch-svg .box{fill:#050811;stroke:rgba(255,255,255,.2);stroke-width:1.25}
+.arch-svg .box-emph{fill:rgba(14,165,233,.22);stroke:#38bdf8;stroke-width:1.75}
+.arch-svg .box-ext{fill:rgba(0,0,0,.55);stroke:#94a3b8;stroke-dasharray:5 4}
+.arch-svg .title{fill:#f1f5f9;font:700 15px var(--sans)}
+.arch-svg .sub{fill:#94a3b8;font:500 11px var(--mono)}
+.arch-svg .lane-label{fill:#94a3b8;font:600 11px var(--mono);letter-spacing:.12em}
+.arch-svg .door{fill:#64748b;font:600 10.5px var(--mono)}
+.arch-svg .wire{stroke:#94a3b8;stroke-width:1.75;fill:none}
+.arch-svg .wire-accent{stroke:#38bdf8;stroke-width:2.25;fill:none}
+.arch-svg .wire-dash{stroke:#94a3b8;stroke-width:1.5;fill:none;stroke-dasharray:5 4}
+.arch-svg .wire-label{fill:#cbd5e1;font:600 11px var(--mono)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;padding:0 4px}
+.legend span{display:inline-flex;align-items:center;gap:7px;font:500 12px var(--mono);color:var(--muted)}
+.key{display:inline-block;width:22px;height:13px;border-radius:4px}
+.key-gate{background:rgba(14,165,233,.22);border:1.5px solid #38bdf8}
+.key-stage{background:#050811;border:1px solid rgba(255,255,255,.25)}
+.key-ext{background:rgba(0,0,0,.55);border:1px dashed #94a3b8}
+.key-wire{width:26px;height:0;border-top:2px solid #38bdf8;border-radius:0}
+.key-dash{width:26px;height:0;border-top:2px dashed #94a3b8;border-radius:0}
+
+/* layers + module cards */
+.layer{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px 18px;margin-bottom:12px}
+.layer-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:12px}
+.layer-head h3{font:700 12px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:#e2e8f0;margin:0}
+.layer-head .hint{font:500 11px var(--mono);color:var(--muted)}
+.mods{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+.mod{background:var(--raised);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.mod h4{font:700 14.5px/1.25 var(--sans);margin:0 0 3px;color:var(--ink)}
+.mod .path{font:500 12px/1.3 var(--mono);color:var(--muted);overflow-wrap:anywhere;word-break:break-word}
+.mod .cap{margin:7px 0 0;font-size:13px;color:var(--soft);overflow-wrap:anywhere}
+
+/* rules */
+.rules{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:10px}
+.rule{display:flex;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.rule.no{border-left:3px solid var(--no);background:var(--no-wash);border-color:rgba(244,63,94,.28)}
+.rule .mark{font:700 14px/1 var(--mono)}
+.rule.no .mark{color:var(--no)}
+.rule .body strong{font-size:14px}
+.rule .body p{margin:4px 0 0;font-size:13px;color:var(--soft)}
+
+/* ledger */
+.ledger{width:100%;border-collapse:collapse;font-size:14px}
+.ledger-wrap{border-radius:16px;padding:6px 14px;overflow-x:auto}
+.ledger td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--soft)}
+.ledger tr:last-child td{border-bottom:none}
+.ledger .q{font:700 12px var(--mono);color:#38bdf8;white-space:nowrap}
+
+/* provenance */
+.prov{margin-top:40px;border-top:1px solid var(--line);padding-top:16px;font:500 12.5px/1.7 var(--mono);color:var(--muted)}
+.prov code{color:#7dd3fc}
+@media print{
+  body{background:#fff;color:#000}
+  .toc{display:none}
+  .glass-card,.layer,.rule,.stage{box-shadow:none;border-color:#ccc;background:#fff}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<nav class="toc glass-card">
+  <a class="brand" href="#model">method · flow</a>
+  <a href="#model">Mental model</a>
+  <a href="#pieces">Pieces</a>
+  <a href="#removed">Removed</a>
+  <a href="#ledger">Decisions</a>
+</nav>
+
+<header class="hero glass-card">
+  <p class="eyebrow"><i data-lucide="compass"></i> canonical · workbench system</p>
+  <h1>The workbench flow</h1>
+  <p class="lede">How work enters, gets scoped, gets implemented, and lands under the <strong>method</strong> system —
+    the curated replacement for the superpowers pipeline. Filled sky boxes are <strong>user gates</strong>: every one is a
+    moment where the user, not the system, decides. Execution agency inside implementation belongs to the user and the
+    harness; method only hands the implementer the <code>plan</code> or <code>goal</code> when one exists.</p>
+  <dl class="facts">
+    <div class="fact"><dt>Skills</dt><dd>6 ported + <code>audit</code> + <code>workbench-drift</code></dd></div>
+    <div class="fact"><dt>Decisions</dt><dd>Q1–Q11, operator-settled</dd></div>
+    <div class="fact"><dt>Upstream pin</dt><dd><code>44c9b2d</code> (obra/superpowers)</dd></div>
+    <div class="fact"><dt>Derived at</dt><dd><code>8e9a2e8</code> + workbench landing</dd></div>
+  </dl>
+</header>
+
+<section id="model">
+  <div class="sec-head"><span class="sec-num">01</span><h2>Mental model</h2></div>
+  <p class="sec-q">How do I hold the whole flow in my head?</p>
+  <div class="stage glass-card">
+  <svg class="arch-svg" viewBox="0 0 1120 790" role="img" aria-label="The workbench flow: entry through two optional doors (audit and idea), scoping through brainstorm and a user route pick, implementation with agency left to the user and harness, and landing through an outline gate. User gates are highlighted; the feedback loop re-enters implementation.">
+    <defs>
+      <marker id="mA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#38bdf8"/></marker>
+      <marker id="mN" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker>
+    </defs>
+
+    <!-- ═ ENTRY band ═ -->
+    <rect class="band" x="24" y="36" width="1072" height="168" rx="14"/>
+    <text class="lane-label" x="40" y="60">ENTRY — TWO OPTIONAL DOORS</text>
+
+    <text class="door" x="40" y="100">door A</text>
+    <g>
+      <rect class="box-emph" x="100" y="72" width="210" height="46" rx="9"/>
+      <text class="title" text-anchor="middle" x="205" y="92">Size the workload</text>
+      <text class="sub" text-anchor="middle" x="205" y="108">quick · deep · sweep</text>
+    </g>
+    <path class="wire" d="M310 95 L365 95" marker-end="url(#mN)"/>
+    <g>
+      <rect class="box" x="370" y="72" width="190" height="46" rx="9"/>
+      <text class="title" text-anchor="middle" x="465" y="92">Audit runs</text>
+      <text class="sub" text-anchor="middle" x="465" y="108">claim-check · qa-sweep</text>
+    </g>
+    <path class="wire" d="M560 95 L615 95" marker-end="url(#mN)"/>
+    <g>
+      <rect class="box-emph" x="620" y="72" width="210" height="46" rx="9"/>
+      <text class="title" text-anchor="middle" x="725" y="92">Confirm the flags</text>
+      <text class="sub" text-anchor="middle" x="725" y="108">only when flags exist</text>
+    </g>
+    <path class="wire" d="M830 95 L885 95" marker-end="url(#mN)"/>
+    <g>
+      <rect class="box-ext" x="890" y="72" width="180" height="46" rx="9"/>
+      <text class="title" text-anchor="middle" x="980" y="92">Report · done</text>
+      <text class="sub" text-anchor="middle" x="980" y="108">audit was the ask</text>
+    </g>
+
+    <text class="door" x="40" y="164">door B</text>
+    <g>
+      <rect class="box" x="100" y="136" width="210" height="46" rx="9"/>
+      <text class="title" text-anchor="middle" x="205" y="156">Ground the idea</text>
+      <text class="sub" text-anchor="middle" x="205" y="172">codebase answers most</text>
+    </g>
+
+    <!-- ═ SCOPING band ═ -->
+    <rect class="band" x="24" y="220" width="1072" height="178" rx="14"/>
+    <text class="lane-label" x="40" y="244">SCOPING</text>
+
+    <g>
+      <rect class="box" x="100" y="256" width="230" height="50" rx="9"/>
+      <text class="title" text-anchor="middle" x="215" y="277">Brainstorm</text>
+      <text class="sub" text-anchor="middle" x="215" y="293">always: feature · refactor</text>
+    </g>
+    <g>
+      <rect class="box-emph" x="430" y="256" width="210" height="50" rx="9"/>
+      <text class="title" text-anchor="middle" x="535" y="277">Pick the route</text>
+      <text class="sub" text-anchor="middle" x="535" y="293">the user's call</text>
+    </g>
+    <g>
+      <rect class="box" x="100" y="330" width="180" height="50" rx="9"/>
+      <text class="title" text-anchor="middle" x="190" y="351">Rawdog</text>
+      <text class="sub" text-anchor="middle" x="190" y="367">from session context</text>
+    </g>
+    <g>
+      <rect class="box" x="340" y="330" width="250" height="50" rx="9"/>
+      <text class="title" text-anchor="middle" x="465" y="351">Plan</text>
+      <text class="sub" text-anchor="middle" x="465" y="367">user's stack → harness fallback</text>
+    </g>
+    <g>
+      <rect class="box" x="650" y="330" width="240" height="50" rx="9"/>
+      <text class="title" text-anchor="middle" x="770" y="351">Handoff-goal ★</text>
+      <text class="sub" text-anchor="middle" x="770" y="367">fresh session pursues</text>
+    </g>
+
+    <path class="wire" d="M205 182 L212 252" marker-end="url(#mN)"/>
+    <text class="wire-label" x="228" y="222">what code can't answer</text>
+    <path class="wire-dash" d="M700 118 C 620 190, 420 220, 335 264" marker-end="url(#mN)"/>
+    <text class="wire-label" x="428" y="200">feature / refactor</text>
+    <path class="wire-dash" d="M760 118 C 720 190, 620 220, 580 252" marker-end="url(#mN)"/>
+    <text class="wire-label" x="648" y="212">confirmed fix</text>
+    <path class="wire-accent" d="M330 281 L425 281" marker-end="url(#mA)"/>
+    <path class="wire-accent" d="M480 306 C 420 318, 280 318, 215 328" marker-end="url(#mA)"/>
+    <path class="wire-accent" d="M525 306 L490 326" marker-end="url(#mA)"/>
+    <path class="wire-accent" d="M590 306 C 650 318, 700 318, 740 328" marker-end="url(#mA)"/>
+
+    <!-- ═ IMPLEMENTATION band ═ -->
+    <rect class="band" x="24" y="414" width="1072" height="186" rx="14"/>
+    <text class="lane-label" x="40" y="438">IMPLEMENTATION — AGENCY: USER / HARNESS</text>
+
+    <g>
+      <rect class="box" x="100" y="450" width="240" height="56" rx="9"/>
+      <text class="title" text-anchor="middle" x="220" y="470">Implement</text>
+      <text class="sub" text-anchor="middle" x="220" y="485">direct or agentic — your pick;</text>
+      <text class="sub" text-anchor="middle" x="220" y="498">plan / goal handed if present</text>
+    </g>
+    <g>
+      <rect class="box-ext" x="60" y="530" width="200" height="42" rx="9"/>
+      <text class="title" text-anchor="middle" x="160" y="548">TDD</text>
+      <text class="sub" text-anchor="middle" x="160" y="563">default w/ harness</text>
+    </g>
+    <g>
+      <rect class="box-ext" x="300" y="530" width="230" height="42" rx="9"/>
+      <text class="title" text-anchor="middle" x="415" y="548">Systematic debugging</text>
+      <text class="sub" text-anchor="middle" x="415" y="563">on bugs, before fixes</text>
+    </g>
+    <path class="wire-dash" d="M160 530 L185 508" marker-end="url(#mN)"/>
+    <path class="wire-dash" d="M390 530 L320 508" marker-end="url(#mN)"/>
+    <g>
+      <rect class="box" x="430" y="450" width="200" height="56" rx="9"/>
+      <text class="title" text-anchor="middle" x="530" y="472">Test quality</text>
+      <text class="sub" text-anchor="middle" x="530" y="490">test-quality-reviewer</text>
+    </g>
+    <g>
+      <rect class="box" x="740" y="450" width="250" height="56" rx="9"/>
+      <text class="title" text-anchor="middle" x="865" y="472">Adversarial review ×1</text>
+      <text class="sub" text-anchor="middle" x="865" y="490">code-quality-review + trim</text>
+    </g>
+
+    <path class="wire-accent" d="M190 380 L200 446" marker-end="url(#mA)"/>
+    <path class="wire-accent" d="M465 380 C 440 410, 300 420, 255 446" marker-end="url(#mA)"/>
+    <path class="wire-dash" d="M770 380 C 720 410, 400 420, 320 446" marker-end="url(#mN)"/>
+    <text class="wire-label" x="560" y="420">same flow, autonomously</text>
+    <path class="wire-accent" d="M340 478 L425 478" marker-end="url(#mA)"/>
+    <path class="wire-accent" d="M630 478 L735 478" marker-end="url(#mA)"/>
+    <text class="wire-label" text-anchor="middle" x="683" y="524">ready = verified</text>
+    <text class="wire-label" text-anchor="middle" x="683" y="538">v-b-c · empirical-proof</text>
+
+    <!-- ═ LANDING band ═ -->
+    <rect class="band" x="24" y="616" width="1072" height="150" rx="14"/>
+    <text class="lane-label" x="40" y="640">LANDING</text>
+
+    <g>
+      <rect class="box-ext" x="100" y="652" width="250" height="56" rx="9"/>
+      <text class="title" text-anchor="middle" x="225" y="672">Feedback loop</text>
+      <text class="sub" text-anchor="middle" x="225" y="687">get-pr-comments</text>
+      <text class="sub" text-anchor="middle" x="225" y="700">receiving-code-review</text>
+    </g>
+    <g>
+      <rect class="box-emph" x="430" y="652" width="240" height="56" rx="9"/>
+      <text class="title" text-anchor="middle" x="550" y="672">PR or merge?</text>
+      <text class="sub" text-anchor="middle" x="550" y="687">session outlines first</text>
+      <text class="sub" text-anchor="middle" x="550" y="700">rules may pre-authorize</text>
+    </g>
+    <g>
+      <rect class="box" x="740" y="652" width="250" height="56" rx="9"/>
+      <text class="title" text-anchor="middle" x="865" y="672">Land</text>
+      <text class="sub" text-anchor="middle" x="865" y="687">file-pr · merge · push</text>
+      <text class="sub" text-anchor="middle" x="865" y="700">fix-ci tends the checks</text>
+    </g>
+
+    <path class="wire" d="M865 506 C 865 570, 620 606, 565 648" marker-end="url(#mN)"/>
+    <text class="wire-label" x="740" y="576">findings → fixed + re-verified</text>
+    <text class="wire-label" x="740" y="590">no re-review</text>
+    <path class="wire-accent" d="M670 680 L735 680" marker-end="url(#mA)"/>
+    <path class="wire-dash" d="M865 708 C 865 744, 420 748, 235 712" marker-end="url(#mN)"/>
+    <text class="wire-label" x="520" y="744">on feedback</text>
+    <path class="wire-dash" d="M160 652 C 128 590, 128 550, 158 510" marker-end="url(#mN)"/>
+    <text class="wire-label" x="40" y="590">fixes re-enter</text>
+  </svg>
+  <div class="legend">
+    <span><span class="key key-gate"></span> user gate — the user decides</span>
+    <span><span class="key key-stage"></span> stage / skill</span>
+    <span><span class="key key-ext"></span> conditional satellite · terminal · loop</span>
+    <span><span class="key key-wire"></span> main path</span>
+    <span><span class="key key-dash"></span> conditional / async</span>
+    <span>★ spawns a fresh session</span>
+  </div>
+  </div>
+</section>
+
+<section id="pieces">
+  <div class="sec-head"><span class="sec-num">02</span><h2>Where every piece lives</h2></div>
+  <p class="sec-q">Which skill backs each box on the map?</p>
+
+  <div class="layer">
+    <div class="layer-head"><h3>method · ported from obra/superpowers (MIT, Jesse Vincent)</h3><span class="hint">adapted per workbench-system.md</span></div>
+    <div class="mods">
+      <div class="mod" title="plugins/workbench/skills/brainstorming/SKILL.md"><h4>brainstorming</h4><div class="path">plugins/workbench/skills/brainstorming/</div><p class="cap">Design dialogue; ends at the route gate.</p></div>
+      <div class="mod" title="plugins/workbench/skills/test-driven-development/SKILL.md"><h4>test-driven-development</h4><div class="path">plugins/workbench/skills/test-driven-development/</div><p class="cap">RED-GREEN-REFACTOR, default where a harness exists.</p></div>
+      <div class="mod" title="plugins/workbench/skills/systematic-debugging/SKILL.md"><h4>systematic-debugging</h4><div class="path">plugins/workbench/skills/systematic-debugging/</div><p class="cap">Root cause before fixes; 3-failures escalation.</p></div>
+      <div class="mod" title="plugins/workbench/skills/verification-before-completion/SKILL.md"><h4>verification-before-completion</h4><div class="path">plugins/workbench/skills/verification-before-completion/</div><p class="cap">The "deemed ready" gate — evidence before claims.</p></div>
+      <div class="mod" title="plugins/workbench/skills/receiving-code-review/SKILL.md"><h4>receiving-code-review</h4><div class="path">plugins/workbench/skills/receiving-code-review/</div><p class="cap">Rigor on feedback; no performative agreement.</p></div>
+      <div class="mod" title="plugins/toolkit/skills/writing-skills/SKILL.md"><h4>writing-skills</h4><div class="path">plugins/toolkit/skills/writing-skills/ (workbench)</div><p class="cap">TDD for skill authoring — reclassified a workbench utility; drift-tracked, outside the flow.</p></div>
+    </div>
+  </div>
+
+  <div class="layer">
+    <div class="layer-head"><h3>method · native</h3><span class="hint">no upstream lineage</span></div>
+    <div class="mods">
+      <div class="mod" title="plugins/workbench/skills/audit/SKILL.md"><h4>audit</h4><div class="path">plugins/workbench/skills/audit/</div><p class="cap">Door A protocol: size → engine → confirm flags → route by shape. Unproven — expect tuning.</p></div>
+      <div class="mod" title="plugins/workbench/skills/using-workbench/SKILL.md"><h4>using-workbench</h4><div class="path">plugins/workbench/skills/using-workbench/</div><p class="cap">On-demand orientation map; reference, never a dispatcher.</p></div>
+      <div class="mod" title=".claude/skills/workbench-drift/SKILL.md"><h4>workbench-drift</h4><div class="path">.claude/skills/workbench-drift/ (repo-local)</div><p class="cap">Upstream watchdog: manifest + drift-check.mjs; fork tooling, not shipped in the plugin.</p></div>
+    </div>
+  </div>
+
+  <div class="layer">
+    <div class="layer-head"><h3>toolkit natives the flow composes</h3><span class="hint">pre-existing, unchanged by method</span></div>
+    <div class="mods">
+      <div class="mod" title="plugins/workbench/skills/claim-check/SKILL.md"><h4>claim-check</h4><div class="path">skills/claim-check/</div><p class="cap">Deep-audit engine.</p></div>
+      <div class="mod" title="plugins/workbench/skills/qa-sweep/SKILL.md"><h4>qa-sweep</h4><div class="path">skills/qa-sweep/</div><p class="cap">Team-sweep engine.</p></div>
+      <div class="mod" title="plugins/toolkit/agents/test-quality-reviewer.md"><h4>test-quality-reviewer</h4><div class="path">agents/test-quality-reviewer.md</div><p class="cap">The test-quality stage.</p></div>
+      <div class="mod" title="plugins/workbench/skills/code-quality-review/SKILL.md"><h4>code-quality-review</h4><div class="path">skills/code-quality-review/</div><p class="cap">The adversarial pass.</p></div>
+      <div class="mod" title="plugins/workbench/skills/empirical-proof/SKILL.md"><h4>empirical-proof</h4><div class="path">skills/empirical-proof/</div><p class="cap">Readiness for runnable surfaces.</p></div>
+      <div class="mod" title="plugins/workbench/skills/handoff-goal/SKILL.md"><h4>handoff-goal</h4><div class="path">skills/handoff-goal/</div><p class="cap">The autonomous route.</p></div>
+      <div class="mod" title="plugins/workbench/skills/file-pr/SKILL.md"><h4>file-pr · fix-ci</h4><div class="path">skills/file-pr/ · skills/fix-ci/</div><p class="cap">Landing: file-and-tend, CI watch-and-fix.</p></div>
+      <div class="mod" title="plugins/workbench/skills/get-pr-comments/SKILL.md"><h4>get-pr-comments</h4><div class="path">skills/get-pr-comments/</div><p class="cap">Feeds the feedback loop.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="removed">
+  <div class="sec-head"><span class="sec-num">03</span><h2>Removed deliberately</h2></div>
+  <p class="sec-q">What did method drop from superpowers, and why? (Per-piece record: <code>.claude/skills/workbench-drift/manifest.json</code>, repo-local. The removal is of forced process — agency itself stays the user's call.)</p>
+  <div class="rules">
+    <div class="rule no"><span class="mark">✕</span><div class="body"><strong><code>using-superpowers</code> + SessionStart hook</strong><p>The enforcement dispatcher ("1% chance → MUST") and its delivery mechanism. Nothing replaces them; defanged descriptions are the entire activation surface.</p></div></div>
+    <div class="rule no"><span class="mark">✕</span><div class="body"><strong><code>subagent-driven-development</code></strong><p>Per-task subagent dispatch. The operator's process is direct implementation with one adversarial review at readiness.</p></div></div>
+    <div class="rule no"><span class="mark">✕</span><div class="body"><strong><code>writing-plans</code> · <code>executing-plans</code></strong><p>The spec→plan→execute pipeline. PLAN is a user-picked route whose mechanism comes from the user's own stack.</p></div></div>
+    <div class="rule no"><span class="mark">✕</span><div class="body"><strong><code>requesting-code-review</code></strong><p>Replaced by <code>code-quality-review</code> and the reviewer agents at the review stage.</p></div></div>
+    <div class="rule no"><span class="mark">✕</span><div class="body"><strong><code>dispatching-parallel-agents</code> · <code>using-git-worktrees</code></strong><p>Native harness behavior when wanted; not workbench's business.</p></div></div>
+    <div class="rule no"><span class="mark">✕</span><div class="body"><strong><code>finishing-a-development-branch</code></strong><p>Superseded by the outline gate + <code>file-pr</code> / push conventions.</p></div></div>
+  </div>
+</section>
+
+<section id="ledger">
+  <div class="sec-head"><span class="sec-num">04</span><h2>Decisions ledger</h2></div>
+  <p class="sec-q">The eleven operator calls (2026-08-11) the flow encodes.</p>
+  <div class="ledger-wrap glass-card">
+    <table class="ledger">
+      <tr><td class="q">Q1</td><td>Brainstorming always precedes feature/refactor design; owns what the codebase can't answer about an idea.</td></tr>
+      <tr><td class="q">Q2</td><td>TDD is the default where a test harness exists; silent skip where none.</td></tr>
+      <tr><td class="q">Q3</td><td>Adversarial review fires once — at model-deemed readiness.</td></tr>
+      <tr><td class="q">Q4</td><td>Comment trimming rides that review, per repo rules.</td></tr>
+      <tr><td class="q">Q5</td><td>Fixed findings re-verify and proceed straight to the outline gate — no re-review.</td></tr>
+      <tr><td class="q">Q6</td><td>Review precedes landing; landing is outline-then-ask, with a rules bypass.</td></tr>
+      <tr><td class="q">Q7</td><td>The confirm gate pauses only when the audit flagged uncertainty.</td></tr>
+      <tr><td class="q">Q8</td><td>Audit sizes: quick look (inline) · deep (claim-check) · team sweep (qa-sweep).</td></tr>
+      <tr><td class="q">Q9</td><td>Audit-revealed work routes by shape: feature/refactor → brainstorm; confirmed fix → route.</td></tr>
+      <tr><td class="q">Q10</td><td>PLAN resolves through the user's stack: plugin skill → repo skill → repo standards → harness plan mode.</td></tr>
+      <tr><td class="q">Q11</td><td>"Deemed ready" = verification-before-completion; empirical-proof for runnable surfaces.</td></tr>
+      <tr><td class="q">Q12</td><td>Flow artifacts are disposable — saved under <code>.workbench/&lt;work_scope&gt;/</code> (or <code>.tmp/workbench/&lt;work_scope&gt;/</code>), enduring only for the work; durable only on explicit user ask or an established repo pattern.</td></tr>
+    </table>
+  </div>
+</section>
+
+<footer class="prov">
+  Derived from <code>docs/workbench-flow.md</code> · <code>docs/decisions/workbench-system.md</code> ·
+  <code>plugins/workbench/skills/*</code> — generated 2026-08-11 at <code>8e9a2e8</code> (workbench landing
+  in the uncommitted working tree at generation time). Upstream pin <code>44c9b2d</code>
+  (obra/superpowers, MIT, Jesse Vincent).<br>
+  <strong>Canonical pair:</strong> this page and <code>docs/workbench-flow.md</code> are maintained together —
+  a flow change updates both or neither. Design-session record: the "method — flow whiteboard" artifact (v7).
+</footer>
+
+</div>
+<script>lucide.createIcons();</script>
+</body>
+</html>

@@ -1,5 +1,7 @@
 # Adoption
 
+> **Deprecated 2026-08-11** — the onboarding `agent-workshop` plugin these docs describe was deleted; the `toolkit` plugin is the adoption path, and the onboarding set is parked in `attic/`. Kept for history. See `docs/decisions/drop-onboarding-plugin.md`.
+
 This is the adoption catalog for `agent-workshop`: it groups the canonical agents
 into adoption packs, names the profile values an adopting project must fill, and
 keeps raw copy decisions out of guesswork.
@@ -29,7 +31,7 @@ The Codex marketplace ships the same onboarding plugin plus a Codex-native
 review package:
 
 - **`agent-workshop`** — exposes only `agent-workshop-onboard`.
-- **`toolkit`** — exposes `file-pr`, `handoff-goal`, `doc-to-html`, `claim-check`, `qa-sweep`, `empirical-proof`, `code-quality-review`, `get-pr-comments`, `ui-demo-video`, `route-work`, `arch-map`, and `fix-ci` as Codex skills.
+- **`toolkit`** — exposes `file-pr`, `handoff-goal`, `doc-to-html`, `claim-check`, `qa-sweep`, `empirical-proof`, `code-quality-review`, `get-pr-comments`, `ui-demo-video`, `route-work`, `arch-map`, `fix-ci`, and the method set (`audit`, `brainstorming`, `test-driven-development`, `systematic-debugging`, `verification-before-completion`, `receiving-code-review`, `writing-skills`, `using-method`) as Codex skills.
   The reviewer agent files are bundled in the plugin payload, but Codex plugins
   do not register standalone custom agents from top-level plugin agent files. For
   true Codex subagent files, use onboarding to copy `.codex/agents/*.toml` into

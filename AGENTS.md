@@ -10,11 +10,11 @@ When a session starts in this repo:
 
 1. `README.md` — what this repo is and is not.
 2. This file (or `CLAUDE.md` for Claude sessions).
-3. `README.md`'s install section and the `agent-workshop-onboard` plugin if the question involves adoption flow.
+3. `README.md`'s install section if the question involves adoption flow (the `workbench` plugin is the adoption path; `toolkit` is optional).
 4. The relevant `docs/agents/<name>.md` or `docs/skills/<name>.md` if the question is about a specific piece.
-5. The canonical spec — in the plugin that ships it (`plugins/toolkit/…` or the onboarding `references/…`; see `CLAUDE.md` § "Source-of-truth boundaries") — only when verifying or modifying the spec itself.
+5. The canonical spec — `plugins/workbench/…` or `plugins/toolkit/…` for shipped pieces, `.claude/` for the repo's own working set (see `CLAUDE.md` § "Source-of-truth boundaries") — only when verifying or modifying the spec itself.
 
-Do not load the full docs tree. Do not load all agent specs unless doing a cross-cutting audit (the `vigil` agent's territory).
+Do not load the full docs tree. Do not load all agent specs unless doing a cross-cutting audit.
 
 ## Maintenance stance
 
@@ -44,7 +44,7 @@ The spec is the contract. The origin doc is the explanation. They must not drift
 
 ## Cross-host parity
 
-Canonical definitions live in the plugins (see `CLAUDE.md` § "Source-of-truth boundaries"), not in a universal `.claude/`. This repo's own host dirs — `.claude/`, `.codex/`, `.opencode/` — carry only the small set the repo runs (`change-log`, `push`, `wiki-maintainer`, `vigil`). Parked pieces — in-progress drafts and deprecated skills — live in `attic/` (see `attic/README.md`): in the repo, shipped by no plugin, discovered by no host, exempt from the docs symmetry until promoted. The onboarding plugin bundles the full host-wrapper templates for the adoptable agents under `references/wrappers/{codex,gemini,opencode}/`.
+Canonical definitions live in the shipped plugins (`workbench` for the process core, `toolkit` for optional utilities; see `CLAUDE.md` § "Source-of-truth boundaries"). This repo's own host dirs — `.claude/`, `.codex/`, `.opencode/` — carry only the small set the repo runs (`change-log`, `push`, `workbench-drift`, `wiki-maintainer`); `.claude/` is canonical for those. Parked pieces — in-progress drafts, deprecated skills, and the former onboarding set (agents included) — live in `attic/` (see `attic/README.md`): in the repo, shipped by no plugin, discovered by no host, exempt from the docs symmetry until promoted.
 
 The portable conventions adopters apply in *their* repos are unchanged: **thin wrappers for agents** (each non-Claude wrapper points at the adopter's `.claude/agents/<name>.md`) and **full mirroring for skills** (each host carries its own SKILL.md). See [`docs/conventions/cross-host-wrappers.md`](docs/conventions/cross-host-wrappers.md) and [`docs/conventions/skill-parity.md`](docs/conventions/skill-parity.md). Gemini and OpenCode remain supported **adoption** targets (onboarding generates their wrappers); this repo simply doesn't keep its own `.gemini/` instance.
 
@@ -60,17 +60,9 @@ When a question involves both this scaffold and an adopting project's specifics:
 
 When this scaffold and an adopting project disagree, the adopting project's `CLAUDE.md` / `AGENTS.md` wins for that project's work. The scaffold provides defaults; adopters can override.
 
-## Reviewer session continuation
+## Reviewer sessions
 
-When working on a substantive scaffold change with the `vigil` agent (advisory governance review), continue the same Vigil session across revision rounds. Do not respawn a fresh Vigil per round — the cost is real (full re-read) and the prior findings live in-session. See `docs/conventions/reviewer-session-continuation.md` for the pattern (it is one of the conventions adopting projects pick up too).
-
-If the host's session-resume mechanism fails, fall back to a fresh dispatch and carry prior findings as context manually.
-
-## Per-task fresh dispatches
-
-Conversely, when a different scaffold change comes up later, dispatch a fresh `vigil` rather than resuming the prior session. Cross-task context inheritance is the cross-artifact mistake — see `docs/conventions/per-task-fresh-dispatches.md`.
-
-This rule mirrors the discipline adopting projects use during subagent-driven development. Eat your own dogfood.
+When dispatching a reviewer agent for a substantive scaffold change, continue the same reviewer session across revision rounds (see `docs/conventions/reviewer-session-continuation.md`) and dispatch fresh for unrelated tasks (see `docs/conventions/per-task-fresh-dispatches.md`).
 
 ## Skill self-application
 

@@ -1,7 +1,7 @@
 {
   "name": "toolkit",
-  "version": "0.19.0",
-  "description": "Codex-ready PR-filing, goal-handoff, claim-check, qa-sweep, empirical-proof, code-quality-review, doc-to-html, ui-demo-video, route-work, arch-map, and fix-ci skills and bundled agent files (reviewers + ci-watcher) from Agent Workshop.",
+  "version": "0.1.0",
+  "description": "Codex-ready optional utilities from Agent Workshop: doc-to-html, ui-demo-video, arch-map, and writing-skills (derived from obra/superpowers, MIT).",
   "author": {
     "name": "Agent Workshop",
     "url": "https://github.com/giostriquer/agent-workshop"
@@ -9,30 +9,21 @@
   "license": "MIT",
   "homepage": "https://github.com/giostriquer/agent-workshop",
   "repository": "https://github.com/giostriquer/agent-workshop",
-  "keywords": ["agents", "skills", "code-review", "governance", "handoff"],
+  "keywords": ["skills", "reports", "diagrams", "video", "skill-authoring"],
   "skills": "./skills",
   "interface": {
     "displayName": "Toolkit",
-    "shortDescription": "Handoff and doc-to-html skills for Codex.",
-    "longDescription": "A Codex manifest for the Agent Workshop toolkit plugin. Codex exposes the file-pr, handoff-goal, doc-to-html, claim-check, qa-sweep, empirical-proof, code-quality-review, get-pr-comments, ui-demo-video, route-work, arch-map, and fix-ci skills from this package; the agent files (the reviewers plus ci-watcher) are bundled in the payload for Claude Code and reference, but Codex standalone custom agents still need repo-local .codex/agents wrappers.",
+    "shortDescription": "Optional artifact-making utilities for Codex.",
+    "longDescription": "A Codex manifest for the Agent Workshop toolkit plugin. Codex exposes the doc-to-html, ui-demo-video, arch-map, and writing-skills skills from this package — the optional artifact-making layer next to the toolkit plugin.",
     "developerName": "Agent Workshop",
     "category": "Productivity",
     "capabilities": ["Skills"],
     "websiteURL": "https://github.com/giostriquer/agent-workshop",
     "defaultPrompt": [
-      "File the branch's PR and see it through to green and mergeable.",
-      "Prepare a goal handoff document.",
       "Turn a markdown report into a standalone HTML page.",
-      "Investigate whether a ticket or claim still holds.",
-      "Run a team-scale QA sweep over a release and corroborate the findings.",
-      "Empirically prove a just-finished change at the running app.",
-      "Run a strict code quality review on the current branch.",
-      "Summarize the active PR's review comments into a prioritized action list.",
-      "Record a UI demo video of a change in the running app.",
-      "Recommend a model and effort route for a task before dispatching it.",
       "Draw an architecture map of a subsystem or refactor as a standalone page.",
-      "Watch the current branch's CI and fix whatever breaks.",
-      "Explain how to install reviewer agents for Codex."
+      "Record a UI demo video of a change in the running app.",
+      "Author or edit a skill with baseline testing."
     ]
   }
 }

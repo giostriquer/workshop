@@ -4,46 +4,92 @@ Ready-to-use AI agents and skills for Claude Code and Codex, extracted from real
 
 ## Install
 
-This repo doubles as a **plugin marketplace** — a catalog Claude Code can install plugins from directly. In a Claude Code session, add it once:
+This repo doubles as a **plugin marketplace** — a catalog Claude Code can install plugins from directly. In a Claude Code session:
 
 ```
 /plugin marketplace add giostriquer/agent-workshop
-```
-
-Then install one (or both) of the plugins:
-
-```
-/plugin install toolkit@agent-workshop
-/plugin install agent-workshop@agent-workshop
+/plugin install workbench@agent-workshop
+/plugin install toolkit@agent-workshop   # optional artifact-making utilities
 ```
 
 Using Codex instead:
 
 ```powershell
 codex plugin marketplace add giostriquer/agent-workshop
-codex plugin add toolkit@agent-workshop
-codex plugin add agent-workshop@agent-workshop
+codex plugin add workbench@agent-workshop
+codex plugin add toolkit@agent-workshop   # optional
 ```
 
-For Cursor, the plugins ship in the Cursor plugin format (`.cursor-plugin/`). Import this repo as a **Team Marketplace** (Teams/Enterprise, admin): **Dashboard → Settings → Plugins → Team Marketplaces → Add Marketplace → Import from Repo**, point it at `giostriquer/agent-workshop`, then install `toolkit` / `agent-workshop` from **Customize** in the sidebar. (Plugins published to the official [cursor.com/marketplace](https://cursor.com/marketplace) install with `/add-plugin` or the **Add to Cursor** button.)
+For Cursor, the plugin ships in the Cursor plugin format (`.cursor-plugin/`). Import this repo as a **Team Marketplace** (Teams/Enterprise, admin): **Dashboard → Settings → Plugins → Team Marketplaces → Add Marketplace → Import from Repo**, point it at `giostriquer/agent-workshop`, then install `workbench` (and optionally `toolkit`) from **Customize** in the sidebar.
 
 ## The plugins
 
-### `toolkit` — use right away
+### `workbench` — use right away
 
-Review agents and direct-use skills, ready immediately after install with nothing to configure:
+Five read-only review agents, nine everyday skills, and the seven-skill **workbench**
+process layer — ready immediately after install, nothing to configure.
 
-- **Agents:** `spec-reviewer` (design specs and plans), `code-quality-reviewer` (maintainability and structure of a diff), `test-quality-reviewer` (test code), `pattern-reviewer` (code-pattern conformance), `vigil` (your agent/skill setup itself), and `ci-watcher` (your branch's PR CI). All read-only — they inspect and report, never edit your files.
-- **Skills:** `file-pr` files the branch's PR with a template-true body and tends it — CI fixes and merge-based conflict resolution — until green and mergeable; `handoff-goal` hands in-flight work to a fresh session or agent; `doc-to-html` turns a markdown report into a polished dark-themed HTML page; `claim-check` runs an unbiased investigation of a premise (ticket, hunch, or question) and returns a verdict plus a readiness dossier; `qa-sweep` fans a QA team over a broad surface and corroborates every finding firsthand before it counts; `empirical-proof` proves a just-finished change at the running software — real MCP/HTTP calls, probe scenarios, raw evidence — and reports verified / broken / blocked without fixing anything; `code-quality-review` runs an unusually strict, structure-first maintainability review over a branch's diff and pushes for restructurings that delete complexity; `get-pr-comments` triages the active PR's review comments into a prioritized action list (read-only); `ui-demo-video` records a Playwright walkthrough of the running app after UI work — per-scene PNG frames the model reads to verify the UI itself, plus a shareable mp4 for the PR; `route-work` grades a task about to be dispatched and returns a model + effort + process-pattern route from its canonical model × effort table; `arch-map` derives a visual architecture map when no source doc exists — subsystem maps, refactor before/afters, proposed designs — with every box traced to real code; `fix-ci` watches your branch's CI and fixes red in-session — failing-log diagnosis, minimal fix, push, re-watch, capped attempts.
+**Agents** — they inspect and report, never edit your files:
+
+| Agent | Reviews |
+| --- | --- |
+| `spec-reviewer` | design specs and plans |
+| `code-quality-reviewer` | a diff's maintainability and structure |
+| `test-quality-reviewer` | test code |
+| `pattern-reviewer` | code-pattern conformance |
+| `ci-watcher` | the branch's PR CI |
+
+**Everyday skills:**
+
+| Skill | Does |
+| --- | --- |
+| `file-pr` | files the branch's PR, tends it to green-and-mergeable |
+| `fix-ci` | watches CI, fixes red in-session |
+| `handoff-goal` | hands a defined goal to a fresh autonomous session |
+| `claim-check` | deep verdict on a ticket / hunch / premise |
+| `qa-sweep` | team-scale QA over a broad surface, corroborated |
+| `empirical-proof` | proves a finished change at the running app |
+| `code-quality-review` | strict structure-first review of a diff |
+| `get-pr-comments` | triages PR feedback into an action list |
+| `route-work` | model + effort recommendation before dispatch |
+
+**Workbench** — the process layer, implementing [the workbench flow](docs/workbench-flow.md):
+
+| Skill | Does |
+| --- | --- |
+| `audit` | user-sized investigations, confirm-the-flags gate |
+| `brainstorming` | design dialogue ending at your route pick |
+| `test-driven-development` | TDD, default where a test harness exists |
+| `systematic-debugging` | root cause before fixes |
+| `verification-before-completion` | evidence before any "done" claim |
+| `receiving-code-review` | rigor on arriving review feedback |
+| `using-workbench` | the on-demand flow map |
+
+Five workbench skills derive from [obra/superpowers](https://github.com/obra/superpowers)
+by Jesse Vincent (MIT), adapted per
+[`docs/decisions/workbench-system.md`](docs/decisions/workbench-system.md) — no hooks,
+no dispatcher, descriptions as honest triggers. Upstream drift tracking
+(`workbench-drift`, `.claude/skills/`) is repo-local maintenance tooling, not
+shipped in the plugin.
+
+Details in [`plugins/workbench/README.md`](plugins/workbench/README.md).
+
+### `toolkit` — optional, install when you want it
+
+Artifact-making utilities kept out of `workbench` so integrators control token
+load — every installed skill's listing rides in each session's context:
+
+| Skill | Does |
+| --- | --- |
+| `doc-to-html` | markdown report → polished dark HTML page |
+| `arch-map` | visual architecture map when no doc exists |
+| `ui-demo-video` | Playwright walkthrough video + verification frames |
+| `writing-skills` | TDD applied to authoring skills (derived from obra/superpowers, MIT) |
 
 Details in [`plugins/toolkit/README.md`](plugins/toolkit/README.md).
 
-### `agent-workshop` — adopt the full scaffold
-
-One guided skill, `agent-workshop-onboard`, for adopting the **project-coupled** scaffolding into your own repo — the agents that need adapting to your project (profile slots, conventions) and the workflow skills meant to live in-repo, plus the conventions that tie them together. It inspects the target, produces a read-only adoption plan, and only copies files after you approve. The direct-use review agents and self-contained skills don't need this — install `toolkit` for those.
-
 ## Going deeper
 
-- [`docs/agents/`](docs/agents/) and [`docs/skills/`](docs/skills/) — the origin story of every agent and skill: what problem it solved and how it's used in practice.
+- [`docs/workbench-flow.md`](docs/workbench-flow.md) — the workbench system's canonical mental model (with an [arch-map rendering](docs/workbench-flow.html)).
+- [`docs/agents/`](docs/agents/) and [`docs/skills/`](docs/skills/) — a doc per agent and skill: how to use it and how not to.
 - [`docs/conventions/`](docs/conventions/) — the portable working rules the agents rely on.
-- [`docs/adoption/README.md`](docs/adoption/README.md) — the pack catalog, maturity labels, and host support.

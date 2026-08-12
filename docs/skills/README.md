@@ -1,26 +1,21 @@
 # Skills
 
-Origin docs for the eighteen skills the scaffold ships (across the `toolkit` and `agent-workshop` plugins). Each doc covers:
+Usage docs for the skills the scaffold ships (the `toolkit` and `workbench` plugins) and its repo-local tooling. Each doc is deliberately **small and usage-first**:
 
-- **Origin** — the pressure that created the skill.
-- **Problem** — what specifically it solves.
-- **Solution shape** — how it works.
-- **Real invocation snippet** — example use.
-- **Pitfalls** — observed mistakes.
-- **Adaptation notes** — fit to your project.
+- One or two lines on what it is (with lineage where derived).
+- **Use it** — triggers, the load-bearing patterns, a compact example.
+- **Don't** — anti-patterns and boundaries.
 
-Each skill's canonical `SKILL.md` lives in the plugin that ships it — `plugins/toolkit/skills/<name>/` for the direct-use skills, the onboarding bundle (`plugins/agent-workshop/.../references/skills/<name>.md`) for the adoptable ones. These docs explain the *why*.
+Rationale and history live in `docs/decisions/` (linked from the doc, never restated). Older docs still carrying the long origin-story format migrate to this shape as they're touched. The **workbench** set's mental model is drawn canonically in [`docs/workbench-flow.md`](../workbench-flow.md).
+
+Each shipped skill's canonical `SKILL.md` lives in its plugin (`plugins/workbench/skills/<name>/` or `plugins/toolkit/skills/<name>/` — toolkit holds the optional artifact-making utilities: `doc-to-html`, `ui-demo-video`, `arch-map`, `writing-skills`); the repo's own working set (`change-log`, `push`, `workbench-drift`) is canonical in `.claude/skills/`.
 
 ## Roster
 
 | Skill | One-line role |
 |---|---|
 | [`change-log`](change-log.md) | Compact entry rules for `docs/change-log.md`; spec/plan landing lifecycle. |
-| [`doc-audit`](doc-audit.md) | Proactive 14-check audit across mechanical, threshold, judgment, and code-arch tiers. Report-only. |
-| [`agent-audit`](agent-audit.md) | Orchestrates `vigil` for governance audits. Deterministic pre-checks plus advisory review. |
 | [`push`](push.md) | Branch-aware commit and push; pulls before staging; uses `change-log` as message source when relevant. |
-| [`research`](research.md) | Forward-looking research orchestration; thin skill, heavy `research` agent. |
-| [`visual-advisor`](visual-advisor.md) | Visual taste advisor; mode-aware (refinement / exploration / rebaseline) prompt shaping. |
 | [`file-pr`](file-pr.md) | Files the current branch's PR and tends it to green-and-mergeable — template-verbatim body, gates run locally before filing, CI fixes via `fix-ci`, merge-based conflict resolution with semantic collisions reported instead of guessed; bounded attempts, never force-pushes, never merges the PR. Formerly `handoff-pr`. |
 | [`handoff-goal`](handoff-goal.md) | Produces a self-contained goal contract directory — `goal.md`, the frozen contract (outcome, baseline, real-surface primary verifier, integrity rules, approval gates, operating rules), plus `plan.md`, the living route the pursuer maintains — for a new session on any runtime (incl. Codex goal mode) to pursue autonomously across compactions; also critiques existing contracts; never pursues the goal itself. |
 | [`doc-to-html`](doc-to-html.md) | Renders a markdown report as a standalone dark HTML page; design defaults are adaptable, editing process rules (rewrite-on-direction-change, renumbering, pre-finish checks) are rigid. |
@@ -33,18 +28,23 @@ Each skill's canonical `SKILL.md` lives in the plugin that ships it — `plugins
 | [`route-work`](route-work.md) | Grades a task about to be dispatched against a five-axis rubric (repo precedent, ambiguity, failure visibility, taste surface, blast radius) and returns a three-line route — model + effort + process pattern + why; carries the canonical model × effort table as its single source of truth. Recommends only — never dispatches. |
 | [`arch-map`](arch-map.md) | Derives a visual architecture map when no source doc exists — subsystem, refactor in flight, or proposed design — and renders a self-contained HTML page: mental-model SVG first, Cursor-dark high contrast, scarce color, provenance stamps, every box and edge traceable to a real file / symbol / diff hunk. Ephemeral-first (`tmp/`) with a promote-to-durable pass. |
 | [`fix-ci`](fix-ci.md) | Watch-and-fix loop over the current branch's CI (PR checks or push runs) — evidence-first diagnosis of the failing log, flake-vs-fault triage, minimal in-session fix, conventional push, re-watch; hard cap of two attempts, never force-pushes, never weakens a failing check. |
+| [`audit`](audit.md) | Workbench's investigation door — user sizes the workload (quick / deep via claim-check / sweep via qa-sweep), engine runs, flagged uncertainties come back for confirmation, exit routes by shape. Pure protocol; workbench's one native, unproven piece. |
+| [`brainstorming`](brainstorming.md) | Collaborative design dialogue before features/refactors — grounds against the codebase, questions one at a time, 2–3 approaches, sectioned design approval, ends at the user's route pick. Derived from obra/superpowers; pipeline exit replaced by the route gate. |
+| [`test-driven-development`](test-driven-development.md) | RED-GREEN-REFACTOR with anti-rationalization armor — workbench's default for features/bugfixes where a test harness exists, silent skip where none. Derived from obra/superpowers, near-verbatim. |
+| [`systematic-debugging`](systematic-debugging.md) | Four-phase root-cause discipline before any fix, with the 3-failed-fixes escalation rule and technique references (root-cause-tracing, defense-in-depth, condition-based-waiting). Derived from obra/superpowers, near-verbatim. |
+| [`verification-before-completion`](verification-before-completion.md) | No completion claims without fresh verification evidence — workbench's "deemed ready" gate; empirical-proof is the runnable-surface sibling. Derived from obra/superpowers. |
+| [`receiving-code-review`](receiving-code-review.md) | Technical rigor on arriving review feedback — verify before implementing, clarify all items first, reasoned pushback, no performative agreement. Derived from obra/superpowers; pairs with get-pr-comments. |
+| [`writing-skills`](writing-skills.md) | TDD applied to skill authoring — pressure-scenario baselines, micro-tested wording, loophole closing; ships the subagent testing methodology. Derived from obra/superpowers; the discipline this repo already runs on. |
+| [`using-workbench`](using-workbench.md) | On-demand orientation map of the workbench flow — doors, the three user gates, moment→skill ownership. Reference only; the anti-using-superpowers. Workbench-native. |
+| [`workbench-drift`](workbench-drift.md) | The workbench set's upstream watchdog — provenance manifest + bundled diff script against obra/superpowers; classifies churn adopt/adapt/ignore against recorded rationale, never auto-applies, pin advances only after completed review. Workbench-native, **repo-local** (`.claude/skills/` — not shipped; it maintains the fork from inside agent-workshop). |
 
-Deprecated (origin docs kept under [`deprecated/`](deprecated/)): [`handoff-review`](deprecated/handoff-review.md) — retired 2026-08-10, spec parked in `attic/skills/handoff-review/`; [`structure-view`](deprecated/structure-view.md) — renamed to `arch-map` 2026-08-05; [`handoff-pr`](deprecated/handoff-pr.md) — evolved into `file-pr` 2026-08-11 (files and tends the PR itself; artifact behavior recoverable from git history).
+Deprecated / parked (docs kept under [`deprecated/`](deprecated/)): [`handoff-review`](deprecated/handoff-review.md) — retired 2026-08-10; [`structure-view`](deprecated/structure-view.md) — renamed to `arch-map` 2026-08-05; [`handoff-pr`](deprecated/handoff-pr.md) — evolved into `file-pr` 2026-08-11; [`agent-audit`](deprecated/agent-audit.md), [`doc-audit`](deprecated/doc-audit.md), [`research`](deprecated/research.md), [`visual-advisor`](deprecated/visual-advisor.md) — parked 2026-08-11 with the onboarding plugin's deletion, specs in `attic/skills/`.
 
 ## Composition
 
 Skills here pair naturally with agents:
 
-- `change-log` is preloaded into `wiki-maintainer` and `visual-implementer` via the `skills:` frontmatter.
-- `doc-audit` orchestrates `doc-indexer` for its mechanical tier.
-- `agent-audit` orchestrates `vigil`.
-- `research` (skill) orchestrates `research` (agent).
-- `visual-advisor` is the advisor counterpart to `visual-implementer`.
+- `change-log` is preloaded into `wiki-maintainer` via the `skills:` frontmatter.
 - `push` stands alone — it's a workflow primitive, not a multi-stage orchestration.
 - `doc-to-html` stands alone — a rendering and page-maintenance primitive; it pairs with `visual-advisor` only when the page needs art direction beyond its defaults.
 - `file-pr` is a file-and-tend primitive — it opens the branch's PR itself (template-verbatim body inherited from its `handoff-pr` past) and composes forward with `fix-ci` for the CI half of the tend loop. `handoff-goal` remains the handoff primitive — it emits a self-contained artifact a *different* session consumes and hands work forward (a goal to pursue). (`handoff-review`, formerly a third handoff primitive, was retired to the attic 2026-08-10; `handoff-pr` evolved into `file-pr` 2026-08-11.)
@@ -57,6 +57,7 @@ Skills here pair naturally with agents:
 - `route-work` is a routing primitive — it grades a task and recommends the dispatch route (model, effort, process pattern) but never dispatches. It sits *before* the dispatch boundary: its recommendation feeds an implementation-dispatch skill (in the origin setup, `codex-implement`) or an Agent/Workflow call, and its table is the single source of truth the operator's always-injected rules file points to instead of duplicating.
 - `arch-map` is a derive-and-render primitive — the doc-less sibling of `doc-to-html`. They split by *input*, not topic: `doc-to-html` renders a finished markdown document and may never invent content; `arch-map` authors the representation from the repo, a diff, or a plan and must trace every element to something real. An architecture *document* still renders via `doc-to-html`; a doc-less structural question goes to `arch-map`.
 - `fix-ci` is the fix half of a watch-and-fix loop over the `ci-watcher` agent: the skill dispatches the agent for background waits and keeps the diagnose–fix–push cycle in the session (the agent stays read-only — the authority split is deliberate). Alongside `get-pr-comments` it covers working a PR: comments vs. CI.
+- The **workbench** set is the workflow layer over everything above, per the settled flow in [`workbench-system.md`](../decisions/workbench-system.md): `audit` fronts `claim-check`/`qa-sweep` as sized engines; `brainstorming` ends at the route pick (rawdog / plan / `handoff-goal`); TDD and `systematic-debugging` ride inside implementation; `verification-before-completion` gates readiness (with `empirical-proof` for runnable surfaces); `code-quality-review` is the one adversarial pass; the outline gate lands through `file-pr`/`push` with `fix-ci` tending; `get-pr-comments` + `receiving-code-review` close the feedback loop. `writing-skills` maintains all of them, and `workbench-drift` watches the six superpowers-derived pieces for upstream drift via its provenance manifest.
 
 ## Adoption
 

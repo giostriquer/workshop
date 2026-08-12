@@ -1,0 +1,130 @@
+{
+  "system": "workbench",
+  "description": "Provenance manifest for the method skill set: toolkit skills derived from obra/superpowers, with every upstream piece's disposition recorded. Consumed by the workbench-drift skill via scripts/drift-check.mjs. See docs/decisions/workbench-system.md.",
+  "upstream": {
+    "repo": "https://github.com/obra/superpowers",
+    "ref": "main",
+    "license": "MIT",
+    "author": "Jesse Vincent (obra)",
+    "watchPaths": ["skills", "hooks"],
+    "lastReviewed": {
+      "commit": "44c9b2d6e889982ac18c27d05a19fefe335194e1",
+      "release": "6.2.0+",
+      "date": "2026-08-11",
+      "note": "Pinned at the phase-B port: the six adopted skills were ported from this upstream commit (head at port time), so everything up to here has been reviewed by construction."
+    }
+  },
+  "adaptationFilter": "docs/decisions/workbench-system.md#2-the-adaptation-filter — defang the description; de-pipeline the body; carry only needed references; provenance footer. Applies to every adoption, initial and future.",
+  "nativePieces": [
+    {
+      "name": "audit",
+      "localPath": "plugins/workbench/skills/audit/",
+      "why": "Door A's protocol from the flow model (operator-approved 2026-08-11): ask the workload size (quick look inline / deep audit via claim-check / team sweep via qa-sweep), run the confirm-the-flags exchange when the audit flagged uncertainty, route the exit by shape (feature/refactor → brainstorming; confirmed fix → route pick). These behaviors exist in no upstream or toolkit piece.",
+      "status": "unproven — born from the whiteboard, not lived use; expect tuning after real runs. Not tracked for upstream drift (no upstream lineage)."
+    },
+    {
+      "name": "using-workbench",
+      "localPath": "plugins/workbench/skills/using-workbench/",
+      "why": "Orientation reference (operator-approved 2026-08-11): the flow's connective tissue must be answerable on demand and ship inside the payload, without a hook or dispatcher. The anti-using-superpowers — explains on request, never enforces at session start. Pairs with the rules-layer doctrine snippet (docs/workbench-doctrine.md), which is deliberately not part of the plugin.",
+      "status": "native; reference-only. Not tracked for upstream drift (no upstream lineage)."
+    }
+  ],
+  "pieces": [
+    {
+      "upstreamPath": "skills/brainstorming/",
+      "localPath": "plugins/workbench/skills/brainstorming/",
+      "disposition": "adopted",
+      "why": "Socratic requirements/design exploration before creative work — on invitation, not compulsion.",
+      "adaptations": "Description rewritten from 'You MUST use this before any creative work' to an honest conditional trigger; pipeline hand-offs (writing-plans, plan mode coupling) scrubbed."
+    },
+    {
+      "upstreamPath": "skills/test-driven-development/",
+      "localPath": "plugins/workbench/skills/test-driven-development/",
+      "disposition": "adopted",
+      "why": "RED→GREEN→REFACTOR discipline when implementing features and bugfixes.",
+      "adaptations": "Description defanged; references to the subagent/plan pipeline scrubbed."
+    },
+    {
+      "upstreamPath": "skills/systematic-debugging/",
+      "localPath": "plugins/workbench/skills/systematic-debugging/",
+      "disposition": "adopted",
+      "why": "Root-cause discipline before proposing fixes.",
+      "adaptations": "Description defanged; cross-references to dropped pieces scrubbed."
+    },
+    {
+      "upstreamPath": "skills/verification-before-completion/",
+      "localPath": "plugins/workbench/skills/verification-before-completion/",
+      "disposition": "adopted",
+      "why": "Evidence before completion claims — same ethos as toolkit's empirical-proof.",
+      "adaptations": "Description defanged; where the body suggests dispatching reviewers, redirected to code-quality-review / empirical-proof."
+    },
+    {
+      "upstreamPath": "skills/writing-skills/",
+      "localPath": "plugins/toolkit/skills/writing-skills/",
+      "disposition": "adopted",
+      "why": "The RED→GREEN skill-authoring loop; the operator authors skills constantly.",
+      "adaptations": "Description defanged; superpowers repo-layout and dispatcher references removed. Reclassified 2026-08-11 as a workbench utility (operator call): method tag dropped, ships in the workbench plugin; drift tracking continues unchanged."
+    },
+    {
+      "upstreamPath": "skills/receiving-code-review/",
+      "localPath": "plugins/workbench/skills/receiving-code-review/",
+      "disposition": "adopted",
+      "why": "Technical rigor on review feedback — verify, never performatively agree. Complements get-pr-comments and the adversarial-review flow. Operator call 2026-08-11.",
+      "adaptations": "Description defanged; cross-references to requesting-code-review redirected to code-quality-review."
+    },
+    {
+      "upstreamPath": "skills/using-superpowers/",
+      "localPath": null,
+      "disposition": "dropped",
+      "why": "The enforcement dispatcher ('1% chance → MUST', red-flags table) — the pressure system this fork exists to remove. Nothing replaces it; defanged descriptions are the entire activation surface."
+    },
+    {
+      "upstreamPath": "hooks/",
+      "localPath": null,
+      "disposition": "dropped",
+      "why": "SessionStart injection (+ Cursor variant, cmd shim) — the pressure delivery mechanism. method ships no hooks."
+    },
+    {
+      "upstreamPath": "skills/subagent-driven-development/",
+      "localPath": null,
+      "disposition": "dropped",
+      "why": "Operator process is direct main-session implementation with an end-of-task adversarial review, not per-task subagent dispatch."
+    },
+    {
+      "upstreamPath": "skills/executing-plans/",
+      "localPath": null,
+      "disposition": "dropped",
+      "why": "Plan-execution machinery of the spec→plan→subagent pipeline."
+    },
+    {
+      "upstreamPath": "skills/requesting-code-review/",
+      "localPath": null,
+      "disposition": "dropped",
+      "why": "Replaced by toolkit's code-quality-review skill and the reviewer agents."
+    },
+    {
+      "upstreamPath": "skills/dispatching-parallel-agents/",
+      "localPath": null,
+      "disposition": "dropped",
+      "why": "Parallel dispatch is native harness behavior when wanted. Operator call 2026-08-11."
+    },
+    {
+      "upstreamPath": "skills/writing-plans/",
+      "localPath": null,
+      "disposition": "dropped",
+      "why": "Plans are written on request without a skill; the trigger otherwise feeds the pipeline. Operator call 2026-08-11."
+    },
+    {
+      "upstreamPath": "skills/using-git-worktrees/",
+      "localPath": null,
+      "disposition": "dropped",
+      "why": "Primary host has native worktree support. Operator call 2026-08-11."
+    },
+    {
+      "upstreamPath": "skills/finishing-a-development-branch/",
+      "localPath": null,
+      "disposition": "dropped",
+      "why": "Superseded by file-pr (file-and-tend) and the push skill."
+    }
+  ]
+}
