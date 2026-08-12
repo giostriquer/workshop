@@ -1,6 +1,6 @@
 {
   "name": "workbench",
-  "version": "0.20.0",
+  "version": "0.20.1",
   "description": "Codex-ready PR-filing, goal-handoff, claim-check, qa-sweep, empirical-proof, code-quality-review, get-pr-comments, route-work, and fix-ci skills, the workbench process skills (audit, brainstorming, TDD, systematic-debugging, verification-before-completion, receiving-code-review, using-workbench; derived from obra/superpowers, MIT), and bundled agent files (reviewers + ci-watcher) from Agent Workshop.",
   "author": {
     "name": "Agent Workshop",

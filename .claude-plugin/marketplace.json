@@ -5,7 +5,7 @@
   "plugins": [
     {
       "name": "workbench",
-      "version": "0.20.0",
+      "version": "0.20.1",
       "source": "./plugins/workbench",
       "description": "The process core: standalone review and CI-monitoring agents plus direct-use skills (PR filing with autonomous CI/conflict tending, goal handoffs, premise investigations, team-scale QA sweeps, post-change runtime proofs, strict code-quality reviews, PR comment triage, model/effort routing, CI watch-and-fix) and the workbench flow skills (derived from obra/superpowers, MIT) — without onboarding.",
       "author": { "name": "Agent Workshop" }

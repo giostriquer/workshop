@@ -5,6 +5,19 @@ Sections are keyed by the **released plugin version** that shipped the change
 work that ships no release (packaging, structure, docs) sits under `## repo — date` sections in
 chronological position.
 
+## workbench 0.20.1 — 2026-08-11
+
+### using-workbench — session-start orientation for discoverability
+
+Operator adjustment in two steps: the description now triggers at conversation
+start (description-as-dispatcher, hook-free) so fresh sessions discover the
+flow before their first response; the wording then settled from a MUST-invoke
+variant down to informational orientation — invoke the owning skill on
+relevance, announce it briefly, opt out when it doesn't fit; "defaults the
+user configured, not gates." READMEs and the usage doc updated to the
+session-start stance. See the amendment in
+[`docs/decisions/workbench-system.md`](decisions/workbench-system.md).
+
 ## toolkit 0.1.0 — 2026-08-11
 
 ### toolkit — optional utilities split out; plugin names swapped

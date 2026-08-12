@@ -4,6 +4,14 @@
 
 ## Status
 
+**Discoverability 2026-08-11 (post-0.20.0):** `using-workbench`'s description
+now triggers at conversation start — description-as-dispatcher, hook-free —
+after the operator judged pure on-demand reference insufficient for
+discoverability. The wording is deliberately informational (orientation with a
+built-in opt-out; "defaults the user configured, not gates"), keeping the
+no-compulsion stance: an operator-tried MUST-invoke variant was settled down to
+this form the same day. `workbench 0.20.0` → `0.20.1`.
+
 **Renamed 2026-08-11:** the system formerly called **method** is **workbench**
 throughout (plugin swap + unification — see `workbench-split.md`). A twelfth
 operator decision joined the ledger: **Q12 — flow artifacts are disposable**,

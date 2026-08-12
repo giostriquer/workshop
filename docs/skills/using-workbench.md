@@ -1,28 +1,31 @@
 # using-workbench
 
-Orientation map of the workbench flow — the doors, gates, and completion chain, and
-which skill owns each moment. **Workbench-native**; the anti-`using-superpowers`:
-it explains on request instead of enforcing at session start. Rationale:
-[`workbench-system.md`](../decisions/workbench-system.md).
+Session-start orientation map of the workbench flow — doors, the three user
+gates, moment→skill ownership — and the on-demand answer to "how does this flow
+work?". Surfaces at conversation start for discoverability (the description is
+the trigger; no hook); **orients, never coerces**. **Workbench-native**;
+rationale: [`workbench-system.md`](../decisions/workbench-system.md).
 
 ## Use it
 
-- Trigger: "how does method work?", "what's the flow here?", "which skill do I
-  use for X?" — or any session needing orientation before picking a piece.
+- Triggers: conversation start (skim the map, invoke the owning skill when the
+  task matches a moment), and direct questions — "how does the workbench flow
+  work?", "which skill do I use for X?".
 - It answers three things: the flow at a glance, the moment→skill ownership
   table, and the three user gates (size the workload · pick the route · PR or
   merge).
-- It also ships the flow map *inside the plugin payload* — an installed machine
-  has the map without cloning agent-workshop.
+- Session-start behavior is orientation with an opt-out built in: skills fire
+  on relevance; a skill that turns out wrong for the situation isn't followed.
 - Pairs with the rules-layer doctrine snippet
-  ([`workbench-doctrine.md`](../workbench-doctrine.md)): the standing rule makes the
-  flow exist at session start; this skill carries the detail on demand.
+  ([`workbench-doctrine.md`](../workbench-doctrine.md)): the standing rule and
+  this skill carry the same map at different depths.
 
 ## Don't
 
 - Don't let it act — answering "how does the flow work?" by *starting* the flow
   is the failure mode it exists to avoid.
-- Don't wire it to a hook or inject it at session start; that's the
-  superpowers dispatcher pattern method deliberately dropped.
+- Don't reintroduce compulsion language (MUST-invoke, no-choice framing) — the
+  session-start trigger is the discoverability mechanism; relevance is the
+  invocation mechanism.
 - Don't treat it as the canonical model — that's `docs/workbench-flow.md` +
-  `.html` in agent-workshop; this is the shipped digest.
+  `.html`; this is the shipped digest.

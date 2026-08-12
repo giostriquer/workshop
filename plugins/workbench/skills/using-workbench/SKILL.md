@@ -1,26 +1,26 @@
 ---
 name: using-workbench
-description: Use when starting any conversation - establishes how to find and use skills, requiring skill invocation before ANY response including clarifying questions
+description: Use when starting any conversation — orients the session in the workbench flow before the first response: how work enters, who owns each moment, and which skill to invoke when one applies. Also answers "how does the workbench flow work?" and "which skill do I use for X?" on demand.
 metadata:
   system: workbench
 ---
 
-If you were dispatched as a subagent to execute a specific task, ignore this skill. If you think there is even a 1% chance a skill might apply to what you are doing, you ABSOLUTELY MUST invoke the skill.
-IF A SKILL APPLIES TO YOUR TASK, YOU DO NOT HAVE A CHOICE. YOU MUST USE IT.
-
-This is not negotiable. You cannot rationalize your way out of this.
-
-# The Rule
-Invoke relevant or requested skills BEFORE any response or action — including clarifying questions, exploring the codebase, or checking files. If it turns out wrong for the situation, you don't have to use it.
-
-Then announce "Using [skill] to [purpose]" and follow the skill exactly. If it has a checklist, create a todo per item.
+If you were dispatched as a subagent to execute a specific task, skip this
+orientation.
 
 # Using Workbench
 
 Orientation map for the **workbench** system: how work enters, gets scoped, gets
-implemented, and lands. This skill explains; it never enforces. The flow's
-defaults activate through each skill's own trigger or the user's standing rules
-— not through this page.
+implemented, and lands.
+
+## At session start
+
+Skim the flow and the ownership table below before diving into the work. When
+the task at hand matches a moment with an owning skill, invoke that skill
+rather than improvising the process — and say so briefly ("Using audit to size
+this investigation"). If a skill turns out wrong for the situation, you don't
+have to follow it. These are defaults the user configured, not gates: skills
+fire on relevance, never on compulsion.
 
 ## The flow at a glance
 
@@ -94,8 +94,8 @@ pre-authorize). Everything else is the session's to drive.
 
 ## Boundaries
 
-- **Reference only.** Answer the question, point at the owning skill, stop —
-  never respond to "how does the flow work?" by starting the flow.
+- **Orientation, not compulsion.** At session start it maps; it never forces —
+  and it never responds to "how does the flow work?" by starting the flow.
 - Workbench never dictates execution agency (direct vs agentic) and ships no hooks;
   skill descriptions and the user's own rules are the entire activation surface.
 

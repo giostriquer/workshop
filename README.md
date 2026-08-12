@@ -63,7 +63,7 @@ process layer — ready immediately after install, nothing to configure.
 | `systematic-debugging` | root cause before fixes |
 | `verification-before-completion` | evidence before any "done" claim |
 | `receiving-code-review` | rigor on arriving review feedback |
-| `using-workbench` | the on-demand flow map |
+| `using-workbench` | session-start flow orientation + on-demand map |
 
 Five workbench skills derive from [obra/superpowers](https://github.com/obra/superpowers)
 by Jesse Vincent (MIT), adapted per
