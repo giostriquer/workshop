@@ -36,11 +36,17 @@ is the relief valve.
 
 ## Hard invariants
 
-Mirrored in the operator's always-injected rules file; change them in both
-places or not at all.
+These carry the *shape* of each rule. The concrete policy — which models are
+in, which are out, where the floor sits — belongs to the operator's
+always-injected rules file, not to this skill; a plugin that hard-codes one
+operator's fleet ships a policy its adopters never chose.
 
-- **Never Haiku or Sonnet — any task, no exceptions.** Bulk work routes to
-  the sol ladder; anything that must be Claude runs on opus-5 or fable-5.
+- **Set a model floor and enforce it upward.** Decide the weakest model
+  allowed to touch real work and write it into the rules file that loads
+  every session. Then override anything that would select below it — agent
+  definitions, tool defaults, `--model` flags, SDK calls — without asking.
+  Where the floor sits is the operator's call; having one, and never
+  silently dropping under it, is the invariant.
 - **Orchestration stays home.** Decomposing, dispatching, and judging a set
   of work always run on the session's own model — never a weaker-model
   subagent.

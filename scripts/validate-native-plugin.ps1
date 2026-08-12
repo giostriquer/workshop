@@ -58,7 +58,7 @@ $plugins = @(
     },
     @{
         Name           = "toolkit"
-        ExpectedSkills = @("arch-map", "doc-to-html", "ui-demo-video", "writing-skills")
+        ExpectedSkills = @("arch-map", "html-report", "ui-demo-video", "writing-skills")
         ExpectedAgents = $null   # no agents directory
     }
 )

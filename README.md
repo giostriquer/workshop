@@ -81,7 +81,7 @@ load — every installed skill's listing rides in each session's context:
 
 | Skill | Does |
 | --- | --- |
-| `doc-to-html` | markdown report → polished dark HTML page |
+| `html-report` | report → polished dark HTML page (from a doc, or from session findings) |
 | `arch-map` | visual architecture map when no doc exists |
 | `ui-demo-video` | Playwright walkthrough video + verification frames |
 | `writing-skills` | TDD applied to authoring skills (derived from obra/superpowers, MIT) |

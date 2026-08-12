@@ -8,6 +8,41 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.20.8 — 2026-08-12
+
+- **`route-work` no longer ships one operator's model policy.** The hard
+  invariant read "Never Haiku or Sonnet — any task, no exceptions," naming a
+  specific fleet; every adopter inherited a ban they never chose. It now
+  carries the shape of the rule — set a model floor, write it into the rules
+  file that loads every session, and override anything selecting below it —
+  and leaves where the floor sits to the operator.
+  ([decision](decisions/route-work-model-floor-portable.md))
+
+## toolkit 0.2.0 — 2026-08-12
+
+- **`doc-to-html` is now `html-report`, and renders from context as well as
+  from a file.** The old name described the input; the artifact is what stays
+  true. A report that exists only in the conversation is now a first-class
+  source, held to the same bar by four fidelity rules that replace the diff
+  you no longer have: render only what the work established, carry every hedge
+  across, keep each claim married to its evidence, and make Method plus
+  coverage-gaps mandatory — the page is the only record once the session ends.
+- **Output target is an explicit up-front choice.** Standalone file (carries
+  its own document skeleton) versus published artifact or embedded host
+  (carries none, and must paint its own `body` background). Deciding late is a
+  design-direction change, and those are always clean rewrites.
+- **`arch-map`'s sibling boundary redrawn.** "Three input shapes, all
+  doc-less" stopped discriminating once `html-report` also took doc-less
+  input; the line moved to who authors the content — `html-report` renders
+  findings that already exist, `arch-map` authors the representation from
+  code.
+- **Prose slack trimmed** per this repo's own token audit: the
+  suggested-invocation section, the thrice-stated house-style precedence rule,
+  and the re-narration of the reference chrome's own code comments — about 400
+  words back. Net the skill still grows 2,306 → 2,558 words, the cost of the
+  two new sections.
+  ([decision](decisions/html-report-rename-and-context-source.md))
+
 ## workbench 0.20.7 — 2026-08-12
 
 - **One evidence home per work scope.** An audit run scattered evidence

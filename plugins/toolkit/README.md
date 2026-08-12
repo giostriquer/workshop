@@ -28,7 +28,7 @@ codex plugin add toolkit@agent-workshop
 
 | Skill | Does |
 | --- | --- |
-| `doc-to-html` | renders a markdown report as a polished standalone dark HTML page |
+| `html-report` | renders a report — a markdown doc, or findings reached in-session — as a polished standalone dark HTML page |
 | `arch-map` | derives a visual architecture map — subsystem, refactor, or proposed design — when no source doc exists |
 | `ui-demo-video` | Playwright walkthrough of the running app — verification frames for the model, mp4 for the PR |
 | `writing-skills` | TDD applied to skill authoring — baselines, micro-tested wording, loophole closing |

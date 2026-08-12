@@ -1,7 +1,7 @@
 {
   "name": "toolkit",
-  "version": "0.1.2",
-  "description": "Optional artifact-making utilities for the workshop: doc-to-html (markdown report to a polished dark HTML page), arch-map (derived architecture maps), ui-demo-video (Playwright walkthroughs with verification frames), and writing-skills (TDD for skill authoring, derived from obra/superpowers, MIT). Install alongside workbench when you want them; skip to keep sessions lean.",
+  "version": "0.2.0",
+  "description": "Optional artifact-making utilities for the workshop: html-report (report to a polished dark HTML page, from a doc or from session findings), arch-map (derived architecture maps), ui-demo-video (Playwright walkthroughs with verification frames), and writing-skills (TDD for skill authoring, derived from obra/superpowers, MIT). Install alongside workbench when you want them; skip to keep sessions lean.",
   "author": {
     "name": "Agent Workshop",
     "url": "https://github.com/giostriquer/agent-workshop"
@@ -14,7 +14,7 @@
   "interface": {
     "displayName": "Toolkit",
     "shortDescription": "Optional artifact-making utilities for Codex.",
-    "longDescription": "A Codex manifest for the Agent Workshop toolkit plugin. Codex exposes the doc-to-html, ui-demo-video, arch-map, and writing-skills skills from this package — the optional artifact-making layer next to the workbench plugin.",
+    "longDescription": "A Codex manifest for the Agent Workshop toolkit plugin. Codex exposes the html-report, ui-demo-video, arch-map, and writing-skills skills from this package — the optional artifact-making layer next to the workbench plugin.",
     "developerName": "Agent Workshop",
     "category": "Productivity",
     "capabilities": ["Skills"],

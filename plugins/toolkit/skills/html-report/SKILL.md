@@ -1,36 +1,57 @@
 ---
-name: doc-to-html
-description: Use when turning a markdown report, audit, review, or research/findings document into a polished standalone dark-themed HTML page, or when revising such a page — content tweaks, inserting/moving/renumbering sections, ordering findings by severity, matching the repo's existing report style, or "this looks noisy / unreadable / ugly / off" feedback. NOT for deriving an architectural representation from code, a diff, or a plan when no source document exists — that is arch-map.
+name: html-report
+description: Use when turning a report, audit, review, or research/findings into a polished self-contained dark-themed HTML page — whether the source is a markdown document or material that exists only in the conversation — or when revising such a page: content tweaks, inserting/moving/renumbering sections, ordering findings by severity, matching the repo's existing report style, or "this looks noisy / unreadable / ugly / off" feedback. NOT for deriving an architectural representation from code, a diff, or a plan when no source document exists — that is arch-map.
 ---
 
-# Doc to HTML
+# HTML Report
 
 ## Purpose
 
-Render a markdown document (report, audit, review, research findings) as a single self-contained HTML page that reads calmly on a dark screen, navigates well, and prints clean — then govern how that page is edited afterward.
+Render a report (audit, review, research findings) as a single self-contained HTML page that reads calmly on a dark screen, navigates well, and prints clean — then govern how that page is edited afterward.
 
-Two stances, deliberately different: the **visual design is adaptable** — first match whatever house style the repo already uses, and fall back to the defaults here only when there is none. The **process rules are rigid** — each exists because its absence failed in real use.
+Two stances, deliberately different: the **visual design is adaptable** — first match whatever house style the repo already uses, and fall back to the defaults here only when there is none. The **process rules are rigid**.
+
+## Source shapes — a document, or the conversation
+
+Two inputs, one standard. The page that ships is held to the same bar either way; what changes is where the content comes from and how fidelity gets enforced.
+
+- **From a document.** A markdown file on disk. Fidelity is *checkable*: every section, finding, and number in the source either appears in the page or was deliberately restructured.
+- **From context.** Material that exists only in the conversation — an audit just produced, findings gathered across a session, a verdict reached in-thread. There is no file to diff against, so fidelity is a **discipline instead of a check**, and the rules below carry it.
+
+**When the source is context, these bind:**
+
+- **Render what the work established, never what would round it out.** A layout slot with nothing to fill it loses the slot — do not invent a stat, a severity, a count, or a fourth finding because a grid looks sparse with three.
+- **Carry the hedges across.** A claim the session marked uncertain, unverified, single-sourced, or agent-reported ships with that qualifier visible on the page. Confidence is content; a page that renders every finding at identical certainty misreports the work that produced it.
+- **Keep each claim married to its evidence.** Whatever proved a claim in-session — a `file:line`, a command's output, a reproduction — travels into the card with it. A finding whose evidence never reached the page is a finding the reader cannot check.
+- **The page becomes the only record.** When the session ends, nothing else survives. So a from-context render always states how it was produced and what it did not cover — the Method and coverage-gaps sections are mandatory here, not optional as they are for a document that still exists on disk.
+
+## Output target — standalone file, or published artifact
+
+Decide this **before generating**, because the two targets need different document skeletons and a wrong guess is a full rewrite:
+
+- **Standalone file (default).** A complete document — `<!doctype html>`, `<html>`, `<head>`, `<body>` — that opens from disk with no server.
+- **Published artifact / embedded host.** The host injects the document skeleton and wraps the file, so emit **page content only**: a `<title>` at the top, then `<style>`, markup, and `<script>`. Emitting `<!doctype>`/`<html>`/`<head>`/`<body>` here nests a document inside a document. Style the `body` selector from CSS (that still applies) and set an explicit background on it — a transparent body borrows the host's ground and can render this page's text on the wrong surface.
+
+Everything else in this skill — architecture, design system, process rules, checklist — applies unchanged to both.
 
 ## Step 0 — match the repo's house style first
 
-Before applying any default in this skill, glob the repo (especially `tmp/` and `docs/`) for an existing standalone `.html` report — excluding generated output (`node_modules/`, `dist/`, `coverage/`, `playwright-report/`, `.next/`, and similar build/test artifacts). A candidate counts only if it is hand-authored: an inline `<style>` block and prose content, not a minified or tool-emitted page. **If one exists, it is the house style:** read its `<style>` block and component vocabulary and match it — palette, type scale, class system, card/chip/table shapes. If several qualify, the most recently modified hand-authored report wins. Consistency with a sibling artifact beats this skill's defaults every time; a wrong-aesthetic first pass gets thrown away whole, so detect before you generate.
-
-The design system below is the **fallback for when no sibling report exists** — not the first choice.
+Before applying any default in this skill, glob the repo (especially `tmp/` and `docs/`) for an existing standalone `.html` report — excluding generated output (`node_modules/`, `dist/`, `coverage/`, `playwright-report/`, `.next/`, and similar build/test artifacts). A candidate counts only if it is hand-authored: an inline `<style>` block and prose content, not a minified or tool-emitted page. **If one exists, it is the house style:** read its `<style>` block and component vocabulary and match it — palette, type scale, class system, card/chip/table shapes. If several qualify, the most recently modified hand-authored report wins. Detect before you generate.
 
 ## Page architecture
 
 Every page gets:
 
-- **Single self-contained file.** Inline CSS and JS, no external assets, no build step. The page must open from disk.
+- **Single self-contained file.** Inline CSS and JS, no external assets, no build step.
 - **Sticky TOC sidebar** (~288px) with an active-item highlight (scroll-spy) and keyboard navigation (`j`/`k` or arrow keys) driven by one explicit array of section ids in document order. A thin top progress bar is a nice touch. Below ~900px the sidebar collapses into static flow (reference CSS) — a fixed 288px rail otherwise eats a phone's whole viewport.
-- **Surface picked by reader action.** Choose how each section renders by what the reader does with it: facts sharing attributes → a table (explanation lives in the surrounding prose, not in the cells); an ordered process → the stepper; findings/claims → the finding card; nuance/caveat → the dashed caveat box; bulk raw output → terminal block or appendix. Consecutive sections carrying different kinds of content should not all render as the same shape — an unbroken run of identical cards is a flat hierarchy, however polished each card looks.
-- **Verified links only.** Don't ship a link you didn't fetch; annotate the result inline (small green/red run next to the link). Enrichment links are optional — but whatever ships is verified. Note: some canonical-looking doc URLs are JS-rendered and 404 to a server-side fetch (e.g. client-side error-code decoders) — confirm a URL actually serves content before relying on it. Relative/companion links (a sibling file, the source md): verify the target file exists.
+- **Surface picked by reader action.** Choose how each section renders by what the reader does with it: facts sharing attributes → a table (explanation lives in the surrounding prose, not in the cells); an ordered process → the stepper; findings/claims → the finding card; nuance/caveat → the dashed caveat box; bulk raw output → terminal block or appendix. Consecutive sections carrying different kinds of content should not all render as the same shape — an unbroken run of identical cards is a flat hierarchy.
+- **Verified links only.** Don't ship a link you didn't fetch; annotate the result inline (small green/red run next to the link). Enrichment links are optional — but whatever ships is verified. Some canonical-looking doc URLs are JS-rendered and 404 to a server-side fetch: confirm a URL actually serves content. Relative/companion links: verify the target file exists.
 - **Styled scrollbars.** Every scroll container — the page, the sidebar, and especially overflowing `.term`/code blocks and wide tables — gets themed scrollbars, never the raw OS default (CSS below).
-- **Print media query.** White background, dark text, hide the nav and keyboard hints (reference CSS below; it's on the checklist).
+- **Print media query.** White background, dark text, hide the nav and keyboard hints.
 
 **Evidence appendix — conditional, not standing.** When the source carries bulk raw evidence (transcripts, terminal dumps, long excerpts), it moves to an appendix at the end and the body cites it with a small `→ A1` cite-chip — the body stays readable without dropping the proof. When the evidence is already compact (`file:line` refs, short quotes), it stays inline in the cards; an appendix of one-liners is empty ceremony. Either way, a footer listing the artifacts the work produced is high-value for audit/research output.
 
-**What yields to house style, what doesn't.** Step 0's sibling governs *visual treatment* — link-annotation style, nav chrome, chip/card/table shapes all follow the house look, including where it disagrees with the defaults below. It never waives the architecture itself: single self-contained file, working TOC/scroll-spy/keyboard nav, print stylesheet, a readable narrow-screen collapse, and verified links ship on every page regardless of aesthetic.
+**What yields to house style.** Step 0's sibling governs *visual treatment* — link annotation, nav chrome, chip/card/table shapes — including where it disagrees with the defaults below. It never waives the architecture bullets above, which ship on every page regardless of aesthetic.
 
 ## Design system — defaults (fallback only)
 
@@ -41,7 +62,7 @@ Use these only when Step 0 finds no house style. They reproduce a rich, card-and
 - **One accent family** used sparingly (active TOC item, headline callout, section-number badge) plus semantic green/red/amber ONLY inside terminal blocks, link-result runs, and cost/severity pills.
 - **Component vocabulary** (the look adopters actually expect):
   - `.sec-num` — mono section-number badge, aligned with its heading (see alignment rule).
-  - `.hero` + a `.stat-grid` (up to 4-up) for the verdict / TL;DR — stat cells carry only numbers the document itself backs; three real stats beat four with one invented.
+  - `.hero` + a `.stat-grid` (up to 4-up) for the verdict / TL;DR — stat cells carry only numbers the source itself backs; three real stats beat four with one invented.
   - `.card` + `.pid` (mono id badge) + colored `.chip`s (severity, evidence tier, disposition).
   - `.claim` — a quote box (❝) carrying the one-line finding.
   - `.term` — terminal/code block with `ok`/`bad`/`dim`/`warn` spans, horizontal scroll, styled scrollbar.
@@ -54,17 +75,17 @@ Use these only when Step 0 finds no house style. They reproduce a rich, card-and
 
 For reports that carry findings (audit, QA, review):
 
-- **Order by severity, descending.** Most severe first, always (critical → high → medium → low). The ids are then reassigned top-down, so a deck whose findings arrive in mixed order (e.g. medium, high, low, critical) ships as `F-1` critical, `F-2` high, …. After sorting, run the **Renumbering procedure** so ids, cross-refs, TOC, and the nav array all match. **Exception:** when the source already carries a stable, cross-referenced id scheme of its own (severity-coded ids tied to its priority matrix or roadmap), preserve those ids and skip reassignment — the Renumbering procedure governs ids this skill assigns, not ids the source owns.
-- **Every finding card carries evidence and an action.** Not just label → headline → body. Required shape: id + chip header (severity + evidence tier) → one-line **claim** (quote box) → an **Evidence** line that is concrete (a live result, `file:line`, or an appendix cite) → a **Fix** line with a cost pill. The headline states the finding; the body proves it and says what to do. Concise beats extensive — but never a claim without its evidence.
-- **Group when items partition.** When findings naturally split (by product, area, severity, owner), group them into sub-sections with prefixed ids (`AUTH-1`, `API-1`, …), each its own TOC group, then run the Renumbering procedure. A recognised variation, not an afterthought.
-- **Optional Method section.** For audit/QA/research output, a short "how this was produced" section — a few numbered practices + a one-line phase chain — helps the reader trust the claims.
+- **Order by severity, descending.** Most severe first, always (critical → high → medium → low). The ids are then reassigned top-down, so a deck whose findings arrive in mixed order ships as `F-1` critical, `F-2` high, …. After sorting, run the **Renumbering procedure**. **Exception:** when the source already carries a stable, cross-referenced id scheme of its own, preserve those ids and skip reassignment — the Renumbering procedure governs ids this skill assigns, not ids the source owns.
+- **Every finding card carries evidence and an action.** Required shape: id + chip header (severity + evidence tier) → one-line **claim** (quote box) → an **Evidence** line that is concrete (a live result, `file:line`, or an appendix cite) → a **Fix** line with a cost pill. The headline states the finding; the body proves it and says what to do. Concise beats extensive — but never a claim without its evidence.
+- **Group when items partition.** When findings naturally split (by product, area, severity, owner), group them into sub-sections with prefixed ids (`AUTH-1`, `API-1`, …), each its own TOC group, then run the Renumbering procedure.
+- **Method section.** A short "how this was produced" section — a few numbered practices + a one-line phase chain — helps the reader trust the claims. Optional for a document source; **mandatory when the source is context**, along with the coverage gaps.
 
 ## Process rules (rigid)
 
-- **Default output path.** Same directory as the source, same basename, `.html` extension — unless the user or the document itself names a different target.
-- **One pass.** Generate the full HTML in one pass from the markdown.
-- **Derived numbers are recomputed.** Totals and per-section counts come from the items actually rendered, not from the source's prose. When the source's stated numbers disagree — with the items, or with each other — render the recomputed values and flag the divergence to the user in the completion summary; never silently ship either side. The inverse is equally rigid: the layout never invents numbers — no stat cell, percentage, or count the source doesn't back, even when a grid slot looks empty without one.
-- **Targeted edit vs clean rewrite.** Content tweaks are targeted edits. A change of design DIRECTION — including switching to match a house style found late — is always a full clean rewrite; incrementally restyling markup built for a different aesthetic compounds into a mess.
+- **Default output path.** For a document source: same directory, same basename, `.html` extension. For a context source: ask, or place it where the work's other artifacts live (the work-scope folder) — never a per-run temp directory unless the page is genuinely throwaway.
+- **One pass.** Generate the full HTML in one pass.
+- **Derived numbers are recomputed.** Totals and per-section counts come from the items actually rendered, not from the source's prose. When the source's stated numbers disagree — with the items, or with each other — render the recomputed values and flag the divergence in the completion summary; never silently ship either side. The inverse is equally rigid: the layout never invents numbers — no stat cell, percentage, or count the source doesn't back, even when a grid slot looks empty without one.
+- **Targeted edit vs clean rewrite.** Content tweaks are targeted edits. A change of design DIRECTION — including switching to match a house style found late, or switching output target — is always a full clean rewrite; incrementally restyling markup built for a different aesthetic compounds into a mess.
 - **One knob at a time.** If the user dislikes the result, ask which specific element fails (contrast, density, hierarchy) and turn that one knob; don't swing the whole design.
 - **Renumbering procedure.** When an insert, move, drop, sort, or re-group forces renumbering: renumber via descending replace-all or a temp placeholder (avoid collisions), then update every cross-reference, TOC entry, element id, and the keyboard-nav order array, and verify with a grep that ids are sequential and references resolve.
 
@@ -75,10 +96,12 @@ For reports that carry findings (audit, QA, review):
 3. Findings are ordered most-severe-first; skill-assigned ids run top-down (source-owned id schemes are preserved as-is).
 4. Every scroll container has a styled scrollbar (no raw OS bars).
 5. Section-number badges align with their headings; cost pills sit in one consistent place across all cards.
-6. No markdown content dropped — spot-check section count and headline statements; derived totals/counts match the rendered items, any divergence from the source's stated numbers is flagged in the completion summary, and no number was invented to fill a layout slot.
+6. No content dropped — spot-check section count and headline statements; derived totals/counts match the rendered items, any divergence from the source's stated numbers is flagged in the completion summary, and no number was invented to fill a layout slot.
 7. Every shipped external link was fetched and annotated; every relative link's target file exists.
 8. Print media query present: white background, dark text, nav and keyboard hints hidden, cards avoid page breaks.
 9. Narrow-screen check: at phone width the sidebar collapses to static flow and nothing overflows horizontally except intentional scroll containers.
+10. Output target honored: a standalone file carries its own document skeleton; an artifact/embedded page carries none, and sets an explicit `body` background.
+11. Context sources only: every hedge survived, every claim kept its evidence, and Method + coverage gaps are present.
 
 ## Reference markup
 
@@ -200,7 +223,7 @@ Vertical stepper (ordered process; connector line through the dots):
 .dot{flex:none;width:16px;height:16px;margin-top:4px;border-radius:50%;border:2px solid var(--accent);background:#0f1520}
 ```
 
-Interactive chrome — scroll-spy, keyboard nav, progress bar. The three classic bugs are pinned shut here: key handlers must not fire inside form fields, a short last section never enters a top-of-viewport observation band (the bottom-of-page fallback covers it), and the `order` array drifts from the DOM (keep the comment's warning; the renumbering procedure updates it):
+Interactive chrome — scroll-spy, keyboard nav, progress bar. Keep the inline comments; each pins a bug that has actually shipped:
 
 ```html
 <script>
@@ -227,7 +250,7 @@ addEventListener('scroll',()=>{
 </script>
 ```
 
-Print — mandatory architecture, checklist item 8:
+Print:
 
 ```css
 @media print{
@@ -239,11 +262,3 @@ Print — mandatory architecture, checklist item 8:
   a{color:#134a9e}
 }
 ```
-
-## Suggested invocation
-
-- Turn `report.md` into a standalone HTML page. (→ Step 0 first: match any sibling `.html` report)
-- The page feels noisy / unreadable — fix it. (→ ask which knob fails: contrast, density, or hierarchy)
-- Insert a new section between 4 and 5. (→ renumbering procedure, then the checklist)
-- Order the findings by severity. (→ sort descending, then the renumbering procedure)
-- Make it feel like a printed zine instead. (→ design-direction change: full clean rewrite)

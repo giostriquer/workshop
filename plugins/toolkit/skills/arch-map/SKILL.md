@@ -1,6 +1,6 @@
 ---
 name: arch-map
-description: Use when you need a visual architecture map of a codebase and no finished source document exists — an existing subsystem, a refactor in flight, or a proposed design — rendered as a self-contained HTML page. NOT for rendering an existing markdown report; that is doc-to-html. Formerly structure-view.
+description: Use when you need a visual architecture map of a codebase and no finished source document exists — an existing subsystem, a refactor in flight, or a proposed design — rendered as a self-contained HTML page. NOT for rendering a report that already exists — on disk or as findings reached in the conversation; that is html-report. Formerly structure-view.
 ---
 
 # Arch Map
@@ -11,19 +11,22 @@ Derive an architectural representation — from the repo, a diff, or a plan —
 and render a **self-contained HTML architecture map** optimized for
 orientation: a graphical mental model first, then the inventory that backs it.
 
-Sibling boundary: `doc-to-html` renders a finished document and may never
-invent content; `arch-map` **authors the representation** and must trace
-every element to something real (file, symbol, or diff hunk).
+Sibling boundary — the line is *who authors the content*, not whether a file
+exists: `html-report` renders findings that already exist (as a document or
+as work done in the conversation) and may never invent content; `arch-map`
+**authors the representation** by reading code, and must trace every element
+to something real (file, symbol, or diff hunk).
 
 ## When to use
 
-Three input shapes, all doc-less:
+Three input shapes, all derived from code rather than from prose:
 
 1. **Existing subsystem** — how a part of the codebase is structured today.
 2. **Refactor in flight** — branch/diff (or planned): what moves, what stays.
 3. **Proposed design** — plan or conversation; target state before commit.
 
-Not for: rendering existing markdown (use `doc-to-html`); freeform diagrams
+Not for: rendering a report that already exists, whether on disk or as
+findings reached in this session (use `html-report`); freeform diagrams
 disconnected from this repo's code, diff, or plan.
 
 ## Skill package layout
@@ -46,7 +49,7 @@ rules in this file are the complete contract; following them is enough.
    standalone `.html` architecture page (inline styles; exclude
    `node_modules/`, `dist/`, etc.). **Genre test:** structural graphics
    dominate (system map, layers, legend, before/after flow) — not a
-   `doc-to-html` report. If a sibling exists, match its tokens and component
+   `html-report` report. If a sibling exists, match its tokens and component
    shapes.
 2. Otherwise use the **deep-dark glass** defaults below, copying structure
    and tokens from the shipped specimens:
