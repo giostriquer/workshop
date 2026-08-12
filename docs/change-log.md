@@ -8,6 +8,22 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.20.6 — 2026-08-12
+
+- **Adversarial review: scope boundary + timing (Q15).**
+  `code-quality-review` fires once, only when the work-stream's
+  implementation is believed complete, right before the PR-or-merge gate —
+  never mid-implementation. Findings are labeled in-scope (blocking) or
+  out-of-scope (follow-up); out-of-scope findings are recorded, not fixed,
+  unless they prove the change unsafe or incorrect.
+  ([decision](decisions/scope-guards-q15-q16.md))
+- **Scope guard (Q16).** `using-workbench`: stop and bring a split/rescope
+  question to the user when a change crosses owner areas the ask never named
+  or grows well past the sized expectation; `test-driven-development`: tests
+  for the accepted work's behaviors — adjacent defects become follow-up
+  work, not a failing test and fix in place.
+  ([decision](decisions/scope-guards-q15-q16.md))
+
 ## workbench 0.20.5 — 2026-08-12
 
 - **Expensive verification is user-optioned (Q14).** `empirical-proof` and

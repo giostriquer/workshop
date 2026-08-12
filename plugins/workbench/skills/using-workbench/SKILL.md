@@ -44,11 +44,13 @@ IMPLEMENTATION (agency = user/harness call; implementer gets the plan/goal if pr
       repo conventions take precedence on conflict
   systematic-debugging — on any bug, before fixes
 
-COMPLETION
+COMPLETION (enters only when the work-stream's implementation is believed complete)
   test-quality review → deemed ready = verified with evidence
   (verification-before-completion; empirical-proof offered if runnable) →
-  ONE adversarial review (code-quality-review + comment trim, per repo rules) →
-  findings fixed + re-verified, proceed (no re-review) →
+  ONE adversarial review (code-quality-review + comment trim, per repo rules;
+  fires only here, right before the PR-or-merge ask — never mid-implementation) →
+  in-scope findings fixed + re-verified, out-of-scope → follow-ups,
+  proceed (no re-review) →
   USER gate: session outlines what was done, asks PR or merge
   (explicit repo/user rules may pre-authorize) → land: file-pr · merge · push;
   fix-ci tends the checks
@@ -69,7 +71,7 @@ FEEDBACK
 | A bug, before proposing fixes | `systematic-debugging` |
 | About to claim done / ready | `verification-before-completion` (offer `empirical-proof` if runnable) |
 | The implementation's tests | `test-quality-reviewer` |
-| The one adversarial pass | `code-quality-review` |
+| The one adversarial pass (work-stream complete, right before PR-or-merge) | `code-quality-review` |
 | Landing | outline gate → `file-pr` / merge / push; `fix-ci` |
 | Review feedback arrives | `get-pr-comments` → `receiving-code-review` |
 | Authoring or editing skills | `writing-skills` (ships in the `toolkit` plugin) |
@@ -128,6 +130,22 @@ worktree exists if not, so a checkout never lands in the index. Never place
 a worktree in the system temp directory or any path outside the repository
 unless the user explicitly asks — temp space is for disposable non-repository
 artifacts (logs, screenshots, evidence), not for a repository checkout.
+
+## Scope guard
+
+The accepted work defines the boundary. Two tripwires — either one stops
+the work and brings a question to the user instead of growing the diff:
+
+- **Spread:** the change starts crossing owner areas or subsystems the ask
+  never named.
+- **Size:** the diff grows well past what the accepted work implied — tens
+  of files where a few were expected.
+
+Stopping to ask "should this split?" is flow-correct behavior; growing
+scope silently is the failure. Adjacent defects discovered along the way
+are recorded as follow-up work, not folded in — and the adversarial
+review's findings follow the same rule (out-of-scope → follow-up unless
+they prove the change unsafe or incorrect).
 
 ## The three user gates
 

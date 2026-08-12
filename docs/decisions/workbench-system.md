@@ -241,7 +241,15 @@ verification-before-completion, with empirical-proof for runnable surfaces —
 refined by **Q14** (2026-08-12): expensive verification (empirical-proof,
 qa-sweep) is user-optioned — offered when it fits, run only on explicit ask or
 standing authorization; verification-before-completion is the only always-on
-gate.
+gate. Two scope guards joined 2026-08-12 after a field session grew a
+one-ticket change into a 52-file workset: **Q15** (refining Q3) — the
+adversarial review fires only when the work-stream's implementation is
+believed complete, right before the PR-or-merge gate, never
+mid-implementation, and its out-of-scope findings become follow-ups unless
+they prove the change unsafe or incorrect; **Q16** — stop and rescope when a
+change crosses owner areas the ask never named or grows well past the sized
+expectation, with adjacent defects recorded as follow-up work rather than
+folded in.
 
 ## Non-goals
 

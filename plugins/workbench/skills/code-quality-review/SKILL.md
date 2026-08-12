@@ -1,6 +1,6 @@
 ---
 name: code-quality-review
-description: Run an extremely strict maintainability review for abstraction quality, giant files, and spaghetti-condition growth. Use for a strict code quality review, deep code quality audit, or especially harsh maintainability review.
+description: Run an extremely strict maintainability review for abstraction quality, giant files, and spaghetti-condition growth. Use for a strict code quality review, deep code quality audit, or especially harsh maintainability review. In the workbench flow this is the single adversarial pass — it fires once, when the work-stream's implementation is believed complete, right before the PR-or-merge gate; never mid-implementation.
 ---
 
 # Code Quality Review
@@ -18,6 +18,25 @@ Start from this baseline:
 > Work to improve abstractions, modularity, reduce Spaghetti code, improve succinctness and legibility.
 > Be ambitious, if there is a clear path to improving the implementation that involves restructuring some of the codebase, go for it.
 > Be extremely thorough and rigorous. Measure twice, cut once.
+
+## Scope Boundary — strict inside, follow-up outside
+
+All the strictness below applies **within the accepted work's boundary** —
+the ticket, plan, or agreed change under review. Findings outside it are
+classified, not chased:
+
+- **In scope (blocking):** defects and structural problems in what this
+  change did — fix before approval, per the standards below.
+- **Out of scope (follow-up):** adjacent defects, pre-existing mess this
+  diff did not worsen, improvements beyond the accepted work — record them
+  as follow-up work (a ticket, a tracked note); do **not** fold them into
+  this change. One exception: a finding that proves this change **unsafe or
+  incorrect as shipped** blocks regardless of where it lives.
+- The review is a **gate, not an implementation-discovery engine.** It fires
+  **once, only when the work-stream's implementation is believed complete**,
+  immediately before the PR-or-merge question — never mid-implementation.
+  Fixed findings re-verify and proceed; feeding each round's discoveries
+  back into implementation grows the diff without bound.
 
 ## Non-Negotiable Additional Standards
 
@@ -164,6 +183,8 @@ Prioritize findings in this order:
 
 Do not flood the review with low-value nits if there are larger structural issues.
 Prefer a smaller number of high-conviction comments over a long list of cosmetic notes.
+Label every finding **in-scope (blocking)** or **out-of-scope (follow-up)** per the
+scope boundary — an unlabeled finding reads as blocking.
 
 ## Approval Bar
 

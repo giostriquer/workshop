@@ -36,6 +36,17 @@ own rules:
 
 Absent a conflicting repo pattern, everything below applies as written.
 
+## Scope boundary — tests for this work, tickets for the neighborhood
+
+TDD turns the **accepted work's** behaviors into tests — it is not a license
+to grow the diff. Edge cases *of the behavior being implemented* get tests;
+defects discovered in *adjacent* code get **recorded as follow-up work**, not
+a failing test and a fix here — unless the change under implementation is
+unsafe or incorrect without them (then say so before expanding). The
+discover-a-defect → test it → fix it → discover more loop is how a one-ticket
+change becomes a fifty-file workset; breaking out of it is a question for the
+user, not a unilateral push forward.
+
 ## When to Use
 
 **Default for, wherever the repo has a test harness:**

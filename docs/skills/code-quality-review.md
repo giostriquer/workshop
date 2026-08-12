@@ -64,6 +64,14 @@ of a baseline audit prompt:
   scattered across shared code, unnecessary wrappers/casts, boundary leaks,
   canonical-helper duplication, and an obvious-but-missed decomposition), each
   waivable only with a clear justification.
+- **A scope boundary** (added 2026-08-12 from field feedback — Q15, after a
+  session used the review as an implementation-discovery engine and grew a
+  one-ticket change into a 52-file workset): the strictness applies within
+  the accepted work's boundary; out-of-scope findings are labeled follow-up
+  rather than fixed in this change, unless they prove the change unsafe or
+  incorrect. The pass fires **once, only when the work-stream's
+  implementation is believed complete, right before the PR-or-merge gate** —
+  never mid-implementation.
 
 The throughline is the tone section's demand: be direct and demanding, don't
 soften major maintainability issues into mild suggestions, and don't be satisfied
@@ -97,6 +105,11 @@ long list of cosmetic nits.
 - **Demanding a reframe that doesn't exist.** Ambition is the default, not a
   mandate to invent complexity; when no code-judo move is available, the honest
   call is to say so.
+- **Using the review as an implementation-discovery engine.** Running it
+  mid-implementation and feeding each round's findings back into the diff
+  grows the change without bound (the lived case: one ticket → 52 files
+  across six subsystems). It fires once, at believed-complete; out-of-scope
+  findings become follow-ups.
 
 ## Adaptation notes
 

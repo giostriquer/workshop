@@ -15,6 +15,11 @@ conditioned on a test harness existing (operator's Q2).
   conflicts with a step (e.g. "no test runs before manual validation") wins.
   Announce the conflict in one line, apply what remains compatible (the test
   is still written first), defer the displaced step to the repo's gate.
+- **Scope boundary** (Q16, 2026-08-12): tests for the accepted work's
+  behaviors only — an adjacent defect found along the way is follow-up work
+  to record, not a failing test and fix here, unless the change is unsafe
+  without it. The discover→test→fix→discover loop is how one ticket becomes
+  a fifty-file workset.
 - The load-bearing patterns: watch the test fail for the right reason before
   any production code · minimal code to pass, nothing more · code written
   before its test gets deleted, not adapted · bug fixes start with a failing

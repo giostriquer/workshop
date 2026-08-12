@@ -25,6 +25,11 @@ rationale: [`workbench-system.md`](../decisions/workbench-system.md).
   always-on piece; `empirical-proof` and `qa-sweep` are expensive tiers —
   offered, never defaulted to; they run on explicit ask or standing
   authorization.
+- Scope guard (Q15/Q16): the accepted work defines the boundary — stop and
+  ask when the change crosses owner areas the ask never named or grows well
+  past the sized expectation; adjacent defects and out-of-scope review
+  findings become follow-ups. The adversarial review fires only at
+  believed-complete, right before PR-or-merge.
 - Session-start behavior is orientation with an opt-out built in: skills fire
   on relevance; a skill that turns out wrong for the situation isn't followed.
 - Pairs with the rules-layer doctrine snippet
