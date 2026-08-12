@@ -8,6 +8,29 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.20.7 — 2026-08-12
+
+- **One evidence home per work scope.** An audit run scattered evidence
+  across three per-agent `/tmp` dirs; now the dispatching session hands the
+  scope folder (`.workbench/<work_scope>/`) to every agent in its contract —
+  `qa-sweep` and `empirical-proof` carry it in their environment facts,
+  `claim-check`'s persist path and repro artifacts move to the scope folder,
+  and `using-workbench` states the rule: one work scope, one folder; never
+  per-agent temp dirs, never the system temp.
+  ([decision](decisions/evidence-one-home-per-scope.md))
+- **Repo-bookkeeping sweep.** Shipped skill and agent text carries no
+  repo-local references: provenance footers reduced to attribution only
+  (decision-doc links removed), `audit`'s footer dropped,
+  `code-quality-reviewer`'s repo path reworded to the bundled skill file.
+- **Descriptions re-trimmed.** `code-quality-review`, `empirical-proof`,
+  `qa-sweep`, and `verification-before-completion` descriptions cut back to
+  tight triggers after growing during the field-feedback rounds.
+
+## toolkit 0.1.2 — 2026-08-12
+
+- **Repo-bookkeeping sweep.** `writing-skills`: provenance footer reduced to
+  attribution only; a stale plugin-placement claim corrected.
+
 ## workbench 0.20.6 — 2026-08-12
 
 - **Adversarial review: scope boundary + timing (Q15).**

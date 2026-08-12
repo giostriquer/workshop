@@ -45,10 +45,11 @@ artifact-making utilities). (The onboarding `agent-workshop` plugin was deleted
 - `attic/skills/<name>/`, `attic/agents/<name>.md` — parked pieces: in-progress
   drafts, deprecated pieces, and the former onboarding set. Shipped by no plugin,
   run by no host, ignored by the validator; exempt from the docs symmetry until
-  promoted (a retired piece's doc lives under `docs/*/deprecated/`).
+  promoted (a retired agent's doc lives under `docs/agents/deprecated/`).
   See `attic/README.md`.
-- `docs/agents/<name>.md`, `docs/skills/<name>.md` — the doc for **every** live
-  piece. Reference, not adopted.
+- `docs/agents/<name>.md` — the origin doc for every live **agent**.
+  Reference, not adopted. **Skills carry no doc layer**: a SKILL.md is
+  self-contained; rationale lives in `docs/decisions/`.
 - `README.md` — repo intro and install entry point. `AGENTS.md` — the non-Claude
   sibling of this file.
 
@@ -60,18 +61,18 @@ diverge, fix the doc.
 ## When adding a new agent or skill
 
 1. Decide it earns inclusion. The bar: *did this agent or skill prove its value in real lived-in use across at least one substantial project?* If not, leave it out — speculative additions dilute the scaffold.
-2. Write the canonical spec where it belongs: `plugins/workbench/…` (process) or `plugins/toolkit/…` (optional utility) for a shipped piece; `.claude/` (and `.codex/`/`.opencode/` if the repo runs it on those hosts) for repo-only tooling. Shipped text references only what an installed environment can reach.
+2. Write the canonical spec where it belongs: `plugins/workbench/…` (process) or `plugins/toolkit/…` (optional utility) for a shipped piece; `.claude/` (and `.codex/`/`.opencode/` if the repo runs it on those hosts) for repo-only tooling. Shipped text references only what an installed environment can reach — **and never repo bookkeeping**: no decision-ledger numbers, decision-note links, dates, or authoring narrative in any skill or agent body. A skill carries only what the skill itself (or the processes it composes with) needs; rationale goes in `docs/decisions/`, full stop.
 3. Sanitize. Strip project-specific names, paths, and domain references. Replace with generic placeholders or named-example callouts.
-4. Write the doc. **Agents** (`docs/agents/<name>.md`): origin story — origin pressure, problem, solution shape, real workflow snippet, observed pitfalls, adaptation notes. **Skills** (`docs/skills/<name>.md`): small and usage-first — a one-or-two-line what-it-is (with lineage where derived), a **Use it** section (triggers, the load-bearing patterns, a compact example), and a **Don't** section (anti-patterns and boundaries). Rationale and history belong in `docs/decisions/`, linked, not restated in the skill doc.
+4. For an **agent**, write the origin doc (`docs/agents/<name>.md`): origin pressure, problem, solution shape, real workflow snippet, observed pitfalls, adaptation notes. **Skills get no doc** — the SKILL.md is the whole artifact; write a `docs/decisions/` note for the rationale.
 5. Update `README.md` if the piece introduces a new top-level capability worth flagging.
 
 ## When removing or deprecating
 
 The scaffold should not accumulate. If a piece stops earning its keep in real use:
 
-1. Move its origin doc to `docs/agents/deprecated/<name>.md` (or skills equivalent), not delete. The history is part of the lesson.
+1. For an agent, move its origin doc to `docs/agents/deprecated/<name>.md`, not delete — the history is part of the lesson. For a skill, a short `docs/decisions/` note records the retirement.
 2. Move the canonical spec out of the plugin(s) that ship it and into `attic/skills/<name>/` (removing it from `.claude/`/`.codex/`/`.opencode/` if the repo ran it). The attic keeps the spec versioned without shipping it; delete outright only when the text has no residual value.
-3. Add a short note in the deprecated origin doc explaining what changed, what replaced it (if anything), and why.
+3. The deprecation record explains what changed, what replaced it (if anything), and why — in the agent's deprecated origin doc, or the skill's `docs/decisions/` note.
 4. Update `README.md` to reflect the current set.
 
 ## What NOT to do here
@@ -79,7 +80,8 @@ The scaffold should not accumulate. If a piece stops earning its keep in real us
 - Do not add agents or skills speculatively because they "might be useful." Inclusion bar: lived-in proof.
 - Do not turn `CLAUDE.md` or `AGENTS.md` (root files) into copies of an adopting project's instructions. They govern the scaffold; they are not the scaffold's product.
 - Do not introduce domain-specific examples inline in agent specs. Domain-specific worked examples belong in `docs/examples/` or in the origin doc.
-- Do not break the symmetry: every agent has a matching `docs/agents/<name>.md`; every skill has `docs/skills/<name>.md`.
+- Do not break the symmetry: every agent has a matching `docs/agents/<name>.md`. Skills have no doc layer — do not recreate one.
+- Do not leak repo bookkeeping into skill or agent text: no decision-ledger numbers (Q-refs), no decision-note links, no dates or authoring narrative. Rationale lives in `docs/decisions/` only.
 - Do not commit private domain content (specific project decisions, real codebase paths beyond generic placeholders) into the scaffold.
 
 ## Scope discipline

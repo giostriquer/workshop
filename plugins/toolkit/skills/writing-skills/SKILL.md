@@ -9,7 +9,7 @@ description: Use when creating new skills, editing existing skills, or verifying
 
 **Writing skills IS Test-Driven Development applied to process documentation.**
 
-**Personal skills live in your runtime's skills directory** (`~/.claude/skills/` on Claude Code; Codex, Copilot CLI, and Gemini CLI also recognize `~/.agents/skills/` as a cross-runtime alias). Skills meant to ship to every machine belong in a plugin — the workbench set ships via the `toolkit` plugin.
+**Personal skills live in your runtime's skills directory** (`~/.claude/skills/` on Claude Code; Codex, Copilot CLI, and Gemini CLI also recognize `~/.agents/skills/` as a cross-runtime alias). Skills meant to ship to every machine belong in a plugin.
 
 You write test cases (pressure scenarios with subagents), watch them fail (baseline behavior), write the skill (documentation), watch tests pass (agents comply), and refactor (close loopholes).
 
@@ -680,4 +680,4 @@ How future agents find your skill:
 
 ---
 
-*Derived from [obra/superpowers](https://github.com/obra/superpowers) (MIT, (c) Jesse Vincent), adapted for the workbench system — rationale and lineage: https://github.com/giostriquer/agent-workshop/blob/main/docs/decisions/workbench-system.md*
+*Derived from [obra/superpowers](https://github.com/obra/superpowers) (MIT, (c) Jesse Vincent), adapted for the workbench system.*

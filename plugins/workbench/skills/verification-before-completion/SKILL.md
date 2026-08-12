@@ -1,6 +1,6 @@
 ---
 name: verification-before-completion
-description: Use when about to claim work is complete, fixed, or passing, before committing or creating PRs — the workbench flow's "deemed ready" gate: run the verification commands and confirm output before making any success claims; evidence before assertions always. For changes with a runnable surface, empirical-proof is the deeper sibling — offered, not automatic; it runs on the user's ask or standing authorization.
+description: Use when about to claim work is complete, fixed, or passing, before committing or creating PRs — the workbench flow's "deemed ready" gate: run the verification commands and confirm output before making any success claims; evidence before assertions always. For changes with a runnable surface, empirical-proof is the deeper sibling — offered, not automatic.
 metadata:
   system: workbench
 ---
@@ -131,4 +131,4 @@ Skip any step = lying, not verifying
 
 ---
 
-*Derived from [obra/superpowers](https://github.com/obra/superpowers) (MIT, (c) Jesse Vincent), adapted for the workbench system — rationale and lineage: https://github.com/giostriquer/agent-workshop/blob/main/docs/decisions/workbench-system.md*
+*Derived from [obra/superpowers](https://github.com/obra/superpowers) (MIT, (c) Jesse Vincent), adapted for the workbench system.*

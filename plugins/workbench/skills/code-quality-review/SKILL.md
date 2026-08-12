@@ -1,6 +1,6 @@
 ---
 name: code-quality-review
-description: Run an extremely strict maintainability review for abstraction quality, giant files, and spaghetti-condition growth. Use for a strict code quality review, deep code quality audit, or especially harsh maintainability review. In the workbench flow this is the single adversarial pass — it fires once, when the work-stream's implementation is believed complete, right before the PR-or-merge gate; never mid-implementation.
+description: Run an extremely strict maintainability review for abstraction quality, giant files, and spaghetti-condition growth. Use for a strict code quality review, deep code quality audit, or especially harsh maintainability review — fires once, at work-stream completion right before PR-or-merge, never mid-implementation.
 ---
 
 # Code Quality Review

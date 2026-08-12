@@ -85,8 +85,3 @@ confirms what it flagged, and this skill routes what comes out.
   pause when they don't.
 - **Never starts the revealed work.** Its last act is a hand-off — to the
   report, to brainstorming, or to the route gate.
-
----
-
-*Part of the workbench system (native — no upstream lineage) — rationale:
-https://github.com/giostriquer/agent-workshop/blob/main/docs/decisions/workbench-system.md*

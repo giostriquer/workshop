@@ -116,6 +116,13 @@ explicitly ask, or when the repo has an established pattern for that artifact
 kind (e.g. a specs directory with a documented convention). Never quietly turn
 working material into committed docs.
 
+**One home per work scope.** Evidence and artifacts from dispatched agents
+belong in the **same** folder as the rest of the scope's material — the
+dispatching session hands the scope folder's path to every agent in its
+contract; agents never invent their own locations. A run that scatters
+evidence across per-agent temp directories (or the system temp) has lost its
+scope: one work scope, one folder.
+
 ## Worktree location
 
 Worktree placement is a convention, not a per-task choice. Prefer the
@@ -160,5 +167,3 @@ pre-authorize). Everything else is the session's to drive.
   and it never responds to "how does the flow work?" by starting the flow.
 - Workbench never dictates execution agency (in-session vs dispatched) and ships no hooks;
   skill descriptions and the user's own rules are the entire activation surface.
-
----

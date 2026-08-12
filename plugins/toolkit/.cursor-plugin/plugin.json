@@ -1,7 +1,7 @@
 {
   "name": "toolkit",
   "displayName": "Toolkit",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Optional artifact-making utilities for the workshop: doc-to-html (markdown report to a polished dark HTML page), arch-map (derived architecture maps), ui-demo-video (Playwright walkthroughs with verification frames), and writing-skills (TDD for skill authoring, derived from obra/superpowers, MIT). Install alongside workbench when you want them; skip to keep sessions lean.",
   "author": {
     "name": "Agent Workshop"

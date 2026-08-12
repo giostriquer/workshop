@@ -249,7 +249,11 @@ mid-implementation, and its out-of-scope findings become follow-ups unless
 they prove the change unsafe or incorrect; **Q16** — stop and rescope when a
 change crosses owner areas the ask never named or grows well past the sized
 expectation, with adjacent defects recorded as follow-up work rather than
-folded in.
+folded in. **Q17** (2026-08-12, refining Q12) followed an audit run that
+scattered evidence across three per-agent `/tmp` dirs: one evidence home per
+work scope — dispatched agents' evidence included — with the scope folder's
+path handed to agents in their contract, never per-agent temp dirs, never
+the system temp.
 
 ## Non-goals
 

@@ -160,4 +160,4 @@ implementation itself.
 
 ---
 
-*Derived from [obra/superpowers](https://github.com/obra/superpowers) (MIT, (c) Jesse Vincent), adapted for the workbench system — rationale and lineage: https://github.com/giostriquer/agent-workshop/blob/main/docs/decisions/workbench-system.md*
+*Derived from [obra/superpowers](https://github.com/obra/superpowers) (MIT, (c) Jesse Vincent), adapted for the workbench system.*

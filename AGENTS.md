@@ -11,7 +11,7 @@ When a session starts in this repo:
 1. `README.md` — what this repo is and is not.
 2. This file (or `CLAUDE.md` for Claude sessions).
 3. `README.md`'s install section if the question involves adoption flow (the `workbench` plugin is the adoption path; `toolkit` is optional).
-4. The relevant `docs/agents/<name>.md` or `docs/skills/<name>.md` if the question is about a specific piece.
+4. The relevant `docs/agents/<name>.md` if the question is about a specific agent; for a skill, the SKILL.md itself is the whole artifact.
 5. The canonical spec — `plugins/workbench/…` or `plugins/toolkit/…` for shipped pieces, `.claude/` for the repo's own working set (see `CLAUDE.md` § "Source-of-truth boundaries") — only when verifying or modifying the spec itself.
 
 Do not load the full docs tree. Do not load all agent specs unless doing a cross-cutting audit.
@@ -33,7 +33,7 @@ The full loop documented in `docs/examples/spec-driven-development.md` applies t
 
 ## Origin-doc parity
 
-Every agent has a matching `docs/agents/<name>.md`. Every skill has a matching `docs/skills/<name>.md`. When changing a canonical spec (in the plugin that ships it):
+Every agent has a matching `docs/agents/<name>.md`. Skills have no doc layer — a SKILL.md is self-contained, with rationale in `docs/decisions/`. When changing an agent's canonical spec (in the plugin that ships it):
 
 1. Apply the spec change.
 2. Read the origin doc.
@@ -54,7 +54,7 @@ When a question involves both this scaffold and an adopting project's specifics:
 
 1. The user's current question and explicit context.
 2. The relevant agent or skill canonical spec (in its shipping plugin).
-3. The origin doc (`docs/agents/` or `docs/skills/`).
+3. The agent origin doc (`docs/agents/`).
 4. `README.md`, this file, `CLAUDE.md`.
 
 When this scaffold and an adopting project disagree, the adopting project's `CLAUDE.md` / `AGENTS.md` wins for that project's work. The scaffold provides defaults; adopters can override.
@@ -81,4 +81,4 @@ This repo is *agent definitions + skills + origin docs*. Adding domain-specific 
 
 ## When in doubt
 
-Read the matching origin doc (`docs/agents/<name>.md` or `docs/skills/<name>.md`). The origin docs explain why each piece exists and what it's responding to. If a maintenance question can't be resolved from the origin doc, ask the user before guessing.
+For an agent, read the matching origin doc (`docs/agents/<name>.md`); for a skill, read its SKILL.md and the relevant `docs/decisions/` note. If a maintenance question can't be resolved from those, ask the user before guessing.

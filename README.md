@@ -91,4 +91,4 @@ Details in [`plugins/toolkit/README.md`](plugins/toolkit/README.md).
 ## Going deeper
 
 - [`docs/workbench-flow.md`](docs/workbench-flow.md) — the workbench system's canonical mental model (with an [arch-map rendering](docs/workbench-flow.html)).
-- [`docs/agents/`](docs/agents/) and [`docs/skills/`](docs/skills/) — a doc per agent and skill: how to use it and how not to.
+- [`docs/agents/`](docs/agents/) — a doc per agent: how to use it and how not to. Skills are self-contained; their rationale lives in [`docs/decisions/`](docs/decisions/).

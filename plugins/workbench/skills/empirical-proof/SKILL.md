@@ -1,6 +1,6 @@
 ---
 name: empirical-proof
-description: Use when a just-finished change touched a surface a real client can drive — an MCP tool, a REST endpoint, runnable app behavior, or the artifact a generator emits — and the user asked for empirical verification, now or by standing rule. An expensive, user-optioned pass — offer it after runnable work, never run it uninvited. If the app cannot run here, the honest outcome is blocked-with-cause. NOT for a release- or branch-wide pass (that is qa-sweep) or verifying a premise or ticket (that is claim-check).
+description: Use when a just-finished change touched a surface a real client can drive — an MCP tool, a REST endpoint, runnable app behavior, or the artifact a generator emits — and the user asked for empirical verification, now or by standing rule (otherwise offer it; never run it uninvited). If the app cannot run here, the honest outcome is blocked-with-cause. NOT for a release- or branch-wide pass (that is qa-sweep) or verifying a premise or ticket (that is claim-check).
 ---
 # Empirical Proof
 
@@ -93,7 +93,10 @@ directly — the contract below applies either way). Every agent receives the
 same contract:
 
 - **Environment facts** — base URL/port or connection handle, auth, one working
-  example invocation to copy.
+  example invocation to copy — and the **evidence directory**: the work
+  scope's single folder (`.workbench/<work_scope>/`, or the repo's scratch
+  equivalent) where every transcript and artifact lands. Agents never pick
+  their own temp dirs; one proof, one folder.
 - **The discipline** — real boundary only; probe beyond the happy path; fix
   nothing (not product code, not setup); stop any process you start **and
   confirm the stop** (port closed, process gone — a cleanup claim is a claim

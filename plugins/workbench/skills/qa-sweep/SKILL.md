@@ -1,6 +1,6 @@
 ---
 name: qa-sweep
-description: Use when running a broad QA or verification pass over a release, branch, feature, or app surface that splits into independent slices and deserves team-scale coverage against the real running artifact. A deliberately expensive, team-scale pass — runs on the user's ask (directly, or as audit's team-sweep pick), never as a default. NOT for a single code change (that is empirical-proof) or a single premise, ticket, or hunch (that is claim-check).
+description: Use when running a broad QA or verification pass over a release, branch, feature, or app surface that splits into independent slices and deserves team-scale coverage against the real running artifact — on the user's ask (directly or as audit's team-sweep pick), never by default. NOT for a single code change (that is empirical-proof) or a single premise, ticket, or hunch (that is claim-check).
 ---
 
 # QA Sweep
@@ -62,7 +62,10 @@ One shared preamble every agent receives **verbatim**; only the **scope line**
 differs per agent. It must carry:
 
 - **Environment facts** — base URL / handle, how to authenticate, the entry
-  points, seed / data state.
+  points, seed / data state — and the **evidence directory**: the sweep's
+  single work-scope folder (`.workbench/<work_scope>/`, or the repo's scratch
+  equivalent) that every agent writes its evidence into. Agents never invent
+  their own temp dirs; one sweep, one folder.
 - **The harness** — the exact way to drive the surface (the runner, plus a working
   example to copy) and how to capture evidence (screenshots, response bodies,
   console / network errors).

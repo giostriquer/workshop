@@ -194,7 +194,9 @@ the premise's source back (the operator handed it to you); pad prior/parallel
 work with non-load-bearing tickets or branches; wrap the report in a blockquote.
 
 Persist the report only when durability or a handoff is wanted (a repo docs home,
-or `tmp/<YYYY-MM-DD>-<slug>-claim-check.md`); otherwise in-chat.
+or the work scope's folder — `.workbench/<work_scope>/<slug>-claim-check.md`);
+otherwise in-chat. Any repro artifacts worth keeping land in that same scope
+folder — never a per-run temp directory.
 
 ## Rules
 
