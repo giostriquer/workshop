@@ -1,6 +1,6 @@
 ---
 name: empirical-proof
-description: Use when a just-finished change touched a surface a real client can drive — an MCP tool, a REST endpoint, runnable app behavior, or the artifact a generator emits — and the user asked for empirical verification, now or by standing rule (otherwise offer it; never run it uninvited). If the app cannot run here, the honest outcome is blocked-with-cause. NOT for a release- or branch-wide pass (that is qa-sweep) or verifying a premise or ticket (that is claim-check).
+description: Use when a just-finished change touched a surface a real client can drive — an MCP tool, a REST endpoint, runnable app behavior, or a generator's emitted artifact — and the user asked for empirical verification (offer it otherwise; never run it uninvited). NOT for a release- or branch-wide pass (qa-sweep), verifying a premise or ticket (claim-check), or driving an app to hunt for unknown bugs in a surface — that is ordinary session work, not this protocol.
 ---
 # Empirical Proof
 
@@ -14,9 +14,20 @@ in — both are the operator's separate step.
 
 After finishing work that touched a surface the running software can prove — an
 MCP tool, a REST API endpoint, any behavior a client can drive — and before
-reporting it done. Not for a release- or branch-wide pass (`qa-sweep`), not for
-verifying a premise or ticket (`claim-check`), and not for diffs with no runtime
-surface (docs, pure test changes) — there is nothing to drive.
+reporting it done.
+
+**Not for** a release- or branch-wide pass (`qa-sweep`), verifying a premise or
+ticket (`claim-check`), diffs with no runtime surface (docs, pure test changes),
+or **driving an app to hunt for unknown bugs in a surface**.
+
+That last one is the misfire worth naming, because this is the only skill in the
+flow that says "drive the running app" — so exploratory hunting gets pulled here
+and then inherits a gate and a verdict set built for proving *one finished
+change*. Nothing is under test when you are hunting, so `verified` / `broken` /
+`blocked` have nothing to attach to, and reaching for the `blocked` exit after a
+launch hiccup ends a hunt that ordinary dev setup would have started. Hunting a
+surface is ordinary session work: get the app up, drive it, reproduce what you
+find, report it.
 
 ## The one rule that makes this proof
 
@@ -38,13 +49,19 @@ Before any scenario is dispatched:
    health-check → nothing downstream counts.
 3. **Confirm the instance carries the change under test** — a stale process
    proves old code. Restart via the documented path when in doubt.
-4. **Otherwise, make one clean start attempt via the documented path.** Steps
-   the docs themselves prescribe (install dependencies, copy the example env)
-   are part of that attempt. Anything beyond it is not yours to do.
-5. **If it will not come up: report `blocked` and stop.** Quote the observed
-   failure verbatim, name the one thing that would unblock it (the missing
-   service, the credential, the env var), and hand it back to the operator.
-   Fixing local setup is out of scope by design.
+4. **Otherwise, start it yourself via the documented path.** Everything the
+   project's own docs prescribe is in scope — install dependencies, copy the
+   example env, build first, run the dev server — as is a clean retry when the
+   first attempt fails for a reason the docs let you fix. A fresh worktree or a
+   clean install is ordinary setup, not environment fabrication. What stays out
+   of scope is repairing the *machine*: a broken toolchain, an absent service,
+   local config drift.
+5. **`blocked` is the last resort, not the first exit.** One failed launch is
+   not a blocked verdict; a documented path you have actually exhausted is.
+   Report it when the app cannot come up without something only the operator can
+   supply — a credential, an unreachable service, a dependency you must not fake
+   — quoting the observed failure verbatim and naming the one thing that would
+   unblock it.
 
 **Do not conjure the environment.** A boot gate that needs an unreachable
 database, credential, or service is a *blocked* verdict — not an invitation to
@@ -159,9 +176,10 @@ citing the check that proved the stop, and what you left untouched.
   genuinely running app over the real boundary — never tests, mocks, harnesses,
   or reading.
 - Gate first: a recorded health-check on the right build before any scenario
-  counts; one documented start attempt at most.
-- `blocked` is a first-class honest outcome: cause verbatim + the one unblock,
-  then stop. Never fabricate a dependency to proceed.
+  counts; start it yourself via the documented path, retry included.
+- `blocked` is a first-class honest outcome but the last resort, not the first
+  exit: cause verbatim + the one unblock, then stop. One failed launch is not a
+  blocked verdict. Never fabricate a dependency to proceed.
 - MCP tools and REST endpoints, when touched, are must-cover — driven through a
   real client connection / real HTTP respectively.
 - The happy path never suffices: probe invalid input, coercion cases, the error
