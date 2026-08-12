@@ -1,6 +1,6 @@
 # visual-implementer
 
-> **Parked 2026-08-11** — the onboarding `agent-workshop` plugin was deleted; the spec is preserved at `attic/agents/`. See `docs/decisions/drop-onboarding-plugin.md`.
+> **Parked 2026-08-11** — the onboarding `agent-workshop` plugin was deleted; the spec sits alongside this doc in this folder. See `docs/decisions/drop-onboarding-plugin.md`.
 
 ## Origin
 

@@ -91,4 +91,4 @@ Details in [`plugins/toolkit/README.md`](plugins/toolkit/README.md).
 ## Going deeper
 
 - [`docs/workbench-flow.md`](docs/workbench-flow.md) — the workbench system's canonical mental model (with an [arch-map rendering](docs/workbench-flow.html)).
-- [`docs/agents/`](docs/agents/) — a doc per agent: how to use it and how not to. Skills are self-contained; their rationale lives in [`docs/decisions/`](docs/decisions/).
+- [`docs/decisions/`](docs/decisions/) — the rationale layer: why each agent and skill exists and the calls made along the way. The specs themselves are self-contained.

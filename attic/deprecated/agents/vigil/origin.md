@@ -1,6 +1,6 @@
 # vigil
 
-> **Parked 2026-08-11** — retired from the `toolkit` plugin and the repo working set (operator call); the spec is preserved at `attic/agents/vigil.md`.
+> **Parked 2026-08-11** — retired from the `toolkit` plugin and the repo working set (operator call); the spec sits alongside this doc in this folder.
 
 ## Origin
 

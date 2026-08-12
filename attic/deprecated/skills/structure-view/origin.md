@@ -1,18 +1,18 @@
 # structure-view (deprecated name)
 
-> **Renamed 2026-08-05 → [`arch-map`](../arch-map.md).** Kept here so the
+> **Renamed 2026-08-05 → [`arch-map`](../../../../plugins/toolkit/skills/arch-map/SKILL.md).** Kept here so the
 > history of the design-first birth and Round 1 field notes stay findable
-> under the old name. Do not resume work under this name — use
-> `docs/skills/arch-map.md` and
+> under the old name. Do not resume work under this name — use the live
+> `arch-map` skill (`plugins/toolkit/skills/arch-map/`) and
 > `docs/decisions/arch-map-skill-draft.md`.
 >
 > Withdrawn from the toolkit plugin on 2026-07-31 — the day it landed —
 > pending more design thought. Historical parked draft:
-> [`../../decisions/structure-view-skill-draft.md`](../../decisions/structure-view-skill-draft.md).
+> [`docs/decisions/structure-view-skill-draft.md`](../../../../docs/decisions/structure-view-skill-draft.md).
 > Spec of record (historical):
-> [`../../decisions/structure-view.md`](../../decisions/structure-view.md).
+> [`docs/decisions/structure-view.md`](../../../../docs/decisions/structure-view.md).
 > Current visual + rename decision:
-> [`../../decisions/arch-map-rename-and-visual.md`](../../decisions/arch-map-rename-and-visual.md).
+> [`docs/decisions/arch-map-rename-and-visual.md`](../../../../docs/decisions/arch-map-rename-and-visual.md).
 
 ## Origin
 
@@ -184,7 +184,7 @@ tests named as the highest-fidelity edge source in Derive. The field agent
 also confirmed the view-economy discipline in practice: three derived-but-
 unchosen views were named in the page intro rather than drawn.
 
-Record further rounds on the active [`arch-map`](../arch-map.md) origin.
+Record further rounds against the active [`arch-map`](../../../../plugins/toolkit/skills/arch-map/SKILL.md) skill.
 
 ## Adaptation notes
 

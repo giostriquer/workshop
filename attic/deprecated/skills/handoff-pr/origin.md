@@ -6,7 +6,7 @@
 > sessions, which turned the artifact into ceremony — the next action after "here's
 > the artifact" was always "open it and watch CI." With `fix-ci` landing the
 > autonomous CI loop, the whole tail became automatable, and the skill evolved into
-> [`file-pr`](../file-pr.md): same template-derived body, ticket detection, and gate
+> [`file-pr`](../../../../plugins/workbench/skills/file-pr/SKILL.md): same template-derived body, ticket detection, and gate
 > discovery, but it **opens the PR itself** and tends it (CI fixes via `fix-ci`,
 > merge-based conflict resolution) until green and mergeable. Teams that still have
 > the authorization split can recover the artifact behavior from this doc and the
@@ -57,6 +57,6 @@ Same, but prints the artifact in-session and writes no `tmp/` file — for when 
 - The body shape is no longer hardcoded — it follows the repo's PR template when one exists (root / `.github/` / `docs/`, including a `PULL_REQUEST_TEMPLATE/` directory of named variants, matched case-insensitively). The built-in Summary / Ticket / Caveats structure is only the fallback. Adjust template detection if your host honors other locations.
 - When multiple templates exist (default vs `hotfix` / `release`), selection is by branch name / change intent; tune that heuristic to your branching model.
 - Ticket detection scans branch / commits / PR description; adjust the patterns to your tracker's id format.
-- The validation gate is **discovered, not hardcoded**: the skill names no formatter, linter, task runner, or hook tool — the producing session reads the repo's CI workflows, hook config, build/package scripts, and contributor docs to find the actual required checks, then runs them. A project on any toolchain gets the same behavior; nothing about a specific setup leaks into the skill. See [`docs/decisions/handoff-pr-prepush-validation-gate.md`](../decisions/handoff-pr-prepush-validation-gate.md).
+- The validation gate is **discovered, not hardcoded**: the skill names no formatter, linter, task runner, or hook tool — the producing session reads the repo's CI workflows, hook config, build/package scripts, and contributor docs to find the actual required checks, then runs them. A project on any toolchain gets the same behavior; nothing about a specific setup leaks into the skill. See [`docs/decisions/handoff-pr-prepush-validation-gate.md`](../../../../docs/decisions/handoff-pr-prepush-validation-gate.md).
 - Title and branch conformance is also discovery-based: if the repo runs a PR-title linter, commit-lint, or a branch-name rule, the skill conforms the title/branch to the pattern it actually enforces (read from the linter/CI config), rather than hardcoding any project's scope vocabulary or ticket-id shape.
 - The **Review status** field (in the opener-only notes, not the public body) records whatever pre-PR review ran. The coupling is light — `handoff-pr` does not enforce that a review ran. (Its former sibling `handoff-review` was retired to the attic 2026-08-10.)

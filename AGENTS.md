@@ -11,8 +11,7 @@ When a session starts in this repo:
 1. `README.md` — what this repo is and is not.
 2. This file (or `CLAUDE.md` for Claude sessions).
 3. `README.md`'s install section if the question involves adoption flow (the `workbench` plugin is the adoption path; `toolkit` is optional).
-4. The relevant `docs/agents/<name>.md` if the question is about a specific agent; for a skill, the SKILL.md itself is the whole artifact.
-5. The canonical spec — `plugins/workbench/…` or `plugins/toolkit/…` for shipped pieces, `.claude/` for the repo's own working set (see `CLAUDE.md` § "Source-of-truth boundaries") — only when verifying or modifying the spec itself.
+4. The canonical spec — `plugins/workbench/…` or `plugins/toolkit/…` for shipped pieces, `.claude/` for the repo's own working set (see `CLAUDE.md` § "Source-of-truth boundaries") — if the question is about a specific agent or skill. The spec is the whole artifact; rationale lives in `docs/decisions/`.
 
 Do not load the full docs tree. Do not load all agent specs unless doing a cross-cutting audit.
 
@@ -24,27 +23,20 @@ The scaffold's value is its fitness for adoption. Every change should make a pie
 
 ## Standard maintenance workflow
 
-The full loop documented in `docs/examples/spec-driven-development.md` applies to **adopting projects**, not to this scaffold. For scaffold maintenance, the lighter loop is:
+The full **Spec → Plan → Execute → Review → Critique → Final-Docs** loop applies to **adopting projects**, not to this scaffold. For scaffold maintenance, the lighter loop is:
 
 1. **Identify the change.** Mechanical (typo, link, formatting), substantive (new agent/skill, behavior change, convention shift), or structural (layout reorganization).
 2. **Mechanical changes** apply directly. No spec, no review, no change-log.
-3. **Substantive changes** get a short note in `docs/decisions/<name>.md` describing what's changing and why. Apply, then verify origin-doc parity.
+3. **Substantive changes** get a short note in `docs/decisions/<name>.md` describing what's changing and why, then apply.
 4. **Structural changes** require updating `README.md` and any cross-references. Pause and ask the user before applying — structural changes affect every adopter.
 
-## Origin-doc parity
+## No doc layer
 
-Every agent has a matching `docs/agents/<name>.md`. Skills have no doc layer — a SKILL.md is self-contained, with rationale in `docs/decisions/`. When changing an agent's canonical spec (in the plugin that ships it):
-
-1. Apply the spec change.
-2. Read the origin doc.
-3. If the origin-doc claims contradict the new spec — fix the origin doc.
-4. If the origin doc is still accurate — leave it alone.
-
-The spec is the contract. The origin doc is the explanation. They must not drift.
+Agents and skills are self-contained: the spec (agent `.md` / SKILL.md) is the whole artifact. There is no per-piece doc to keep in parity; rationale lives in `docs/decisions/`. Do not recreate a doc layer (no `docs/agents/`, no `docs/skills/`).
 
 ## Cross-host parity
 
-Canonical definitions live in the shipped plugins (`workbench` for the process core, `toolkit` for optional utilities; see `CLAUDE.md` § "Source-of-truth boundaries"). This repo's own host dirs — `.claude/`, `.codex/`, `.opencode/` — carry only the small set the repo runs (`change-log`, `push`, `workbench-drift`, `wiki-maintainer`); `.claude/` is canonical for those. Parked pieces — in-progress drafts, deprecated skills, and the former onboarding set (agents included) — live in `attic/` (see `attic/README.md`): in the repo, shipped by no plugin, discovered by no host, exempt from the docs symmetry until promoted.
+Canonical definitions live in the shipped plugins (`workbench` for the process core, `toolkit` for optional utilities; see `CLAUDE.md` § "Source-of-truth boundaries"). This repo's own host dirs — `.claude/`, `.codex/`, `.opencode/` — carry only the small set the repo runs (`change-log`, `push`, `workbench-drift`, `wiki-maintainer`); `.claude/` is canonical for those. Parked pieces live in `attic/` (see `attic/README.md`): in the repo, shipped by no plugin, discovered by no host. Two tiers — `attic/skills/` and `attic/agents/` for in-progress pieces still intended to ship; `attic/deprecated/` for retired pieces kept as history.
 
 The portable conventions adopters apply in *their* repos are unchanged: **thin wrappers for agents** (each non-Claude wrapper points at the adopter's `.claude/agents/<name>.md`) and **full mirroring for skills** (each host carries its own SKILL.md). Gemini and OpenCode remain supported **adoption** targets (onboarding generates their wrappers); this repo simply doesn't keep its own `.gemini/` instance.
 
@@ -54,7 +46,7 @@ When a question involves both this scaffold and an adopting project's specifics:
 
 1. The user's current question and explicit context.
 2. The relevant agent or skill canonical spec (in its shipping plugin).
-3. The agent origin doc (`docs/agents/`).
+3. The relevant `docs/decisions/` note.
 4. `README.md`, this file, `CLAUDE.md`.
 
 When this scaffold and an adopting project disagree, the adopting project's `CLAUDE.md` / `AGENTS.md` wins for that project's work. The scaffold provides defaults; adopters can override.
@@ -69,16 +61,15 @@ The scaffold's own skills (`change-log`, `push`, etc.) apply to this repo too. W
 
 ## What NOT to do
 
-- Do not modify agent specs without checking origin-doc parity.
 - Do not add agents or skills speculatively. Inclusion bar: lived-in proof from at least one substantial project.
-- Do not introduce domain-specific examples (game design, web app, particular product) inline in canonical specs. Domain examples go in `docs/examples/` or origin docs.
+- Do not introduce domain-specific examples (game design, web app, particular product) inline in canonical specs. Keep specs generic; domain-specific rationale goes in `docs/decisions/`.
 - Do not commit private domain content (specific project decisions, real internal paths beyond generic placeholders).
 - Do not turn the scaffold into a methodology with claims. The scaffold is artifacts + origin notes.
 
 ## Scope discipline
 
-This repo is *agent definitions + skills + origin docs*. Adding domain-specific tooling, hosts, or product features is out-of-scope.
+This repo is *agent definitions + skills + decision records*. Adding domain-specific tooling, hosts, or product features is out-of-scope.
 
 ## When in doubt
 
-For an agent, read the matching origin doc (`docs/agents/<name>.md`); for a skill, read its SKILL.md and the relevant `docs/decisions/` note. If a maintenance question can't be resolved from those, ask the user before guessing.
+Read the piece's canonical spec and the relevant `docs/decisions/` note. If a maintenance question can't be resolved from those, ask the user before guessing.
