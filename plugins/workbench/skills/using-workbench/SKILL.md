@@ -1,9 +1,19 @@
 ---
 name: using-workbench
-description: Use when asked how the workbench flow works, what process this environment follows, or which skill owns a moment in the workflow — "how does the workbench flow work?", "what's the flow here?", "which skill do I use for X?". An orientation map of the workbench system's doors, gates, and completion chain. Reference only — it never inserts the flow into unrelated work.
+description: Use when starting any conversation - establishes how to find and use skills, requiring skill invocation before ANY response including clarifying questions
 metadata:
   system: workbench
 ---
+
+If you were dispatched as a subagent to execute a specific task, ignore this skill. If you think there is even a 1% chance a skill might apply to what you are doing, you ABSOLUTELY MUST invoke the skill.
+IF A SKILL APPLIES TO YOUR TASK, YOU DO NOT HAVE A CHOICE. YOU MUST USE IT.
+
+This is not negotiable. You cannot rationalize your way out of this.
+
+# The Rule
+Invoke relevant or requested skills BEFORE any response or action — including clarifying questions, exploring the codebase, or checking files. If it turns out wrong for the situation, you don't have to use it.
+
+Then announce "Using [skill] to [purpose]" and follow the skill exactly. If it has a checklist, create a todo per item.
 
 # Using Workbench
 
@@ -88,11 +98,5 @@ pre-authorize). Everything else is the session's to drive.
   never respond to "how does the flow work?" by starting the flow.
 - Workbench never dictates execution agency (direct vs agentic) and ships no hooks;
   skill descriptions and the user's own rules are the entire activation surface.
-- The canonical model (diagrams, decisions ledger, provenance) is published at
-  https://github.com/giostriquer/agent-workshop/blob/main/docs/workbench-flow.md
-  — this skill is the shipped digest.
 
 ---
-
-*Part of the workbench system (native — no upstream lineage) — rationale:
-https://github.com/giostriquer/agent-workshop/blob/main/docs/decisions/workbench-system.md*
