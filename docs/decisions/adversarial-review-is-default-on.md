@@ -86,6 +86,26 @@ A trigger-surface fix rather than a behavioral one, but the same family of
 defect as the mandate confusion above: the flow and the skill were describing
 the same thing in different words.
 
+## Amendment (same day): description trimmed back to purpose and usage
+
+Making the review default-on was implemented partly *in the description* — it
+grew to carry when to run it unasked, both exceptions, and the
+once-per-work-stream rule. That is execution policy in the one field every
+session pays for whether or not the skill fires, and it is precisely the
+description bloat this repo's own token audit flags against other skills. The
+skill body already carried all of it.
+
+Trimmed to purpose and usage: 65 words → 31, leaner than the 40 it started at.
+What stays is the trigger surface and the one word that makes the gate fire —
+"required once a work-stream's implementation is complete" — plus the
+misfire guard, "never mid-implementation". Both exits and the non-reasons live
+in the body's gate bullet, which is where a session reads them: after the
+skill has already loaded, at the moment it matters.
+
+Lesson worth keeping: a mandate needs exactly one word in the description
+(*required*) and its full statement in the body. Encoding the whole policy in
+the trigger surface taxes every session to serve the sessions where it fires.
+
 ## What was deliberately not changed
 
 `verification-before-completion` keeps its always-on status and its wording;

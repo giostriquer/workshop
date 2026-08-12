@@ -1,6 +1,6 @@
 ---
 name: code-quality-review
-description: Run an extremely strict maintainability review for abstraction quality, giant files, and spaghetti-condition growth. Required once a work-stream's implementation is complete, right before the PR-or-merge ask — run it unasked unless the user explicitly declines or the repo's own process supersedes it. Also use for a strict or adversarial code quality review, deep code quality audit, or especially harsh maintainability review. Once per work-stream, never mid-implementation.
+description: Extremely strict maintainability review — abstraction quality, giant files, spaghetti-condition growth. Use for a strict or adversarial code quality review; required once a work-stream's implementation is complete, right before PR-or-merge, never mid-implementation.
 ---
 
 # Code Quality Review

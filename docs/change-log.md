@@ -8,6 +8,17 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.20.11 — 2026-08-12
+
+- **`code-quality-review`'s description trimmed back to purpose and usage.**
+  Making the review default-on (0.20.9) pushed execution policy into the
+  always-loaded description — when to run it unasked, both exceptions, the
+  once-per-work-stream rule — which is the description bloat this repo's own
+  token audit flags elsewhere. The policy lives in the body; the description
+  is 65 words → 31, leaner than the 40 it started at, and still carries
+  "required" so the gate fires by default.
+  ([decision](decisions/adversarial-review-is-default-on.md))
+
 ## workbench 0.20.10 — 2026-08-12
 
 - **"Adversarial" now matches the review that answers to it.** The flow names
