@@ -74,7 +74,7 @@ Legend:
 - **Purple (rectangles):** documentation skills and the wiki-maintainer end-of-flow pass.
 - **Green (rounded):** user-touch points (start, approval gates, branch close).
 
-The annotations on edges (`continue same session`, `fresh dispatch`) call out the [reviewer-session-continuation](../conventions/reviewer-session-continuation.md) and [per-task-fresh-dispatches](../conventions/per-task-fresh-dispatches.md) discipline that holds the loop together.
+The annotations on edges (`continue same session`, `fresh dispatch`) call out the continuation discipline that holds the loop together: same artifact across revision rounds → continue the same reviewer session; a new task or artifact → a fresh dispatch.
 
 ## Stage 1 — Spec
 
@@ -139,7 +139,7 @@ If pattern-reviewer flags issues:
 - If the fix was structural (new files, changed interfaces, extracted layer), loop back to code-quality review before final pattern re-review.
 - If the fix was mechanical (field vs property, switch arm, namespace swap), skip back to pattern re-review.
 
-**Important:** each task's four stages are fresh dispatches per stage per task. Do not SendMessage-resume a reviewer that completed a prior task's review on a new task's diff. See [`docs/conventions/per-task-fresh-dispatches.md`](../conventions/per-task-fresh-dispatches.md).
+**Important:** each task's four stages are fresh dispatches per stage per task. Do not SendMessage-resume a reviewer that completed a prior task's review on a new task's diff.
 
 ### 4d. Test quality
 
@@ -180,8 +180,6 @@ This stage is mandatory by default even when per-task `change-log` and per-task 
 - **Same artifact, multi-round:** continue the same reviewer session (e.g., `spec-reviewer-feature-x` across spec-review revision rounds).
 - **New artifact (different spec, plan, task, audit, asset slot):** fresh dispatch.
 - **Continuation failure:** try ID-based addressing, then fall back to fresh dispatch carrying findings as context.
-
-See [`docs/conventions/reviewer-session-continuation.md`](../conventions/reviewer-session-continuation.md) and [`docs/conventions/per-task-fresh-dispatches.md`](../conventions/per-task-fresh-dispatches.md).
 
 ## Skip rules
 

@@ -25,7 +25,6 @@ This repo follows a lighter version of the **Spec → Plan → Execute → Revie
 - **Spec.** When changing an agent or skill substantively, write a short note in `docs/decisions/` (create the folder if it doesn't exist) describing what's changing and why. Mechanical edits (typo fixes, link updates, formatting) skip this step.
 - **Execute.** Apply the change. Touch only the files involved.
 - **Origin-doc parity.** Every change to an agent definition (`.claude/agents/<name>.md`) must check whether the matching `docs/agents/<name>.md` is still accurate. Same for skills.
-- **Conventions parity.** When changing a convention doc (`docs/conventions/`), check whether the agents and skills referencing it need updating.
 
 If a change is meaningful enough to land a `change-log.md` entry, use the `change-log` skill (the scaffold's own skill applies to itself — eat your own dogfood).
 
@@ -50,7 +49,6 @@ artifact-making utilities). (The onboarding `agent-workshop` plugin was deleted
   See `attic/README.md`.
 - `docs/agents/<name>.md`, `docs/skills/<name>.md` — the doc for **every** live
   piece. Reference, not adopted.
-- `docs/conventions/<name>.md` — portable rules. Adopting projects pick which to include.
 - `README.md` — repo intro and install entry point. `AGENTS.md` — the non-Claude
   sibling of this file.
 
@@ -65,8 +63,7 @@ diverge, fix the doc.
 2. Write the canonical spec where it belongs: `plugins/workbench/…` (process) or `plugins/toolkit/…` (optional utility) for a shipped piece; `.claude/` (and `.codex/`/`.opencode/` if the repo runs it on those hosts) for repo-only tooling. Shipped text references only what an installed environment can reach.
 3. Sanitize. Strip project-specific names, paths, and domain references. Replace with generic placeholders or named-example callouts.
 4. Write the doc. **Agents** (`docs/agents/<name>.md`): origin story — origin pressure, problem, solution shape, real workflow snippet, observed pitfalls, adaptation notes. **Skills** (`docs/skills/<name>.md`): small and usage-first — a one-or-two-line what-it-is (with lineage where derived), a **Use it** section (triggers, the load-bearing patterns, a compact example), and a **Don't** section (anti-patterns and boundaries). Rationale and history belong in `docs/decisions/`, linked, not restated in the skill doc.
-5. If the new piece relies on a convention not yet in `docs/conventions/`, add or update that convention.
-6. Update `README.md` if the piece introduces a new top-level capability worth flagging.
+5. Update `README.md` if the piece introduces a new top-level capability worth flagging.
 
 ## When removing or deprecating
 
@@ -87,7 +84,7 @@ The scaffold should not accumulate. If a piece stops earning its keep in real us
 
 ## Scope discipline
 
-This repo is intentionally narrow. It is *agent definitions and skills* + *origin docs* + *portable conventions*. It is not a host (no application server, no test harness, no domain-specific tooling). Adding scope beyond that is out-of-scope; route to a separate project.
+This repo is intentionally narrow. It is *agent definitions and skills* + *origin docs*. It is not a host (no application server, no test harness, no domain-specific tooling). Adding scope beyond that is out-of-scope; route to a separate project.
 
 ## On adopting from this repo into another project
 

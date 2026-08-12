@@ -5,6 +5,20 @@ Sections are keyed by the **released plugin version** that shipped the change
 work that ships no release (packaging, structure, docs) sits under `## repo — date` sections in
 chronological position.
 
+## repo — 2026-08-12
+
+### docs/conventions removed
+
+Operator call: the conventions layer (seven pre-plugin-era docs — host-mirror
+parity, doc-routing, dispatch disciplines) is no longer relevant now that
+skills ship via plugins and the workbench flow docs carry the process rules.
+Directory deleted; live references in `README.md`, `CLAUDE.md`, `AGENTS.md`,
+the spec-driven-development example, and two origin docs updated, with the
+load-bearing disciplines inlined. Agent-contract references to an *adopting
+project's* `docs/conventions/<domain>/` layout are kept — they describe the
+host repo, not this one. Rationale:
+[`remove-conventions-layer.md`](decisions/remove-conventions-layer.md).
+
 ## workbench 0.20.5 — 2026-08-12
 
 ### expensive verification is user-optioned (Q14)

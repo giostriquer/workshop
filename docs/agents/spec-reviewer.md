@@ -65,4 +65,4 @@ Example dispatch shape:
 - Plan review's **layer consistency** check (Core struct + host wrapper + authored asset) reflects the originating project's three-layer config pattern. If your project has a different layering, generalize the check accordingly.
 - The **test existence (literal walk)** rule is unusually load-bearing — adopt it verbatim. Spec → plan test-coverage drift is a common pre-implementation bug; the literal walk catches it.
 - Pre-commit guard coupling (introducing a file matching a guarded pattern means landing all coupled artifacts in the same commit) is project-specific to the originating project's `convention-guard.ps1`. If your project doesn't have similar guards, omit.
-- The agent runs **once per artifact, multi-round until PASS**. Reviewer-session continuation matters — see `docs/conventions/reviewer-session-continuation.md`.
+- The agent runs **once per artifact, multi-round until PASS**. Reviewer-session continuation matters — keep revision rounds of the same artifact in the same reviewer session; dispatch fresh for a new artifact.

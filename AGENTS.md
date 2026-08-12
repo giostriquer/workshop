@@ -46,7 +46,7 @@ The spec is the contract. The origin doc is the explanation. They must not drift
 
 Canonical definitions live in the shipped plugins (`workbench` for the process core, `toolkit` for optional utilities; see `CLAUDE.md` § "Source-of-truth boundaries"). This repo's own host dirs — `.claude/`, `.codex/`, `.opencode/` — carry only the small set the repo runs (`change-log`, `push`, `workbench-drift`, `wiki-maintainer`); `.claude/` is canonical for those. Parked pieces — in-progress drafts, deprecated skills, and the former onboarding set (agents included) — live in `attic/` (see `attic/README.md`): in the repo, shipped by no plugin, discovered by no host, exempt from the docs symmetry until promoted.
 
-The portable conventions adopters apply in *their* repos are unchanged: **thin wrappers for agents** (each non-Claude wrapper points at the adopter's `.claude/agents/<name>.md`) and **full mirroring for skills** (each host carries its own SKILL.md). See [`docs/conventions/cross-host-wrappers.md`](docs/conventions/cross-host-wrappers.md) and [`docs/conventions/skill-parity.md`](docs/conventions/skill-parity.md). Gemini and OpenCode remain supported **adoption** targets (onboarding generates their wrappers); this repo simply doesn't keep its own `.gemini/` instance.
+The portable conventions adopters apply in *their* repos are unchanged: **thin wrappers for agents** (each non-Claude wrapper points at the adopter's `.claude/agents/<name>.md`) and **full mirroring for skills** (each host carries its own SKILL.md). Gemini and OpenCode remain supported **adoption** targets (onboarding generates their wrappers); this repo simply doesn't keep its own `.gemini/` instance.
 
 ## Source priority
 
@@ -55,14 +55,13 @@ When a question involves both this scaffold and an adopting project's specifics:
 1. The user's current question and explicit context.
 2. The relevant agent or skill canonical spec (in its shipping plugin).
 3. The origin doc (`docs/agents/` or `docs/skills/`).
-4. The convention doc (`docs/conventions/`).
-5. `README.md`, this file, `CLAUDE.md`.
+4. `README.md`, this file, `CLAUDE.md`.
 
 When this scaffold and an adopting project disagree, the adopting project's `CLAUDE.md` / `AGENTS.md` wins for that project's work. The scaffold provides defaults; adopters can override.
 
 ## Reviewer sessions
 
-When dispatching a reviewer agent for a substantive scaffold change, continue the same reviewer session across revision rounds (see `docs/conventions/reviewer-session-continuation.md`) and dispatch fresh for unrelated tasks (see `docs/conventions/per-task-fresh-dispatches.md`).
+When dispatching a reviewer agent for a substantive scaffold change, continue the same reviewer session across revision rounds; dispatch fresh for unrelated tasks.
 
 ## Skill self-application
 
@@ -78,7 +77,7 @@ The scaffold's own skills (`change-log`, `doc-audit`, etc.) apply to this repo t
 
 ## Scope discipline
 
-This repo is *agent definitions + skills + origin docs + portable conventions*. Adding domain-specific tooling, hosts, or product features is out-of-scope.
+This repo is *agent definitions + skills + origin docs*. Adding domain-specific tooling, hosts, or product features is out-of-scope.
 
 ## When in doubt
 

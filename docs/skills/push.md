@@ -55,7 +55,7 @@ The skill is invocation-only; no agent dispatches it.
 
 ## Adaptation notes
 
-- The **co-author trailer** is project-specific (model attribution differs per host: Claude / Codex / Gemini). Adapt step 7 to your project's trailer convention. The originating project has Claude/Codex/Gemini variants of this skill with different model trailers — see `docs/conventions/skill-parity.md` for the cross-host adaptation pattern.
+- The **co-author trailer** is project-specific (model attribution differs per host: Claude / Codex / Gemini). Adapt step 7 to your project's trailer convention. The originating project has Claude/Codex/Gemini variants of this skill with different model trailers.
 - The **conventional-style subject prefixes** (`docs:`, `feat:`, etc.) are widely portable. Adopt as-is or extend with project-specific prefixes.
 - The skill operates on the project repo only — does not touch upstream / parent wikis or unrelated repos. If your project has linked sibling repos, write a separate skill per repo rather than generalizing.
 - The "prefer change-log as message source" rule pairs with the `change-log` skill. If your project doesn't use a change-log convention, fall back to "always derive from the diff."
