@@ -65,7 +65,7 @@ When dispatching a reviewer agent for a substantive scaffold change, continue th
 
 ## Skill self-application
 
-The scaffold's own skills (`change-log`, `doc-audit`, etc.) apply to this repo too. When a meaningful scaffold change lands, use the `change-log` skill to record it under `docs/change-log.md` (create the file if needed). Trivial maintenance does not need a log entry.
+The scaffold's own skills (`change-log`, `push`, etc.) apply to this repo too. When a change ships in a plugin version bump, use the `change-log` skill to record it in `docs/change-log.md` — the plugins' release notes (plugin releases only, bounded at 15 sections). Repo-only work is recorded in `docs/decisions/`, not the release notes.
 
 ## What NOT to do
 

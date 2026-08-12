@@ -26,7 +26,7 @@ This repo follows a lighter version of the **Spec → Plan → Execute → Revie
 - **Execute.** Apply the change. Touch only the files involved.
 - **Origin-doc parity.** Every change to an agent definition (`.claude/agents/<name>.md`) must check whether the matching `docs/agents/<name>.md` is still accurate. Same for skills.
 
-If a change is meaningful enough to land a `change-log.md` entry, use the `change-log` skill (the scaffold's own skill applies to itself — eat your own dogfood).
+If a change ships in a plugin version bump, record it with the `change-log` skill — `docs/change-log.md` is the plugins' **release notes** (plugin releases only, bounded at 15 sections; repo-only work is recorded in `docs/decisions/`, not there). The scaffold's own skill applies to itself — eat your own dogfood.
 
 ## Source-of-truth boundaries
 
