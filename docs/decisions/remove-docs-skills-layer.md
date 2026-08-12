@@ -23,7 +23,7 @@ edit into doc edits that re-leaked bookkeeping.
 - **`docs/skills/` deleted** (per-skill pages and the roster README — git
   history preserves the texts). The seven `deprecated/` pages — the former
   origin docs of already-retired skills — are **parked under
-  `attic/docs/skills/`** (operator call), consistent with the attic's role
+  `attic/deprecated/`** (operator call), consistent with the attic's role
   as the home for retired material.
 - **The model going forward:** a SKILL.md is the whole artifact — concise,
   carrying only what the skill itself or its composed processes need.
