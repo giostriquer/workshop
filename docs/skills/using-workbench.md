@@ -14,6 +14,17 @@ rationale: [`workbench-system.md`](../decisions/workbench-system.md).
 - It answers three things: the flow at a glance, the moment→skill ownership
   table, and the three user gates (size the workload · pick the route · PR or
   merge).
+- It also carries the session-conduct conventions: flow artifacts are
+  disposable, and worktrees follow the repo/user convention — absent one,
+  `<repo>/.worktrees/<task-name>`, never the system temp directory.
+- And the verification picker: one line per verification-adjacent piece
+  (always-on gate · single change · broad sweep · premise · landing), chosen
+  by the work's shape — plus the principle for work no frame fits: keep the
+  evidence standard, drop the frame. Checkpoints, not reading assignments.
+- Cost/authority rule (Q14): `verification-before-completion` is the only
+  always-on piece; `empirical-proof` and `qa-sweep` are expensive tiers —
+  offered, never defaulted to; they run on explicit ask or standing
+  authorization.
 - Session-start behavior is orientation with an opt-out built in: skills fire
   on relevance; a skill that turns out wrong for the situation isn't followed.
 - Pairs with the rules-layer doctrine snippet

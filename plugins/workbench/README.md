@@ -57,7 +57,7 @@ They inspect and report; none can edit your files (reviewers use
 | `empirical-proof` | proves a finished change at the running app — real calls, raw evidence; verified / broken / blocked |
 | `code-quality-review` | unusually strict, structure-first maintainability review of a diff |
 | `get-pr-comments` | triages the PR's conversation, review, and inline comments into a prioritized action list; read-only |
-| `route-work` | grades a task and recommends model + effort + process pattern before dispatch; never dispatches |
+| `route-work` | reference table for the model fleet — model × effort scores plus the hard routing invariants; a lookup, not a dispatch step |
 
 ## Workbench — the process layer
 
@@ -72,7 +72,7 @@ surface, and `using-workbench` answers "how does this flow work?" on demand.
 | --- | --- |
 | `audit` | sizes an investigation with you (quick · deep · sweep), runs the engine, confirms flagged uncertainty, routes the exit |
 | `brainstorming` | design dialogue for features and refactors, ending at your route pick — direct / plan / handoff-goal |
-| `test-driven-development` | RED-GREEN-REFACTOR, default where a test harness exists |
+| `test-driven-development` | RED-GREEN-REFACTOR, default where a test harness exists; repo conventions take precedence |
 | `systematic-debugging` | four-phase root-cause discipline before any fix |
 | `verification-before-completion` | the "deemed ready" gate — fresh evidence before any done / fixed / passing claim |
 | `receiving-code-review` | verify feedback against the codebase before implementing; reasoned pushback, no performative agreement |

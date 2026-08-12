@@ -40,12 +40,13 @@ SCOPING
       handoff-goal (contract dir; fresh session pursues autonomously)
 
 IMPLEMENTATION (agency = user/harness call; implementer gets the plan/goal if present)
-  test-driven-development — default where a test harness exists
+  test-driven-development — default where a test harness exists;
+      repo conventions take precedence on conflict
   systematic-debugging — on any bug, before fixes
 
 COMPLETION
   test-quality review → deemed ready = verified with evidence
-  (verification-before-completion; empirical-proof if runnable) →
+  (verification-before-completion; empirical-proof offered if runnable) →
   ONE adversarial review (code-quality-review + comment trim, per repo rules) →
   findings fixed + re-verified, proceed (no re-review) →
   USER gate: session outlines what was done, asks PR or merge
@@ -66,12 +67,40 @@ FEEDBACK
 | Big autonomous goal | `handoff-goal` |
 | Implementing with a test harness | `test-driven-development` |
 | A bug, before proposing fixes | `systematic-debugging` |
-| About to claim done / ready | `verification-before-completion` (`empirical-proof` if runnable) |
+| About to claim done / ready | `verification-before-completion` (offer `empirical-proof` if runnable) |
 | The implementation's tests | `test-quality-reviewer` |
 | The one adversarial pass | `code-quality-review` |
 | Landing | outline gate → `file-pr` / merge / push; `fix-ci` |
 | Review feedback arrives | `get-pr-comments` → `receiving-code-review` |
 | Authoring or editing skills | `writing-skills` (ships in the `toolkit` plugin) |
+
+## Picking the verification piece
+
+Several pieces touch verification — pick by the work's shape, don't read
+them all:
+
+- `verification-before-completion` — the always-on gate: fresh evidence
+  before any done/fixed/passing claim. The others deepen it; this one never
+  skips.
+- `empirical-proof` — one just-finished change with a drivable surface. For
+  generator work, the emitted artifact **is** that surface — generate,
+  build, drive it.
+- `qa-sweep` — a broad decomposable surface (release, branch, feature area)
+  at team scale.
+- `claim-check` — one premise, ticket, or hunch to investigate.
+- `file-pr` — landing, not verification; it assumes the gates already ran.
+
+When no frame fits the work's shape, keep the standard and drop the frame:
+prove the deliverable the way its real consumer would exercise it, and
+record the evidence. The protocols are checkpoints, not reading
+assignments — load one when its moment arrives, not preemptively.
+
+**Cost and authority:** `verification-before-completion` is the only
+always-on piece. `empirical-proof` and `qa-sweep` are the expensive tiers —
+**offer them, never default to them**: they run on the user's explicit ask
+(now or standing) and not otherwise. Most changes don't warrant them, and
+running one uninvited spends the user's time and budget on ceremony they
+didn't order.
 
 ## Artifacts are disposable
 
@@ -84,6 +113,21 @@ to a durable artifact is **the user's call**: it happens only when they
 explicitly ask, or when the repo has an established pattern for that artifact
 kind (e.g. a specs directory with a documented convention). Never quietly turn
 working material into committed docs.
+
+## Worktree location
+
+Worktree placement is a convention, not a per-task choice. Prefer the
+harness's native worktree mechanism when it has one — it places and cleans up
+correctly by construction; hand-roll `git worktree add` only without one.
+Before creating one, inspect `git worktree list` and any repo or user rule on
+worktrees, and follow the established pattern. Absent one, create worktrees
+under
+`<repo>/.worktrees/<task-name>` — verifying first that the directory is
+ignored (`git check-ignore .worktrees`), adding it to `.gitignore` before the
+worktree exists if not, so a checkout never lands in the index. Never place
+a worktree in the system temp directory or any path outside the repository
+unless the user explicitly asks — temp space is for disposable non-repository
+artifacts (logs, screenshots, evidence), not for a repository checkout.
 
 ## The three user gates
 

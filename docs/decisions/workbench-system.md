@@ -208,8 +208,9 @@ autonomously — same flow, own cadence).
 method never dictates in-session vs dispatched execution; its only job is handing the implementer
 the plan or goal when one exists. Inside implementation:
 `test-driven-development` is the **default for features/bugfixes where a test
-harness exists** (silent skip where none); `systematic-debugging` fires on any
-bug before fixes are proposed.
+harness exists** (silent skip where none) — a default, not a mandate: a stated
+repo/user convention that conflicts takes precedence, announced (**Q13**,
+2026-08-12); `systematic-debugging` fires on any bug before fixes are proposed.
 
 **Completion.** (1) **test-quality review** of the implementation's tests
 (`test-quality-reviewer`); (2) **"deemed ready"** is
@@ -236,7 +237,11 @@ fixed findings re-verify and proceed straight to the outline gate — no re-revi
 deep (claim-check) / sweep (qa-sweep) · **Q9** audit-revealed work routes by shape
 · **Q10** PLAN resolves through the user's stack (plugin skill → local skill →
 repo standards → harness plan mode) · **Q11** "deemed ready" =
-verification-before-completion, with empirical-proof for runnable surfaces.
+verification-before-completion, with empirical-proof for runnable surfaces —
+refined by **Q14** (2026-08-12): expensive verification (empirical-proof,
+qa-sweep) is user-optioned — offered when it fits, run only on explicit ask or
+standing authorization; verification-before-completion is the only always-on
+gate.
 
 ## Non-goals
 

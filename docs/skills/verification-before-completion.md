@@ -25,7 +25,8 @@ adapted per [`workbench-system.md`](../decisions/workbench-system.md).
 - Don't claim from a previous run, a partial check, or "should/probably/seems."
 - Don't express satisfaction ("Perfect!", "Done!") before the evidence exists.
 - Don't substitute a linter pass for a build, or a build for tests.
-- Don't reach for it when `empirical-proof` fits better — a change with a
-  runnable surface deserves the deeper sibling (real client, real calls).
+- Don't escalate to `empirical-proof` uninvited — for a runnable surface,
+  offer the deeper sibling (real client, real calls); it runs on the user's
+  ask or standing authorization (Q14). This gate is the always-on floor.
 - Don't soften the rules to make casual conversation smoother; if it over-fires,
   fix trigger wording, not the law.

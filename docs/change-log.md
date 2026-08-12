@@ -5,6 +5,76 @@ Sections are keyed by the **released plugin version** that shipped the change
 work that ships no release (packaging, structure, docs) sits under `## repo — date` sections in
 chronological position.
 
+## workbench 0.20.5 — 2026-08-12
+
+### expensive verification is user-optioned (Q14)
+
+Operator call refining the feedback round: `empirical-proof` and `qa-sweep`
+are expensive workflows and must not run every time a change qualifies —
+`verification-before-completion` is the only always-on gate; the expensive
+tiers are **offered** and run only on explicit ask or standing authorization.
+Authority lines added to both descriptions, the deeper-sibling pointer
+re-framed as an offer, the picker gains the cost/authority paragraph, flow
+surfaces read "offered if runnable", Q14 joins the ledger. Rationale:
+[`expensive-verification-user-optioned.md`](decisions/expensive-verification-user-optioned.md).
+
+### verification picker + generated-artifact surfaces (first field feedback)
+
+First real-project feedback round (a code-generator project), operator-
+endorsed: the five verification-adjacent pieces overlapped with no cheap
+chooser, and `empirical-proof`'s app-boot frame didn't lead generator work to
+the right proof. `using-workbench` gains a verification picker (one line per
+piece, chosen by shape; "keep the standard, drop the frame" when none fits;
+"checkpoints, not reading assignments"); `empirical-proof` names the
+generated-artifact case — the runnable surface is the emitted artifact,
+built and driven as its consumer would, with won't-build output `broken`
+against the generator rather than `blocked`. Rationale:
+[`verification-shape-feedback.md`](decisions/verification-shape-feedback.md).
+
+### route-work — recalibrated, then reduced to a pure reference table
+
+Two operator passes. First the table recalibration (sol ladder collapsed to
+low/medium + xhigh, `gpt-5.6-luna` replaces terra as the bulk lane, opus-5
+re-graded to flat 8s) with prose reconciled and the 18-line
+calibration-history block removed. Then the hard cut: the skill still read as
+a dispatch procedure, so the five-axis rubric, process patterns, output
+contract, worked examples, and dispatch mechanics all left — route-work is
+now the table (with axis definitions), the hard invariants, and four
+reading-notes bullets, with a description that makes it a lookup, not a
+pre-dispatch step. Roster surfaces and the Codex prompt updated to match;
+staleness sweep fixed `/toolkit:` invocations and `code-quality-reviewer`'s
+plugin reference. Rationale:
+[`route-work-recalibration-and-trim.md`](decisions/route-work-recalibration-and-trim.md).
+
+### test-driven-development — a default, not a mandate (Q13)
+
+Lived failure: a repo forbade test runs before manual Desktop validation; the
+session obeyed the TDD skill's "MANDATORY. Never skip." and ran a focused
+regression anyway. The skill gains a Precedence section: implementation
+inherits repo patterns first — a stated repo/user convention that conflicts
+with a step wins, announced in one line, with the compatible parts of the
+cycle still applied (test written, run deferred); only a stated rule displaces
+a step — the anti-rationalization armor still catches self-negotiated skips.
+Q13 joins the decisions ledger; flow surfaces updated; the drift manifest's
+TDD entry records the divergence. Rationale:
+[`tdd-default-not-mandate.md`](decisions/tdd-default-not-mandate.md).
+
+### using-workbench — worktree-location convention
+
+Lived failure: a session created a git worktree inside the system temp
+directory. `using-workbench` (home of the session-conduct conventions) gains a
+`## Worktree location` section: inspect `git worktree list` and any repo/user
+rule first and follow the established pattern; absent one, create under
+`<repo>/.worktrees/<task-name>` behind a `git check-ignore` gate; prefer the
+harness's native worktree mechanism over hand-rolled `git worktree add`. The
+gate and native-first line are borrowed from upstream's `using-git-worktrees`;
+adopting that skill wholesale was considered and declined (below the
+lived-in-proof bar; the decision note records the trade-off). Never the system
+temp directory or any external path unless the user explicitly asks — temp
+space is for disposable non-repository artifacts, not a repository checkout.
+Rationale:
+[`using-workbench-worktree-location.md`](decisions/using-workbench-worktree-location.md).
+
 ## workbench 0.20.4 — 2026-08-12
 
 ### route rename: "rawdog" → "direct"; route gate asks structured

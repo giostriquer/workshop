@@ -1,6 +1,6 @@
 ---
 name: empirical-proof
-description: Use when a just-finished change touched a surface a real client can drive — an MCP tool, a REST endpoint, runnable app behavior — and "done" should mean empirically verified at the running software rather than claimed. If the app cannot run here, the honest outcome is blocked-with-cause. NOT for a release- or branch-wide pass (that is qa-sweep) or verifying a premise or ticket (that is claim-check).
+description: Use when a just-finished change touched a surface a real client can drive — an MCP tool, a REST endpoint, runnable app behavior, or the artifact a generator emits — and the user asked for empirical verification, now or by standing rule. An expensive, user-optioned pass — offer it after runnable work, never run it uninvited. If the app cannot run here, the honest outcome is blocked-with-cause. NOT for a release- or branch-wide pass (that is qa-sweep) or verifying a premise or ticket (that is claim-check).
 ---
 # Empirical Proof
 
@@ -53,6 +53,17 @@ service booted against a fabricated dependency is not the artifact that ships,
 no matter how unrelated the change looks from inside — sessions under ship
 pressure have done exactly this, every time reasoning "the change never touches
 the DB."
+
+## When the deliverable is generated code
+
+A generator, scaffolder, or emitter has no app of its own to boot — its
+runnable surface is **the artifact it emits**. The proof: run the generator
+via the documented path, then build and drive the emitted artifact the way
+its real consumer would — compile it, boot it, hit its endpoints. The gate
+above applies to that artifact; reading the emitted source is still reading,
+not proof. One boundary shift: an emitted artifact that fails to build or
+boot is a **`broken` verdict against the generator**, not `blocked` — the
+generator's output is the change under test.
 
 ## Scenarios — what to prove
 

@@ -14,8 +14,16 @@ evidence would not survive one skeptical question.
 One honesty note: unlike most scaffold pieces, this skill was born *in* the
 scaffold rather than extracted from a host project — the lived-in part is the
 failure pressure above, not the skill text. Its wording was validated with a
-full RED/GREEN baseline harness instead (below), and the origin doc will be
-updated as real-project use accumulates.
+full RED/GREEN baseline harness instead (below).
+
+First real-project round (2026-08-12, a code-generator project): the skill's
+app-boot frame didn't lead naturally to the right proof — the project emits
+source code, so there was no obvious live client to drive, and the session
+had to design the correct test (driving the generated routers) on its own.
+The skill now names that case: a generator's runnable surface is the emitted
+artifact — generate, build, drive it as its consumer would; an emitted
+artifact that won't build or boot is `broken` against the generator, not
+`blocked`.
 
 ## Problem
 
@@ -109,6 +117,9 @@ with transcripts.
   portable core; add your stack's equivalents (GraphQL resolvers, queue
   consumers, CLI entry points) under the same principle — the boundary a real
   client hits, nothing shallower.
+- Generator/scaffolder projects: the runnable surface is the emitted
+  artifact, not the generator's own process — the gate and scenario matrix
+  apply to the generated output, exercised as its consumer would.
 - "One clean start attempt via the documented path" leans on the project
   documenting how it runs (run skill, README, package scripts). If your
   project has no documented path, that gap — not this skill — is the first

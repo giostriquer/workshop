@@ -44,7 +44,7 @@ flowchart LR
     classDef stage fill:#e6f2f0,stroke:#0e7468,color:#1d2321
     classDef sat fill:none,stroke:#8a948f,color:#5d6763
 
-    TDD["test-driven-development<br/>default where a harness exists"]:::sat -.- I
+    TDD["test-driven-development<br/>default where a harness exists;<br/>repo conventions take precedence"]:::sat -.- I
     SD["systematic-debugging<br/>on any bug, before fixes"]:::sat -.- I
 
     I["IMPLEMENT<br/>direct or agentic — user / harness call;<br/>handed the plan / goal if present"]:::stage
@@ -54,7 +54,7 @@ flowchart LR
     L["LAND<br/>file-pr · merge · push;<br/>fix-ci tends the checks"]:::stage
 
     I --> TQ
-    TQ -->|"deemed ready = verified<br/>(verification-before-completion;<br/>empirical-proof if runnable)"| AR
+    TQ -->|"deemed ready = verified<br/>(verification-before-completion;<br/>empirical-proof offered if runnable)"| AR
     AR -->|"findings → fixed + re-verified<br/>(no re-review)"| OG
     OG --> L
     L -.->|"feedback: get-pr-comments →<br/>receiving-code-review; verified fixes re-enter"| I
@@ -71,7 +71,7 @@ manifest (`.claude/skills/workbench-drift/manifest.json` — repo-local fork
 tooling). The removal is of *forced process* — execution agency itself stays
 the user's call.
 
-## Decisions ledger (operator, 2026-08-11)
+## Decisions ledger (operator, 2026-08-11 unless noted)
 
 | # | Decision |
 |---|---|
@@ -87,3 +87,5 @@ the user's call.
 | Q10 | PLAN resolves through the user's stack: plugin skill → repo skill → repo standards → harness plan mode. |
 | Q11 | "Deemed ready" = verification-before-completion; empirical-proof for runnable surfaces. |
 | Q12 | Flow artifacts are disposable — saved under `.workbench/<work_scope>/` (or `.tmp/workbench/<work_scope>/`), enduring only for the work; durable only on explicit user ask or an established repo pattern. |
+| Q13 | Implementation inherits repo patterns first: a stated repo/user convention that conflicts with a discipline step wins — announced, not absorbed silently; TDD is the default only where the repo is silent. (2026-08-12) |
+| Q14 | Expensive verification (`empirical-proof`, `qa-sweep`) is user-optioned: offered when it fits, run only on explicit ask or standing authorization — never automatic. `verification-before-completion` is the only always-on gate. (2026-08-12) |

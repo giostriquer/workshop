@@ -1,6 +1,6 @@
 ---
 name: qa-sweep
-description: Use when running a broad QA or verification pass over a release, branch, feature, or app surface that splits into independent slices and deserves team-scale coverage against the real running artifact. NOT for a single code change (that is empirical-proof) or a single premise, ticket, or hunch (that is claim-check).
+description: Use when running a broad QA or verification pass over a release, branch, feature, or app surface that splits into independent slices and deserves team-scale coverage against the real running artifact. A deliberately expensive, team-scale pass — runs on the user's ask (directly, or as audit's team-sweep pick), never as a default. NOT for a single code change (that is empirical-proof) or a single premise, ticket, or hunch (that is claim-check).
 ---
 
 # QA Sweep

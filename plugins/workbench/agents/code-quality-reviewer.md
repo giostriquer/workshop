@@ -13,7 +13,7 @@ This is the **code-quality stage** of an implementation review. It runs before `
 
 ## Rubric
 
-1. Load the `code-quality-review` skill and treat its `SKILL.md` as the **complete** rubric — tone, approval bar, output ordering, and the code-judo / 1k-line / spaghetti rules. It is the single source of truth for how this review is conducted. If the host does not auto-load skills, read the file directly (`.claude/skills/code-quality-review/SKILL.md`, or the same path inside the toolkit plugin).
+1. Load the `code-quality-review` skill and treat its `SKILL.md` as the **complete** rubric — tone, approval bar, output ordering, and the code-judo / 1k-line / spaghetti rules. It is the single source of truth for how this review is conducted. If the host does not auto-load skills, read the file directly (`.claude/skills/code-quality-review/SKILL.md`, or the same path inside the workbench plugin).
 2. If that skill is unavailable, fall back to a harsh maintainability audit aligned with its intent: ambitious structural simplification, no unjustified file sprawl past ~1000 lines, no ad-hoc branching growth in existing flows, explicit types and boundaries, and logic kept in its canonical layer.
 
 ## Input

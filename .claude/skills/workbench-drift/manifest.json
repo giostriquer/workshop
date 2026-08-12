@@ -42,7 +42,7 @@
       "localPath": "plugins/workbench/skills/test-driven-development/",
       "disposition": "adopted",
       "why": "RED→GREEN→REFACTOR discipline when implementing features and bugfixes.",
-      "adaptations": "Description defanged; references to the subagent/plan pipeline scrubbed."
+      "adaptations": "Description defanged; references to the subagent/plan pipeline scrubbed. Precedence layer added 2026-08-12 (operator Q13): repo/user conventions override conflicting steps, announced; TDD is the default only where the repo is silent — see docs/decisions/tdd-default-not-mandate.md. The anti-rationalization armor is deliberate content; upstream drift must not re-tighten precedence."
     },
     {
       "upstreamPath": "skills/systematic-debugging/",

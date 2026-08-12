@@ -1,6 +1,6 @@
 ---
 name: test-driven-development
-description: Use when implementing a feature or bugfix in a repo that has a test harness — the workbench flow's default discipline there (where no harness exists, skip without ceremony). Write the failing test first, watch it fail, write minimal code to pass, refactor.
+description: Use when implementing a feature or bugfix in a repo that has a test harness — the workbench flow's default discipline there, as a default rather than a mandate; the repo's own implementation and testing conventions take precedence when they conflict (where no harness exists, skip without ceremony). Write the failing test first, watch it fail, write minimal code to pass, refactor.
 metadata:
   system: workbench
 ---
@@ -14,6 +14,27 @@ Write the test first. Watch it fail. Write minimal code to pass.
 **Core principle:** If you didn't watch the test fail, you don't know if it tests the right thing.
 
 **Violating the letter of the rules is violating the spirit of the rules.**
+
+## Precedence — a default, not a mandate
+
+Implementation inherits the repo's patterns first. This skill is the workbench
+default where the repo is silent — never an enforcement layer over the repo's
+own rules:
+
+- **A stated repo or user convention that conflicts with a step wins.** A rule
+  like "no test runs before manual validation" displaces Verify RED/GREEN —
+  the run defers to the repo's gate; this skill's MANDATORY labels do not
+  override it.
+- **Announce the conflict, don't absorb it silently.** One line naming the
+  repo rule and the step it displaces ("repo forbids test runs before manual
+  validation — writing the test now, deferring the run"), then follow the
+  repo. Apply whatever of the cycle remains compatible: the test is still
+  written first.
+- **Only a stated rule displaces a step.** Your own convenience never does —
+  "just this once" with no repo rule behind it is exactly what the
+  rationalization table below catches.
+
+Absent a conflicting repo pattern, everything below applies as written.
 
 ## When to Use
 
@@ -32,7 +53,8 @@ decision for the user, not a TDD side effect.
 - Generated code
 - Configuration files
 
-Harness exists and you're thinking "skip TDD just this once"? Stop. That's rationalization.
+Harness exists and you're thinking "skip TDD just this once"? Stop. That's
+rationalization. (A stated repo rule is not "just this once" — see Precedence.)
 
 ## The Iron Law
 
@@ -323,7 +345,8 @@ Production code → test exists and failed first
 Otherwise → not TDD
 ```
 
-No exceptions without the user's permission.
+No exceptions without the user's permission — a stated repo or user
+convention is that permission in standing form (see Precedence).
 
 ---
 

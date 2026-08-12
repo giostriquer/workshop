@@ -321,7 +321,7 @@ h2{font:700 24px/1.2 var(--sans);letter-spacing:-.02em;margin:0;color:#f8fafc}
     <div class="layer-head"><h3>method · ported from obra/superpowers (MIT, Jesse Vincent)</h3><span class="hint">adapted per workbench-system.md</span></div>
     <div class="mods">
       <div class="mod" title="plugins/workbench/skills/brainstorming/SKILL.md"><h4>brainstorming</h4><div class="path">plugins/workbench/skills/brainstorming/</div><p class="cap">Design dialogue; ends at the route gate.</p></div>
-      <div class="mod" title="plugins/workbench/skills/test-driven-development/SKILL.md"><h4>test-driven-development</h4><div class="path">plugins/workbench/skills/test-driven-development/</div><p class="cap">RED-GREEN-REFACTOR, default where a harness exists.</p></div>
+      <div class="mod" title="plugins/workbench/skills/test-driven-development/SKILL.md"><h4>test-driven-development</h4><div class="path">plugins/workbench/skills/test-driven-development/</div><p class="cap">RED-GREEN-REFACTOR, default where a harness exists; repo conventions take precedence.</p></div>
       <div class="mod" title="plugins/workbench/skills/systematic-debugging/SKILL.md"><h4>systematic-debugging</h4><div class="path">plugins/workbench/skills/systematic-debugging/</div><p class="cap">Root cause before fixes; 3-failures escalation.</p></div>
       <div class="mod" title="plugins/workbench/skills/verification-before-completion/SKILL.md"><h4>verification-before-completion</h4><div class="path">plugins/workbench/skills/verification-before-completion/</div><p class="cap">The "deemed ready" gate — evidence before claims.</p></div>
       <div class="mod" title="plugins/workbench/skills/receiving-code-review/SKILL.md"><h4>receiving-code-review</h4><div class="path">plugins/workbench/skills/receiving-code-review/</div><p class="cap">Rigor on feedback; no performative agreement.</p></div>
@@ -383,6 +383,8 @@ h2{font:700 24px/1.2 var(--sans);letter-spacing:-.02em;margin:0;color:#f8fafc}
       <tr><td class="q">Q10</td><td>PLAN resolves through the user's stack: plugin skill → repo skill → repo standards → harness plan mode.</td></tr>
       <tr><td class="q">Q11</td><td>"Deemed ready" = verification-before-completion; empirical-proof for runnable surfaces.</td></tr>
       <tr><td class="q">Q12</td><td>Flow artifacts are disposable — saved under <code>.workbench/&lt;work_scope&gt;/</code> (or <code>.tmp/workbench/&lt;work_scope&gt;/</code>), enduring only for the work; durable only on explicit user ask or an established repo pattern.</td></tr>
+      <tr><td class="q">Q13</td><td>Implementation inherits repo patterns first: a stated repo/user convention that conflicts with a discipline step wins — announced, not absorbed silently; TDD is the default only where the repo is silent. (2026-08-12)</td></tr>
+      <tr><td class="q">Q14</td><td>Expensive verification (empirical-proof, qa-sweep) is user-optioned: offered when it fits, run only on explicit ask or standing authorization — never automatic. verification-before-completion is the only always-on gate. (2026-08-12)</td></tr>
     </table>
   </div>
 </section>

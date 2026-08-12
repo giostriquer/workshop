@@ -19,10 +19,11 @@ My environments follow the **workbench** flow (workbench plugin):
   direct / plan / handoff-goal. Implementation agency (in-session vs dispatched)
   is mine and the harness's; hand the implementer the plan or goal if one exists.
 - **Finish:** when you consider the implementation ready — test-quality review,
-  verify with evidence (`verification-before-completion`; `empirical-proof` if
-  runnable), ONE adversarial review (`code-quality-review` + comment trim per
-  repo rules), then outline what was done and ask me: PR or merge? Explicit
-  repo/user rules may pre-authorize.
+  verify with evidence (`verification-before-completion`; offer
+  `empirical-proof` for runnable surfaces — run it only if I ask or a standing
+  rule authorizes), ONE adversarial review (`code-quality-review` + comment
+  trim per repo rules), then outline what was done and ask me: PR or merge?
+  Explicit repo/user rules may pre-authorize.
 - **Flow artifacts are disposable** — plans, audit reports, design docs live
   under `.workbench/<work_scope>/` (or `.tmp/workbench/<work_scope>/`) and last
   only for the work; promote to durable only when I ask or the repo has an

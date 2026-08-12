@@ -44,77 +44,47 @@ lacked: a rubric that grades the task before naming the model.
 
 ## Solution shape
 
-A direct-use skill with three parts and a set of carried invariants:
+A reference skill — three parts, nothing procedural:
 
 - **The canonical model × effort table** — the single source of truth,
   updated only in the skill. Rows are model+effort tiers (the workhorse
   model's effort levels are separate rows, so "climb the ladder before
   hopping models" is expressible). Values are the operator's lived
-  calibration, anchored against public benchmarks and confirmed row by row
-  before freezing. The structural insight the original calibration surfaced:
-  the mid-tier models are *cost lanes, not quality lanes* — a class below
-  the workhorse ladder — while the workhorse's own taste sits close enough
-  to the frontier that user-facing work doesn't automatically escalate. A
-  later fleet change (a near-frontier Claude-side coder arriving at mid
-  cost) exposed a conflation in the original three axes: *taste* had been
-  covering both user-facing polish and coding craft, and could not express
-  "same intelligence, better coder." The table grew a fourth axis — **code**
-  (coding craft) — and taste narrowed to user-facing surfaces only. Rows
-  also leave the table when the fleet retires their niche; a dead lane kept
-  "for reference" is the same staleness the skill exists to kill.
-- **The grading rubric** — five axes: repo precedent, ambiguity, failure
-  visibility, taste surface, blast radius. Cool across the board → cheapest
-  capable tier at modest effort. High ambiguity or silent-failure risk →
-  top tier, or the *leverage pattern*: cheap implementer + high-tier
-  plan-review checkpoint before implementation proceeds.
-- **The output contract** — three lines (`route:` / `why:` / `grades:`),
-  directly usable in the dispatch command. The recommendation names a
-  process pattern (direct dispatch / plan-review checkpoint / judge loop /
-  taste pass), not just a model.
+  calibration; adopters swap rows and re-grade. Rows leave the table when
+  the fleet retires their niche — a dead lane kept "for reference" is the
+  same staleness the skill exists to kill.
+- **The hard invariants** — never Haiku or Sonnet; orchestration stays on
+  the session's own model; standing permission to escalate when output
+  misses the bar; intelligence > taste > cost for anything that ships.
+  Mirrored in the slimmed always-injected file so they hold even when the
+  skill is never opened.
+- **Reading notes** — four bullets on how the operator reads the table
+  (cheap end for routine work, effort before model hops, frontier for
+  judgment/taste/silent-failure work, the taste floor).
 
-The hard invariants stay mirrored in the slimmed always-injected file so
-they hold even when the skill is never invoked: never Haiku or Sonnet;
-orchestration stays on the session's own model; standing permission to
-escalate when output misses the bar; intelligence > taste > cost for
-anything that ships.
-
-## Real invocation snippet
-
-> /toolkit:route-work implement the passage generator from the committed plan
-
-```
-route: gpt-5.6-sol high · direct dispatch
-why: pattern-following against a frozen plan; the plan's tests catch
-     mediocrity, so paying for a higher tier buys nothing.
-grades: precedent established · ambiguity closed · failure visible · taste none · blast contained
-```
-
-> /toolkit:route-work integrate the new speech engine — no repo precedent,
-> output quality is judged by ear
-
-```
-route: fable-5 plan-review checkpoint, then gpt-5.6-sol high · judge loop
-why: novel ground with silent calibration risk — top-tier judgment belongs
-     at the plan; the implementation is gate-checkable once the plan is right.
-grades: precedent novel · ambiguity open · failure silent · taste none · blast wide
-```
+**Reduced 2026-08-12.** The first version also carried a five-axis grading
+rubric, four named process patterns, a three-line output contract, worked
+examples, and an embedded calibration-history narrative. The operator cut
+all of it: the procedure read as a step to run before every dispatch —
+never the intent — and the history belonged in the docs. What survived is
+what the skill was for: the table, the invariants, and how to read them.
+Along the way the axes story played out in the table itself: *taste* had
+been covering both user-facing polish and coding craft until a
+near-frontier Claude coder made the conflation visible, and the table grew
+the fourth **code** axis, with taste narrowed to user-facing surfaces only.
 
 ## Pitfalls observed
 
 - **Table drift by copy.** The moment the table is duplicated somewhere
   convenient (a rules file, a repo doc, a prompt template), the copy starts
-  aging. The skill's first rule exists for this: update here only.
-- **Grading theater.** Running the rubric and concluding "top tier" every
-  time reproduces the original failure with extra steps. If the grades are
-  cool and the route still says frontier, the grading was decoration.
-- **Skipping the called-for taste pass.** When a route includes a taste
-  pass, the implementer's output reading "fine" to the model that wrote it
-  is not the pass. The rubric's taste axis is only worth having if the
-  higher-taste model actually runs before ship.
-- **Routing the orchestrator.** The rubric tempts "this decomposition is
-  mechanical, route it cheap" — but orchestration is an invariant, not a
-  gradeable task. Decompose, dispatch, and judge stay on the session's own
-  model.
+  aging. The skill's rule exists for this: update here only.
+- **Proceduralizing the lookup.** The removed rubric is the lesson: any
+  protocol attached to the table invites running it before every dispatch,
+  which is overhead the table was built to avoid. If guidance grows back
+  beyond reading notes, trim it.
+- **Routing the orchestrator.** "This decomposition is mechanical, route it
+  cheap" — but orchestration is an invariant, not a choice. Decompose,
+  dispatch, and judge stay on the session's own model.
 - **Treating escalation as a failure.** The standing permission means a
   missed bar is a rerun on a smarter tier, not a negotiation. Hesitating
   there costs more than the rerun.
@@ -124,16 +94,12 @@ grades: precedent novel · ambiguity open · failure silent · taste none · bla
 - The table values are explicitly the operator's calibration — subscription
   economics, lived quality judgments, a specific fleet. Adopters swap the
   rows for their own models and re-grade against their own benchmarks and
-  experience. The rubric, the process patterns, and the output contract are
-  the portable half.
+  experience. The axis set and the invariants structure are the portable
+  half.
 - The invariants are a template, not a universal truth: "never these
   models," "orchestration stays home," "escalate without asking," and the
   intelligence > taste > cost ordering encode one operator's risk posture.
   Keep the *structure* (a short non-negotiable list mirrored where it's
   always visible) even if the entries change.
-- The skill assumes a dispatch boundary worth routing across (a CLI coder,
-  subagents, workflow stages). A single-model setup has nothing to route —
-  adopt the rubric only when a second lane exists.
-- Pairs naturally with an implementation-dispatch skill (here,
-  `codex-implement`) that owns mechanics and judge loops; `route-work`
-  deliberately stops at the recommendation so the two never blur.
+- The skill assumes more than one lane worth choosing between. A
+  single-model setup has nothing to look up.
