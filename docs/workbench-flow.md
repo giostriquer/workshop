@@ -31,7 +31,7 @@ flowchart TD
     B1 -->|what the code can't answer| B2["BRAINSTORM — always for feature / refactor;<br/>design approved in sections"]:::stage
     B2 --> RG[["USER — pick the route"]]:::gate
 
-    RG --> R1["RAWDOG<br/>straight from session context"]:::stage
+    RG --> R1["DIRECT<br/>straight from session context"]:::stage
     RG --> R2["PLAN<br/>mechanism discovered from the user's stack:<br/>plugin skill → repo skill → repo standards → harness plan mode"]:::stage
     RG --> R3["HANDOFF-GOAL<br/>contract dir; fresh session pursues —<br/>same flow, own cadence"]:::stage
 ```

@@ -71,7 +71,7 @@ surface, and `using-workbench` answers "how does this flow work?" on demand.
 | Skill | Does |
 | --- | --- |
 | `audit` | sizes an investigation with you (quick · deep · sweep), runs the engine, confirms flagged uncertainty, routes the exit |
-| `brainstorming` | design dialogue for features and refactors, ending at your route pick — rawdog / plan / handoff-goal |
+| `brainstorming` | design dialogue for features and refactors, ending at your route pick — direct / plan / handoff-goal |
 | `test-driven-development` | RED-GREEN-REFACTOR, default where a test harness exists |
 | `systematic-debugging` | four-phase root-cause discipline before any fix |
 | `verification-before-completion` | the "deemed ready" gate — fresh evidence before any done / fixed / passing claim |

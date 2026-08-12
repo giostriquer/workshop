@@ -16,8 +16,8 @@ My environments follow the **workbench** flow (workbench plugin):
 
 - **Start:** investigations go through `audit` (I size the workload); feature
   and refactor ideas go through `brainstorming`, which ends at MY route pick —
-  rawdog / plan / handoff-goal. Implementation agency (direct vs agentic) is
-  mine and the harness's; hand the implementer the plan or goal if one exists.
+  direct / plan / handoff-goal. Implementation agency (in-session vs dispatched)
+  is mine and the harness's; hand the implementer the plan or goal if one exists.
 - **Finish:** when you consider the implementation ready — test-quality review,
   verify with evidence (`verification-before-completion`; `empirical-proof` if
   runnable), ONE adversarial review (`code-quality-review` + comment trim per

@@ -62,7 +62,10 @@ confirms what it flagged, and this skill routes what comes out.
      `brainstorming` with the findings and confirmed flags as its context — it
      must not re-derive them.
    - **Work was revealed, a confirmed fix** → skip the design debate; present
-     the route pick (rawdog / plan / handoff-goal) directly.
+     the route pick (direct / plan / handoff-goal) directly — asked like the
+     sizing question: structured question tool when available, with
+     user-facing labels (**Direct**, **Plan**, **Long-running goal**) and the
+     recommended route first and marked; a numbered list otherwise.
 
 ## Output
 

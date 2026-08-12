@@ -197,7 +197,7 @@ Designed interactively with the operator on a shared whiteboard (artifact
   brainstorming's job**.
 
 **Scoping.** Brainstorming **always** precedes feature design and refactors. Its
-output hits a user gate — **pick the route**: `rawdog` (implement straight from
+output hits a user gate — **pick the route**: `direct` (implement straight from
 session context) · `plan` (structured mid-size work; mechanism **discovered from
 the user's stack**, in order: plugin plan skill → repo-local skill → repo planning
 standards → harness plan mode as final fallback; method ships nothing for it) ·
@@ -205,7 +205,7 @@ standards → harness plan mode as final fallback; method ships nothing for it) 
 autonomously — same flow, own cadence).
 
 **Implementation.** Execution agency belongs to **the user and the harness** —
-method never dictates direct vs agentic; its only job is handing the implementer
+method never dictates in-session vs dispatched execution; its only job is handing the implementer
 the plan or goal when one exists. Inside implementation:
 `test-driven-development` is the **default for features/bugfixes where a test
 harness exists** (silent skip where none); `systematic-debugging` fires on any

@@ -35,7 +35,7 @@ ENTRY (two optional doors)
 
 SCOPING
   brainstorming — always before feature/refactor design → USER picks the route:
-      rawdog (straight from session) · plan (mechanism from the user's stack:
+      direct (straight from session) · plan (mechanism from the user's stack:
       plugin skill → repo skill → repo standards → harness plan mode) ·
       handoff-goal (contract dir; fresh session pursues autonomously)
 
@@ -96,7 +96,7 @@ pre-authorize). Everything else is the session's to drive.
 
 - **Orientation, not compulsion.** At session start it maps; it never forces —
   and it never responds to "how does the flow work?" by starting the flow.
-- Workbench never dictates execution agency (direct vs agentic) and ships no hooks;
+- Workbench never dictates execution agency (in-session vs dispatched) and ships no hooks;
   skill descriptions and the user's own rules are the entire activation surface.
 
 ---

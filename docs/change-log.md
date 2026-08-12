@@ -5,6 +5,23 @@ Sections are keyed by the **released plugin version** that shipped the change
 work that ships no release (packaging, structure, docs) sits under `## repo — date` sections in
 chronological position.
 
+## workbench 0.20.4 — 2026-08-12
+
+### route rename: "rawdog" → "direct"; route gate asks structured
+
+Operator flagged the first route's name as leftover sexual-origin slang that
+survived sanitization. Renamed to **direct** across all 15 occurrences —
+skills (`brainstorming`, `audit`, `using-workbench`), all four manifests, the
+workbench README, docs pages, both flow diagrams, the doctrine snippet, and
+the `workbench-system.md` ledger. The "agency (direct vs agentic)" phrasing
+became "in-session vs dispatched" to keep the new name unambiguous. The route
+gate also adopts 0.20.3's ask mechanics: `AskUserQuestion` when available
+(numbered list otherwise) with user-facing labels — Direct / Plan /
+Long-running goal — recommendation first and marked; `handoff-goal` keeps its
+skill name. (A same-day conditional-sizing patch to audit was reverted before
+landing — sizing stays as 0.20.3 shipped it.) Rationale:
+[`route-rename-direct-and-structured-gate.md`](decisions/route-rename-direct-and-structured-gate.md).
+
 ## workbench 0.20.3 — 2026-08-12
 
 ### audit — structured sizing ask + runtime-modality flag

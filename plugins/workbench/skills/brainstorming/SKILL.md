@@ -28,7 +28,7 @@ write code, scaffold projects, or invoke implementation skills mid-brainstorm.
 - **Entering from an audit:** the findings and the user's confirmed flags are
   your context — don't re-derive them.
 - **The terminal state is the route gate.** When the design is approved, present
-  the user the three routes and let them pick: **rawdog** (implement straight
+  the user the three routes and let them pick: **direct** (implement straight
   from this conversation), **plan** (write one — using the user's own plan
   mechanism: a plugin or repo skill, the repo's planning standards, or the
   harness's plan mode as fallback), or **handoff-goal** (a contract for a fresh
@@ -46,7 +46,7 @@ digraph brainstorming {
     "Write design doc (if repo keeps specs)" [shape=box];
     "Design self-review\n(fix inline)" [shape=box];
     "User reviews design?" [shape=diamond];
-    "Route gate: user picks\nrawdog / plan / handoff-goal" [shape=doublecircle];
+    "Route gate: user picks\ndirect / plan / handoff-goal" [shape=doublecircle];
 
     "Explore project context" -> "Ask clarifying questions";
     "Ask clarifying questions" -> "Propose 2-3 approaches";
@@ -57,7 +57,7 @@ digraph brainstorming {
     "Write design doc (if repo keeps specs)" -> "Design self-review\n(fix inline)";
     "Design self-review\n(fix inline)" -> "User reviews design?";
     "User reviews design?" -> "Write design doc (if repo keeps specs)" [label="changes requested"];
-    "User reviews design?" -> "Route gate: user picks\nrawdog / plan / handoff-goal" [label="approved"];
+    "User reviews design?" -> "Route gate: user picks\ndirect / plan / handoff-goal" [label="approved"];
 }
 ```
 
@@ -150,8 +150,13 @@ they request changes, make them and re-run the self-review. Only proceed once
 they approve.
 
 **Then the route gate — and stop.** Present the three routes with a one-line
-read on which fits this work and why, and let the user pick. Brainstorming
-never starts the implementation itself.
+read on which fits this work and why, and let the user pick. Ask with a
+structured question tool (`AskUserQuestion` or the host's equivalent) when one
+is available — user-facing labels, not skill names: **Direct**, **Plan**,
+**Long-running goal**, each with a one-line description, the recommended route
+first and marked "(Recommended)". Otherwise present the same options as a
+numbered list and wait for the pick. Brainstorming never starts the
+implementation itself.
 
 ---
 

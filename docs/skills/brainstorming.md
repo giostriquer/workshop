@@ -15,11 +15,13 @@ replaced by the route gate, visual-companion subsystem not carried.
   message · 2–3 approaches with a recommendation · YAGNI ruthlessly · present
   the design in sections, approval per section · design self-review, then user
   review gate.
-- It ends at the route gate: rawdog / plan / handoff-goal — recommended in one
-  line, picked by the user.
+- It ends at the route gate: direct / plan / handoff-goal — recommended in one
+  line, picked by the user via `AskUserQuestion` when available (numbered list
+  otherwise), with user-facing labels: **Direct**, **Plan**, **Long-running
+  goal** — the recommended route first and marked.
 - Example: "let's add per-project rate limiting" → grounds in middleware code,
   asks the four unanswerable questions, two approaches, sectioned design,
-  approval → "I'd suggest plan. rawdog / plan / handoff-goal?"
+  approval → route gate: Direct / Plan (Recommended) / Long-running goal.
 
 ## Don't
 
