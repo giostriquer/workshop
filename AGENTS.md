@@ -30,9 +30,11 @@ The full **Spec → Plan → Execute → Review → Critique → Final-Docs** lo
 3. **Substantive changes** get a short note in `docs/decisions/<name>.md` describing what's changing and why, then apply.
 4. **Structural changes** require updating `README.md` and any cross-references. Pause and ask the user before applying — structural changes affect every adopter.
 
-## No doc layer
+## No rationale doc layer
 
-Agents and skills are self-contained: the spec (agent `.md` / SKILL.md) is the whole artifact. There is no per-piece doc to keep in parity; rationale lives in `docs/decisions/`. Do not recreate a doc layer (no `docs/agents/`, no `docs/skills/`).
+Agents and skills are self-contained: the spec (agent `.md` / SKILL.md) is the whole artifact, and rationale lives in `docs/decisions/`.
+
+The one per-skill layer is `docs/skills/` — **usage** pages for shipped skills: what each does, when to reach for it, common questions, how to tell it worked. Reader-facing only. Do not let a page drift into rationale, origin story, or release history; that is the layer that was deleted before. Update a skill's page in the same change that alters its behavior, and when page and spec disagree, the spec wins. Agents get no doc layer (no `docs/agents/`).
 
 ## Cross-host parity
 

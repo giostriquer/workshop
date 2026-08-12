@@ -24,7 +24,7 @@ This repo follows a lighter version of the **Spec → Plan → Execute → Revie
 
 - **Spec.** When changing an agent or skill substantively, write a short note in `docs/decisions/` (create the folder if it doesn't exist) describing what's changing and why. Mechanical edits (typo fixes, link updates, formatting) skip this step.
 - **Execute.** Apply the change. Touch only the files involved.
-- **No doc layer.** Agents and skills are self-contained: the spec (agent `.md` / SKILL.md) is the whole artifact. Rationale lives in `docs/decisions/`; there is no per-piece doc to keep in parity.
+- **No rationale doc layer.** Agents and skills are self-contained: the spec (agent `.md` / SKILL.md) is the whole artifact, and rationale lives in `docs/decisions/` only. The one per-skill layer that exists is `docs/skills/` — **usage** pages for shipped skills (what it does, when to reach for it, common questions, how to tell it worked). When a shipped skill's behavior changes, update its page in the same change: a usage page that has drifted from its spec is worse than no page. If the two ever disagree, the spec is right.
 
 If a change ships in a plugin version bump, record it with the `change-log` skill — `docs/change-log.md` is the plugins' **release notes** (plugin releases only, bounded at 15 sections; repo-only work is recorded in `docs/decisions/`, not there). The scaffold's own skill applies to itself — eat your own dogfood.
 
@@ -48,8 +48,11 @@ artifact-making utilities). (The onboarding `agent-workshop` plugin was deleted
   `attic/deprecated/` holds pieces with **no current function, kept as
   history** (a folder per retired piece: spec plus any parked origin doc).
   See `attic/README.md`.
-- **Agents and skills carry no doc layer**: the spec is self-contained;
-  rationale lives in `docs/decisions/`.
+- `docs/skills/` — **usage** pages for every skill shipped in a plugin: what it
+  does, when to reach for it, common questions, how to tell it worked. Reader-
+  facing, never rationale, history, or release notes — those stay in
+  `docs/decisions/` and `docs/change-log.md`. Agents carry no such layer, and
+  the specs themselves remain self-contained.
 - `README.md` — repo intro and install entry point. `AGENTS.md` — the non-Claude
   sibling of this file.
 
@@ -63,7 +66,7 @@ exist. If prose and definition diverge, fix the prose.
 1. Decide it earns inclusion. The bar: *did this agent or skill prove its value in real lived-in use across at least one substantial project?* If not, leave it out — speculative additions dilute the scaffold.
 2. Write the canonical spec where it belongs: `plugins/workbench/…` (process) or `plugins/toolkit/…` (optional utility) for a shipped piece; `.claude/` (and `.codex/`/`.opencode/` if the repo runs it on those hosts) for repo-only tooling. Shipped text references only what an installed environment can reach — **and never repo bookkeeping**: no decision-ledger numbers, decision-note links, dates, or authoring narrative in any skill or agent body. A skill carries only what the skill itself (or the processes it composes with) needs; rationale goes in `docs/decisions/`, full stop.
 3. Sanitize. Strip project-specific names, paths, and domain references. Replace with generic placeholders or named-example callouts.
-4. Write a `docs/decisions/` note for the rationale. **No per-piece doc** — for agents and skills alike, the spec is the whole artifact.
+4. Write a `docs/decisions/` note for the rationale. For a **shipped skill**, also add its `docs/skills/<name>.md` usage page and list it in `docs/skills/README.md` — usage only, never a restatement of the rationale note. Agents get no page; their spec is the whole artifact.
 5. Update `README.md` if the piece introduces a new top-level capability worth flagging.
 
 ## When removing or deprecating
@@ -79,13 +82,13 @@ The scaffold should not accumulate. If a piece stops earning its keep in real us
 - Do not add agents or skills speculatively because they "might be useful." Inclusion bar: lived-in proof.
 - Do not turn `CLAUDE.md` or `AGENTS.md` (root files) into copies of an adopting project's instructions. They govern the scaffold; they are not the scaffold's product.
 - Do not introduce domain-specific examples inline in agent specs. Keep specs generic (placeholders or named-example callouts); domain-specific rationale goes in `docs/decisions/`.
-- Do not recreate a doc layer: agents and skills have no per-piece docs (no `docs/agents/`, no `docs/skills/`). Rationale lives in `docs/decisions/` only.
+- Do not turn `docs/skills/` back into an origin-doc layer. Those pages are **usage** documentation. The moment one starts restating why a skill exists, what pressure created it, or what changed in which release, it has become the layer that was deleted before — rationale belongs in `docs/decisions/`, history in git. Agents get no doc layer at all.
 - Do not leak repo bookkeeping into skill or agent text: no decision-ledger numbers (Q-refs), no decision-note links, no dates or authoring narrative. Rationale lives in `docs/decisions/` only.
 - Do not commit private domain content (specific project decisions, real codebase paths beyond generic placeholders) into the scaffold.
 
 ## Scope discipline
 
-This repo is intentionally narrow. It is *agent definitions and skills* + *decision records*. It is not a host (no application server, no test harness, no domain-specific tooling). Adding scope beyond that is out-of-scope; route to a separate project.
+This repo is intentionally narrow. It is *agent definitions and skills* + *decision records* + *usage docs for the shipped skills*. It is not a host (no application server, no test harness, no domain-specific tooling). Adding scope beyond that is out-of-scope; route to a separate project.
 
 ## On adopting from this repo into another project
 

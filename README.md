@@ -91,4 +91,5 @@ Details in [`plugins/toolkit/README.md`](plugins/toolkit/README.md).
 ## Going deeper
 
 - [`docs/workbench-flow.md`](docs/workbench-flow.md) — the workbench system's canonical mental model (with an [arch-map rendering](docs/workbench-flow.html)).
+- [`docs/skills/`](docs/skills/) — the usage handbook: one page per shipped skill covering what it does, when to reach for it, and the questions people actually hit. Start at its [index](docs/skills/README.md).
 - [`docs/decisions/`](docs/decisions/) — the rationale layer: why each agent and skill exists and the calls made along the way. The specs themselves are self-contained.
