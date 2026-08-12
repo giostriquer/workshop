@@ -8,6 +8,15 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.20.10 — 2026-08-12
+
+- **"Adversarial" now matches the review that answers to it.** The flow names
+  this pass adversarial everywhere it appears, but `code-quality-review`'s
+  description never used the word — so asking for "an adversarial code quality
+  review" matched on "code quality review" alone. The on-request clause now
+  reads "a strict **or adversarial** code quality review".
+  ([decision](decisions/adversarial-review-is-default-on.md))
+
 ## workbench 0.20.9 — 2026-08-12
 
 - **The adversarial code-quality review is default-on, not offered.** Sessions

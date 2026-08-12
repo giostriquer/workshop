@@ -73,6 +73,19 @@ itself out of the review on the grounds that this particular change looked
 clean — which is exactly the judgment the adversarial pass exists to
 distrust.
 
+## Amendment (same day): "adversarial" added to the on-request triggers
+
+The flow layer calls this pass **adversarial** in every place it names it —
+"ONE adversarial review", "the one adversarial pass", "its adversarial
+review". The skill's own description contained the word nowhere, so a user
+asking for "an adversarial code quality review" was matching on "code quality
+review" alone and got no help from the term the rest of the system uses. The
+on-request clause now reads "a strict **or adversarial** code quality review".
+
+A trigger-surface fix rather than a behavioral one, but the same family of
+defect as the mandate confusion above: the flow and the skill were describing
+the same thing in different words.
+
 ## What was deliberately not changed
 
 `verification-before-completion` keeps its always-on status and its wording;
