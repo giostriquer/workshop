@@ -1,6 +1,6 @@
 ---
 name: code-quality-review
-description: Run an extremely strict maintainability review for abstraction quality, giant files, and spaghetti-condition growth. Use for a strict code quality review, deep code quality audit, or especially harsh maintainability review — fires once, at work-stream completion right before PR-or-merge, never mid-implementation.
+description: Run an extremely strict maintainability review for abstraction quality, giant files, and spaghetti-condition growth. Required once a work-stream's implementation is complete, right before the PR-or-merge ask — run it unasked unless the user explicitly declines or the repo's own process supersedes it. Also fires on request for a strict code quality review, deep code quality audit, or especially harsh maintainability review. Once per work-stream, never mid-implementation.
 ---
 
 # Code Quality Review
@@ -32,11 +32,16 @@ classified, not chased:
   as follow-up work (a ticket, a tracked note); do **not** fold them into
   this change. One exception: a finding that proves this change **unsafe or
   incorrect as shipped** blocks regardless of where it lives.
-- The review is a **gate, not an implementation-discovery engine.** It fires
-  **once, only when the work-stream's implementation is believed complete**,
-  immediately before the PR-or-merge question — never mid-implementation.
-  Fixed findings re-verify and proceed; feeding each round's discoveries
-  back into implementation grows the diff without bound.
+- The review is a **gate, not an implementation-discovery engine** — and a
+  **default-on** gate: when a work-stream's implementation is complete, this
+  review runs whether or not anyone asked for it. Exactly two things stop it —
+  **the user explicitly declining**, or **the repo's own process superseding
+  it**. A small diff, a confident implementation, a clean-looking change, time
+  pressure, or the session's own sense that this one doesn't need it are not
+  among them. It fires **once, only when the implementation is believed
+  complete**, immediately before the PR-or-merge question — never
+  mid-implementation. Fixed findings re-verify and proceed; feeding each
+  round's discoveries back into implementation grows the diff without bound.
 
 ## Non-Negotiable Additional Standards
 

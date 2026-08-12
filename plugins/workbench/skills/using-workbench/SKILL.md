@@ -19,8 +19,17 @@ Skim the flow and the ownership table below before diving into the work. When
 the task at hand matches a moment with an owning skill, invoke that skill
 rather than improvising the process — and say so briefly ("Using audit to size
 this investigation"). If a skill turns out wrong for the situation, you don't
-have to follow it. These are defaults the user configured, not gates: skills
-fire on relevance, never on compulsion.
+have to follow it. Most of these are defaults the user configured rather than
+gates: they fire on relevance, not compulsion.
+
+**Two pieces are the exception — they fire by default, not by relevance.**
+`verification-before-completion` at every done/fixed/passing claim, and the
+adversarial `code-quality-review` once a work-stream's implementation is
+complete. Each runs unless **the user explicitly declines it**, or **the repo's
+own process supersedes it**. Those are the only two outs: a small diff, a
+confident implementation, a tidy-looking change, or time pressure are not
+among them, and neither is the session's own judgment that this one looks
+fine.
 
 ## The flow at a glance
 
@@ -47,8 +56,10 @@ IMPLEMENTATION (agency = user/harness call; implementer gets the plan/goal if pr
 COMPLETION (enters only when the work-stream's implementation is believed complete)
   test-quality review → deemed ready = verified with evidence
   (verification-before-completion; empirical-proof offered if runnable) →
-  ONE adversarial review (code-quality-review + comment trim, per repo rules;
-  fires only here, right before the PR-or-merge ask — never mid-implementation) →
+  ONE adversarial review — REQUIRED, not offered (code-quality-review +
+  comment trim, per repo rules); skipped only on an explicit user decline or a
+  superseding repo process; fires here and nowhere else, right before the
+  PR-or-merge ask — never mid-implementation →
   in-scope findings fixed + re-verified, out-of-scope → follow-ups,
   proceed (no re-review) →
   USER gate: session outlines what was done, asks PR or merge
@@ -71,7 +82,7 @@ FEEDBACK
 | A bug, before proposing fixes | `systematic-debugging` |
 | About to claim done / ready | `verification-before-completion` (offer `empirical-proof` if runnable) |
 | The implementation's tests | `test-quality-reviewer` |
-| The one adversarial pass (work-stream complete, right before PR-or-merge) | `code-quality-review` |
+| The one adversarial pass — **required** once the work-stream is complete, right before PR-or-merge | `code-quality-review` |
 | Landing | outline gate → `file-pr` / merge / push; `fix-ci` |
 | Review feedback arrives | `get-pr-comments` → `receiving-code-review` |
 | Authoring or editing skills | `writing-skills` (ships in the `toolkit` plugin) |
@@ -97,8 +108,11 @@ prove the deliverable the way its real consumer would exercise it, and
 record the evidence. The protocols are checkpoints, not reading
 assignments — load one when its moment arrives, not preemptively.
 
-**Cost and authority:** `verification-before-completion` is the only
-always-on piece. `empirical-proof` and `qa-sweep` are the expensive tiers —
+**Cost and authority:** two pieces are always-on —
+`verification-before-completion` at every done-claim, and the adversarial
+`code-quality-review` once the implementation is complete. Both are default-on
+and stop only for an explicit user decline or a superseding repo process.
+`empirical-proof` and `qa-sweep` are the expensive tiers —
 **offer them, never default to them**: they run on the user's explicit ask
 (now or standing) and not otherwise. Most changes don't warrant them, and
 running one uninvited spends the user's time and budget on ceremony they
@@ -163,7 +177,10 @@ pre-authorize). Everything else is the session's to drive.
 
 ## Boundaries
 
-- **Orientation, not compulsion.** At session start it maps; it never forces —
-  and it never responds to "how does the flow work?" by starting the flow.
+- **Orientation, not compulsion — with two standing exceptions.** At session
+  start it maps; it never forces, and it never responds to "how does the flow
+  work?" by starting the flow. The two default-on completion gates are the
+  exceptions: they are the process the user configured, so skipping one is
+  the user's call to make, never the session's.
 - Workbench never dictates execution agency (in-session vs dispatched) and ships no hooks;
   skill descriptions and the user's own rules are the entire activation surface.
