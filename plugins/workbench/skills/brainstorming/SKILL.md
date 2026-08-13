@@ -9,35 +9,101 @@ metadata:
 
 Help turn ideas into fully formed designs through natural collaborative dialogue.
 
-Start by understanding the current project context, then ask questions one at a
-time to refine the idea. Once you understand what you're building, present the
-design and get user approval — then hand the user the route decision.
+Start by classifying how much process the request actually needs, then work that
+path: understand the context, refine the idea, present a design, get the user's
+approval — and hand them the route decision.
 
 **Rule:** no implementation before the design is presented and approved. Don't
 write code, scaffold projects, or invoke implementation skills mid-brainstorm.
+**The ceremony scales with the task; the approval gate never does.**
+
+## Three paths
+
+Before the first question, classify the request and say the classification out
+loud — "this looks bounded, so I'll present a short design here rather than write
+one up" — so the user can override it.
+
+- **Spike** — a feasibility question ("can we…", "is it possible…", "quick and
+  dirty is fine") whose output is an answer, not code you keep. Present the
+  question and what you'll try in two or three sentences, get a nod, then find
+  out as cheaply as correctness allows. No design doc. Report findings as a
+  recommendation, and label anything you built throwaway.
+- **Bounded** — a well-scoped change to code that already exists here: a new
+  flag, a small endpoint, a one-file fix. Understanding the *kind* of app is not
+  enough — bounded means the flow you are changing is already in the repo to
+  read. If there is no existing flow to change, it is not bounded. Ask the
+  clarifying questions that matter, present a short design **in chat** (a few
+  sentences to a few short paragraphs), and stop for approval. No design doc.
+- **Architectural** — new projects, new subsystems, changes that restructure how
+  components fit together or alter interfaces others depend on. The full process
+  below: questions, approaches, sectioned design, a written design, self-review.
+
+**The ratchet is one-way.** When torn between two paths, take the heavier one.
+Hidden complexity discovered mid-task upgrades the path — stop, say so, and step
+up. Nothing downgrades mid-task.
 
 ## Where this sits in the workbench flow
 
 - **Scope:** features and refactors get this treatment — always. Confirmed small
   fixes (e.g. a bug an audit already pinned down) skip it; work whose design was
-  already settled elsewhere skips it.
+  already settled elsewhere skips it. Entering does not mean the full ceremony:
+  the path classification above decides how much, and most bounded work is a few
+  questions and a short design in chat.
 - **Entering from an idea:** ground the idea first — a couple of questions, most
   answerable from the codebase itself. Brainstorming owns the rest: the
   questions only the user can answer (intent, priorities, taste, constraints the
   code doesn't record).
 - **Entering from an audit:** the findings and the user's confirmed flags are
   your context — don't re-derive them.
-- **The terminal state is the route gate.** When the design is approved, present
-  the user the three routes and let them pick: **direct** (implement straight
-  from this conversation), **plan** (write one — using the user's own plan
-  mechanism: a plugin or repo skill, the repo's planning standards, or the
-  harness's plan mode as fallback), or **handoff-goal** (a contract for a fresh
-  session to pursue autonomously). The choice is theirs, not yours.
+- **The terminal state is the route gate**, for bounded and architectural work
+  alike. When the design is approved, present the user the three routes and let
+  them pick: **direct** (implement straight from this conversation), **plan**
+  (write one — using the user's own plan mechanism: a plugin or repo skill, the
+  repo's planning standards, or the harness's plan mode as fallback), or
+  **handoff-goal** (a contract for a fresh session to pursue autonomously). The
+  choice is theirs, not yours; the path only shapes what you recommend — bounded
+  work usually wants **direct**, architectural work usually wants **plan** or
+  **handoff-goal**.
+- **A spike is the exception**: its terminal state is a reported recommendation,
+  not a route pick. There is nothing to route until the user turns the answer
+  into work, and that is a fresh pass through this skill.
+
+## Red flags
+
+| Thought | Reality |
+|---------|---------|
+| "This is too simple to need a design" | Simple means a short design, not no design. Two sentences in chat, then approval. |
+| "I'll call it bounded and skip the write-up" | Reaching for a label to skip work *is* the doubt. Take the heavier path. |
+| "It's bounded and the design is obvious — I'll start while they read it" | The gate is the approval, not the design's length. Present, then stop until you hear yes. |
+| "I understand this kind of app, so it's bounded" | Bounded measures the repo, not your familiarity. A new project has no existing flow to change — that is architectural. |
+| "The spike works, so I'll keep the code" | A spike's output is an answer. Keeping the code is a new request — classify it. |
+| "It grew, but I'm almost done — no need to re-classify" | Hidden complexity upgrades the path mid-task. Stop and say so. |
+| "They approved the spike, so the follow-up is approved too" | Each task gets its own classification and its own approval. |
 
 ## Process
 
+Classify first, announce the path, then work the checklist for that path in
+order.
+
+**Spike:** explore just enough to frame the probe → present the question and
+probe plan in two or three sentences → get a nod → investigate as cheaply as
+correctness allows → report a recommendation, labelling anything built
+throwaway.
+
+**Bounded:** explore project context (files, docs, recent commits) → ask the
+clarifying questions that matter, one at a time → present a short design in chat
+covering approach, files touched, and testing → **stop and wait for an explicit
+yes** (presenting the design and starting in the same breath is skipping the
+gate) → route gate.
+
+**Architectural:** the full sequence below.
+
 ```dot
 digraph brainstorming {
+    "Classify: spike / bounded / architectural" [shape=diamond];
+    "Present question + probe" [shape=box];
+    "Investigate; report recommendation" [shape=doublecircle];
+    "Present short design in chat" [shape=box];
     "Explore project context" [shape=box];
     "Ask clarifying questions" [shape=box];
     "Propose 2-3 approaches" [shape=box];
@@ -48,6 +114,11 @@ digraph brainstorming {
     "User reviews design?" [shape=diamond];
     "Route gate: user picks\ndirect / plan / handoff-goal" [shape=doublecircle];
 
+    "Classify: spike / bounded / architectural" -> "Present question + probe" [label="spike"];
+    "Classify: spike / bounded / architectural" -> "Present short design in chat" [label="bounded"];
+    "Classify: spike / bounded / architectural" -> "Explore project context" [label="architectural"];
+    "Present question + probe" -> "Investigate; report recommendation" [label="approved"];
+    "Present short design in chat" -> "Route gate: user picks\ndirect / plan / handoff-goal" [label="approved"];
     "Explore project context" -> "Ask clarifying questions";
     "Ask clarifying questions" -> "Propose 2-3 approaches";
     "Propose 2-3 approaches" -> "Present design sections";
@@ -61,6 +132,11 @@ digraph brainstorming {
 }
 ```
 
+The subsections below serve the bounded and architectural paths; a spike stops
+at "present the probe, get a nod." Everything from **Exploring approaches**
+onward is architectural depth — for bounded work, context plus a few questions
+plus a short in-chat design is the whole process.
+
 **Understanding the idea:**
 
 - Check out the current project state first (files, docs, recent commits)
@@ -73,12 +149,10 @@ digraph brainstorming {
   should they be built? Then brainstorm the first sub-project through the
   normal flow. Each sub-project gets its own design → route → implementation
   cycle.
-- For appropriately-scoped projects, ask questions one at a time to refine the
-  idea — and answer from the codebase yourself whatever the codebase can
-  answer; spend the user's attention only on what it can't
+- **One question per message** — if a topic needs more exploration, break it
+  into several. Answer from the codebase yourself whatever the codebase can
+  answer; spend the user's attention only on what it can't.
 - Prefer multiple choice questions when possible, but open-ended is fine too
-- Only one question per message — if a topic needs more exploration, break it
-  into multiple questions
 - Focus on understanding: purpose, constraints, success criteria
 
 **Exploring approaches:**
@@ -124,6 +198,10 @@ digraph brainstorming {
   goal.
 
 ## After the Design
+
+This section is the **architectural** path. Bounded work has no written design
+to document, self-review, or re-approve — it goes from the in-chat design's
+approval straight to the route gate at the end.
 
 **Documentation:** the written design is **disposable working material** — save
 it under `.workbench/<work_scope>/` (or `.tmp/workbench/<work_scope>/`), where

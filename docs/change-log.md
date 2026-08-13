@@ -8,6 +8,31 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.21.0 — 2026-08-12
+
+- **`brainstorming` gains a three-path classifier.** Before the first question it
+  now sorts the request into **spike** (a feasibility question whose output is an
+  answer, not code), **bounded** (a well-scoped change to a flow already in the
+  repo), or **architectural** (new subsystems, restructuring, interfaces others
+  depend on) — and says the classification out loud so you can override it. Each
+  path carries its own checklist. The point is that a one-file fix stops
+  receiving the ceremony designed for a new subsystem.
+- **Two rules keep it honest.** Bounded measures the repo, not the session's
+  familiarity: if there is no existing flow to change, the task is architectural.
+  And the ratchet is one-way — when torn take the heavier path, hidden complexity
+  upgrades mid-task, nothing downgrades. A red-flags table names the
+  rationalizations that break each rule.
+- **The approval gate does not scale.** A two-sentence design is still presented
+  and still waits for a yes; what shrinks with simplicity is the artifact.
+- Adopted from upstream and retargeted on the way in: every path ends at the
+  workbench **route gate** rather than upstream's `writing-plans` (a dropped
+  piece), a spike ends at a recommendation with no route pick, and the
+  After-the-Design section is scoped to the architectural path so bounded work
+  never writes a design doc. Upstream's `"You MUST use this before any creative
+  work"` description was ignored — that is the compulsion framing this fork
+  removes.
+  ([decision](decisions/brainstorming-three-paths-adopted.md))
+
 ## toolkit 0.3.0 — 2026-08-12
 
 - **`writing-skills` is now mirrored from upstream byte-for-byte**, at

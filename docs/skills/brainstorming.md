@@ -40,7 +40,33 @@ work whose design was settled elsewhere.
 | The design is settled; a fresh session should pursue it autonomously | `handoff-goal` (the route gate's third option) |
 | Implementing with a test harness | `test-driven-development` |
 
+## Three paths
+
+Before the first question the skill classifies the request and says the
+classification out loud, so you can override it. The path decides how much
+ceremony follows.
+
+| Path | What it is | What you get |
+| --- | --- | --- |
+| **Spike** | A feasibility question — "can we…", "quick and dirty is fine" — whose output is an answer, not code you keep | The question and probe plan in two or three sentences, a nod, then findings as a recommendation. Anything built is labelled throwaway. No design doc, no route pick. |
+| **Bounded** | A well-scoped change to a flow that already exists in the repo: a new flag, a small endpoint, a one-file fix | The questions that matter, then a short design **in chat**, then a stop for approval, then the route gate. No design doc. |
+| **Architectural** | New projects, new subsystems, changes that restructure how components fit or alter interfaces others depend on | The full sequence: questions, approaches, sectioned design, a written design, self-review, your review, route gate. |
+
+Two rules keep the classifier honest. **Bounded measures the repo, not your
+familiarity** — understanding the *kind* of app is not enough; if there is no
+existing flow to change, the task is architectural. And **the ratchet is
+one-way**: when torn, take the heavier path; hidden complexity found mid-task
+upgrades it; nothing downgrades mid-task.
+
+What never scales is the approval. "The ceremony scales with the task; the
+approval gate never does" — a two-sentence design still gets presented and
+still waits for a yes.
+
 ## The dialogue
+
+The subsections below serve the bounded and architectural paths; a spike stops
+at the probe. Everything from *Exploring approaches* onward is architectural
+depth.
 
 **Understanding the idea.** Check the project state first — files, docs, recent
 commits. Then assess scope before spending questions: if the request describes
@@ -48,11 +74,10 @@ multiple independent subsystems, that is flagged immediately and the project
 gets decomposed into sub-projects before any detail work. Each sub-project then
 gets its own design, route, and implementation cycle.
 
-For appropriately scoped work, questions come one at a time. Two constraints
-shape them: "answer from the codebase yourself whatever the codebase can
-answer; spend the user's attention only on what it can't," and "Only one
-question per message — if a topic needs more exploration, break it into
-multiple questions." Multiple choice is preferred where it fits.
+Questions come **one per message** — "if a topic needs more exploration, break
+it into several" — and the skill answers from the codebase itself whatever the
+codebase can answer, spending your attention only on what it can't. Multiple
+choice is preferred where it fits.
 
 **Exploring approaches.** Two or three approaches with trade-offs, presented
 conversationally, recommendation first with reasoning. "YAGNI ruthlessly —

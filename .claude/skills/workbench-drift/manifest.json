@@ -11,10 +11,10 @@
     "watchPaths": ["skills", "hooks"],
     "trackingNote": "Drift is measured against upstream's published releases, never the branch tip. Unreleased commits on `ref` are work in progress: they get reported as a count and excluded from review and from mirroring. Set track to \"branch\" only if upstream stops tagging releases.",
     "lastReviewed": {
-      "commit": "44c9b2d6e889982ac18c27d05a19fefe335194e1",
-      "release": "v6.2.0+1 (unreleased)",
-      "date": "2026-08-11",
-      "note": "Pinned at the phase-B port: the six adopted skills were ported from this commit, so everything up to here has been reviewed by construction. It is one commit past v6.2.0 — an unreleased state, pinned before release tracking existed. The next completed review should land the pin on a release tag."
+      "commit": "b36e0829c6d0140e93cfef2ca599b1b07d4a7797",
+      "release": "v6.3.0",
+      "date": "2026-08-12",
+      "note": "First pin landed on a release boundary. Review of v6.2.0+1 → v6.3.0 completed: brainstorming's three-path classifier adopted through the adaptation filter, writing-skills re-mirrored verbatim, the other four adopted pieces unchanged upstream in the range, dropped-piece churn reviewed as FYI with every disposition standing, zero unmapped entries."
     }
   },
   "adaptationFilter": "docs/decisions/workbench-system.md#2-the-adaptation-filter — defang the description; de-pipeline the body; carry only needed references; provenance footer. Applies to every adoption, initial and future.",
@@ -38,7 +38,7 @@
       "localPath": "plugins/workbench/skills/brainstorming/",
       "disposition": "adopted",
       "why": "Socratic requirements/design exploration before creative work — on invitation, not compulsion.",
-      "adaptations": "Description rewritten from 'You MUST use this before any creative work' to an honest conditional trigger; pipeline hand-offs (writing-plans, plan mode coupling) scrubbed."
+      "adaptations": "Description rewritten from 'You MUST use this before any creative work' to an honest conditional trigger; pipeline hand-offs (writing-plans, plan mode coupling) scrubbed. v6.3.0 review: the three-path classifier (spike / bounded / architectural), the one-way ratchet, the red-flags table, and the per-path checklists were adopted — they scale ceremony down, which is the opposite of pressure tuning. Adapted on the way in: every path terminates at the workbench route gate instead of writing-plans (a dropped piece), a spike terminates at a recommendation with no route pick, 'your human partner' rewritten to 'the user', and the After-the-Design section scoped to the architectural path. Ignored: the upstream description's 'You MUST' framing, and visual-companion.md — we carry SKILL.md only."
     },
     {
       "upstreamPath": "skills/test-driven-development/",
