@@ -4,15 +4,17 @@ Ready-to-use AI agents and skills for Claude Code and Codex, extracted from real
 
 ## Install
 
-This repo doubles as a **plugin marketplace** — a catalog Claude Code can install plugins from directly. In a Claude Code session:
+This repo doubles as a **plugin marketplace** — a catalog Claude Code can install plugins from directly.
+
+In a Claude Code session:
 
 ```
 /plugin marketplace add giostriquer/agent-workshop
 /plugin install workbench@agent-workshop
-/plugin install toolkit@agent-workshop   # optional artifact-making utilities
+/plugin install toolkit@agent-workshop   # optional utilities
 ```
 
-Using Codex instead:
+Codex install:
 
 ```powershell
 codex plugin marketplace add giostriquer/agent-workshop
@@ -21,6 +23,16 @@ codex plugin add toolkit@agent-workshop   # optional
 ```
 
 For Cursor, the plugin ships in the Cursor plugin format (`.cursor-plugin/`). Import this repo as a **Team Marketplace** (Teams/Enterprise, admin): **Dashboard → Settings → Plugins → Team Marketplaces → Add Marketplace → Import from Repo**, point it at `giostriquer/agent-workshop`, then install `workbench` (and optionally `toolkit`) from **Customize** in the sidebar.
+
+### Global Rules Adoption - Optional
+
+To install the workshop's shipped global agent configuration — its CLAUDE.md, AGENTS.md and rules — on a machine — additively, without overwriting what
+is already there — run `/adopt-global-rules` after installing `toolkit`. On a machine
+with no plugin installed, the same installer runs standalone:
+
+```powershell
+npx github:giostriquer/agent-workshop --dry-run   # plan; drop --dry-run to apply
+```
 
 ## The plugins
 
@@ -76,8 +88,8 @@ Details in [`plugins/workbench/README.md`](plugins/workbench/README.md).
 
 ### `toolkit` — optional, install when you want it
 
-Artifact-making utilities kept out of `workbench` so integrators control token
-load — every installed skill's listing rides in each session's context:
+Utilities kept out of `workbench` so integrators control token load — every
+installed skill's listing rides in each session's context:
 
 | Skill | Does |
 | --- | --- |
@@ -85,6 +97,7 @@ load — every installed skill's listing rides in each session's context:
 | `arch-map` | visual architecture map when no doc exists |
 | `ui-demo-video` | Playwright walkthrough video + verification frames |
 | `writing-skills` | TDD applied to authoring skills (derived from obra/superpowers, MIT) |
+| `adopt-global-rules` | installs the workshop's shipped global CLAUDE.md / AGENTS.md and rules onto a machine, additively (user-invoked only) |
 
 Details in [`plugins/toolkit/README.md`](plugins/toolkit/README.md).
 

@@ -1,0 +1,39 @@
+{
+  "packVersion": 2,
+  "description": "The workshop's shipped global agent configuration, installed onto a machine by adopt-global-rules. Two kinds: a per-host global instruction document (globals/) and discrete single-source rules fanned out to every host (rules/). Paths are relative to the skill directory; targets are relative to the home directory (or to --root). This is plugin payload — it ships with the plugin the same way its skills do, and changes to it are released, not configured per machine.",
+  "globalDocId": "globals",
+  "hosts": [
+    {
+      "id": "claude",
+      "label": "Claude Code",
+      "detect": ".claude",
+      "mode": "dir",
+      "target": ".claude/rules",
+      "globalDoc": {
+        "file": "globals/CLAUDE.md",
+        "target": ".claude/CLAUDE.md"
+      },
+      "mcpConfigs": [".claude.json", ".claude/settings.json"]
+    },
+    {
+      "id": "codex",
+      "label": "Codex",
+      "detect": ".codex",
+      "mode": "file",
+      "target": ".codex/AGENTS.md",
+      "globalDoc": {
+        "file": "globals/AGENTS.md",
+        "target": ".codex/AGENTS.md"
+      },
+      "mcpConfigs": [".codex/config.toml"]
+    }
+  ],
+  "rules": [
+    {
+      "id": "model-floor",
+      "tier": "core",
+      "title": "Model floor",
+      "file": "rules/core/model-floor.md"
+    }
+  ]
+}

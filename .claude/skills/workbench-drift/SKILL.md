@@ -64,6 +64,13 @@ that is a manifest edit plus, for adoptions, the port workflow below.
    upstream tree wholesale, including files it gained or lost. The trade is
    recorded in the piece's manifest entry — fidelity to upstream over local
    correctness, dead cross-references included.
+   **Then re-apply that entry's `localDeltas`, if it has any.** A mirrored piece
+   may carry a short list of deliberate local divergences; the copy in step 5
+   overwrites them, so re-applying is part of the re-mirror, not a follow-up.
+   The script prints them under the Re-mirror heading — a re-mirror that ends
+   without re-applying them has silently reverted an operator decision. Keep the
+   list short: it is a recorded exception, not a reopened fork. If it grows past
+   a few lines, the piece wants the `adopted` disposition instead.
 6. **Advance the pin.** Set `upstream.lastReviewed.commit` to the reviewed
    release's commit, and `release` to its tag — only after the review completed,
    including the ignores; an advanced pin asserts "everything up to here was

@@ -184,6 +184,7 @@ const result = {
     upstreamPath: piece.upstreamPath,
     localPath: piece.localPath,
     changedFiles: files.length,
+    localDeltas: piece.localDeltas ?? null,
   })),
   intentionallyDropped: [...groups.droppedFyi.entries()].map(([p, n]) => ({ upstreamPath: p, changedFiles: n })),
   unmapped: groups.unmapped,
@@ -224,6 +225,10 @@ for (const b of reviewBlocks) {
 console.log(`## Re-mirror (mirrored pieces — copy upstream wholesale, do not adapt) — ${result.remirror.length}\n`);
 for (const m of result.remirror) {
   console.log(`- ${m.upstreamPath} → ${m.localPath} — ${m.changedFiles} changed file(s); re-copy the upstream tree verbatim`);
+  if (m.localDeltas?.length) {
+    console.log(`  !! ${m.localDeltas.length} recorded local delta(s) — re-apply after copying or they are lost:`);
+    for (const d of m.localDeltas) console.log(`     - ${d}`);
+  }
 }
 console.log(`\n## Intentionally dropped (FYI only) — ${result.intentionallyDropped.length}\n`);
 for (const d of result.intentionallyDropped) {

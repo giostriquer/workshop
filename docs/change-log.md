@@ -8,6 +8,69 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.22.0 — 2026-08-12
+
+- **`route-work` drops the effort axis.** The table is now one row per model,
+  graded at the effort that model is actually run at; re-grade a row rather than
+  splitting it when your habitual effort changes. `grok-4.6` joins the fleet and
+  `fable-5` is re-graded.
+- **`speed` is a real axis, and `cost` shrank to make room.** Cost was defined as
+  "subscription-limit burn **plus wall-clock**", so adding a speed column without
+  touching it scored wall-clock twice. Cost is now burn alone; speed is
+  wall-clock turnaround. A new reading note bounds it: speed breaks ties between
+  level rows and never buys a drop on intelligence, taste, or code.
+- **"Climb effort before hopping models" is gone**, along with the `sol
+  low/medium` and `sol xhigh` rows it named. The *Standing escalation permission*
+  invariant already covers rerunning a tier up, so nothing load-bearing went with
+  it. The cross-ladder caveat was generalized off its old GPT-vs-Claude framing,
+  which `grok-4.6` had broken.
+- The frontmatter description advertised the old grain and omitted `speed` —
+  it is the activation surface, so it was corrected with the table rather than
+  after it. ([decision](decisions/route-work-effort-axis-removed.md))
+
+## toolkit 0.4.0 — 2026-08-12
+
+- **New skill: `adopt-global-rules`.** Installs the workshop's own shipped
+  global agent configuration onto a machine **additively**: a per-host instruction document
+  (`~/.claude/CLAUDE.md`, `~/.codex/AGENTS.md`) plus discrete rules (one marked
+  file each in `~/.claude/rules/`, fenced blocks in `AGENTS.md`). The pack owns
+  only what its `<!-- agent-workshop:rule id=… -->` markers delimit; an unmarked
+  file at a rule's path is reported as a collision and left exactly as found. It
+  is user-invoked only (`disable-model-invocation: true`).
+- **Global documents are authored per host, not derived.** `globals/CLAUDE.md`
+  and `globals/AGENTS.md` are separate files because hosts want different things
+  said — sandbox-escalation instructions are meaningless to one, a communication
+  preference may not belong in the other. Rules are the opposite: one body fanned
+  out everywhere. `--skip-globals` installs rules only.
+- **Two entry points, one implementation.** The skill runs `adopt.mjs` from its
+  own directory; `npx github:giostriquer/agent-workshop` runs the same file
+  through a root `bin/` shim, so a machine with no plugin installed can still
+  bootstrap. The pack lives inside the skill directory because that is the only
+  copy an installed plugin can reach.
+- **The script does mechanics; the skill does judgment.** `--dry-run --json`
+  returns the plan plus every byte of a single-file target sitting *outside* the
+  pack's fences, verbatim — the skill reads that to answer what no script can:
+  whether existing prose duplicates or contradicts a rule about to be installed.
+- **Drift is fixed, not reported.** Managed blocks are pack-owned: a re-run
+  overwrites a drifted block and prints the diff. Hand-maintained legacy fences
+  (the same marker used to open and close) are recognised and migrated in place
+  rather than duplicated. Rules whose precondition is unmet — an optional rule
+  needing an MCP server that machine lacks — are skipped with a reason instead
+  of installed as misleading dead weight.
+  ([decision](decisions/adopt-global-rules.md))
+- **`writing-skills` now fires on auditing an existing skill**, not just
+  creating, editing, or verifying one — a distinct trigger that was falling
+  through the description.
+- **The edit is recorded rather than doomed.** This skill is mirrored
+  byte-for-byte from upstream, so the next re-mirror would have silently erased
+  the word. Its manifest entry keeps `disposition: mirrored` and gains a
+  `localDeltas` list; `drift-check.mjs` prints those under the Re-mirror heading
+  — it previously showed only paths and a file count, making a recorded delta
+  invisible at the one moment it matters — and `workbench-drift` makes
+  re-applying them part of the re-mirror. Flipping to `adopted` was rejected: it
+  reopens the fork that caused the earlier dangling-pointer defect.
+  ([decision](decisions/mirrored-pieces-local-deltas.md))
+
 ## workbench 0.21.0 — 2026-08-12
 
 - **`brainstorming` gains a three-path classifier.** Before the first question it
@@ -239,66 +302,3 @@ deletes the oldest (git history keeps everything). Sections from before the
   (numbered list otherwise), user-facing labels — Direct / Plan /
   Long-running goal — recommendation first and marked; `handoff-goal` keeps
   its skill name.
-
-## workbench 0.20.3 — 2026-08-12
-
-- **audit — structured sizing ask.** The tier question goes through
-  `AskUserQuestion` (numbered-list fallback), recommended tier marked; the
-  pick stays the user's.
-  ([decision](decisions/audit-sizing-ask-and-runtime-modality.md))
-- **audit — runtime-modality flag.** When the target is behavior a real
-  client can drive, the sizing question also confirms whether the check
-  should drive the booted app; the confirmation travels to the engine as
-  part of the workload.
-
-## workbench 0.20.2 — 2026-08-11
-
-- **Manifests tell the process-system story.** Identity-first descriptions
-  across all three manifests and the marketplace (the flow's arc, the agents
-  as backing, the no-hooks stance); Codex `defaultPrompt` reordered to walk
-  the flow.
-
-## toolkit 0.1.1 — 2026-08-11
-
-- **Description accuracy pass.** Swap-era self-references ("install
-  alongside toolkit") fixed to workbench; one identity-first description now
-  consistent across all three manifests and the marketplace.
-
-## workbench 0.20.1 — 2026-08-11
-
-- **using-workbench triggers at session start** (description-as-dispatcher,
-  hook-free); wording settled from a MUST-invoke variant to informational
-  orientation — invoke on relevance, opt out when it doesn't fit; "defaults
-  the user configured, not gates."
-  ([amendment](decisions/workbench-system.md))
-
-## toolkit 0.1.0 — 2026-08-11
-
-- **Optional utilities split into the new `toolkit` plugin** —
-  `doc-to-html`, `arch-map`, `ui-demo-video`, `writing-skills` — so
-  integrators opt into their listing token load (toolkit ≈ 1,784 tokens;
-  workbench ≈ 378). ([decision](decisions/workbench-split.md))
-- Marketplaces list both plugins; the validator generalized to a per-plugin
-  spec table; each plugin carries exactly its own attribution and LICENSE
-  notice.
-
-## workbench 0.20.0 — 2026-08-11
-
-- **The workbench system lands**: six process skills ported from
-  [obra/superpowers](https://github.com/obra/superpowers) `44c9b2d` (MIT,
-  Jesse Vincent) through the adaptation filter, plus the native `audit`
-  protocol and `using-workbench` orientation. The flow — two optional doors,
-  user-picked routes, agency left to user/harness, one adversarial review at
-  readiness, outline-then-ask landing — is recorded with every design
-  question operator-settled.
-  ([decision](decisions/workbench-system.md))
-- **workbench-drift** (provenance manifest + bundled diff script) settles as
-  repo-local fork tooling at `.claude/skills/workbench-drift/` — ships in no
-  plugin.
-- **Description trim (SDO):** six legacy skills cut to trigger-only listings
-  after an 8/8 routing probe; listing cost −29%.
-  ([decision](decisions/description-trim-sdo.md))
-- **Shipped-text hygiene:** payload text references only what an installed
-  environment can reach — public URLs, never repo-relative paths.
-- **vigil parked** to `attic/agents/`; five review agents remain.
-  ([decision](decisions/park-vigil.md))

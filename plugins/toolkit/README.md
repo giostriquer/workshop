@@ -1,6 +1,6 @@
 # toolkit
 
-Optional artifact-making utilities from
+Optional utilities from
 [Agent Workshop](https://github.com/giostriquer/agent-workshop) — the grab-bag of optional tools next
 to the [`workbench`](../workbench/README.md). Install it when you want these; skip
 it to keep sessions lean. The set grows with more optional utilities over time.
@@ -32,6 +32,14 @@ codex plugin add toolkit@agent-workshop
 | `arch-map` | derives a visual architecture map — subsystem, refactor, or proposed design — when no source doc exists |
 | `ui-demo-video` | Playwright walkthrough of the running app — verification frames for the model, mp4 for the PR |
 | `writing-skills` | TDD applied to skill authoring — baselines, micro-tested wording, loophole closing |
+| `adopt-global-rules` | installs the workshop's shipped global CLAUDE.md / AGENTS.md and rules onto this machine, additively — user-invoked only |
+
+`adopt-global-rules` also runs without any plugin installed, for bootstrapping a
+bare machine:
+
+```powershell
+npx github:giostriquer/agent-workshop --dry-run   # plan; drop --dry-run to apply
+```
 
 > **Attribution:** `writing-skills` is derived from
 > [obra/superpowers](https://github.com/obra/superpowers) by **Jesse Vincent**

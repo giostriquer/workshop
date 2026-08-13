@@ -2,10 +2,10 @@
 
 ## What it does
 
-`route-work` is a reference table for the model fleet: one row per model and
-effort tier, graded on cost, intelligence, taste, and code, plus the routing
+`route-work` is a reference table for the model fleet: one row per model,
+graded on cost, intelligence, taste, code, and speed, plus the routing
 invariants that hold regardless of which models you run. You consult it when a
-model or effort choice needs grounding and is not already settled.
+model choice needs grounding and is not already settled.
 
 It is a lookup, and nothing else. Its own description draws the line: "A
 lookup, not a process — not a step before every dispatch, and it never
@@ -21,9 +21,8 @@ content.
 
 ## When to reach for it
 
-Invoke `/route-work` when you are about to make a model or effort choice that
-you cannot already justify, or when the fleet changes and the table needs
-updating. The canonical copy "lives here and nowhere else" — an operator's
+Invoke `/route-work` when you are about to make a model choice that you cannot
+already justify, or when the fleet changes and the table needs updating. The canonical copy "lives here and nowhere else" — an operator's
 always-injected rules file carries only the hard invariants and points at this
 skill, so the table has exactly one place to go stale.
 
@@ -32,7 +31,7 @@ its own description.
 
 | The problem | The skill |
 | --- | --- |
-| Which model, which effort tier | `route-work` |
+| Which model to run this on | `route-work` |
 | Which skill owns this moment in the flow | `using-workbench` |
 | How big an investigation should be (quick look / deep / sweep) | `audit` |
 | Which implementation route the work takes (direct / plan / long-running goal) | `brainstorming`'s route gate |
@@ -42,19 +41,27 @@ its own description.
 
 Scores are 1-10, higher is better.
 
-| model + effort | cost | intelligence | taste | code |
-|---|---|---|---|---|
-| gpt-5.6-sol low/medium | 8 | 6.5 | 7 | 7.5 |
-| gpt-5.6-sol xhigh | 6 | 8.5 | 8.5 | 9 |
-| gpt-5.6-luna (default: max) | 10 | 5 | 5 | 5 |
-| opus-5 | 5 | 8 | 8 | 8 |
-| fable-5 | 2 | 9 | 9.5 | 9 |
+| model | cost | intelligence | taste | code | speed |
+|---|---|---|---|---|---|
+| gpt-5.6-sol | 6 | 9 | 8.5 | 9 | 6 |
+| gpt-5.6-luna | 10 | 5 | 5 | 5 | 8 |
+| opus-5 | 5 | 8 | 8 | 8 | 8 |
+| fable-5 | 1 | 10 | 9.5 | 9 | 5 |
+| grok-4.6 | 5 | 8 | 8 | 8 | 7 |
 
-The axes are defined precisely, and one of them is counterintuitive:
+There is **one row per model**, "graded at the effort that model is actually
+run at." Effort is not a separate axis — if you change the effort you
+habitually run a model at, you re-grade its row rather than adding one.
 
-- **Cost** is "subscription-limit burn plus wall-clock, not dollars" — both
-  sides run on subscriptions, so a low cost score means "slow and eats the
-  weekly limit," not "expensive per token." Higher is cheaper.
+The axes are defined precisely, and two of them are easy to misread:
+
+- **Cost** is "subscription-limit burn, not dollars" — the fleet runs on
+  subscriptions, so a low cost score means "eats the weekly limit fast," not
+  "expensive per token." Higher is cheaper.
+- **Speed** is wall-clock turnaround on the same task. It is scored apart from
+  cost "because a model that thinks for ten minutes and one that drains the
+  weekly limit fail in different ways and constrain different work." Higher is
+  faster.
 - **Intelligence** is how hard a problem the model can carry unsupervised.
 - **Taste** covers user-facing surfaces only — UI/UX, copy, API shape, docs
   voice.
@@ -63,17 +70,19 @@ The axes are defined precisely, and one of them is counterintuitive:
 
 **Reading notes**, straight from the skill:
 
-- Routine, well-specified work goes to the cheap end; luna only for truly
-  mechanical bulk.
-- "Climb effort before hopping models — sol xhigh before leaving the ladder."
+- Routine, well-specified work goes to the cheap end: "luna only for truly
+  mechanical bulk, sol for routine work that still needs judgment."
 - Judgment-heavy, taste-critical, or silent-failure work goes to the frontier.
   "Putting high-tier judgment at the plan while a cheaper tier implements is
   often the better spend."
 - "A shipping taste surface needs taste >= 7 — luna is not a taste route."
+- "Speed breaks ties, never quality": level rows go to the faster one, but speed
+  "does not buy a drop on intelligence, taste, or code."
 
-**The cross-ladder caveat.** The GPT and Claude rows burn different
-subscriptions, "so a row another dominates on paper is not retired — when one
-pool's weekly limit is the constraint, the other ladder is the relief valve."
+**The cross-ladder caveat.** Rows drawn from different subscriptions are not
+comparable on cost alone, "so a row another dominates on paper is not retired —
+when one pool's weekly limit is the constraint, a row on another pool is the
+relief valve."
 
 ## The invariants
 
@@ -85,7 +94,7 @@ fleet.
 | **Set a model floor and enforce it upward** | Decide the weakest model allowed to touch real work, write it into the rules file that loads every session, then override anything selecting below it — agent definitions, tool defaults, `--model` flags, SDK calls — without asking |
 | **Orchestration stays home** | Decomposing, dispatching, and judging a set of work always run on the session's own model, never a weaker-model subagent |
 | **Standing escalation permission** | When output misses the bar, rerun or redo on a smarter tier without asking. "Judge the output, not the price tag" |
-| **Cost is a tie-breaker only** | When axes conflict for anything that ships: intelligence > taste > cost |
+| **Cost and speed are tie-breakers only** | When axes conflict for anything that ships: intelligence > taste > cost > speed. Neither of the last two buys a drop on the first two |
 | **Local policy wins** | Repo-local model policies override this table where they conflict |
 
 ## Common questions
@@ -125,12 +134,21 @@ Because cost is scored like every other axis — higher is better. A 10 means
 lowest burn: fast and light on the weekly limit. Read the column as "cheapness,"
 not "price."
 
+**What effort should I run these at?**
+
+Whatever effort you graded the row at. The table has one row per model, "graded
+at the effort that model is actually run at," so the numbers already assume your
+habitual setting. If you start running a model at a different effort and its
+behaviour moves, re-grade that row — do not add a second row for the new tier.
+
 **Two models tie on intelligence. Which do I pick?**
 
 Look at which axis the work actually loads. Implementation work reads the code
 column the way user-facing work reads taste. If the axes genuinely conflict for
-something that ships, the order is intelligence, then taste, then cost — cost
-never breaks a tie in its own favor when quality is at stake.
+something that ships, the order is intelligence, then taste, then cost, then
+speed — neither cost nor speed breaks a tie in its own favor when quality is at
+stake. Between rows that are genuinely level on the axis the work loads, take
+the faster one.
 
 **Can I dispatch orchestration work to a cheap tier to save budget?**
 
@@ -154,8 +172,8 @@ always-injected copy of a table has no update trigger
 ## It's working if
 
 - A model choice can be pointed at a row and an axis, not at a habit.
-- Effort climbs before models hop — you see the ladder tried before the fleet
-  is changed.
+- A row that stops matching how a model actually behaves gets re-graded, rather
+  than worked around in the moment.
 - Anything selecting below your floor gets overridden silently, without a
   question asked.
 - Output that misses the bar gets rerun a tier up rather than shipped.
