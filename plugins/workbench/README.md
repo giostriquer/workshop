@@ -77,6 +77,7 @@ surface, and `using-workbench` answers "how does this flow work?" on demand.
 | `verification-before-completion` | the "deemed ready" gate — fresh evidence before any done / fixed / passing claim |
 | `receiving-code-review` | verify feedback against the codebase before implementing; reasoned pushback, no performative agreement |
 | `using-workbench` | session-start + on-demand orientation map of the flow; orients, never coerces |
+| `self-audit` | retrospective on the process that ran the session — trace, classify, propose; reports, never edits a skill |
 
 
 > **Attribution:** five of the workbench skills (`brainstorming`, `test-driven-development`, `systematic-debugging`, `verification-before-completion`, `receiving-code-review`) are derived from [obra/superpowers](https://github.com/obra/superpowers) by **Jesse Vincent** (MIT) — adapted per the [workbench-system decision](https://github.com/giostriquer/workshop/blob/main/docs/decisions/workbench-system.md): descriptions rewritten as honest triggers, pipeline coupling removed, no hooks. A sixth derived skill, `writing-skills`, ships in the `toolkit` plugin. The lineage of every piece, including what was deliberately dropped and why, lives in the [workbench manifest](https://github.com/giostriquer/workshop/blob/main/.claude/skills/workbench-drift/manifest.json).

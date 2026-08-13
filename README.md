@@ -76,6 +76,7 @@ process layer — ready immediately after install, nothing to configure.
 | `verification-before-completion` | evidence before any "done" claim |
 | `receiving-code-review` | rigor on arriving review feedback |
 | `using-workbench` | session-start flow orientation + on-demand map |
+| `self-audit` | retrospective on the process that ran the session (user-invoked only) |
 
 Five workbench skills derive from [obra/superpowers](https://github.com/obra/superpowers)
 by Jesse Vincent (MIT), adapted per
@@ -98,6 +99,7 @@ installed skill's listing rides in each session's context:
 | `ui-demo-video` | Playwright walkthrough video + verification frames |
 | `writing-skills` | TDD applied to authoring skills (derived from obra/superpowers, MIT) |
 | `adopt-global-rules` | installs the workshop's shipped global CLAUDE.md / AGENTS.md and rules onto a machine, additively (user-invoked only) |
+| `me-human` | act as a human user dogfooding a system for real work (user-invoked only) |
 
 Details in [`plugins/toolkit/README.md`](plugins/toolkit/README.md).
 

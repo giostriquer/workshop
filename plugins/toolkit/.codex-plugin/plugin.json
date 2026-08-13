@@ -1,7 +1,7 @@
 {
   "name": "toolkit",
-  "version": "0.5.0",
-  "description": "Optional utilities for the workshop: html-report (report to a polished dark HTML page, from a doc or from session findings), arch-map (derived architecture maps), ui-demo-video (Playwright walkthroughs with verification frames), writing-skills (TDD for skill authoring, derived from obra/superpowers, MIT), and adopt-global-rules (installs the workshop's shipped global CLAUDE.md / AGENTS.md and rules onto a machine, additively). Install alongside workbench when you want them; skip to keep sessions lean.",
+  "version": "0.6.0",
+  "description": "Optional utilities for the workshop: html-report (report to a polished dark HTML page, from a doc or from session findings), arch-map (derived architecture maps), ui-demo-video (Playwright walkthroughs with verification frames), writing-skills (TDD for skill authoring, derived from obra/superpowers, MIT), adopt-global-rules (installs the workshop's shipped global CLAUDE.md / AGENTS.md and rules onto a machine, additively), and me-human (act as a human user dogfooding a system for real work). Install alongside workbench when you want them; skip to keep sessions lean.",
   "author": {
     "name": "Workshop",
     "url": "https://github.com/giostriquer/workshop"
@@ -14,7 +14,7 @@
   "interface": {
     "displayName": "Toolkit",
     "shortDescription": "Optional utilities for Codex.",
-    "longDescription": "A Codex manifest for the Workshop toolkit plugin. Codex exposes the html-report, ui-demo-video, arch-map, writing-skills, and adopt-global-rules skills from this package — the optional layer next to the workbench plugin.",
+    "longDescription": "A Codex manifest for the Workshop toolkit plugin. Codex exposes the html-report, ui-demo-video, arch-map, writing-skills, adopt-global-rules, and me-human skills from this package — the optional layer next to the workbench plugin.",
     "developerName": "Workshop",
     "category": "Productivity",
     "capabilities": ["Skills"],
@@ -24,7 +24,8 @@
       "Draw an architecture map of a subsystem or refactor as a standalone page.",
       "Record a UI demo video of a change in the running app.",
       "Author or edit a skill with baseline testing.",
-      "Install the workshop's global CLAUDE.md, AGENTS.md and rules onto this machine."
+      "Install the workshop's global CLAUDE.md, AGENTS.md and rules onto this machine.",
+      "Use this system the way a real human user would, and report what got in the way."
     ]
   }
 }

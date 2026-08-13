@@ -33,6 +33,7 @@ codex plugin add toolkit@workshop
 | `ui-demo-video` | Playwright walkthrough of the running app — verification frames for the model, mp4 for the PR |
 | `writing-skills` | TDD applied to skill authoring — baselines, micro-tested wording, loophole closing |
 | `adopt-global-rules` | installs the workshop's shipped global CLAUDE.md / AGENTS.md and rules onto this machine, additively — user-invoked only |
+| `me-human` | act as a human user putting a system to real work — tries before asking, escalates on bugs, stops at the scope edge — user-invoked only |
 
 `adopt-global-rules` also runs without any plugin installed, for bootstrapping a
 bare machine:

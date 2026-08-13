@@ -19,7 +19,7 @@ wrong.
 and lands. Start with [using-workbench](using-workbench.md), which maps the
 whole flow and tells you which piece owns which moment.
 
-**`toolkit`** is optional. Five utilities you install alongside workbench when
+**`toolkit`** is optional. Six utilities you install alongside workbench when
 you want them, and skip to keep sessions lean.
 
 ## Find the skill by the moment
@@ -41,6 +41,7 @@ you want them, and skip to keep sessions lean.
 | Turning a branch into a PR and seeing it green | [file-pr](file-pr.md) |
 | CI is red | [fix-ci](fix-ci.md) |
 | Review feedback arrived | [get-pr-comments](get-pr-comments.md) → [receiving-code-review](receiving-code-review.md) |
+| Looking back at how the process itself ran | [self-audit](self-audit.md) |
 
 ## The optional toolkit
 
@@ -51,6 +52,7 @@ you want them, and skip to keep sessions lean.
 | A recorded walkthrough of UI work, with frames the model reads back | [ui-demo-video](ui-demo-video.md) |
 | To write or edit a skill | [writing-skills](writing-skills.md) |
 | To install the workshop's global CLAUDE.md / AGENTS.md and rules on a machine | [adopt-global-rules](adopt-global-rules.md) |
+| To use a system as a real human user and report what got in the way | [me-human](me-human.md) |
 
 ## Two things worth knowing up front
 

@@ -8,6 +8,35 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.23.0 — 2026-08-13
+
+- **New skill: `self-audit`.** A retrospective on **the process that ran the
+  session** — the flow and its skills, never the code or the deliverable. It
+  replays the session into a trace of facts first, then classifies each moment
+  as *process defect* (yields a proposal), *session defect* (reported, no edit),
+  or *clean*. The conversion rule keeps that split honest: an instruction the
+  session reliably misses is a wording defect, not a discipline defect.
+  Proposals must name one piece and one edit shape — wording, gate, boundary,
+  new, delete — and clear a bar: the change would have altered this session or
+  the next of its shape. No findings is a legitimate result. It reports and
+  stops; the edit belongs to `writing-skills`. User-invoked only
+  (`disable-model-invocation: true`), and deliberately absent from
+  `using-workbench`'s ownership table — it sits outside the flow, looking back
+  at it. ([decision](decisions/self-audit.md))
+
+## toolkit 0.6.0 — 2026-08-13
+
+- **New skill: `me-human`.** Puts the session in the stance of a human user
+  putting a system to real work — eager, learning by doing, reporting what got
+  in the way. Three behaviors carry it: try before asking, escalate before
+  declaring a blocker (investigate, make a targeted local change, report, ask —
+  two failed attempts then stop), and stop at the scope edge rather than growing
+  the work. It answers the question the verification pieces don't: not whether
+  the thing works, but whether it is any good to use. The skill states the
+  stance only — the target system, entry point, goal, and driving mechanism come
+  from you at invocation. User-invoked only
+  (`disable-model-invocation: true`). ([decision](decisions/me-human.md))
+
 ## toolkit 0.5.0 — 2026-08-12
 
 - **Renamed `agent-workshop` → `workshop`.** Install with
@@ -263,24 +292,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 - **Descriptions re-trimmed.** `code-quality-review`, `empirical-proof`,
   `qa-sweep`, and `verification-before-completion` descriptions cut back to
   tight triggers after growing during the field-feedback rounds.
-
-## toolkit 0.1.2 — 2026-08-12
-
-- **Repo-bookkeeping sweep.** `writing-skills`: provenance footer reduced to
-  attribution only; a stale plugin-placement claim corrected.
-
-## workbench 0.20.6 — 2026-08-12
-
-- **Adversarial review: scope boundary + timing (Q15).**
-  `code-quality-review` fires once, only when the work-stream's
-  implementation is believed complete, right before the PR-or-merge gate —
-  never mid-implementation. Findings are labeled in-scope (blocking) or
-  out-of-scope (follow-up); out-of-scope findings are recorded, not fixed,
-  unless they prove the change unsafe or incorrect.
-  ([decision](decisions/scope-guards-q15-q16.md))
-- **Scope guard (Q16).** `using-workbench`: stop and bring a split/rescope
-  question to the user when a change crosses owner areas the ask never named
-  or grows well past the sized expectation; `test-driven-development`: tests
-  for the accepted work's behaviors — adjacent defects become follow-up
-  work, not a failing test and fix in place.
-  ([decision](decisions/scope-guards-q15-q16.md))
