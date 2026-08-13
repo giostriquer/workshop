@@ -1,4 +1,4 @@
-# Agent Workshop
+# Workshop
 
 Ready-to-use AI agents and skills for Claude Code and Codex, extracted from real projects and packaged as installable plugins. You get review agents that catch problems in specs, tests, and code, plus workflow skills for handoffs and reports.
 
@@ -9,20 +9,20 @@ This repo doubles as a **plugin marketplace** — a catalog Claude Code can inst
 In a Claude Code session:
 
 ```
-/plugin marketplace add giostriquer/agent-workshop
-/plugin install workbench@agent-workshop
-/plugin install toolkit@agent-workshop   # optional utilities
+/plugin marketplace add giostriquer/workshop
+/plugin install workbench@workshop
+/plugin install toolkit@workshop   # optional utilities
 ```
 
 Codex install:
 
 ```powershell
-codex plugin marketplace add giostriquer/agent-workshop
-codex plugin add workbench@agent-workshop
-codex plugin add toolkit@agent-workshop   # optional
+codex plugin marketplace add giostriquer/workshop
+codex plugin add workbench@workshop
+codex plugin add toolkit@workshop   # optional
 ```
 
-For Cursor, the plugin ships in the Cursor plugin format (`.cursor-plugin/`). Import this repo as a **Team Marketplace** (Teams/Enterprise, admin): **Dashboard → Settings → Plugins → Team Marketplaces → Add Marketplace → Import from Repo**, point it at `giostriquer/agent-workshop`, then install `workbench` (and optionally `toolkit`) from **Customize** in the sidebar.
+For Cursor, the plugin ships in the Cursor plugin format (`.cursor-plugin/`). Import this repo as a **Team Marketplace** (Teams/Enterprise, admin): **Dashboard → Settings → Plugins → Team Marketplaces → Add Marketplace → Import from Repo**, point it at `giostriquer/workshop`, then install `workbench` (and optionally `toolkit`) from **Customize** in the sidebar.
 
 ### Global Rules Adoption - Optional
 
@@ -31,7 +31,7 @@ is already there — run `/adopt-global-rules` after installing `toolkit`. On a 
 with no plugin installed, the same installer runs standalone:
 
 ```powershell
-npx github:giostriquer/agent-workshop --dry-run   # plan; drop --dry-run to apply
+npx github:giostriquer/workshop --dry-run   # plan; drop --dry-run to apply
 ```
 
 ## The plugins

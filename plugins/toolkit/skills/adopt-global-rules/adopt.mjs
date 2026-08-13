@@ -59,11 +59,25 @@ if (!["core", "all"].includes(tier)) {
 // Block-level HTML comments are stripped from memory files before they reach a
 // model's context, so the marker is free to carry: visible on disk, invisible
 // in the session.
-const OPEN = (id) => `<!-- agent-workshop:rule id=${id} -->`;
-const CLOSE = (id) => `<!-- /agent-workshop:rule id=${id} -->`;
-const ANY_MANAGED = /<!--\s*agent-workshop:rule id=([A-Za-z0-9._-]+)\s*-->[\s\S]*?<!--\s*\/agent-workshop:rule id=\1\s*-->/g;
-const ANY_OPEN = /<!--\s*agent-workshop:rule id=([A-Za-z0-9._-]+)\s*-->/g;
 const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+const NS = "workshop";
+// Namespaces this installer still recognises on disk but no longer writes.
+// A marker rename that does not carry its predecessors makes every block
+// already on a machine invisible — the installer would append a second copy of
+// everything and report no orphan, because orphan detection keys on the same
+// pattern. Retire an entry only once no machine can still be carrying it.
+const LEGACY_NS = ["agent-workshop"];
+const NS_ALT = [NS, ...LEGACY_NS].map(esc).join("|");
+
+const OPEN = (id, ns = NS) => `<!-- ${ns}:rule id=${id} -->`;
+const CLOSE = (id, ns = NS) => `<!-- /${ns}:rule id=${id} -->`;
+const ANY_MANAGED = new RegExp(
+  `<!--\\s*(?:${NS_ALT}):rule id=([A-Za-z0-9._-]+)\\s*-->[\\s\\S]*?<!--\\s*\\/(?:${NS_ALT}):rule id=\\1\\s*-->`,
+  "g"
+);
+const ANY_OPEN = new RegExp(`<!--\\s*(?:${NS_ALT}):rule id=([A-Za-z0-9._-]+)\\s*-->`, "g");
+const isManaged = (text, id) => [NS, ...LEGACY_NS].some((ns) => text.includes(OPEN(id, ns)));
 
 const lf = (s) => s.replace(/\r\n/g, "\n");
 
@@ -152,6 +166,17 @@ function upsertBlock(st, id, body, legacyMarkers = []) {
     return { action: "updated", diff: diffLines(hit[0], block) };
   }
 
+  // A block written under a retired marker namespace: rewrite it in place under
+  // the current one rather than appending a second copy beside it.
+  for (const ns of LEGACY_NS) {
+    const legacy = new RegExp(`${esc(OPEN(id, ns))}[\\s\\S]*?${esc(CLOSE(id, ns))}`);
+    const lhit = st.text.match(legacy);
+    if (lhit) {
+      st.text = st.text.replace(legacy, () => block);
+      return { action: "updated", migratedFrom: `${ns}:rule`, diff: diffLines(lhit[0], block) };
+    }
+  }
+
   // Legacy form: the same marker used as both opening and closing fence, which
   // is how these blocks were maintained by hand before the pack existed.
   // Recognising it is what stops adoption from appending a duplicate.
@@ -221,7 +246,7 @@ for (const host of hosts) {
         actions.push({ hostId: host.id, ruleId: rule.id, kind: "rule", action: "added", path });
         continue;
       }
-      if (!st.text.includes(OPEN(rule.id))) {
+      if (!isManaged(st.text, rule.id)) {
         actions.push({
           hostId: host.id,
           ruleId: rule.id,
@@ -285,7 +310,10 @@ for (const host of hosts) {
       if (knownIds.has(id)) continue;
       orphans.push({ hostId: host.id, ruleId: id, path, pruned: prune });
       if (prune) {
-        st.text = st.text.replace(new RegExp(`\\n*${esc(OPEN(id))}[\\s\\S]*?${esc(CLOSE(id))}\\n*`), "\n\n");
+        st.text = st.text.replace(
+          new RegExp(`\\n*<!--\\s*(?:${NS_ALT}):rule id=${esc(id)}\\s*-->[\\s\\S]*?<!--\\s*\\/(?:${NS_ALT}):rule id=${esc(id)}\\s*-->\\n*`),
+          "\n\n"
+        );
       }
     }
     // Everything the pack does not own, handed back verbatim. This is the

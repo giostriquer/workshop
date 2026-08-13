@@ -53,7 +53,7 @@ Exit `0` clean, `2` collisions or orphans need attention, `1` error.
 
 ## What the pack owns
 
-Managed content is delimited by `<!-- agent-workshop:rule id=... -->` markers.
+Managed content is delimited by `<!-- workshop:rule id=... -->` markers.
 The pack owns what is inside them and nothing else:
 
 - **Rules directory** — one file per rule, whole-file ownership. A file at a
@@ -98,7 +98,7 @@ user decide.
 Where this plugin is not installed, the same implementation runs standalone:
 
 ```
-npx github:giostriquer/agent-workshop --dry-run
+npx github:giostriquer/workshop --dry-run
 ```
 
 ## Changing what ships

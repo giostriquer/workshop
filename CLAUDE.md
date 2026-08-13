@@ -1,10 +1,10 @@
-# CLAUDE.md - Agent Workshop
+# CLAUDE.md - Workshop
 
 ## What this repo is
 
-This is `agent-workshop` — a scaffolding repo holding agent definitions, skills, and the operational conventions that make them useful in practice. The agents and skills here are extracted from real lived-in projects, sanitized for portable adoption.
+This is `workshop` — a scaffolding repo holding agent definitions, skills, and the operational conventions that make them useful in practice. The agents and skills here are extracted from real lived-in projects, sanitized for portable adoption.
 
-This file (`CLAUDE.md`) governs Claude's behavior **when working inside `agent-workshop` itself** — maintaining, extending, sanitizing, or refining the scaffold. It is **not** the file you copy into adopting projects; those projects write their own `CLAUDE.md` describing their domain.
+This file (`CLAUDE.md`) governs Claude's behavior **when working inside `workshop` itself** — maintaining, extending, sanitizing, or refining the scaffold. It is **not** the file you copy into adopting projects; those projects write their own `CLAUDE.md` describing their domain.
 
 If you're looking for the file that adopting projects' Claude sessions should read, you're in the wrong place — see `README.md`'s install section (the `workbench` plugin is the adoption path; `toolkit` is optional).
 
@@ -32,7 +32,7 @@ If a change ships in a plugin version bump, record it with the `change-log` skil
 
 The marketplace ships **two plugins**: `workbench` (the process core — review
 agents, everyday skills, and the workbench flow layer) and `toolkit` (optional
-artifact-making utilities). (The onboarding `agent-workshop` plugin was deleted
+artifact-making utilities). (The onboarding `workshop` plugin was deleted
 2026-08-11 — its worthwhile pieces are parked in the attic.)
 
 - `plugins/workbench/…` and `plugins/toolkit/…` — canonical for everything
@@ -92,7 +92,7 @@ This repo is intentionally narrow. It is *agent definitions and skills* + *decis
 
 ## On adopting from this repo into another project
 
-If a Claude session is working in an adopting project (not in `agent-workshop` itself), it should not read this `CLAUDE.md`. The adopting project writes its own. The scaffold provides the templates; the adopting project owns what it does with them.
+If a Claude session is working in an adopting project (not in `workshop` itself), it should not read this `CLAUDE.md`. The adopting project writes its own. The scaffold provides the templates; the adopting project owns what it does with them.
 
 That separation matters: the scaffold's `CLAUDE.md` is about *maintaining the scaffold*; the adopting project's `CLAUDE.md` is about *the project's domain and workflow*. Mixing them defeats the point.
 

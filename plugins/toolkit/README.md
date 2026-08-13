@@ -1,7 +1,7 @@
 # toolkit
 
 Optional utilities from
-[Agent Workshop](https://github.com/giostriquer/agent-workshop) — the grab-bag of optional tools next
+[Workshop](https://github.com/giostriquer/workshop) — the grab-bag of optional tools next
 to the [`workbench`](../workbench/README.md). Install it when you want these; skip
 it to keep sessions lean. The set grows with more optional utilities over time.
 
@@ -10,19 +10,19 @@ it to keep sessions lean. The set grows with more optional utilities over time.
 **Claude Code:**
 
 ```
-/plugin marketplace add giostriquer/agent-workshop
-/plugin install toolkit@agent-workshop
+/plugin marketplace add giostriquer/workshop
+/plugin install toolkit@workshop
 ```
 
 **Codex:**
 
 ```powershell
-codex plugin marketplace add giostriquer/agent-workshop --ref main
-codex plugin add toolkit@agent-workshop
+codex plugin marketplace add giostriquer/workshop --ref main
+codex plugin add toolkit@workshop
 ```
 
 **Cursor** — Team Marketplace (Teams/Enterprise, admin): import
-`giostriquer/agent-workshop`, then install `toolkit` from **Customize**.
+`giostriquer/workshop`, then install `toolkit` from **Customize**.
 
 ## Skills
 
@@ -38,13 +38,13 @@ codex plugin add toolkit@agent-workshop
 bare machine:
 
 ```powershell
-npx github:giostriquer/agent-workshop --dry-run   # plan; drop --dry-run to apply
+npx github:giostriquer/workshop --dry-run   # plan; drop --dry-run to apply
 ```
 
 > **Attribution:** `writing-skills` is derived from
 > [obra/superpowers](https://github.com/obra/superpowers) by **Jesse Vincent**
 > (MIT), adapted per the
-> [workbench-system decision](https://github.com/giostriquer/agent-workshop/blob/main/docs/decisions/workbench-system.md).
+> [workbench-system decision](https://github.com/giostriquer/workshop/blob/main/docs/decisions/workbench-system.md).
 
 ## Not included
 

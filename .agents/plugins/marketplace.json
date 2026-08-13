@@ -1,7 +1,7 @@
 {
-  "name": "agent-workshop",
+  "name": "workshop",
   "interface": {
-    "displayName": "Agent Workshop"
+    "displayName": "Workshop"
   },
   "plugins": [
     {

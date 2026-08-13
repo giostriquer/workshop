@@ -1,13 +1,13 @@
 {
-  "name": "agent-workshop",
+  "name": "workshop",
   "version": "0.1.0",
-  "description": "Global agent rules installer for the Agent Workshop scaffold. Run via npx; writes rules additively into each detected host's global instruction location.",
+  "description": "Global agent rules installer for the Workshop scaffold. Run via npx; writes rules additively into each detected host's global instruction location.",
   "license": "MIT",
-  "repository": "https://github.com/giostriquer/agent-workshop",
-  "homepage": "https://github.com/giostriquer/agent-workshop",
+  "repository": "https://github.com/giostriquer/workshop",
+  "homepage": "https://github.com/giostriquer/workshop",
   "type": "module",
   "bin": {
-    "agent-workshop": "bin/adopt-global-rules.mjs",
+    "workshop": "bin/adopt-global-rules.mjs",
     "adopt-global-rules": "bin/adopt-global-rules.mjs"
   },
   "engines": { "node": ">=18" },

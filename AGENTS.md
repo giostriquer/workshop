@@ -1,6 +1,6 @@
-# AGENTS.md - Agent Workshop
+# AGENTS.md - Workshop
 
-Workflow rules for non-Claude hosts (Codex, Gemini, OpenCode) working **inside `agent-workshop`** — maintaining the scaffold itself.
+Workflow rules for non-Claude hosts (Codex, Gemini, OpenCode) working **inside `workshop`** — maintaining the scaffold itself.
 
 This file is the host-agnostic counterpart to `CLAUDE.md`. The two files are intentionally parallel; rules that fire during a session live in both, because each host loads only one file at the start of a session and forwarding to the other is unreliable under context pressure.
 

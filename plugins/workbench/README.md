@@ -1,6 +1,6 @@
 # workbench
 
-A direct-use plugin from [Agent Workshop](https://github.com/giostriquer/agent-workshop):
+A direct-use plugin from [Workshop](https://github.com/giostriquer/workshop):
 five read-only review agents, nine everyday skills, and the seven-skill **workbench**
 process layer. No setup — works in any repo. Optional artifact-making utilities
 (doc pages, demo videos, architecture maps, skill authoring) live in the sibling
@@ -11,22 +11,22 @@ process layer. No setup — works in any repo. Optional artifact-making utilitie
 **Claude Code** — in a session:
 
 ```
-/plugin marketplace add giostriquer/agent-workshop
-/plugin install workbench@agent-workshop
+/plugin marketplace add giostriquer/workshop
+/plugin install workbench@workshop
 ```
 
-(Terminal equivalent for the first step: `claude plugin marketplace add giostriquer/agent-workshop`.)
+(Terminal equivalent for the first step: `claude plugin marketplace add giostriquer/workshop`.)
 
 **Codex:**
 
 ```powershell
-codex plugin marketplace add giostriquer/agent-workshop --ref main
-codex plugin add workbench@agent-workshop
+codex plugin marketplace add giostriquer/workshop --ref main
+codex plugin add workbench@workshop
 ```
 
 **Cursor** — Team Marketplace (Teams/Enterprise, admin): **Dashboard → Settings →
 Plugins → Team Marketplaces → Add Marketplace → Import from Repo**
-(`giostriquer/agent-workshop`), then install `workbench` from **Customize**.
+(`giostriquer/workshop`), then install `workbench` from **Customize**.
 
 After install: agents resolve as `workbench:<agent>`; skills are invoked by name.
 Codex exposes all sixteen skills; the agent files ride inertly (Codex custom
@@ -62,7 +62,7 @@ They inspect and report; none can edit your files (reviewers use
 ## Workbench — the process layer
 
 How work starts, gets designed, and gets finished — implementing
-[the workbench flow](https://github.com/giostriquer/agent-workshop/blob/main/docs/workbench-flow.md).
+[the workbench flow](https://github.com/giostriquer/workshop/blob/main/docs/workbench-flow.md).
 Its signature: **three user gates**
 (size the workload · pick the route · PR or merge); everything else the session
 drives. No hooks, no dispatcher — skill descriptions are the entire activation
@@ -79,7 +79,7 @@ surface, and `using-workbench` answers "how does this flow work?" on demand.
 | `using-workbench` | session-start + on-demand orientation map of the flow; orients, never coerces |
 
 
-> **Attribution:** five of the workbench skills (`brainstorming`, `test-driven-development`, `systematic-debugging`, `verification-before-completion`, `receiving-code-review`) are derived from [obra/superpowers](https://github.com/obra/superpowers) by **Jesse Vincent** (MIT) — adapted per the [workbench-system decision](https://github.com/giostriquer/agent-workshop/blob/main/docs/decisions/workbench-system.md): descriptions rewritten as honest triggers, pipeline coupling removed, no hooks. A sixth derived skill, `writing-skills`, ships in the `toolkit` plugin. The lineage of every piece, including what was deliberately dropped and why, lives in the [workbench manifest](https://github.com/giostriquer/agent-workshop/blob/main/.claude/skills/workbench-drift/manifest.json).
+> **Attribution:** five of the workbench skills (`brainstorming`, `test-driven-development`, `systematic-debugging`, `verification-before-completion`, `receiving-code-review`) are derived from [obra/superpowers](https://github.com/obra/superpowers) by **Jesse Vincent** (MIT) — adapted per the [workbench-system decision](https://github.com/giostriquer/workshop/blob/main/docs/decisions/workbench-system.md): descriptions rewritten as honest triggers, pipeline coupling removed, no hooks. A sixth derived skill, `writing-skills`, ships in the `toolkit` plugin. The lineage of every piece, including what was deliberately dropped and why, lives in the [workbench manifest](https://github.com/giostriquer/workshop/blob/main/.claude/skills/workbench-drift/manifest.json).
 
 ## Not included
 

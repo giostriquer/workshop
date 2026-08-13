@@ -8,6 +8,26 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## toolkit 0.5.0 — 2026-08-12
+
+- **Renamed `agent-workshop` → `workshop`.** Install with
+  `/plugin install toolkit@workshop` from `giostriquer/workshop`; the standalone
+  installer is now `npx github:giostriquer/workshop`. **You must update
+  `enabledPlugins` and `extraKnownMarketplaces` in your settings and re-add the
+  marketplace** — the plugin namespace changed, and nothing detects that for you.
+- **`adopt-global-rules` markers move to `<!-- workshop:rule … -->`.** Retired
+  namespaces are recorded, so a machine that adopted `0.4.0` has its old blocks
+  **rewritten in place** rather than duplicated. A marker rename that dropped its
+  predecessor would make existing blocks invisible — orphan detection keys on the
+  same pattern — and append a second copy of everything.
+  ([decision](decisions/rename-to-workshop.md))
+
+## workbench 0.22.1 — 2026-08-12
+
+- **Renamed `agent-workshop` → `workshop`** across the plugin manifests and
+  attribution URLs. Install with `/plugin install workbench@workshop`. Same
+  settings caveat as toolkit: the namespace change is not detected for you.
+
 ## workbench 0.22.0 — 2026-08-12
 
 - **`route-work` drops the effort axis.** The table is now one row per model,
@@ -34,7 +54,7 @@ deletes the oldest (git history keeps everything). Sections from before the
   global agent configuration onto a machine **additively**: a per-host instruction document
   (`~/.claude/CLAUDE.md`, `~/.codex/AGENTS.md`) plus discrete rules (one marked
   file each in `~/.claude/rules/`, fenced blocks in `AGENTS.md`). The pack owns
-  only what its `<!-- agent-workshop:rule id=… -->` markers delimit; an unmarked
+  only what its `<!-- workshop:rule id=… -->` markers delimit; an unmarked
   file at a rule's path is reported as a collision and left exactly as found. It
   is user-invoked only (`disable-model-invocation: true`).
 - **Global documents are authored per host, not derived.** `globals/CLAUDE.md`
@@ -43,7 +63,7 @@ deletes the oldest (git history keeps everything). Sections from before the
   preference may not belong in the other. Rules are the opposite: one body fanned
   out everywhere. `--skip-globals` installs rules only.
 - **Two entry points, one implementation.** The skill runs `adopt.mjs` from its
-  own directory; `npx github:giostriquer/agent-workshop` runs the same file
+  own directory; `npx github:giostriquer/workshop` runs the same file
   through a root `bin/` shim, so a machine with no plugin installed can still
   bootstrap. The pack lives inside the skill directory because that is the only
   copy an installed plugin can reach.
@@ -264,41 +284,3 @@ deletes the oldest (git history keeps everything). Sections from before the
   for the accepted work's behaviors — adjacent defects become follow-up
   work, not a failing test and fix in place.
   ([decision](decisions/scope-guards-q15-q16.md))
-
-## workbench 0.20.5 — 2026-08-12
-
-- **Expensive verification is user-optioned (Q14).** `empirical-proof` and
-  `qa-sweep` are offered, run only on explicit ask or standing authorization;
-  `verification-before-completion` is the only always-on gate.
-  ([decision](decisions/expensive-verification-user-optioned.md))
-- **Verification picker + generated-artifact surfaces** (first field
-  feedback). `using-workbench` gains a pick-by-shape verification map —
-  "keep the standard, drop the frame"; "checkpoints, not reading
-  assignments" — and `empirical-proof` names the generator case: the emitted
-  artifact is the runnable surface; won't-build output is `broken`, not
-  `blocked`. ([decision](decisions/verification-shape-feedback.md))
-- **route-work recalibrated, then reduced to a pure reference table.** New
-  rows (two-rung sol ladder, `gpt-5.6-luna` bulk lane, opus-5 re-graded);
-  the rubric, process patterns, output contract, and dispatch mechanics all
-  cut — a lookup, not a pre-dispatch step; `/toolkit:` invocations fixed to
-  `/workbench:`. ([decision](decisions/route-work-recalibration-and-trim.md))
-- **TDD is a default, not a mandate (Q13).** A stated repo/user convention
-  displaces a conflicting discipline step, announced in one line; the
-  anti-rationalization armor still catches self-negotiated skips.
-  ([decision](decisions/tdd-default-not-mandate.md))
-- **Worktree-location convention.** Repo/user rule first; absent one,
-  `<repo>/.worktrees/<task-name>` behind a `git check-ignore` gate; the
-  harness's native worktree mechanism preferred; never the system temp
-  directory. ([decision](decisions/using-workbench-worktree-location.md))
-
-## workbench 0.20.4 — 2026-08-12
-
-- **Route renamed: "rawdog" → "direct"** across skills, manifests, READMEs,
-  both flow diagrams, and the doctrine snippet; the "direct vs agentic"
-  agency phrasing became "in-session vs dispatched" to keep the name
-  unambiguous.
-  ([decision](decisions/route-rename-direct-and-structured-gate.md))
-- **The route gate asks structured**: `AskUserQuestion` when available
-  (numbered list otherwise), user-facing labels — Direct / Plan /
-  Long-running goal — recommendation first and marked; `handoff-goal` keeps
-  its skill name.

@@ -59,7 +59,7 @@ You ask, or it does not run.
 
 ## What "additive" actually means
 
-The pack owns content between `<!-- agent-workshop:rule id=… -->` markers, and
+The pack owns content between `<!-- workshop:rule id=… -->` markers, and
 nothing else.
 
 - **A file you wrote is never touched.** If a file sits at a rule's path without
@@ -127,7 +127,7 @@ install, and you get the same thing twice. Nothing mechanical can detect that.
 Yes — that is the point of the second entry point:
 
 ```
-npx github:giostriquer/agent-workshop --dry-run
+npx github:giostriquer/workshop --dry-run
 ```
 
 Same implementation, no install required. Drop `--dry-run` to apply.
