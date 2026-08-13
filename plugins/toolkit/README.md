@@ -24,6 +24,8 @@ codex plugin add toolkit@workshop
 **Cursor** — Team Marketplace (Teams/Enterprise, admin): import
 `giostriquer/workshop`, then install `toolkit` from **Customize**.
 
+**Google Antigravity:** Copy or link this folder into your workspace's `.agents/plugins/toolkit/` (that workspace only) or into `~/.gemini/config/plugins/toolkit/` (every workspace). Antigravity scans both; there is no registry file to edit.
+
 ## Skills
 
 | Skill | Does |

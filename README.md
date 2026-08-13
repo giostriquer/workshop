@@ -1,6 +1,6 @@
 # Workshop
 
-Ready-to-use AI agents and skills for Claude Code and Codex, extracted from real projects and packaged as installable plugins. You get review agents that catch problems in specs, tests, and code, plus workflow skills for handoffs and reports.
+Ready-to-use AI agents and skills for Claude Code, Codex, Cursor, and Google Antigravity, extracted from real projects and packaged as installable plugins. You get review agents that catch problems in specs, tests, and code, plus workflow skills for handoffs and reports.
 
 ## Install
 
@@ -23,6 +23,8 @@ codex plugin add toolkit@workshop   # optional
 ```
 
 For Cursor, the plugin ships in the Cursor plugin format (`.cursor-plugin/`). Import this repo as a **Team Marketplace** (Teams/Enterprise, admin): **Dashboard → Settings → Plugins → Team Marketplaces → Add Marketplace → Import from Repo**, point it at `giostriquer/workshop`, then install `workbench` (and optionally `toolkit`) from **Customize** in the sidebar.
+
+For Google Antigravity, each plugin folder carries a native `plugin.json` manifest, which is what makes it installable. Antigravity discovers plugins by scanning two locations, so copy or link `plugins/workbench` (and optionally `plugins/toolkit`) into either: your workspace's `.agents/plugins/` directory, for that workspace only, or `~/.gemini/config/plugins/`, for every workspace. There is no registry file — a plugin folder is found because it sits in a scanned directory.
 
 ### Global Rules Adoption - Optional
 

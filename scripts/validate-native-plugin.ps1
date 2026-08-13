@@ -71,6 +71,7 @@ function Assert-Plugin {
     $manifest = Read-JsonFile "$root/.claude-plugin/plugin.json"
     $codexManifest = Read-JsonFile "$root/.codex-plugin/plugin.json"
     $cursorManifest = Read-JsonFile "$root/.cursor-plugin/plugin.json"
+    $antigravityManifest = Read-JsonFile "$root/plugin.json"
 
     if ($manifest.name -ne $name) {
         Fail "$name plugin name must be $name"
@@ -81,11 +82,17 @@ function Assert-Plugin {
     if ($cursorManifest.name -ne $name) {
         Fail "Cursor $name manifest name must be $name"
     }
+    if ($antigravityManifest.name -ne $name) {
+        Fail "Antigravity $name manifest name must be $name"
+    }
     if ($codexManifest.version -ne $manifest.version) {
         Fail "Codex $name manifest version must match Claude manifest"
     }
     if ($cursorManifest.version -ne $manifest.version) {
         Fail "Cursor $name manifest version must match Claude manifest"
+    }
+    if ($antigravityManifest.version -ne $manifest.version) {
+        Fail "Antigravity $name manifest version must match Claude manifest"
     }
     foreach ($m in @($manifest, $codexManifest)) {
         if (Has-Property $m "mcpServers") {

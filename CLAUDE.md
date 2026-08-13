@@ -56,10 +56,11 @@ artifact-making utilities). (The onboarding `workshop` plugin was deleted
 - `README.md` — repo intro and install entry point. `AGENTS.md` — the non-Claude
   sibling of this file.
 
-`scripts/validate-native-plugin.ps1` enforces this: the toolkit plugin is
-internally consistent and all three host marketplaces list exactly it. The agent
-and skill **definitions** are working code; `docs/decisions/` records why they
-exist. If prose and definition diverge, fix the prose.
+`scripts/validate-native-plugin.ps1` enforces this: the workbench and toolkit
+plugins are internally consistent across all four host packaging surfaces (Claude,
+Codex, Cursor, Antigravity). The agent and skill **definitions** are working
+code; `docs/decisions/` records why they exist. If prose and definition diverge,
+fix the prose.
 
 ## When adding a new agent or skill
 

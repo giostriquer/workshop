@@ -28,9 +28,11 @@ codex plugin add workbench@workshop
 Plugins → Team Marketplaces → Add Marketplace → Import from Repo**
 (`giostriquer/workshop`), then install `workbench` from **Customize**.
 
+**Google Antigravity:** Copy or link this folder into your workspace's `.agents/plugins/workbench/` (that workspace only) or into `~/.gemini/config/plugins/workbench/` (every workspace). Antigravity scans both; there is no registry file to edit. All seventeen skills are discovered and loaded on demand; the review agents are not — Antigravity's plugin format covers skills, rules, MCP servers, and hooks.
+
 After install: agents resolve as `workbench:<agent>`; skills are invoked by name.
 Codex exposes all sixteen skills; the agent files ride inertly (Codex custom
-agents need repo-local `.codex/agents/` wrappers).
+agents need repo-local `.codex/agents/` wrappers). Antigravity discovers and progressively loads the skills from `skills/`.
 
 ## Agents — read-only reviewers
 
