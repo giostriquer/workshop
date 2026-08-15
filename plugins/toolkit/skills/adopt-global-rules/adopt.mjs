@@ -2,10 +2,14 @@
 // adopt-global-rules — install the workshop's global agent configuration onto
 // this machine, additively.
 //
-// Two kinds of content:
-//   globals/  a whole instruction document, authored per host (Claude and Codex
-//             want different things said), installed as one managed block.
-//   rules/    discrete single-source rules fanned out to every host.
+// Three kinds of content:
+//   globals/       a whole instruction document, authored per host (Claude and
+//                  Codex want different things said), installed as one managed
+//                  block.
+//   rules/         discrete single-source rules fanned out to every host.
+//   output-styles/ whole files for hosts that have a first-class surface for
+//                  them; installed, never activated — selecting one is the
+//                  user's call.
 //
 // The contract is narrow on purpose: the pack owns its own marked blocks and
 // nothing else. Content outside those markers is never rewritten, and a target
@@ -93,9 +97,11 @@ try {
 const GLOBAL_DOC_ID = manifest.globalDocId ?? "globals";
 const packFile = (rel) => lf(readFileSync(join(HERE, rel), "utf8")).trim();
 
+const outputStyles = manifest.outputStyles ?? [];
+
 // The global-doc id is reserved, so it is a known id for orphan purposes even
 // though it is not a rule.
-const knownIds = new Set([...manifest.rules.map((r) => r.id), GLOBAL_DOC_ID]);
+const knownIds = new Set([...manifest.rules.map((r) => r.id), ...outputStyles.map((s) => s.id), GLOBAL_DOC_ID]);
 
 // ── host detection ───────────────────────────────────────────────────────────
 for (const id of hostFilter) {
@@ -196,6 +202,64 @@ function upsertBlock(st, id, body, legacyMarkers = []) {
   return { action: "added" };
 }
 
+// ── whole-file targets ───────────────────────────────────────────────────────
+// The marker rides at the top of a file the pack owns outright — except where
+// the file opens with YAML frontmatter. A host parses that block from byte
+// zero, so a marker ahead of it would break the very file it is meant to
+// manage; there it goes immediately after the closing fence instead.
+function markWholeFile(id, body) {
+  const fm = body.match(/^---\n[\s\S]*?\n---\n/);
+  if (!fm) return `${OPEN(id)}\n\n${body}\n`;
+  return `${fm[0]}\n${OPEN(id)}\n\n${body.slice(fm[0].length).replace(/^\n+/, "")}\n`;
+}
+
+function installWholeFile(host, dir, item, kind) {
+  const path = join(dir, `${item.id}.md`);
+  const desired = markWholeFile(item.id, packFile(item.file));
+  const st = fileState(path);
+
+  if (!st.raw) {
+    st.text = desired;
+    return { hostId: host.id, ruleId: item.id, kind, action: "added", path };
+  }
+  if (!isManaged(st.text, item.id)) {
+    fileStates.delete(path); // never write a file we do not own
+    return {
+      hostId: host.id,
+      ruleId: item.id,
+      kind,
+      action: "collision",
+      path,
+      reason: "a file already exists at this path without a pack marker — it is yours, so it was left untouched",
+    };
+  }
+  if (st.text === desired) return { hostId: host.id, ruleId: item.id, kind, action: "unchanged", path };
+  const diff = diffLines(st.text, desired);
+  st.text = desired;
+  return { hostId: host.id, ruleId: item.id, kind, action: "updated", path, diff };
+}
+
+// Orphans and unmanaged files across a whole directory the pack owns file by file.
+function scanDir(host, dir) {
+  if (!existsSync(dir)) return;
+  for (const name of readdirSync(dir).filter((n) => n.endsWith(".md"))) {
+    const p = join(dir, name);
+    const body = lf(readFileSync(p, "utf8"));
+    const ids = [...body.matchAll(ANY_OPEN)].map((x) => x[1]);
+    for (const id of ids) {
+      if (knownIds.has(id)) continue;
+      orphans.push({ hostId: host.id, ruleId: id, path: p, pruned: prune });
+      // Safe to delete outright: the file carries a pack marker, so the pack
+      // wrote it. An unmarked file is a collision, handled above.
+      if (prune) deletes.add(p);
+    }
+    // Such a directory is a flat namespace, so something the user wrote under a
+    // different filename never collides — it just sits alongside the pack's copy
+    // saying the same thing twice. Only a reader catches that.
+    if (!ids.length) unmanaged[host.id].push({ source: p, content: body.trim() });
+  }
+}
+
 // ── planning ─────────────────────────────────────────────────────────────────
 const actions = [];
 const orphans = [];
@@ -203,6 +267,7 @@ const unmanaged = {};
 const deletes = new Set();
 
 const eligible = manifest.rules.filter((r) => tier === "all" || r.tier === "core");
+const eligibleStyles = outputStyles.filter((s) => tier === "all" || (s.tier ?? "core") === "core");
 
 for (const host of hosts) {
   unmanaged[host.id] = [];
@@ -237,56 +302,10 @@ for (const host of hosts) {
         actions.push({ hostId: host.id, ruleId: rule.id, kind: "rule", action: "skipped", reason: pre.reason });
         continue;
       }
-      const path = join(dir, `${rule.id}.md`);
-      const desired = `${OPEN(rule.id)}\n\n${packFile(rule.file)}\n`;
-      const st = fileState(path);
-
-      if (!st.raw) {
-        st.text = desired;
-        actions.push({ hostId: host.id, ruleId: rule.id, kind: "rule", action: "added", path });
-        continue;
-      }
-      if (!isManaged(st.text, rule.id)) {
-        actions.push({
-          hostId: host.id,
-          ruleId: rule.id,
-          kind: "rule",
-          action: "collision",
-          path,
-          reason: "a file already exists at this path without a pack marker — it is yours, so it was left untouched",
-        });
-        fileStates.delete(path); // never write a file we do not own
-        continue;
-      }
-      if (st.text === desired) {
-        actions.push({ hostId: host.id, ruleId: rule.id, kind: "rule", action: "unchanged", path });
-        continue;
-      }
-      const diff = diffLines(st.text, desired);
-      st.text = desired;
-      actions.push({ hostId: host.id, ruleId: rule.id, kind: "rule", action: "updated", path, diff });
+      actions.push(installWholeFile(host, dir, rule, "rule"));
     }
 
-    // Orphans and unmanaged files across the whole rules directory.
-    if (existsSync(dir)) {
-      for (const name of readdirSync(dir).filter((n) => n.endsWith(".md"))) {
-        const p = join(dir, name);
-        const body = lf(readFileSync(p, "utf8"));
-        const ids = [...body.matchAll(ANY_OPEN)].map((x) => x[1]);
-        for (const id of ids) {
-          if (!knownIds.has(id)) {
-            orphans.push({ hostId: host.id, ruleId: id, path: p, pruned: prune });
-            // Safe to delete outright: the file carries a pack marker, so the
-            // pack wrote it. An unmarked file is a collision, handled above.
-            if (prune) deletes.add(p);
-          }
-        }
-        // A rules directory is a flat namespace, so a rule the user wrote under
-        // a different filename never collides — it just sits alongside the
-        // pack's copy saying the same thing twice. Only a reader catches that.
-        if (!ids.length) unmanaged[host.id].push({ source: p, content: body.trim() });
-      }
-    }
+    scanDir(host, dir);
   } else {
     const path = join(root, host.target);
     const st = fileState(path);
@@ -302,7 +321,17 @@ for (const host of hosts) {
     }
   }
 
-  // ── 3. orphans and unmanaged prose in every single file this host touches ──
+  // ── 3. output styles ───────────────────────────────────────────────────────
+  // A host-native surface for how a session talks. Installed, never activated:
+  // a style takes effect only once the user selects it, and that choice is not
+  // the installer's to make.
+  if (host.outputStyles) {
+    const dir = join(root, host.outputStyles.target);
+    for (const style of eligibleStyles) actions.push(installWholeFile(host, dir, style, "output-style"));
+    scanDir(host, dir);
+  }
+
+  // ── 4. orphans and unmanaged prose in every single file this host touches ──
   for (const path of touchedFiles) {
     const st = fileState(path);
     for (const m of [...st.text.matchAll(ANY_OPEN)]) {
@@ -364,15 +393,27 @@ console.log(`home: ${root}\n`);
 
 for (const host of hosts) {
   const mine = actions.filter((a) => a.hostId === host.id);
-  const targets = [...new Set([host.globalDoc && !skipGlobals ? host.globalDoc.target : null, host.target].filter(Boolean))];
+  const targets = [...new Set([host.globalDoc && !skipGlobals ? host.globalDoc.target : null, host.target, host.outputStyles?.target ?? null].filter(Boolean))];
   const where = host.present ? targets.join(" + ") : "not installed";
   console.log(`## ${host.label} — ${where}`);
   for (const a of mine) {
-    const label = a.kind === "global-doc" ? `${a.ruleId} (global doc)` : a.ruleId ?? "(host)";
+    const kindNote = { "global-doc": " (global doc)", "output-style": " (output style)" }[a.kind] ?? "";
+    const label = a.ruleId ? `${a.ruleId}${kindNote}` : "(host)";
     console.log(
       `  ${icon[a.action] ?? "?"} ${label} — ${a.action}${a.reason ? `: ${a.reason}` : ""}${a.migratedFrom ? ` (migrated legacy ${a.migratedFrom})` : ""}`
     );
     if (a.diff) console.log(a.diff.split("\n").map((l) => `      ${l}`).join("\n"));
+  }
+  console.log("");
+}
+
+const landedStyles = actions.filter((a) => a.kind === "output-style" && ["added", "updated"].includes(a.action));
+if (landedStyles.length) {
+  console.log(`## Output styles — installed, not activated`);
+  console.log(`A style does nothing until you select it. In Claude Code: /output-style`);
+  for (const a of landedStyles) {
+    const title = outputStyles.find((x) => x.id === a.ruleId)?.title ?? a.ruleId;
+    console.log(`  · ${title}`);
   }
   console.log("");
 }

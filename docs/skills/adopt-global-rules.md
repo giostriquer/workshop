@@ -8,37 +8,41 @@ repository, regardless of which project you are in.
 
 The configuration is **plugin payload**, not a template. It ships with the
 plugin the same way its skills do: you install the plugin, run the skill, and
-the machine ends up carrying the workshop's `CLAUDE.md`, `AGENTS.md`, and rules.
-Changes to that content arrive as a plugin release.
+the machine ends up carrying the workshop's `CLAUDE.md`, `AGENTS.md`, rules,
+and output styles. Changes to that content arrive as a plugin release.
 
 It adds to what is already there. It does not replace a machine's global
 configuration and it does not rewrite instructions the machine already carries.
 The pack owns a set of clearly marked blocks; everything else on the machine is
 left exactly as found.
 
-Two kinds of content ship:
+Three kinds of content ship:
 
 | Kind | What it is |
 | --- | --- |
 | **Global document** | A whole instruction document, authored separately for each host |
 | **Rules** | Discrete single-source rules, fanned out to every host that applies |
+| **Output styles** | Whole style files, for hosts that have a native surface for them |
 
 That split is the important one. Hosts want different things said — a Codex
-sandbox-escalation instruction means nothing to Claude Code, and a Claude-side
-communication preference may not belong in Codex — so each host's global
-document is written on its own terms rather than derived from another's. Rules
-are the opposite: one body, installed everywhere.
+sandbox-escalation instruction means nothing to Claude Code — so each host's
+global document is written on its own terms rather than derived from another's.
+Rules are the opposite: one body, installed everywhere.
 
 Where things land:
 
-| Host | Global document | Rules |
-| --- | --- | --- |
-| Claude Code | `~/.claude/CLAUDE.md` | `~/.claude/rules/<rule>.md`, one file each |
-| Codex | `~/.codex/AGENTS.md` | `~/.codex/AGENTS.md`, one fenced block each |
+| Host | Global document | Rules | Output styles |
+| --- | --- | --- | --- |
+| Claude Code | `~/.claude/CLAUDE.md` | `~/.claude/rules/<rule>.md`, one file each | `~/.claude/output-styles/<style>.md` |
+| Codex | `~/.codex/AGENTS.md` | `~/.codex/AGENTS.md`, one fenced block each | — |
 
 Claude Code loads both `~/.claude/CLAUDE.md` and every `.md` in
 `~/.claude/rules/` into every session. Codex reads one flat `AGENTS.md`, so both
 kinds land there as separate blocks.
+
+Output styles are different in one way that matters: installing one does not
+turn it on. The file lands; you select it with `/output-style`. Claude Code ships
+`bluf-ste` — answer-first responses in plain technical English.
 
 ## When to reach for it
 
@@ -81,6 +85,16 @@ the machine.** A local tweak inside a managed block is lost on the next run.
 No. It only writes inside its own markers. An unmarked file at a rule's path is
 reported and left alone, and content outside the fences in a single-file target
 is preserved exactly.
+
+**Why is the communication style an output style rather than a line in
+`CLAUDE.md`?**
+
+Because Claude Code has a surface built for exactly that, and an instruction
+lands better in the surface designed for it than in the catch-all memory file.
+It is also switchable: an output style you can turn off is a preference, while a
+line in `CLAUDE.md` is an always-on instruction competing with everything else
+in there. Codex has no equivalent, so its `AGENTS.md` keeps the same guidance
+inline — which is the per-host authoring rule doing its job.
 
 **Why are `globals/CLAUDE.md` and `globals/AGENTS.md` different files rather
 than one source?**
@@ -135,11 +149,12 @@ Same implementation, no install required. Drop `--dry-run` to apply.
 **How do I change what ships?**
 
 Edit it in the plugin's repository and cut a release — never patch a machine.
-Global documents live under `globals/`, one per host; `rules/manifest.json`
-holds the host list, each host's targets, and the rule list. Adding a host is a
-manifest entry plus its `globals/<HOST>.md`, not a code change. Because the
-content is versioned with the plugin, every machine converges on the same thing
-the next time the skill runs — which is the entire point.
+Global documents live under `globals/`, one per host; output styles under
+`output-styles/`; `rules/manifest.json` holds the host list, each host's
+targets, and the rule and output-style lists. Adding a host is a manifest entry
+plus its `globals/<HOST>.md`, not a code change. Because the content is
+versioned with the plugin, every machine converges on the same thing the next
+time the skill runs — which is the entire point.
 
 **Does it work on Gemini / opencode / Cursor?**
 
@@ -151,6 +166,8 @@ single-file host is a manifest entry and one authored document.
 - A fresh machine ends up carrying the same shipped configuration as every
   other, in one run.
 - A second run reports everything `unchanged` — it is idempotent.
+- A shipped output style shows up in `/output-style` on the machine, ready to
+  select.
 - A change released in the pack lands on the next run of every machine, without
   anyone editing a machine by hand.
 - Hand-written global instructions already on the machine are still there

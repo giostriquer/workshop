@@ -28,7 +28,7 @@ For Google Antigravity, each plugin folder carries a native `plugin.json` manife
 
 ### Global Rules Adoption - Optional
 
-To install the workshop's shipped global agent configuration — its CLAUDE.md, AGENTS.md and rules — on a machine — additively, without overwriting what
+To install the workshop's shipped global agent configuration — its CLAUDE.md, AGENTS.md, rules, and Claude output styles — on a machine — additively, without overwriting what
 is already there — run `/adopt-global-rules` after installing `toolkit`. On a machine
 with no plugin installed, the same installer runs standalone:
 
@@ -100,7 +100,7 @@ installed skill's listing rides in each session's context:
 | `arch-map` | visual architecture map when no doc exists |
 | `ui-demo-video` | Playwright walkthrough video + verification frames |
 | `writing-skills` | TDD applied to authoring skills (derived from obra/superpowers, MIT) |
-| `adopt-global-rules` | installs the workshop's shipped global CLAUDE.md / AGENTS.md and rules onto a machine, additively (user-invoked only) |
+| `adopt-global-rules` | installs the workshop's shipped global CLAUDE.md / AGENTS.md, rules, and Claude output styles onto a machine, additively (user-invoked only) |
 | `me-human` | act as a human user dogfooding a system for real work (user-invoked only) |
 
 Details in [`plugins/toolkit/README.md`](plugins/toolkit/README.md).

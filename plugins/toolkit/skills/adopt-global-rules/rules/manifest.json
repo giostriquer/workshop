@@ -1,6 +1,6 @@
 {
-  "packVersion": 2,
-  "description": "The workshop's shipped global agent configuration, installed onto a machine by adopt-global-rules. Two kinds: a per-host global instruction document (globals/) and discrete single-source rules fanned out to every host (rules/). Paths are relative to the skill directory; targets are relative to the home directory (or to --root). This is plugin payload — it ships with the plugin the same way its skills do, and changes to it are released, not configured per machine.",
+  "packVersion": 3,
+  "description": "The workshop's shipped global agent configuration, installed onto a machine by adopt-global-rules. Three kinds: a per-host global instruction document (globals/), discrete single-source rules fanned out to every host (rules/), and output styles for hosts that have a first-class surface for them (output-styles/). Paths are relative to the skill directory; targets are relative to the home directory (or to --root). This is plugin payload — it ships with the plugin the same way its skills do, and changes to it are released, not configured per machine.",
   "globalDocId": "globals",
   "hosts": [
     {
@@ -12,6 +12,9 @@
       "globalDoc": {
         "file": "globals/CLAUDE.md",
         "target": ".claude/CLAUDE.md"
+      },
+      "outputStyles": {
+        "target": ".claude/output-styles"
       },
       "mcpConfigs": [".claude.json", ".claude/settings.json"]
     },
@@ -34,6 +37,14 @@
       "tier": "core",
       "title": "Model floor",
       "file": "rules/core/model-floor.md"
+    }
+  ],
+  "outputStyles": [
+    {
+      "id": "bluf-ste",
+      "tier": "core",
+      "title": "BLUF + Simplified Technical English",
+      "file": "output-styles/bluf-ste.md"
     }
   ]
 }
