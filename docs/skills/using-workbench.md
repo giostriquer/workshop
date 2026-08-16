@@ -5,13 +5,13 @@
 `using-workbench` is the orientation map for the workbench system. It tells a
 session how work enters, who owns each moment, which skill to invoke when one
 applies, and where the session's working material goes. It also carries the
-session-conduct conventions that belong to no single skill: where flow
+session-conduct conventions that belong to no single skill, including where flow
 artifacts live, where worktrees go, and when a growing change should stop and
 ask to be rescoped.
 
 It is a reference, not a process. It runs no loop, produces no artifact, and
 reaches no verdict. Its own Boundaries section states the stance:
-"**Orientation, not compulsion — with two standing exceptions.** At session
+"**Orientation, not compulsion, with two standing exceptions.** At session
 start it maps; it never forces, and it never responds to 'how does the flow
 work?' by starting the flow." Ask it how the flow works and you get an answer,
 not an audit.
@@ -21,12 +21,12 @@ that bind. `verification-before-completion` fires at every done/fixed/passing
 claim, and the adversarial `code-quality-review` fires once the work-stream's
 implementation is complete. Each "runs unless **the user explicitly declines
 it**, or **the repo's own process supersedes it**." Everything else on the map
-is a default the user configured — it fires on relevance.
+is a default the user configured; it fires on relevance.
 
 ## When to reach for it
 
 It fires by itself. Its description triggers at conversation start, so a
-session orients before its first response. There is no hook behind this —
+session orients before its first response. There is no hook behind this because
 workbench "ships no hooks; skill descriptions and the user's own rules are the
 entire activation surface." You can also invoke it on demand, and the two
 questions it is built to answer are "how does the workbench flow work?" and
@@ -51,25 +51,25 @@ do not read the map.
 
 **The flow, in five stages.**
 
-- **Entry** — two optional doors. Door A is `audit`: the user sizes the
+- **Entry**: two optional doors. Door A is `audit`: the user sizes the
   workload, an engine runs it, the user confirms flagged points, and the exit
   is a report or revealed work. Door B is an idea: ground it against the
   codebase first, then `brainstorming` owns what the code cannot answer.
-- **Scoping** — `brainstorming` always precedes feature and refactor design,
+- **Scoping**: `brainstorming` always precedes feature and refactor design,
   and ends at the user's route pick: direct, plan, or handoff-goal.
-- **Implementation** — `test-driven-development` where a test harness exists
+- **Implementation**: `test-driven-development` where a test harness exists
   (repo conventions take precedence on conflict), `systematic-debugging` on
   any bug before fixes. Execution agency is the user's and the harness's call;
   workbench never dictates in-session versus dispatched.
-- **Completion** — entered only when the work-stream's implementation is
+- **Completion**: entered only when the work-stream's implementation is
   believed complete: test-quality review, then "deemed ready" (verified with
   evidence), then one adversarial review right before the PR-or-merge ask,
   then the user gate.
-- **Feedback** — `get-pr-comments` triages, `receiving-code-review` governs
+- **Feedback**: `get-pr-comments` triages, `receiving-code-review` governs
   acting on it, verified fixes re-enter implementation.
 
 **The three user gates.** This is the system's signature: the user decides at
-exactly three moments — size the workload (`audit`), pick the route (after
+exactly three moments: size the workload (`audit`), pick the route (after
 `brainstorming`), PR or merge (after the adversarial review, with the outline
 in hand; standing rules may pre-authorize). "Everything else is the session's
 to drive."
@@ -79,7 +79,7 @@ tells you to pick by the work's shape rather than read them all.
 
 | Shape | Piece |
 | --- | --- |
-| Any done/fixed/passing claim | `verification-before-completion` — always on |
+| Any done/fixed/passing claim | `verification-before-completion` is always on |
 | One just-finished change with a drivable surface | `empirical-proof` |
 | A broad decomposable surface at team scale | `qa-sweep` |
 | One premise, ticket, or hunch | `claim-check` |
@@ -87,7 +87,7 @@ tells you to pick by the work's shape rather than read them all.
 
 Two principles ride with it: "When no frame fits the work's shape, keep the
 standard and drop the frame," and "The protocols are checkpoints, not reading
-assignments — load one when its moment arrives, not preemptively."
+assignments: load one when its moment arrives, not preemptively."
 
 **Cost and authority.** `empirical-proof` and `qa-sweep` are the expensive
 tiers: "**offer them, never default to them**." They run on the user's explicit
@@ -95,7 +95,7 @@ ask, now or standing. Running one uninvited spends time and budget on ceremony
 nobody ordered.
 
 **Artifacts are disposable.** Audit reports, brainstorm designs, route plans,
-outlines — all working material. They live in `.workbench/<work_scope>/` (or
+outlines: all working material. They live in `.workbench/<work_scope>/` (or
 `.tmp/workbench/<work_scope>/` in repos that centralize scratch), typically
 gitignored. Promotion to a committed doc is the user's call. And there is one
 home per work scope: the dispatching session hands the scope folder's path to
@@ -127,7 +127,7 @@ matching a moment on the map should invoke the owning skill and say so briefly
 Two, and only two: `verification-before-completion` and the adversarial
 `code-quality-review`. This used to be one. The file said outright that
 "`verification-before-completion` is the only always-on piece," and three other
-passages generalized the no-compulsion framing over everything — so sessions
+passages generalized the no-compulsion framing over everything, so sessions
 finished implementations, verified them, and went straight to the landing gate,
 skipping the adversarial review entirely. All four sites were rewritten to
 state the same rule, and the framing now names the non-reasons: a small diff, a
@@ -140,7 +140,7 @@ session's own judgment that this one looks fine are not grounds to skip
 No, and this caused a real failure. Subagents are told to skip the orientation,
 so an audit run left its evidence spread across three per-agent system-temp
 directories although all of it belonged to one work scope. The fix is not that
-agents read the map — it is that the dispatching session hands the scope
+agents read the map; it is that the dispatching session hands the scope
 folder's path to each agent in its contract
 ([decision](../decisions/evidence-one-home-per-scope.md)). If you are
 dispatching, put the path in the contract.
@@ -155,15 +155,15 @@ in the flow tripped on diff size or subsystem spread. The two tripwires exist
 because of that run, along with the rule that adjacent defects get recorded as
 follow-up work rather than folded in
 ([decision](../decisions/scope-guards-q15-q16.md)). The thresholds are
-deliberately qualitative — there is no numeric size limit, and a repo that
+deliberately qualitative because there is no numeric size limit, and a repo that
 wants one sets it in its own rules.
 
 **Should I be running `empirical-proof` or `qa-sweep`?**
 
 Only if you ask for them. They are offered, never automatic. The flow's earlier
 wording ("empirical-proof if runnable", "the deeper sibling") read as an
-instruction to run them whenever a change qualified; they are expensive —
-subagent fan-outs, booted apps, corroboration loops — and the choice is the
+instruction to run them whenever a change qualified. They are expensive due to
+subagent fan-outs, booted apps, and corroboration loops, and the choice is the
 user's ([decision](../decisions/expensive-verification-user-optioned.md)).
 
 **Does it decide whether work runs in-session or gets dispatched to agents?**
@@ -207,6 +207,6 @@ scoping, implementation, completion, and feedback, and hands off to whichever
 skill owns the moment: `audit` and `brainstorming` at the two entry doors,
 `test-driven-development` and `systematic-debugging` inside implementation,
 `verification-before-completion` and `code-quality-review` at the completion
-gates, `file-pr` and `fix-ci` at landing. Nothing hands off *to* it — it is
+gates, `file-pr` and `fix-ci` at landing. Nothing hands off *to* it; it is
 already loaded when the session starts, and it is the thing you re-read when
 you cannot tell which piece owns what is in front of you.

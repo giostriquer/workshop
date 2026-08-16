@@ -1,6 +1,6 @@
 ---
 name: code-quality-review
-description: Extremely strict maintainability review — abstraction quality, giant files, spaghetti-condition growth. Use for a strict or adversarial code quality review; required once a work-stream's implementation is complete, right before PR-or-merge, never mid-implementation.
+description: Extremely strict maintainability review: abstraction quality, giant files, spaghetti-condition growth. Use for a strict or adversarial code quality review; required once a work-stream's implementation is complete, right before PR-or-merge, never mid-implementation.
 ---
 
 # Code Quality Review
@@ -19,27 +19,27 @@ Start from this baseline:
 > Be ambitious, if there is a clear path to improving the implementation that involves restructuring some of the codebase, go for it.
 > Be extremely thorough and rigorous. Measure twice, cut once.
 
-## Scope Boundary — strict inside, follow-up outside
+## Scope Boundary: strict inside, follow-up outside
 
-All the strictness below applies **within the accepted work's boundary** —
+All the strictness below applies **within the accepted work's boundary**:
 the ticket, plan, or agreed change under review. Findings outside it are
 classified, not chased:
 
 - **In scope (blocking):** defects and structural problems in what this
-  change did — fix before approval, per the standards below.
+  change did. Fix them before approval, per the standards below.
 - **Out of scope (follow-up):** adjacent defects, pre-existing mess this
-  diff did not worsen, improvements beyond the accepted work — record them
+  diff did not worsen, improvements beyond the accepted work: record them
   as follow-up work (a ticket, a tracked note); do **not** fold them into
   this change. One exception: a finding that proves this change **unsafe or
   incorrect as shipped** blocks regardless of where it lives.
-- The review is a **gate, not an implementation-discovery engine** — and a
+- The review is a **gate, not an implementation-discovery engine**, and a
   **default-on** gate: when a work-stream's implementation is complete, this
-  review runs whether or not anyone asked for it. Exactly two things stop it —
+  review runs whether or not anyone asked for it. Exactly two things stop it:
   **the user explicitly declining**, or **the repo's own process superseding
   it**. A small diff, a confident implementation, a clean-looking change, time
   pressure, or the session's own sense that this one doesn't need it are not
   among them. It fires **once, only when the implementation is believed
-  complete**, immediately before the PR-or-merge question — never
+  complete**, immediately before the PR-or-merge question, never
   mid-implementation. Fixed findings re-verify and proceed; feeding each
   round's discoveries back into implementation grows the diff without bound.
 
@@ -189,7 +189,7 @@ Prioritize findings in this order:
 Do not flood the review with low-value nits if there are larger structural issues.
 Prefer a smaller number of high-conviction comments over a long list of cosmetic notes.
 Label every finding **in-scope (blocking)** or **out-of-scope (follow-up)** per the
-scope boundary — an unlabeled finding reads as blocking.
+scope boundary: an unlabeled finding reads as blocking.
 
 ## Approval Bar
 

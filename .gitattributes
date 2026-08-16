@@ -1,6 +1,6 @@
 # Normalize all text files to LF, in the index and the working tree, on every
 # platform. This overrides per-machine core.autocrlf, so Windows checkouts stop
 # converting to CRLF (and stop warning about it). The repo is all text today
-# (md/json/toml/ps1/yaml — pwsh is fine with LF); add explicit rules here if
+# (md/json/toml/ps1/yaml: pwsh is fine with LF); add explicit rules here if
 # binaries or CRLF-required files (.bat/.cmd) ever land.
 * text=auto eol=lf

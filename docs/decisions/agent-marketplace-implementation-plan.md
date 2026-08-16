@@ -698,7 +698,7 @@ Expected result: commit succeeds and only the three marketplace docs are include
 Add a `marketplace/catalog.json` bullet to "What's here" after the wrappers/skills bullets:
 
 ```markdown
-- `marketplace/catalog.json` — machine-readable catalog of agent packs, maturity labels, role boundaries, host-wrapper support, and project profile slots.
+- `marketplace/catalog.json`: machine-readable catalog of agent packs, maturity labels, role boundaries, host-wrapper support, and project profile slots.
 ```
 
 Add a marketplace sentence to "How to use it":
@@ -713,7 +713,7 @@ Update the adoption checklist so step 1 points at the marketplace first:
 1. Read [`docs/marketplace/README.md`](docs/marketplace/README.md) and choose the smallest pack set that fits your project.
 2. Read [`docs/setup.md`](docs/setup.md).
 3. Copy the selected `.claude/agents/`, `.claude/skills/`, and host wrappers into your project's repo root.
-4. Write your project's own `CLAUDE.md` and `AGENTS.md` — do not copy this repo's; they are for maintaining the scaffold itself.
+4. Write your project's own `CLAUDE.md` and `AGENTS.md`. Do not copy this repo's files; they are for maintaining the scaffold itself.
 5. Fill the required profile slots in your project docs and workflow instructions.
 6. Read the origin docs for the agents and skills you copied. Sanitize any project-specific paths.
 7. Drop in the conventions you'll actually use; skip the rest.

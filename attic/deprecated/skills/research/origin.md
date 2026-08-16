@@ -1,10 +1,10 @@
 # research
 
-> **Parked 2026-08-11** — the onboarding `agent-workshop` plugin was deleted; the spec sits alongside this doc in [`SKILL.md`](SKILL.md). See `docs/decisions/drop-onboarding-plugin.md`.
+> **Parked 2026-08-11**: the onboarding `agent-workshop` plugin was deleted; the spec sits alongside this doc in [`SKILL.md`](SKILL.md). See `docs/decisions/drop-onboarding-plugin.md`.
 
 ## Origin
 
-The originating project produced a steady stream of forward-looking notes — half-formed "we should think about X" ideas that didn't fit critique (which evaluates validated checkpoints) or specs (which design committed work). They accumulated in scattered places with inconsistent shape, making cross-comparison and triage hard.
+The originating project produced a steady stream of forward-looking notes: half-formed "we should think about X" ideas that didn't fit critique (which evaluates validated checkpoints) or specs (which design committed work). They accumulated in scattered places with inconsistent shape, making cross-comparison and triage hard.
 
 The skill-and-agent pair was introduced to **standardize forward-looking research**: consistent inputs per category, a shared scoring framework, and an output structure stable enough to triage across runs.
 
@@ -29,7 +29,7 @@ The skill enforces shape; the agent applies the framework; the user gets a stabl
 - Effort / feasibility (low / medium / high)
 - Confidence (low / medium / high)
 - Urgency (now / next / later / deferred)
-- Horizon (current / near-term / vision) — non-scored categorical
+- Horizon (current / near-term / vision): non-scored categorical
 
 **Required output structure:** `# Title` with metadata → `## Purpose anchor` → `## Questions` → `## Findings` (with `### Existing surface review` and `### Net-new candidates`) → `## Gaps and risks` → `## Promotion candidates` → `## Conclusion` → `## Sources`.
 
@@ -37,7 +37,7 @@ The skill enforces shape; the agent applies the framework; the user gets a stabl
 
 **Validation lifecycle:** the skill validates the agent's draft. First pass passes → skill applies the index update. First pass fails → one revision pass. Second pass also fails → malformed file stays on disk; user decides.
 
-The agent never updates the research index `## Contents` itself — that's held until the skill validates.
+The agent never updates the research index `## Contents` itself; that's held until the skill validates.
 
 ## Real invocation snippet
 
@@ -63,8 +63,8 @@ Example invocations:
 
 ## Adaptation notes
 
-- The **category list** is project-specific. Pick a small set that maps to recurring research questions in your work — common shapes include `architecture`, `tests`, `code-quality`, `ui-ux`, `project-org`, plus a domain-specific one or two for your area. Start with one or two; add as needed.
-- A **lens** dimension orthogonal to category (e.g., `inventory` / `prioritization` / `regression` / `ops-health`) is a useful layering when one category needs multiple shapes of pass. This is **advanced layering** — adopt only after the simple category framework has earned its value over several runs. The scaffold ships only the category framework.
+- The **category list** is project-specific. Pick a small set that maps to recurring research questions in your work: common shapes include `architecture`, `tests`, `code-quality`, `ui-ux`, `project-org`, plus a domain-specific one or two for your area. Start with one or two; add as needed.
+- A **lens** dimension orthogonal to category (e.g., `inventory` / `prioritization` / `regression` / `ops-health`) is a useful layering when one category needs multiple shapes of pass. This is **advanced layering**: adopt only after the simple category framework has earned its value over several runs. The scaffold ships only the category framework.
 - **Per-category recipes** are the binding between category and inputs. Document them in the skill file or in a sibling reference doc.
 - **External lookup integration** (Context7 for library docs, WebSearch for design patterns) is opt-in per category. Some categories don't benefit; declare `external_sources: none` so the agent skips the lookup phase.
-- The validation lifecycle is load-bearing — without it, malformed notes get indexed before being noticed. Adopt the held-until-PASS index update.
+- The validation lifecycle is load-bearing, without it, malformed notes get indexed before being noticed. Adopt the held-until-PASS index update.

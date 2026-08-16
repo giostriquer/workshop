@@ -11,20 +11,20 @@ Implemented (2026-06-29). `validate-native-plugin.ps1` passes.
 The repo had grown a heavy mirroring discipline: every agent/skill lived as a
 canonical copy in `.claude/`, was mirrored byte-identical into `.codex/`,
 `.gemini/`, the `toolkit` plugin (for the toolkit subset), **and** the onboarding
-plugin's `references/` bundle — and the validator enforced all of it against
+plugin's `references/` bundle, and the validator enforced all of it against
 `.claude/` as the single master. Two problems fell out of that:
 
 1. **`.claude/` (and the host dirs) misrepresented the repo.** Because Claude Code
    activates everything under `.claude/`, this scaffold repo "used" all 13 skills +
-   9 agents in its own sessions, even though its actual work — debate that converges
-   on a spec, or an operator-handed spec — leans on almost none of them. A prior
+   9 agents in its own sessions, even though its actual work: debate that converges
+   on a spec, or an operator-handed spec: leans on almost none of them. A prior
    pass scoped them with `.claude/settings.json`, but that was a band-aid: the files
    were still physically present and claimed as the repo's own.
 2. **Onboarding was force-coupled to toolkit.** The validator required the
    onboarding bundle to mirror *every* canonical piece, so the onboarding plugin
    carried templates for the direct-use, self-contained skills (handoffs,
    doc-to-html, claim-check, qa-sweep, code-quality-review) that no project ever
-   needs to *copy and adapt* — an adopter just installs the `toolkit` plugin.
+   needs to *copy and adapt*: an adopter just installs the `toolkit` plugin.
 
 ## The new model
 
@@ -60,7 +60,7 @@ The 3-bucket split:
   toolkit-only skills and `code-quality-reviewer` were removed from
   `references/{agents,skills,wrappers,docs}`.
 - **`code-quality-reviewer` dropped from `marketplace/catalog.json`** (self-contained,
-  toolkit-only — not onboarding-adopted). The catalog now lists 8 agents.
+  toolkit-only and not onboarding-adopted). The catalog now lists 8 agents.
 - **Validator rewritten** from "every copy is byte-equal to `.claude/`" to a
   per-plugin model: manifest/version/marketplace structure (unchanged); toolkit ships
   exactly its declared skill/agent sets; the onboarding bundle is self-consistent
@@ -68,18 +68,18 @@ The 3-bucket split:
   against `docs/`); and the few pieces the repo runs locally stay byte-identical to
   their bundle templates. The `.claude/`-master parity logic and the now-unused
   `Get-RelativeFileList` helper were removed.
-- **`.claude/settings.json` reverted** — redundant now that the unused pieces are
+- **`.claude/settings.json` reverted**: redundant now that the unused pieces are
   physically gone from `.claude/`.
 - **Docs updated** to the new layout: `CLAUDE.md` source-of-truth boundaries +
   add/remove steps; `AGENTS.md` cross-host parity + path references; the agent/skill
   rosters; `docs/marketplace/{README,native-plugin}.md`; root `README.md`
   onboarding framing. The onboarding `SKILL.md` gained a scope note (it adopts the
   project-coupled set; direct-use pieces come from `toolkit`). `docs/setup.md` (the
-  manual copy-by-hand guide) was **removed** as a follow-up — the guided onboarding
+  manual copy-by-hand guide) was **removed** as a follow-up: the guided onboarding
   skill is the adoption path, and its mechanics had become fiddly post-decouple; its
   references in `README.md`/`CLAUDE.md`/`AGENTS.md` were cleaned up. The **portable**
   convention docs (`cross-host-wrappers`, `skill-parity`, `doc-routing`) are
-  unchanged — they describe the pattern adopters apply in *their* repos, where
+  unchanged because they describe the pattern adopters apply in *their* repos, where
   canonical does land in `.claude/`.
 
 **No version bump.** The installable plugin payloads (`plugins/toolkit/` and the
@@ -97,7 +97,7 @@ validator.
   works for hosts that can't load the plugin, but is no longer a step-by-step guide
   (`docs/setup.md` was removed).
 - Installed plugins are orthogonal: if a maintainer has `toolkit` installed in their
-  environment, its `toolkit:`-namespaced agents still surface in sessions — that's an
+  environment, its `toolkit:`-namespaced agents still surface in sessions; that's an
   install choice, separate from what this repo declares in `.claude/`.
 
 ## Follow-up (still open)

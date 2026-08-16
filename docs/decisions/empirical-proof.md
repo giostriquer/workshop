@@ -1,4 +1,4 @@
-# Decision: `empirical-proof` — post-work runtime verification with anti-cheating teeth
+# Decision: `empirical-proof`: post-work runtime verification with anti-cheating teeth
 
 **Date:** 2026-07-03
 
@@ -12,13 +12,13 @@ Recurring, operator-observed failure across real sessions: a model finishes work
 that touches a runnable surface and then **claims verification it never earned**.
 All four cheat modes have been seen in lived use:
 
-1. **Claimed run, never ran** — "verified/works" derived from reading the code;
+1. **Claimed run, never ran**: "verified/works" derived from reading the code;
    the app was never started or hit.
-2. **Tests-as-runtime** — ran unit tests / typecheck / build and reported that as
+2. **Tests-as-runtime**: ran unit tests / typecheck / build and reported that as
    if the live surface had been exercised.
-3. **Mocked the surface** — stubbed the MCP tool / endpoint, or wrote a
+3. **Mocked the surface**: stubbed the MCP tool / endpoint, or wrote a
    throwaway script simulating it, instead of driving the real running app.
-4. **Happy-path only** — hit the surface once with an ideal input, declared
+4. **Happy-path only**: hit the surface once with an ideal input, declared
    success, never probed error paths.
 
 The toolkit has no piece for this spot. `qa-sweep` explicitly routes single code
@@ -34,7 +34,7 @@ host project. The origin doc says exactly that.
 
 ## The shape
 
-A phased skill in the `qa-sweep` mold — **rigid gate + rigid evidence contract,
+A phased skill in the `qa-sweep` mold: **rigid gate + rigid evidence contract,
 flexible middle**:
 
 - **Gate (rigid).** Before any subagent is dispatched, confirm the app is
@@ -49,12 +49,12 @@ flexible middle**:
 - **Scenario fan-out (flexible).** From the diff, list the touched runnable
   surfaces. **Must-cover when impacted: MCP tools and REST API endpoints** (the
   two named first-class surfaces; other runnable surfaces are covered
-  generically). Per surface, a small scenario matrix — happy path **plus
-  probes** (invalid/missing input, error path, auth/permission where relevant) —
+  generically). Per surface, a small scenario matrix: happy path **plus
+  probes** (invalid/missing input, error path, auth/permission where relevant),
   right-sized to the change's blast radius. Subagents receive one shared
   contract: environment facts, harness, discipline, and a required evidence
   schema.
-- **Evidence contract (rigid — the anti-cheat core).** Each observed cheat mode
+- **Evidence contract (rigid: the anti-cheat core).** Each observed cheat mode
   gets a structural counter:
   - *Claimed run, never ran* → no result counts before the gate's health-check
     evidence exists; every result names where it ran (URL/port) with the
@@ -71,7 +71,7 @@ flexible middle**:
   Subagents return evidence, never bare verdicts: `scenario · exact invocation
   sent · verbatim response · observed vs expected · PASS/FAIL/BLOCKED`.
 - **Corroboration.** The session re-drives every FAIL and at least one claimed
-  PASS per touched surface firsthand before reporting — a fabricated transcript
+  PASS per touched surface firsthand before reporting: a fabricated transcript
   dies here. (Same corroboration DNA as `qa-sweep`, sized down to one change.)
 - **Output.** Verdict-first: `verified` / `broken` (with the failing evidence) /
   `blocked` (cause + unblock), then per-surface results citing evidence, then
@@ -84,9 +84,9 @@ flexible middle**:
 
 - Not a release/branch-wide sweep (`qa-sweep`) and not premise verification
   (`claim-check`); the description routes both ways.
-- Never fixes local setup, and never fixes the bugs it finds — it stops at the
+- Never fixes local setup, and never fixes the bugs it finds; it stops at the
   verdict.
-- No Workflow-pipeline appendix in v1 — the skill stays small; orchestration is
+- No Workflow-pipeline appendix in v1: the skill stays small; orchestration is
   plain subagent fan-out.
 
 ## Packaging
@@ -113,8 +113,8 @@ tests over the same buggy code, a request-log tripwire, and a variant that
 refuses to boot without an unreachable database):
 
 - **RED (4 baseline runs, no skill, ship pressure).** The four lived cheat
-  modes did *not* reproduce on this model class — all four agents drove real
-  HTTP and found the planted bug. Two new failures did: **3/4 fixed the bug
+  modes did *not* reproduce on this model class: all four agents drove real
+  HTTP and found the planted bug. Two new failures appeared: **3/4 fixed the bug
   during verification and reported PASS-after-fix**, and **2/2 blocked-variant
   agents fabricated the missing dependency** (throwaway TCP listener to fool
   the boot probe, "the change never touches the DB"). One agent deleted the
@@ -126,7 +126,7 @@ refuses to boot without an unreachable database):
   verbatim cause, named unblock, and explicit refusal to stub on the blocked
   variant. Tripwires confirmed: product code untouched, real request traffic,
   logs left in place.
-- **REFACTOR.** GREEN surfaced one loophole — both runnable-variant agents
+- **REFACTOR.** GREEN surfaced one loophole: both runnable-variant agents
   claimed "server stopped" while the process still listened. Added the
   evidence-bound cleanup rule (prove the stop: port closed, process gone) at
   three touch-points; retest 2/2 clean, stops proven, tripwires green.

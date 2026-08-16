@@ -4,11 +4,11 @@
 
 `receiving-code-review` governs how you act on review feedback. Its opening
 line sets the frame: "Code review requires technical evaluation, not emotional
-performance." The core principle is three clauses — "Verify before
+performance." The core principle is three clauses: "Verify before
 implementing. Ask before assuming. Technical correctness over social comfort."
 
 It exists to prevent two opposite failures. One is performative agreement:
-"You're absolutely right!", "Great point!", "Thanks for catching that!" — all
+"You're absolutely right!", "Great point!", "Thanks for catching that!": all
 explicitly forbidden, along with any gratitude expression. The other is blind
 implementation: taking a suggestion straight to code without checking whether
 it is correct for this codebase, breaks existing functionality, or contradicts
@@ -19,12 +19,12 @@ reviewers, an implementation order, and explicit guidance on pushing back.
 The stopping behavior is the part that catches people out. If **any** item in
 a batch of feedback is unclear, the skill stops everything: "STOP - do not
 implement anything yet. ASK for clarification on unclear items." Not the
-unclear ones — everything. It is also not a fetcher: getting the feedback off
+unclear ones: everything. It is also not a fetcher: getting the feedback off
 a PR is `get-pr-comments`'s job.
 
 ## When to reach for it
 
-Reach for it when review feedback arrives and before implementing any of it —
+Reach for it when review feedback arrives and before implementing any of it,
 especially when the feedback seems unclear or technically questionable. It
 applies to feedback from a human reviewer, a review bot, and from the user.
 
@@ -52,16 +52,16 @@ Around that loop sit four rules with teeth:
   Partial understanding = wrong implementation."
 - **Source-specific handling.** From the user: trusted, implement after
   understanding, still ask if scope is unclear, no performative agreement.
-  From external reviewers: five checks before implementing — is it technically
+  From external reviewers, apply five checks before implementing: Is it technically
   correct for this codebase, does it break existing functionality, is there a
   reason for the current implementation, does it work on all
   platforms/versions, does the reviewer understand the full context. Rule of
-  thumb: "external feedback — be skeptical, but check carefully."
+  thumb: "external feedback: be skeptical, but check carefully."
 - **A YAGNI check on "implement it properly" suggestions.** Grep the codebase
   for actual usage first. If nothing calls it, the honest answer is to propose
   removing it, not to build it out.
 - **Implementation order.** Clarify anything unclear first, then blocking
-  issues (breaks, security), then simple fixes, then complex ones — testing
+  issues (breaks, security), then simple fixes, then complex ones: testing
   each individually and verifying no regressions.
 
 ## Common questions
@@ -88,8 +88,8 @@ involving the user when the question is architectural.
 you're uncomfortable pushing back out loud: Name that tension, then tell the
 user about the issue you've seen."
 
-**I pushed back and I was wrong.** State the correction factually and move on
-— "You were right - I checked [X] and it does [Y]. Implementing now." Long
+**I pushed back and I was wrong.** State the correction factually and move on:
+"You were right - I checked [X] and it does [Y]. Implementing now." Long
 apologies, defending why you pushed back, and over-explaining are all listed
 as the wrong move.
 
@@ -100,9 +100,9 @@ the Common Mistakes table as a mistake with a named fix.
 **The feedback conflicts with something the user decided earlier.** Stop and
 discuss with the user first, before implementing.
 
-**Where do replies to inline comments go?** In the comment thread — `gh api
-repos/{owner}/{repo}/pulls/{pr}/comments/{id}/replies` — not as a top-level PR
-comment.
+**Where do replies to inline comments go?** In the comment thread: `gh api
+repos/{owner}/{repo}/pulls/{pr}/comments/{id}/replies`, rather than as a top-level
+PR comment.
 
 **Is this just a tone rule?** No. Tone is one of seven rows in its Common
 Mistakes table; the others are blind implementation, batching without testing,
@@ -112,14 +112,14 @@ proceeding when you can't verify. Each has a stated fix.
 **Where does it come from?** It is derived from
 [obra/superpowers](https://github.com/obra/superpowers) (MIT, (c) Jesse
 Vincent) and adapted for the workbench system. When the workbench set was
-assembled, it was the one borderline upstream skill kept — recorded as earning
+assembled, it was the one borderline upstream skill kept: recorded as earning
 its place because it complements `get-pr-comments` and the adversarial-review
 flow. ([decision](../decisions/workbench-system.md))
 
 ## It's working if
 
 - The first response to feedback restates the technical requirement, asks a
-  specific question, or is simply the work starting — not an evaluation of the
+  specific question, or is simply the work starting instead of an evaluation of the
   feedback's quality.
 - Unclear items are surfaced as a batch before any implementation begins.
 - Fixes land one at a time, each tested, with blocking issues first.
@@ -134,7 +134,7 @@ flow. ([decision](../decisions/workbench-system.md))
 
 `receiving-code-review` is the second half of the workbench flow's feedback
 stage: `get-pr-comments` triages what arrived, this skill governs acting on
-it, and verified fixes re-enter implementation — where the usual disciplines
+it, and verified fixes re-enter implementation, where the usual disciplines
 (`test-driven-development`, `systematic-debugging`) and the usual completion
 gates apply again. It is the mirror image of `code-quality-review`: one
 governs giving a hard review, this one governs taking it.

@@ -1,6 +1,6 @@
 ---
 name: brainstorming
-description: Use when designing a feature or a refactor — the workbench flow runs this before any such design — and when an idea carries questions the codebase can't answer (intent, preference, trade-offs). Explores user intent, requirements, and design through collaborative dialogue, ending at the user's route pick. Not for confirmed small fixes or work whose design is already settled.
+description: Use when designing a feature or a refactor (the workbench flow runs this before any such design) and when an idea carries questions the codebase can't answer (intent, preference, trade-offs). Explores user intent, requirements, and design through collaborative dialogue, ending at the user's route pick. Not for confirmed small fixes or work whose design is already settled.
 metadata:
   system: workbench
 ---
@@ -11,7 +11,7 @@ Help turn ideas into fully formed designs through natural collaborative dialogue
 
 Start by classifying how much process the request actually needs, then work that
 path: understand the context, refine the idea, present a design, get the user's
-approval — and hand them the route decision.
+approval, and hand them the route decision.
 
 **Rule:** no implementation before the design is presented and approved. Don't
 write code, scaffold projects, or invoke implementation skills mid-brainstorm.
@@ -20,48 +20,48 @@ write code, scaffold projects, or invoke implementation skills mid-brainstorm.
 ## Three paths
 
 Before the first question, classify the request and say the classification out
-loud — "this looks bounded, so I'll present a short design here rather than write
-one up" — so the user can override it.
+loud: "this looks bounded, so I'll present a short design here rather than write
+one up", so the user can override it.
 
-- **Spike** — a feasibility question ("can we…", "is it possible…", "quick and
+- **Spike**: a feasibility question ("can we…", "is it possible…", "quick and
   dirty is fine") whose output is an answer, not code you keep. Present the
   question and what you'll try in two or three sentences, get a nod, then find
   out as cheaply as correctness allows. No design doc. Report findings as a
   recommendation, and label anything you built throwaway.
-- **Bounded** — a well-scoped change to code that already exists here: a new
+- **Bounded**: a well-scoped change to code that already exists here: a new
   flag, a small endpoint, a one-file fix. Understanding the *kind* of app is not
-  enough — bounded means the flow you are changing is already in the repo to
+  enough: bounded means the flow you are changing is already in the repo to
   read. If there is no existing flow to change, it is not bounded. Ask the
   clarifying questions that matter, present a short design **in chat** (a few
   sentences to a few short paragraphs), and stop for approval. No design doc.
-- **Architectural** — new projects, new subsystems, changes that restructure how
+- **Architectural**: new projects, new subsystems, changes that restructure how
   components fit together or alter interfaces others depend on. The full process
   below: questions, approaches, sectioned design, a written design, self-review.
 
 **The ratchet is one-way.** When torn between two paths, take the heavier one.
-Hidden complexity discovered mid-task upgrades the path — stop, say so, and step
+Hidden complexity discovered mid-task upgrades the path: stop, say so, and step
 up. Nothing downgrades mid-task.
 
 ## Where this sits in the workbench flow
 
-- **Scope:** features and refactors get this treatment — always. Confirmed small
+- **Scope:** features and refactors always get this treatment. Confirmed small
   fixes (e.g. a bug an audit already pinned down) skip it; work whose design was
   already settled elsewhere skips it. Entering does not mean the full ceremony:
   the path classification above decides how much, and most bounded work is a few
   questions and a short design in chat.
-- **Entering from an idea:** ground the idea first — a couple of questions, most
+- **Entering from an idea:** ground the idea first: a couple of questions, most
   answerable from the codebase itself. Brainstorming owns the rest: the
   questions only the user can answer (intent, priorities, taste, constraints the
   code doesn't record).
 - **Entering from an audit:** the findings and the user's confirmed flags are
-  your context — don't re-derive them.
+  your context: don't re-derive them.
 - **The terminal state is the route gate**, for bounded and architectural work
   alike. When the design is approved, present the user the three routes and let
   them pick: **direct** (implement straight from this conversation), **plan**
-  (write one — using the user's own plan mechanism: a plugin or repo skill, the
+  (write one: using the user's own plan mechanism: a plugin or repo skill, the
   repo's planning standards, or the harness's plan mode as fallback), or
   **handoff-goal** (a contract for a fresh session to pursue autonomously). The
-  choice is theirs, not yours; the path only shapes what you recommend — bounded
+  choice is theirs, not yours; the path only shapes what you recommend: bounded
   work usually wants **direct**, architectural work usually wants **plan** or
   **handoff-goal**.
 - **A spike is the exception**: its terminal state is a reported recommendation,
@@ -74,10 +74,10 @@ up. Nothing downgrades mid-task.
 |---------|---------|
 | "This is too simple to need a design" | Simple means a short design, not no design. Two sentences in chat, then approval. |
 | "I'll call it bounded and skip the write-up" | Reaching for a label to skip work *is* the doubt. Take the heavier path. |
-| "It's bounded and the design is obvious — I'll start while they read it" | The gate is the approval, not the design's length. Present, then stop until you hear yes. |
-| "I understand this kind of app, so it's bounded" | Bounded measures the repo, not your familiarity. A new project has no existing flow to change — that is architectural. |
-| "The spike works, so I'll keep the code" | A spike's output is an answer. Keeping the code is a new request — classify it. |
-| "It grew, but I'm almost done — no need to re-classify" | Hidden complexity upgrades the path mid-task. Stop and say so. |
+| "It's bounded and the design is obvious: I'll start while they read it" | The gate is the approval, not the design's length. Present, then stop until you hear yes. |
+| "I understand this kind of app, so it's bounded" | Bounded measures the repo, not your familiarity. A new project has no existing flow to change, so the work is architectural. |
+| "The spike works, so I'll keep the code" | A spike's output is an answer. Keeping the code is a new request: classify it. |
+| "It grew, but I'm almost done: no need to re-classify" | Hidden complexity upgrades the path mid-task. Stop and say so. |
 | "They approved the spike, so the follow-up is approved too" | Each task gets its own classification and its own approval. |
 
 ## Process
@@ -134,7 +134,7 @@ digraph brainstorming {
 
 The subsections below serve the bounded and architectural paths; a spike stops
 at "present the probe, get a nod." Everything from **Exploring approaches**
-onward is architectural depth — for bounded work, context plus a few questions
+onward adds architectural depth. For bounded work, context plus a few questions
 plus a short in-chat design is the whole process.
 
 **Understanding the idea:**
@@ -149,7 +149,7 @@ plus a short in-chat design is the whole process.
   should they be built? Then brainstorm the first sub-project through the
   normal flow. Each sub-project gets its own design → route → implementation
   cycle.
-- **One question per message** — if a topic needs more exploration, break it
+- **One question per message**: if a topic needs more exploration, break it
   into several. Answer from the codebase yourself whatever the codebase can
   answer; spend the user's attention only on what it can't.
 - Prefer multiple choice questions when possible, but open-ended is fine too
@@ -160,7 +160,7 @@ plus a short in-chat design is the whole process.
 - Propose 2-3 different approaches with trade-offs
 - Present options conversationally with your recommendation and reasoning
 - Lead with your recommended option and explain why
-- YAGNI ruthlessly — remove unnecessary features from every approach and design
+- YAGNI ruthlessly: remove unnecessary features from every approach and design
 
 **Presenting the design:**
 
@@ -181,7 +181,7 @@ plus a short in-chat design is the whole process.
 - Can someone understand what a unit does without reading its internals? Can
   you change the internals without breaking consumers? If not, the boundaries
   need work.
-- Smaller, well-bounded units are also easier for you to work with — you reason
+- Smaller, well-bounded units are also easier for you to work with; you reason
   better about code you can hold in context at once, and your edits are more
   reliable when files are focused. When a file grows large, that's often a
   signal that it's doing too much.
@@ -192,7 +192,7 @@ plus a short in-chat design is the whole process.
   patterns.
 - Where existing code has problems that affect the work (e.g., a file that's
   grown too large, unclear boundaries, tangled responsibilities), include
-  targeted improvements as part of the design — the way a good developer
+  targeted improvements as part of the design: the way a good developer
   improves code they're working in.
 - Don't propose unrelated refactoring. Stay focused on what serves the current
   goal.
@@ -200,17 +200,17 @@ plus a short in-chat design is the whole process.
 ## After the Design
 
 This section is the **architectural** path. Bounded work has no written design
-to document, self-review, or re-approve — it goes from the in-chat design's
+to document, self-review, or re-approve; it goes from the in-chat design's
 approval straight to the route gate at the end.
 
-**Documentation:** the written design is **disposable working material** — save
+**Documentation:** the written design is **disposable working material**: save
 it under `.workbench/<work_scope>/` (or `.tmp/workbench/<work_scope>/`), where
 it endures only for the duration of the work. It becomes a durable, committed
 doc only when the user explicitly asks, or when the repo has an established
 design-doc convention (then write it where that convention says). Never quietly
 promote it.
 
-**Design self-review** — look at the written design with fresh eyes:
+**Design self-review**: look at the written design with fresh eyes:
 
 1. **Placeholder scan:** any "TBD", "TODO", incomplete sections, or vague
    requirements? Fix them.
@@ -221,16 +221,16 @@ promote it.
 4. **Ambiguity check:** could any requirement be interpreted two different
    ways? If so, pick one and make it explicit.
 
-Fix any issues inline. No need to re-review — just fix and move on.
+Fix any issues inline. No need to re-review: just fix and move on.
 
 **User review gate:** ask the user to review the design before proceeding. If
 they request changes, make them and re-run the self-review. Only proceed once
 they approve.
 
-**Then the route gate — and stop.** Present the three routes with a one-line
+**Then use the route gate and stop.** Present the three routes with a one-line
 read on which fits this work and why, and let the user pick. Ask with a
 structured question tool (`AskUserQuestion` or the host's equivalent) when one
-is available — user-facing labels, not skill names: **Direct**, **Plan**,
+is available: user-facing labels, not skill names: **Direct**, **Plan**,
 **Long-running goal**, each with a one-line description, the recommended route
 first and marked "(Recommended)". Otherwise present the same options as a
 numbered list and wait for the pick. Brainstorming never starts the

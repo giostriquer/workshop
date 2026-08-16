@@ -12,7 +12,7 @@ Shipped into `plugins/toolkit/skills/arch-map/` (`toolkit` `0.16.3`).
 After shipping arch-map on a Cursor-dark specimen, operator iteration produced
 a final visual pattern (deep near-black gradient, glass cards, Inter +
 JetBrains Mono, sky accent, scarce emerald/rose). Early skill text pointed at
-workshop-local `tmp/*.html` specimens and private nicknames — those paths and
+workshop-local `tmp/*.html` specimens and private nicknames; those paths and
 names do **not** ship with the plugin, so an adopting install would treat the
 style guidance as a no-op.
 
@@ -25,7 +25,7 @@ style guidance as a no-op.
    - `references/subsystem-specimen.html`
    - `references/refactor-specimen.html`
 3. Skill text is the complete contract (tokens, scraps, fit rules). Do **not**
-   ship a layout harness with the plugin — fit is enforced by construction and
+   ship a layout harness with the plugin: fit is enforced by construction and
    checklist spot-checks. Workshop-only harness tooling may live under
    `scripts/arch-map-harness/` for skill maintenance.
 4. Step 0: match an adopting project's house-style sibling if present;

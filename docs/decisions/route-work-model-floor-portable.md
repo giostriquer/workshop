@@ -10,10 +10,10 @@ Implemented.
 
 `route-work`'s Hard invariants opened with:
 
-> **Never Haiku or Sonnet — any task, no exceptions.** Bulk work routes to the
+> **Never Haiku or Sonnet: any task, no exceptions.** Bulk work routes to the
 > sol ladder; anything that must be Claude runs on opus-5 or fable-5.
 
-That is the operator's own policy, and it is correct *for the operator* — it
+That is the operator's own policy, and it is correct *for the operator*; it
 lives in their always-injected rules file and should. The problem is that
 `route-work` ships inside the `workbench` plugin. Every adopter who installs
 workbench inherited a ban on two models they may have perfectly good reasons
@@ -36,8 +36,8 @@ the operator:
 
 > **Set a model floor and enforce it upward.** Decide the weakest model
 > allowed to touch real work and write it into the rules file that loads every
-> session. Then override anything that would select below it — agent
-> definitions, tool defaults, `--model` flags, SDK calls — without asking.
+> session. Then override anything that would select below it: agent
+> definitions, tool defaults, `--model` flags, SDK calls, without asking.
 > Where the floor sits is the operator's call; having one, and never silently
 > dropping under it, is the invariant.
 
@@ -45,7 +45,7 @@ The section preamble now says why: a plugin that hard-codes one operator's
 fleet ships a policy its adopters never chose.
 
 What is deliberately kept: the discipline itself. "Have a floor" and "escalate
-rather than silently drop below it" are genuinely portable — they survive any
+rather than silently drop below it" are genuinely portable; they survive any
 fleet. The model × effort table also stays, since it was already marked as the
 operator's own calibration for adopters to swap and re-grade; a worked example
 is useful where an absolute prohibition is not.
@@ -54,9 +54,9 @@ is useful where an absolute prohibition is not.
 
 The finding that `anthropic-best-practices.md` violates the model floor is
 **withdrawn**. Its Haiku/Sonnet testing advice is appropriate portable guidance
-for a plugin. The genuine defects in that file — it contradicts
+for a plugin. The genuine defects in that file; it contradicts
 `writing-skills/SKILL.md` on the `description` field, and is a raw docs scrape
-roughly 15% useful — stand on their own.
+roughly 15% useful: stand on their own.
 
 ## Packaging
 

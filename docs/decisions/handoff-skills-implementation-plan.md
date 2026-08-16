@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Ship two direct-use handoff skills — `handoff-review` (produces a self-contained, unbiased review brief) and `handoff-pr` (produces a structured PR artifact for an authorized session) — through the existing `reviewers` marketplace plugin.
+**Goal:** Ship two direct-use handoff skills (`handoff-review` (produces a self-contained, unbiased review brief) and `handoff-pr` (produces a structured PR artifact for an authorized session)) through the existing `reviewers` marketplace plugin.
 
 **Architecture:** Each skill is a single `SKILL.md` authored once as canonical at `.claude/skills/<name>/SKILL.md`, then mirrored byte-identical to its host ports, the `reviewers` plugin payload, and two onboard reference roots. Both are pure prompt artifacts: neither runs the downstream action (review tools / `gh pr create`). The `reviewers` plugin's "agents-only, no skills" invariant is consciously loosened in its validator and README.
 
@@ -14,7 +14,7 @@
 
 ## File map (the validator enforces this exact set)
 
-Per skill `<name>` ∈ {`handoff-review`, `handoff-pr`} — **9 git-tracked files**:
+Per skill `<name>` ∈ {`handoff-review`, `handoff-pr`}: **9 git-tracked files**:
 
 | # | Path | Content |
 |---|------|---------|
@@ -32,13 +32,13 @@ Files #2, #3, #4, #5, #6 are byte-identical to #1. Files #8, #9 are byte-identic
 
 Shared, edited once (not per-skill):
 
-- `docs/skills/README.md` + its two reference mirrors (`.../references/docs/skills/README.md` in both roots) — roster 6 → 8.
-- `scripts/validate-native-plugin.ps1` — loosen the reviewers skills assertion.
-- `plugins/reviewers/README.md` — broaden identity.
-- `plugins/reviewers/.claude-plugin/plugin.json` — version 0.2.0 → 0.3.0 (+ `handoff` keyword).
-- `.claude-plugin/marketplace.json` — reviewers version → 0.3.0 (must match manifest).
-- `docs/decisions/handoff-skills.md` — status Draft → Implemented (on landing).
-- `docs/change-log.md` — entry via `change-log` skill.
+- `docs/skills/README.md` + its two reference mirrors (`.../references/docs/skills/README.md` in both roots): roster 6 → 8.
+- `scripts/validate-native-plugin.ps1`: loosen the reviewers skills assertion.
+- `plugins/reviewers/README.md`: broaden identity.
+- `plugins/reviewers/.claude-plugin/plugin.json`: version 0.2.0 → 0.3.0 (+ `handoff` keyword).
+- `.claude-plugin/marketplace.json`: reviewers version → 0.3.0 (must match manifest).
+- `docs/decisions/handoff-skills.md`: status Draft → Implemented (on landing).
+- `docs/change-log.md`: entry via `change-log` skill.
 
 **Byte-identity rule for the whole plan:** produce mirror copies with `Copy-Item`, never by retyping. The validator does CRLF-normalized content comparison; `Copy-Item` is the safe path.
 
@@ -66,7 +66,7 @@ description: Use when implementation on a branch is done (or mid-way) and you wa
 
 # Handoff Review
 
-Produce a **self-contained, unbiased review brief** for a separate agent or session to run before a PR is opened. This skill writes the brief; it does **not** perform the review and does **not** prescribe which tools the reviewer uses — tool choice belongs to whoever picks up the brief.
+Produce a **self-contained, unbiased review brief** for a separate agent or session to run before a PR is opened. This skill writes the brief; it does **not** perform the review and does **not** prescribe which tools the reviewer uses: tool choice belongs to whoever picks up the brief.
 
 ## When to use
 
@@ -76,35 +76,35 @@ Implementation on a branch is done, or far enough along, and you want a fresh pa
 
 The brief must **stand alone**. A reviewer who shares this session's context inherits its blind spots, so the brief re-derives the task from the **ticket + diff**, never from "what we discussed this session."
 
-"Stand alone" cuts one way only: exclude the implementing session's *interpretation* of the task (that is the bias being removed), but **include the ticket's acceptance criteria** (the ground truth the reviewer judges against). Those are different inputs — drop the first, carry the second.
+"Stand alone" cuts one way only: exclude the implementing session's *interpretation* of the task (that is the bias being removed), but **include the ticket's acceptance criteria** (the ground truth the reviewer judges against). Those are different inputs: drop the first, carry the second.
 
 ## Steps
 
 1. **Detect branch and base.** Run `git branch --show-current` and determine the base branch (default `main` unless the repo says otherwise). Capture the diff range with `git diff <base>...HEAD --stat` and the commit list.
 2. **Identify the ticket.** Scan the branch name, commit messages, and any existing PR description for a ClickUp / Linear / Jira id or URL. Present what you found and ask the operator to confirm or supply the right one. If none is found, ask.
-3. **Get the ticket's substance, not just its link** — this is what makes the task-vs-code check real:
+3. **Get the ticket's substance, not just its link**; this is what makes the task-vs-code check real:
    - If a tracker integration is reachable (ClickUp / Linear / Jira MCP, or web access to the ticket URL), fetch the ticket body / acceptance criteria and embed it verbatim in the brief.
    - Else, ask the operator to paste the acceptance criteria.
-   - Else, write a short task summary and label it explicitly **"implementer's claim — verify against the actual ticket."** Never present a session-derived paraphrase as ground truth.
-4. **Assemble the brief** using the template below. It names *what* to review, never *how* — no tool or skill names.
+   - Else, write a short task summary and label it explicitly **"implementer's claim: verify against the actual ticket."** Never present a session-derived paraphrase as ground truth.
+4. **Assemble the brief** using the template below. It names *what* to review, never *how*: no tool or skill names.
 5. **Deliver by mode:**
-   - **default (spawn):** dispatch a fresh agent (the host's general-purpose agent) with the brief as its entire prompt — no session history — and return its findings.
+   - **default (spawn):** dispatch a fresh agent (the host's general-purpose agent) with the brief as its entire prompt (no session history) and return its findings.
    - **handoff** (invoked as `handoff-review handoff` or `handoff-review session`): write the brief to `tmp/handoff-review-<branch-slug>.md` (sanitize the branch name: `/` → `-`), tell the operator the path, and print the brief for copy-paste into a new session. Do not spawn an agent.
 
 ## The review brief template
 
-> **Review brief — `<branch>` vs `<base>`**
+> **Review brief: `<branch>` vs `<base>`**
 >
 > **Task (from ticket `<id / url>`):**
-> `<acceptance criteria, verbatim from the ticket — or, if unavailable, the labeled "implementer's claim, verify against the ticket" summary>`
+> `<acceptance criteria, verbatim from the ticket, or, if unavailable, the labeled "implementer's claim, verify against the ticket" summary>`
 >
-> **Diff scope:** `<files / stat summary>` — see it with `git diff <base>...HEAD`.
+> **Diff scope:** `<files / stat summary>`: see it with `git diff <base>...HEAD`.
 >
-> **Review the following, forming your own judgment from the diff — do not trust any summary above:**
-> 1. **Task vs. code** — does the diff actually deliver the acceptance criteria? Call out anything asked-for-but-missing and anything done-but-not-asked.
-> 2. **Rules / conventions** — read this repo's own `CLAUDE.md` / `AGENTS.md` / convention docs and check the diff against them. (This brief does not restate the rules; read them.)
-> 3. **Information leak** — secrets / keys / tokens, internal hostnames or absolute paths, and private domain content that should not ship.
-> 4. **Correctness / quality** — bugs, missing error handling, untested risk.
+> **Review the following and form your own judgment from the diff. Do not trust any summary above:**
+> 1. **Task vs. code**: Does the diff actually deliver the acceptance criteria? Call out anything asked-for-but-missing and anything done-but-not-asked.
+> 2. **Rules / conventions**: read this repo's own `CLAUDE.md` / `AGENTS.md` / convention docs and check the diff against them. (This brief does not restate the rules; read them.)
+> 3. **Information leak**: secrets / keys / tokens, internal hostnames or absolute paths, and private domain content that should not ship.
+> 4. **Correctness / quality**: bugs, missing error handling, untested risk.
 >
 > **Report:** findings grouped by severity (blocker / major / minor / nit), each with `file:line` and a concrete fix, then an overall **go / no-go**.
 
@@ -122,7 +122,7 @@ The brief must **stand alone**. A reviewer who shares this session's context inh
 
 ## Origin
 
-A prompt the maintainer rewrote by hand at the end of nearly every branch: "give this a fresh, unbiased review before we open the PR — does the code match the task, does it follow our rules, did we leak anything." Written ad hoc, it drifted: different wording each time, the leak check sometimes dropped, the review sometimes run by the same session that wrote the code (the worst possible judge).
+A prompt the maintainer rewrote by hand at the end of nearly every branch asked: "Give this a fresh, unbiased review before we open the PR. Does the code match the task? Does it follow our rules? Did we leak anything?" Written ad hoc, it drifted through different wording each time; sometimes the leak check disappeared, and sometimes the same session that wrote the code ran the review, making it the worst possible judge.
 
 `handoff-review` formalizes that prompt into a self-contained review brief that a *different* agent or session runs.
 
@@ -131,11 +131,11 @@ A prompt the maintainer rewrote by hand at the end of nearly every branch: "give
 Two failure modes in the ad-hoc flow:
 
 1. **Biased reviewer.** The implementing session "knows" the intent and reads it into the diff, so it confirms its own work. A genuinely fresh review has to re-derive the task from the ticket and the diff.
-2. **Hollow task-vs-code check.** Handed only a ticket id, a fresh reviewer can't open it and silently falls back to reviewing commits alone — gutting the most important dimension.
+2. **Hollow task-vs-code check.** Handed only a ticket id, a fresh reviewer can't open it and silently falls back to reviewing commits alone: gutting the most important dimension.
 
 ## Solution shape
 
-A brief generator, not a reviewer. It gathers branch + base + diff, identifies the ticket, and — critically — pulls the ticket's *acceptance criteria* into the brief (tracker fetch → operator paste → labeled "implementer's claim" fallback). The brief names four review dimensions (task-vs-code, rules conformance, information leak, correctness) and prescribes no tools. Two modes: spawn a fresh agent, or write the brief to a scratch file for a new session.
+A brief generator, not a reviewer. It gathers branch + base + diff, identifies the ticket, and (critically) pulls the ticket's *acceptance criteria* into the brief (tracker fetch → operator paste → labeled "implementer's claim" fallback). The brief names four review dimensions (task-vs-code, rules conformance, information leak, correctness) and prescribes no tools. Two modes: spawn a fresh agent, or write the brief to a scratch file for a new session.
 
 The load-bearing constraint: the brief stands alone. "Zero shared context" excludes the author's interpretation (the bias) but includes the ticket's ground truth (what the reviewer checks against).
 
@@ -217,18 +217,18 @@ The work is ready for a PR, but the current session does not hold PR-write autho
 
 ## Steps
 
-1. **Detect branch and base.** Run `git branch --show-current` and determine the base branch (default `main` unless the repo says otherwise). Summarize the change from `git diff <base>...HEAD` and the commit list — do not rely on session memory.
+1. **Detect branch and base.** Run `git branch --show-current` and determine the base branch (default `main` unless the repo says otherwise). Summarize the change from `git diff <base>...HEAD` and the commit list rather than relying on session memory.
 2. **Identify the ticket.** Scan the branch name, commit messages, and any existing PR description for a ClickUp / Linear / Jira id or URL. Present what you found and ask the operator to confirm or supply the right one. If none is found, ask. Capture the full ticket **link**, not just the id.
 3. **Capture status fields:**
    - **Validation / tests:** what was run and the result (or "not run").
-   - **Review:** whether a `handoff-review` pass ran and its outcome; link the findings if available. Do not block on it — record honestly if no review ran.
+   - **Review:** whether a `handoff-review` pass ran and its outcome; link the findings if available. Do not block on it: record honestly if no review ran.
 4. **Assemble the artifact** using the template below.
 5. **Deliver:** print the artifact inline. Also write it to `tmp/handoff-pr-<branch-slug>.md` (sanitize the branch name: `/` → `-`) and report the path, so the authorized session can read it.
 6. **Stop.** State plainly that opening the PR is the authorized session's job: it runs `gh pr create` with the title and body below. Do not run it.
 
 ## The PR artifact template
 
-> **PR handoff — `<branch>` → `<base>`**
+> **PR handoff: `<branch>` → `<base>`**
 >
 > **Title:** `<conventional-style subject, e.g. feat: ...>`
 >
@@ -253,9 +253,9 @@ The work is ready for a PR, but the current session does not hold PR-write autho
 
 ## Rules
 
-- Never run `gh pr create` (or any PR-opening command) — produce the artifact only.
+- Never run `gh pr create` (or any PR-opening command): produce the artifact only.
 - Always carry a real ticket link; if you cannot find or confirm one, ask rather than omit it.
-- Ground the summary in the actual diff, not session memory — the artifact may be opened by a session with no shared context.
+- Ground the summary in the actual diff, not session memory: the artifact may be opened by a session with no shared context.
 ```
 
 - [ ] **Step 2: Write the origin doc** `docs/skills/handoff-pr.md` with exactly this content:
@@ -279,7 +279,7 @@ Three failure modes in the ad-hoc flow:
 
 ## Solution shape
 
-An artifact generator, not a PR opener. It detects branch + base, summarizes from the real diff, auto-detects and confirms the ticket link, and records validation + review status into a structured body. It prints the artifact and writes it to a scratch file. It explicitly never runs `gh pr create` — that is the authorized session's job.
+An artifact generator, not a PR opener. It detects branch + base, summarizes from the real diff, auto-detects and confirms the ticket link, and records validation + review status into a structured body. It prints the artifact and writes it to a scratch file. It explicitly never runs `gh pr create`; that is the authorized session's job.
 
 ## Real invocation snippet
 
@@ -297,7 +297,7 @@ Builds the PR artifact, confirms the ticket, writes `tmp/handoff-pr-<branch-slug
 
 - The artifact body sections (Summary / Ticket / Validation / Review / Caveats) are portable; trim or extend to match your PR template.
 - Ticket detection scans branch / commits / PR description; adjust the patterns to your tracker's id format.
-- Pairs with `handoff-review`: the **Review** field records that outcome. The coupling is light — `handoff-pr` does not enforce that a review ran.
+- Pairs with `handoff-review`: the **Review** field records that outcome. The coupling is light: `handoff-pr` does not enforce that a review ran.
 ```
 
 - [ ] **Step 3: Produce the byte-identical mirror copies**
@@ -376,7 +376,7 @@ Copy-Item ".claude/skills/handoff-pr/SKILL.md" "plugins/reviewers/skills/handoff
 Run: `pwsh -File scripts/validate-native-plugin.ps1`
 Expected: `native plugin validation ok` (now requires and finds exactly the two reviewers skills, each byte-identical to canonical).
 
-- [ ] **Step 4: Negative check — confirm the assertion actually bites**
+- [ ] **Step 4: Negative check: confirm the assertion actually bites**
 
 Temporarily rename one copy and confirm the validator fails, then restore:
 
@@ -418,7 +418,7 @@ Add these two rows to the Roster table, after the `visual-advisor` row:
 Add to the **Composition** section's bullet list:
 
 ```markdown
-- `handoff-review` and `handoff-pr` are end-of-branch handoff primitives — each emits a self-contained artifact a *different* session consumes; they stand alone, not orchestrating other skills.
+- `handoff-review` and `handoff-pr` are end-of-branch handoff primitives: each emits a self-contained artifact a *different* session consumes; they stand alone, not orchestrating other skills.
 ```
 
 - [ ] **Step 2: Mirror the README to both reference roots (byte-identical)**
@@ -471,7 +471,7 @@ For the `reviewers` plugin entry, change `"version": "0.2.0"` to `"version": "0.
 | Skill | Produces |
 | --- | --- |
 | `handoff-review` | a self-contained, unbiased review brief (task-vs-code, rules, info-leak, correctness) for a separate agent/session to run before a PR |
-| `handoff-pr` | a structured PR handoff artifact (title, body, ticket links, status) for a separately-authorized session to open — never opens the PR itself |
+| `handoff-pr` | a structured PR handoff artifact (title, body, ticket links, status) for a separately-authorized session to open; the skill never opens the PR itself |
 ```
 
 - In the **Not included** section, change `No skills, MCP servers, or hooks.` to `No MCP servers or hooks.` and keep the note that the onboarding skill and edit-capable agents live in the separate `agent-workshop` plugin.
@@ -549,8 +549,8 @@ git commit -m "docs: change-log entry for handoff skills"
 
 ## Self-review notes (for the executor)
 
-- **Byte-identity is the #1 failure mode.** If the validator reports `file differs from source`, re-run the `Copy-Item` for that file — do not hand-edit the mirror.
+- **Byte-identity is the #1 failure mode.** If the validator reports `file differs from source`, re-run the `Copy-Item` for that file. Do not hand-edit the mirror.
 - **Never reorder Tasks 1–3.** Adding a `.claude/skills/<name>/` without its reference mirrors, or adding `plugins/reviewers/skills/` before the validator change, breaks the validator mid-task.
 - **The skills are prompt artifacts.** There is no runtime test; the validator + host-parity hash check + `claude plugin validate` are the full verification surface.
 - **`marketplace/catalog.json` is deliberately untouched.** It enumerates *agents* only (the existing 6 skills are not catalogued either), so the two new skills follow the same absent pattern. Confirmed; not a gap.
-- **Exposure is assumed-by-precedent, not proven here.** `claude plugin validate` checks structural validity, not that the skills load and invoke. Plugin skill auto-discovery is established by the `agent-workshop-onboard` precedent, so the assumption is sound — but confirming the spec's "installing `reviewers` exposes the two skills, invocable" acceptance criterion needs a real install in a clean session.
+- **Exposure is assumed-by-precedent, not proven here.** `claude plugin validate` checks structural validity, not that the skills load and invoke. Plugin skill auto-discovery is established by the `agent-workshop-onboard` precedent, so the assumption is sound, but confirming the spec's "installing `reviewers` exposes the two skills, invocable" acceptance criterion needs a real install in a clean session.

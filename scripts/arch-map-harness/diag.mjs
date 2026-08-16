@@ -35,7 +35,7 @@ const rows = await page.evaluate((vw) => {
   return out.sort((a, b) => b.right - a.right).slice(0, 12);
 }, width);
 
-console.log(`\n${path.basename(file)} @ ${width}px — innerWidth=${await page.evaluate(() => window.innerWidth)}`);
+console.log(`\n${path.basename(file)} @ ${width}px: innerWidth=${await page.evaluate(() => window.innerWidth)}`);
 for (const r of rows) {
   console.log(`  right=${String(r.right).padStart(5)} w=${String(r.width).padStart(5)} ${r.tag}.${r.cls} [minW=${r.minW} ws=${r.ws} ox=${r.ox}] "${r.txt}"`);
 }

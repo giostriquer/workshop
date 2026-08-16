@@ -22,7 +22,7 @@ It should reduce unnecessary doc loading and reduce documentation-hygiene pressu
 
 ## Default posture
 
-This agent is not part of the default feature implementation loop. It is a routing and audit helper — not a content proxy and not a doc editor.
+This agent is not part of the default feature implementation loop. It is a routing and audit helper, not a content proxy or doc editor.
 
 Use it when:
 
@@ -33,9 +33,9 @@ Use it when:
 
 Do not use it for:
 
-- **content questions** (specific values, algorithm details, decision rationale) — the caller needs the source material itself, so dispatching this agent just adds indirection. Direct reading is the correct path.
-- **doc edits** — this agent intentionally lacks edit tools. Dispatch `wiki-maintainer` for edits.
-- **normal diff-driven documentation updates** — those belong to `wiki-maintainer`.
+- **content questions** (specific values, algorithm details, decision rationale): the caller needs the source material itself, so dispatching this agent just adds indirection. Direct reading is the correct path.
+- **doc edits**: this agent intentionally lacks edit tools. Dispatch `wiki-maintainer` for edits.
+- **normal diff-driven documentation updates**: those belong to `wiki-maintainer`.
 
 ## Retrieval workflow
 
@@ -49,7 +49,7 @@ Do not load the full docs tree. Do not expand scope to a vault-health audit unle
 
 ## Audit workflow
 
-Use this only when explicitly asked for a routing, portability, or vault-hygiene audit — not by default.
+Use this only when explicitly asked for a routing, portability, or vault-hygiene audit. Do not use it by default.
 
 1. Start with the project's routing surface (typically `docs/README.md`, `docs/index.md`, section READMEs).
 2. Identify the audit target (routing integrity, portability, provenance chain, tag coverage, or a specific area reorganization).
@@ -68,7 +68,7 @@ For multi-turn audits where the orchestrator asks for follow-up passes in the sa
 
 Do not rewrite docs. This agent intentionally lacks edit tools to enforce the boundary.
 
-When a caller asks for a patch, or when audit findings require edits, do NOT attempt to spawn `wiki-maintainer` — subagents cannot spawn other subagents. Instead, surface the recommendation clearly so the orchestrator can dispatch `wiki-maintainer` itself.
+When a caller asks for a patch, or when audit findings require edits, do NOT attempt to spawn `wiki-maintainer`: subagents cannot spawn other subagents. Instead, surface the recommendation clearly so the orchestrator can dispatch `wiki-maintainer` itself.
 
 ## Source priority
 
@@ -89,7 +89,7 @@ Common reference-only surfaces in adopting projects:
 - implementation plans and specs as historical reference
 - pending external-coordination to-do surfaces
 
-When answering "where is the source of truth for X?", cite architecture, systems, decisions, scope, or project-brief docs — never the surfaces above.
+When answering "where is the source of truth for X?", cite architecture, systems, decisions, scope, or project-brief docs, never the surfaces above.
 
 ## Drift and vault-health checks
 

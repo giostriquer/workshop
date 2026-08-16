@@ -1,6 +1,6 @@
 # visual-advisor
 
-> **Parked 2026-08-11** — the onboarding `agent-workshop` plugin was deleted; the spec sits alongside this doc in [`SKILL.md`](SKILL.md). See `docs/decisions/drop-onboarding-plugin.md`.
+> **Parked 2026-08-11**: the onboarding `agent-workshop` plugin was deleted; the spec sits alongside this doc in [`SKILL.md`](SKILL.md). See `docs/decisions/drop-onboarding-plugin.md`.
 
 ## Origin
 
@@ -9,7 +9,7 @@ In the originating project, AI-generated visual workflows produced two failure m
 1. **Self-bless gate collapse.** When the same agent generates a candidate and judges it, the gate collapses.
 2. **Mode confusion.** Refinement prompts ("under the current visual thesis, refine X") and exploration prompts ("the current direction feels stuck, broaden") need different anchoring. Mixing them produces fifty variants of the same look.
 
-`visual-advisor` was introduced as the **advisor counterpart** to the `visual-implementer` agent — taste judgment, prompt shaping, mode discipline, and promotion gating. Together they enforce role separation.
+`visual-advisor` was introduced as the **advisor counterpart** to the `visual-implementer` agent: taste judgment, prompt shaping, mode discipline, and promotion gating. Together they enforce role separation.
 
 ## Problem
 
@@ -26,16 +26,16 @@ The advisor / implementer split addresses self-judgment. Mode discipline address
 
 **Three modes:**
 
-- `refinement` — sprite intake, animation, runtime proof, presentation wiring under a settled visual thesis. Current baselines are *constraints*.
-- `exploration` — broaden visual options when the current direction feels stuck. Current baselines are *context only* — do NOT re-impose them on candidates. Study-only outputs; cannot promote to baseline directly.
-- `rebaseline` — the user has decided a baseline must change and a new thesis needs drafting. Requires explicit thesis-ratification gate before refinement work resumes.
+- `refinement`: sprite intake, animation, runtime proof, presentation wiring under a settled visual thesis. Current baselines are *constraints*.
+- `exploration`: broaden visual options when the current direction feels stuck. Current baselines are *context only*. Do NOT re-impose them on candidates. Study-only outputs cannot promote to baseline directly.
+- `rebaseline`: the user has decided a baseline must change and a new thesis needs drafting. Requires explicit thesis-ratification gate before refinement work resumes.
 
 **Pass type ladder:** `study-only` → `candidate asset` → `runtime proof` → `baseline promotion`. Plus `thesis ratification` for rebaseline mode.
 
 **Verdict ladder per mode:**
 
 - Refinement: `Reject` / `Needs another art pass` / `Study approved` / `Runtime-ready candidate` / `Baseline approved`.
-- Exploration: `Reject` / `Exploration noted` / `Promising direction — escalate to rebaseline`.
+- Exploration: `Reject` / `Exploration noted` / `Promising direction: escalate to rebaseline`.
 - Rebaseline: `Thesis rejected` / `Thesis ratified`.
 
 **Mode-specific prompt skeletons** (refinement / exploration) ensure prompts don't accidentally apply the wrong anchoring.
@@ -62,12 +62,12 @@ Example invocations:
 - **Self-blessing.** The advisor must inspect actual images, not just worker summaries. The advisor's whole point is independence from the implementer's verdict.
 - **Letting a worker's "approved" verdict substitute for advisor review.** The worker may report `runtime-ready candidate`; the advisor still must read the actual screenshots before promoting.
 - **Promoting without runtime proof.** Flat previews are insufficient. The visual must be evaluated at runtime scale beside adjacent assets.
-- **Cleaning rejected variants into baselines.** Rejected variants and exploration outputs belong in scratch space (`.temp` or equivalent), not in baseline docs. Documentation tracks promoted baselines, ratified theses, and durable workflow lessons — not failed studies.
+- **Cleaning rejected variants into baselines.** Rejected variants and exploration outputs belong in scratch space (`.temp` or equivalent), not in baseline docs. Documentation tracks promoted baselines, ratified theses, and durable workflow lessons rather than failed studies.
 
 ## Adaptation notes
 
-- The skill's *shape* — mode discipline, advisor / implementer split, verdict ladder, retrieval-first — generalizes across visual-asset domains: game art, web UI, document mockups, marketing visuals, illustrations. Sanitize the canonical spec to your project's domain.
+- The skill's *shape* (mode discipline, advisor / implementer split, verdict ladder, retrieval-first) generalizes across visual-asset domains: game art, web UI, document mockups, marketing visuals, illustrations. Sanitize the canonical spec to your project's domain.
 - The "Minimal context" reading list in the skill references generic project paths. Replace these with your project's visual-stack docs.
 - Pair with `visual-implementer`. Without the implementer side, the advisor has nowhere to send approved prompts.
-- If your project doesn't have AI-generated visuals as a recurring workflow, this skill and the paired agent probably don't earn their keep. Leave them out — the scaffold's discipline is "lived-in proof or nothing."
+- If your project doesn't have AI-generated visuals as a recurring workflow, this skill and the paired agent probably don't earn their keep. Leave them out: the scaffold's discipline is "lived-in proof or nothing."
 - Mode-specific scaffold-doc references (e.g., HUD prompt scaffolds, animation reference contracts) are project-specific. Drop or replace for your project.

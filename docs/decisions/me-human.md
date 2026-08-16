@@ -1,4 +1,4 @@
-# Decision: `me-human` — dogfood a system as a real user, not as QA
+# Decision: `me-human`: dogfood a system as a real user, not as QA
 
 **Date:** 2026-08-13
 
@@ -11,7 +11,7 @@ Implemented. Ships as `toolkit 0.6.0`.
 The toolkit and workbench pieces all verify that something **works**:
 `empirical-proof` proves one finished change at the running app, `qa-sweep`
 covers a broad surface at team scale, `claim-check` settles a premise. None of
-them asks whether the thing is any **good to use** — whether a person arriving
+them asks whether the thing is any **good to use**: whether a person arriving
 without context can get where they were going.
 
 Doing that ad hoc has a dominant failure mode: told to "use the app like a
@@ -22,9 +22,9 @@ dogfooding at all.
 
 ## The shape
 
-A user-invoked persona skill. The session adopts a human's stance — eager to
+A user-invoked persona skill. The session adopts a human's stance: eager to
 try the system without understanding it first, learning by doing, willing to be
-wrong — and reports the experience.
+wrong, and reports the experience.
 
 Three behaviors carry it:
 
@@ -41,7 +41,7 @@ recommendations, and next steps, in plain language.
 
 ## Non-goals
 
-- **Not QA.** The skill says so directly — a plan run against expectations is a
+- **Not QA.** The skill says so directly: a plan run against expectations is a
   different activity from a person pursuing a goal and noticing what hurt.
 - **Not an implementation pass.** Local unblocking changes only, each reported
   immediately.
@@ -49,7 +49,7 @@ recommendations, and next steps, in plain language.
   target system, the entry point, the goal, and the driving mechanism at
   invocation. Naming a concrete mechanism (browser automation, computer use)
   would couple a portable stance skill to one modality and break it on hosts
-  that lack it — the same line `empirical-proof` holds when it says "boot it,
+  that lack it: the same line `empirical-proof` holds when it says "boot it,
   hit its endpoints" without naming a tool.
 
 ## Open thread
@@ -57,11 +57,11 @@ recommendations, and next steps, in plain language.
 The modality question is deliberately unresolved rather than settled. Two
 candidates for the skill text, both portable and neither yet written:
 
-- A **front-door rule** — reach the system the way a user has to (its UI, its
+- A **front-door rule**: reach the system the way a user has to (its UI, its
   CLI, its documented entry), never through internals or test harnesses. Told
   to "use the app," a session will otherwise satisfy that by calling the app's
   internals.
-- A **reach-the-system ladder** — prefer the project's own documented way to
+- A **reach-the-system ladder**: prefer the project's own documented way to
   run it, then the ecosystem default for that project type, then ask.
 
 Both are behavioral invariants rather than tooling, so they would not cost the

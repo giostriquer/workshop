@@ -1,12 +1,12 @@
 # doc-indexer
 
-> **Parked 2026-08-11** — the onboarding `agent-workshop` plugin was deleted; the spec sits alongside this doc in this folder. See `docs/decisions/drop-onboarding-plugin.md`.
+> **Parked 2026-08-11**: the onboarding `agent-workshop` plugin was deleted; the spec sits alongside this doc in this folder. See `docs/decisions/drop-onboarding-plugin.md`.
 
 ## Origin
 
 `wiki-maintainer` was the originating project's first local agent and was doing two distinct jobs: (1) maintaining source-of-truth docs, and (2) answering routing / retrieval questions. The retrieval job didn't need edit tools, didn't need the heavy maintainer context, and was happening often enough that loading `wiki-maintainer` for it was wasteful.
 
-`doc-indexer` was extracted to handle retrieval, routing, and lightweight audit work — explicitly without edit tools. The naming is deliberate: it's the local repo-specific implementation of the broader `wiki-indexer` concept.
+`doc-indexer` was extracted to handle retrieval, routing, and lightweight audit work without edit tools. The naming is deliberate; it is the local repo-specific implementation of the broader `wiki-indexer` concept.
 
 ## Problem
 
@@ -21,10 +21,10 @@ Documentation systems with any depth produce two failure modes:
 
 Two workflows:
 
-- **Retrieval.** "Which docs matter for X?" / "Where is the source of truth for Y?" — read the minimum relevant docs, answer concisely, flag any obvious drift signals along the way.
+- **Retrieval.** "Which docs matter for X?" / "Where is the source of truth for Y?": read the minimum relevant docs, answer concisely, flag any obvious drift signals along the way.
 - **Audit.** Routing integrity, portability checks, vault-hygiene checks. Reports findings and recommends `wiki-maintainer` follow-up. Does not edit.
 
-The agent **lacks edit tools at the frontmatter level** — the boundary is enforced at the tool layer, not just by policy. If a caller asks for a fix, the agent recommends `wiki-maintainer` dispatch in its report.
+The agent **lacks edit tools at the frontmatter level**: the boundary is enforced at the tool layer, not just by policy. If a caller asks for a fix, the agent recommends `wiki-maintainer` dispatch in its report.
 
 **Reference-only surfaces** are tracked: research notes, idea seeds, plans, specs as historical reference. The agent does not surface these as primary routing answers for current-state questions; those go to architecture, systems, decisions, scope, or project-brief docs.
 
@@ -43,9 +43,9 @@ Use `doc-indexer` when:
 - a larger docs pass needs a routing or vault-hygiene audit
 
 Read directly (skip dispatch) for:
-- specific content questions (formulas, config values, decision rationale) — direct reading is the correct path
-- normal diff-driven documentation updates — those belong to `wiki-maintainer`
-- doc edits — `doc-indexer` lacks edit tools by design
+- specific content questions (formulas, config values, decision rationale): direct reading is the correct path
+- normal diff-driven documentation updates; those belong to `wiki-maintainer`
+- doc edits: `doc-indexer` lacks edit tools by design
 ```
 
 Example dispatch shape:
@@ -58,7 +58,7 @@ Or, for an audit:
 
 ## Pitfalls observed
 
-- **Dispatching for content questions.** "What's the formula for X?" — the answer comes from reading the formula doc directly, not from a routing agent that summarizes it. Routing introduces summary fidelity risk; direct reading is the right path.
+- **Dispatching for content questions.** "What's the formula for X?": the answer comes from reading the formula doc directly, not from a routing agent that summarizes it. Routing introduces summary fidelity risk; direct reading is the right path.
 - **Expecting it to fix things.** It surfaces drift but cannot patch. The orchestrator (the model that dispatched it) must dispatch `wiki-maintainer` based on the recommendations.
 - **Subagents trying to spawn `wiki-maintainer`.** Subagents can't spawn other subagents. The orchestrator is the actor.
 - **Using it as a second `wiki-maintainer`.** Edit tools are intentionally absent. Don't try to work around the boundary.
@@ -68,5 +68,5 @@ Or, for an audit:
 
 - The reference-only surfaces list is project-specific. Sanitize the canonical spec to match your project's directories: research, idea-seeds, plans, specs, future-ideas trackers, etc.
 - The Obsidian-specific checks (frontmatter tags table, wiki-link compliance, code-architecture note format) reflect the originating project's Obsidian-vault dual-purpose. Drop these if your project doesn't use Obsidian.
-- The "Recommended orchestrator action" line in audit-mode output is unusually load-bearing. Without it, the orchestrator often forgets that it has to dispatch `wiki-maintainer` itself — the audit findings just sit unaddressed. Adopt the convention.
-- This agent runs on `model: sonnet` because most of its work is mechanical retrieval and auditing — Opus reasoning isn't needed. Keep that frontmatter unless your project's audit needs heavier judgment.
+- The "Recommended orchestrator action" line in audit-mode output is unusually load-bearing. Without it, the orchestrator often forgets that it has to dispatch `wiki-maintainer` itself: the audit findings just sit unaddressed. Adopt the convention.
+- This agent runs on `model: sonnet` because most of its work is mechanical retrieval and auditing: Opus reasoning isn't needed. Keep that frontmatter unless your project's audit needs heavier judgment.

@@ -1,6 +1,6 @@
 ---
 name: verification-before-completion
-description: Use when about to claim work is complete, fixed, or passing, before committing or creating PRs — the workbench flow's "deemed ready" gate: run the verification commands and confirm output before making any success claims; evidence before assertions always. For changes with a runnable surface, empirical-proof is the deeper sibling — offered, not automatic.
+description: Use when about to claim work is complete, fixed, or passing, before committing or creating PRs. The workbench flow's "deemed ready" gate requires verification commands and confirmed output before any success claim; evidence comes before assertions. For changes with a runnable surface, empirical-proof is the deeper sibling and is offered rather than automatic.
 metadata:
   system: workbench
 ---
@@ -17,7 +17,7 @@ In the workbench flow, this skill defines **"deemed ready"**: an implementation 
 proceed to its adversarial review only once the claims about it carry fresh
 verification evidence. When the change has a runnable surface (an API, MCP tool,
 or app a real client can drive), `empirical-proof` is the deeper form of this
-gate — a user option, not an automatic step: offer it, and run it only on the
+gate is a user option, not an automatic step. Offer it, and run it only on the
 user's explicit ask or a standing authorization. This gate itself is the
 always-on floor.
 

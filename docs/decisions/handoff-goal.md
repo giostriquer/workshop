@@ -8,12 +8,12 @@ Implemented.
 
 ## Context
 
-`handoff-review` and `handoff-pr` hand work *backward* — they package a finished
+`handoff-review` and `handoff-pr` hand work *backward*; they package a finished
 (or nearly finished) branch for a fresh reviewer or a separately-authorized PR
 opener. A third handoff keeps recurring with no skill behind it: handing work
 *forward*. The operator wants a new session to **pick up a goal and pursue it
-autonomously** — finish the remaining slices of a plan, or build something that
-was only just described — without re-explaining the goal, the current state, or
+autonomously**: finish the remaining slices of a plan, or build something that
+was only just described, without re-explaining the goal, the current state, or
 the working rules every time.
 
 Written by hand, that forward handoff fails in two characteristic ways:
@@ -21,7 +21,7 @@ Written by hand, that forward handoff fails in two characteristic ways:
 1. **The rules evaporate.** Preferences stated once in chat (which branch to
    work on, commit style, push policy, when a PR may be opened) live only in
    session context. The pursuing session starts well, compacts, and the rules
-   are gone — behavior drifts mid-goal.
+   are gone: behavior drifts mid-goal.
 2. **The goal arrives as a step list, not an outcome.** Without a definition of
    done, the pursuing session either stops early or gold-plates; without an
    outcome framing it cannot optimize the path when the listed steps turn out
@@ -38,12 +38,12 @@ or to keep a progress log in the file rather than in its head.
 `handoff-goal` is the third member of the handoff family and obeys the family
 contract: it packages the work into a **self-contained artifact** consumed by a
 different session with zero shared context, and it **never performs the
-downstream action** — it writes the goal document; it does not pursue the goal.
+downstream action**. It writes the goal document but does not pursue the goal.
 
 Where it differs from its siblings: `handoff-review` deliberately *excludes*
 the session's interpretation (that is the bias being removed); `handoff-goal`
-deliberately *carries* the session's accumulated intent — goal, decisions made,
-state — because continuation, not fresh eyes, is the point. What both share is
+deliberately *carries* the session's accumulated intent: goal, decisions made,
+state, because continuation, not fresh eyes, is the point. What both share is
 the standalone discipline: nothing the pursuing session needs may live only in
 chat.
 
@@ -57,13 +57,13 @@ chat.
   an explicit definition of done; the pursuing session owns the path and may
   optimize it.
 - **Operating rules with concrete values.** Branch / worktree, commit cadence
-  and style, push policy, PR policy, validation gates, scope boundaries —
-  detected from the repo's own rule files where possible, asked of the operator
+  and style, push policy, PR policy, validation gates, and scope boundaries.
+  These are detected from the repo's own rule files where possible and asked of the operator
   where not, and recorded as actual values ("PRs go to `develop`"), never as
   "follow user preferences."
 - **Compaction survival.** The document opens by telling the pursuing session
   to re-read the operating rules after every compaction and to append to a
-  progress section as work lands — the file, not session memory, is the
+  progress section as work lands: the file, not session memory, is the
   durable contract across compactions and across sessions.
 - **Artifact path.** `tmp/<YYYY-MM-DD>-<goal-slug>.md` (the `tmp/` scratch dir
   is already gitignored).
@@ -93,10 +93,10 @@ Same footprint as the sibling handoff skills (see
 ## Non-goals
 
 - The skill never pursues the goal in the producing session.
-- It does not prescribe the pursuing session's tools or plan the slices itself —
-  it links to plan/spec files rather than restating them.
+- It does not prescribe the pursuing session's tools or plan the slices itself.
+  It links to plan/spec files rather than restating them.
 - No MCP server, hook, or runtime service.
-- No divergent host copies — mirrors stay byte-identical to canonical.
+- No divergent host copies: mirrors stay byte-identical to canonical.
 
 ## Validation
 

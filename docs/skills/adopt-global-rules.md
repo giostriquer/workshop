@@ -3,7 +3,7 @@
 ## What it does
 
 Installs **the workshop's shipped global agent configuration** onto the machine
-you run it on — the instructions that load in every session, in every
+you run it on: the instructions that load in every session, in every
 repository, regardless of which project you are in.
 
 The configuration is **plugin payload**, not a template. It ships with the
@@ -24,8 +24,8 @@ Three kinds of content ship:
 | **Rules** | Discrete single-source rules, fanned out to every host that applies |
 | **Output styles** | Whole style files, for hosts that have a native surface for them |
 
-That split is the important one. Hosts want different things said — a Codex
-sandbox-escalation instruction means nothing to Claude Code — so each host's
+That split is the important one. Hosts want different things said: a Codex
+sandbox-escalation instruction means nothing to Claude Code, so each host's
 global document is written on its own terms rather than derived from another's.
 Rules are the opposite: one body, installed everywhere.
 
@@ -34,7 +34,7 @@ Where things land:
 | Host | Global document | Rules | Output styles |
 | --- | --- | --- | --- |
 | Claude Code | `~/.claude/CLAUDE.md` | `~/.claude/rules/<rule>.md`, one file each | `~/.claude/output-styles/<style>.md` |
-| Codex | `~/.codex/AGENTS.md` | `~/.codex/AGENTS.md`, one fenced block each | — |
+| Codex | `~/.codex/AGENTS.md` | `~/.codex/AGENTS.md`, one fenced block each | Not supported |
 
 Claude Code loads both `~/.claude/CLAUDE.md` and every `.md` in
 `~/.claude/rules/` into every session. Codex reads one flat `AGENTS.md`, so both
@@ -42,12 +42,12 @@ kinds land there as separate blocks.
 
 Output styles are different in one way that matters: installing one does not
 turn it on. The file lands; you select it with `/output-style`. Claude Code ships
-`bluf-ste` — answer-first responses in plain technical English.
+`bluf-ste`: answer-first responses in plain technical English.
 
 ## When to reach for it
 
 Run `/adopt-global-rules` when you are setting up a new machine, or when you
-suspect a machine has fallen behind — an instruction you added months ago that
+suspect a machine has fallen behind: an instruction you added months ago that
 never made it everywhere.
 
 It is **user-invoked only**. The skill carries `disable-model-invocation: true`,
@@ -75,7 +75,7 @@ nothing else.
   a managed block that has drifted, and prints the diff.
 
 That last one is deliberate, and it is the whole point: it is how a machine that
-missed a change catches up. The rule of thumb it implies — **edit the pack, not
+missed a change catches up. The rule of thumb it implies: **edit the pack, not
 the machine.** A local tweak inside a managed block is lost on the next run.
 
 ## Common questions
@@ -94,7 +94,7 @@ lands better in the surface designed for it than in the catch-all memory file.
 It is also switchable: an output style you can turn off is a preference, while a
 line in `CLAUDE.md` is an always-on instruction competing with everything else
 in there. Codex has no equivalent, so its `AGENTS.md` keeps the same guidance
-inline — which is the per-host authoring rule doing its job.
+inline, which is the per-host authoring rule doing its job.
 
 **Why are `globals/CLAUDE.md` and `globals/AGENTS.md` different files rather
 than one source?**
@@ -119,7 +119,7 @@ block.
 
 **Why did it skip a rule?**
 
-A rule can declare a precondition — for instance, needing a particular MCP
+A rule can declare a precondition: for instance, needing a particular MCP
 server configured on that machine. Where the precondition is unmet the rule is
 skipped and the reason is stated, rather than installed as an instruction to
 reach for something that is not there.
@@ -133,12 +133,12 @@ always reported. They are only removed if you pass `--prune`.
 
 Everything the pack does not own, handed back for you to read. This is the part
 worth actually reading: a rules directory is a flat namespace, so an instruction
-you wrote under a different filename never collides with the pack's copy — both
+you wrote under a different filename never collides with the pack's copy: both
 install, and you get the same thing twice. Nothing mechanical can detect that.
 
 **Can I run it on a machine with no plugin installed?**
 
-Yes — that is the point of the second entry point:
+Yes. That is the point of the second entry point:
 
 ```
 npx github:giostriquer/workshop --dry-run
@@ -148,13 +148,13 @@ Same implementation, no install required. Drop `--dry-run` to apply.
 
 **How do I change what ships?**
 
-Edit it in the plugin's repository and cut a release — never patch a machine.
+Edit it in the plugin's repository and cut a release, never patch a machine.
 Global documents live under `globals/`, one per host; output styles under
 `output-styles/`; `rules/manifest.json` holds the host list, each host's
 targets, and the rule and output-style lists. Adding a host is a manifest entry
 plus its `globals/<HOST>.md`, not a code change. Because the content is
 versioned with the plugin, every machine converges on the same thing the next
-time the skill runs — which is the entire point.
+time the skill runs, which is the entire point.
 
 **Does it work on Gemini / opencode / Cursor?**
 
@@ -165,7 +165,7 @@ single-file host is a manifest entry and one authored document.
 
 - A fresh machine ends up carrying the same shipped configuration as every
   other, in one run.
-- A second run reports everything `unchanged` — it is idempotent.
+- A second run reports everything `unchanged`; it is idempotent.
 - A shipped output style shows up in `/output-style` on the machine, ready to
   select.
 - A change released in the pack lands on the next run of every machine, without
@@ -184,5 +184,5 @@ to it and it hands off to nothing; it is machine setup, run once per machine and
 then whenever the pack is released. Its closest relative in spirit is
 [route-work](route-work.md): route-work describes the routing doctrine and
 deliberately carries no concrete fleet policy, while this skill is where the
-workshop's concrete policy — its model floor included — actually ships and
+workshop's concrete policy (its model floor included) actually ships and
 reaches a machine.

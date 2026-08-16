@@ -4,11 +4,11 @@
 
 ## Status
 
-Implemented — ships in `toolkit 0.5.0` and `workbench 0.22.1`.
+Implemented: ships in `toolkit 0.5.0` and `workbench 0.22.1`.
 
 ## Context
 
-Operator call: drop the `agent-` prefix everywhere — repository, marketplace,
+Operator call: drop the `agent-` prefix everywhere: repository, marketplace,
 namespaces, marker tokens.
 
 The name was four independent identifiers that happened to share a string, and
@@ -16,7 +16,7 @@ they carry very different costs:
 
 | Identifier | Cost of changing |
 | --- | --- |
-| GitHub repository name | None — GitHub redirects the old path permanently |
+| GitHub repository name | None: GitHub redirects the old path permanently |
 | Marketplace name (`workbench@…`) | A manual settings fix on every machine |
 | Marker namespace (`<!-- …:rule -->`) | Silent duplicate blocks on adopted machines |
 | Local directory path | Orphans the machine-local auto-memory directory |
@@ -30,15 +30,15 @@ installer's marker namespace.
 
 Three things kept the old string, on purpose:
 
-- **`docs/decisions/`** — a historical record. The project *was* named
+- **`docs/decisions/`**: a historical record. The project *was* named
   `agent-workshop` when those notes were written; rewriting them would make the
   record describe a past that did not happen. Their GitHub URLs resolve through
   the redirect.
-- **`attic/`** — parked history, shipped by no plugin and ignored by the
+- **`attic/`**: parked history, shipped by no plugin and ignored by the
   validator. The first pass rewrote it and was reverted: several entries read
   "the onboarding `agent-workshop` plugin was deleted", which names a **deleted
   plugin**, not the repository. Renaming that is simply false.
-- **`scripts/validate-native-plugin.ps1`** — its `plugins/agent-workshop` guard
+- **`scripts/validate-native-plugin.ps1`**: its `plugins/agent-workshop` guard
   exists to stop that deleted plugin from reappearing. The literal is the thing
   being guarded against.
 
@@ -49,8 +49,8 @@ The distinction throughout: `agent-workshop` as *the project* was renamed;
 
 `adopt.mjs` identifies the content it owns by an HTML-comment marker. Renaming
 that token without carrying its predecessor would make every block already on a
-machine invisible — not reported as an orphan either, since orphan detection
-keys on the same pattern — and the installer would append a second copy of
+machine invisible. It would not be reported as an orphan either, since orphan detection
+keys on the same pattern, and the installer would append a second copy of
 everything beside it.
 
 So `LEGACY_NS` records retired namespaces. Matching, orphan detection, pruning,

@@ -33,12 +33,12 @@ Do not edit files outside the project repo. If a host or pre-check finds a user/
 
 ## Invocation forms
 
-- `/agent-audit` — full project agent / skill governance sweep
-- `/agent-audit target PATH` — review one agent, skill, wrapper, or workflow doc
-- `/agent-audit consult SUMMARY_OR_PATH` — review a proposed agent or skill change before implementation
-- `/agent-audit wrappers` — check canonical-agent to wrapper parity
-- `/agent-audit skills` — check Claude/Codex/Gemini repo-local skill parity and stale workflow instructions
-- `/agent-audit record` — run the full audit and write an accepted audit-log entry
+- `/agent-audit`: full project agent / skill governance sweep
+- `/agent-audit target PATH`: review one agent, skill, wrapper, or workflow doc
+- `/agent-audit consult SUMMARY_OR_PATH`: review a proposed agent or skill change before implementation
+- `/agent-audit wrappers`: check canonical-agent to wrapper parity
+- `/agent-audit skills`: check Claude/Codex/Gemini repo-local skill parity and stale workflow instructions
+- `/agent-audit record`: run the full audit and write an accepted audit-log entry
 
 Plain-language triggers include:
 
@@ -51,12 +51,12 @@ Plain-language triggers include:
 
 ## Modes
 
-- `full` — audit the whole agent and skill surface
-- `target` — audit one agent, skill, wrapper, or workflow doc
-- `consult` — review a proposed change before implementation
-- `wrappers` — canonical-to-wrapper parity check
-- `skills` — Claude/Codex/Gemini skill parity check
-- `record` — full audit plus a written audit-log entry
+- `full`: audit the whole agent and skill surface
+- `target`: audit one agent, skill, wrapper, or workflow doc
+- `consult`: review a proposed change before implementation
+- `wrappers`: canonical-to-wrapper parity check
+- `skills`: Claude/Codex/Gemini skill parity check
+- `record`: full audit plus a written audit-log entry
 
 If no mode is provided, infer the narrowest useful mode and state it.
 
@@ -79,7 +79,7 @@ Adapt the regex line to scan for stale-reference patterns specific to your proje
 
 For wrapper mode, compare agent basenames across host folders and note missing wrappers before dispatch.
 
-For skills mode, run a deterministic mechanical drift report (typically `scripts/skill-parity.ps1`) that classifies each skill as `IDENTICAL`, `ALLOWED_DRIFT` (against the project's allow-list of intentional divergences), or `UNEXPECTED_DRIFT`. Pass the report into `vigil`'s brief — `vigil` judges whether each `ALLOWED_DRIFT` reason still holds and whether `UNEXPECTED_DRIFT` entries are stale mirrors or newly intentional divergences.
+For skills mode, run a deterministic mechanical drift report (typically `scripts/skill-parity.ps1`) that classifies each skill as `IDENTICAL`, `ALLOWED_DRIFT` (against the project's allow-list of intentional divergences), or `UNEXPECTED_DRIFT`. Pass the report into `vigil`'s brief: `vigil` judges whether each `ALLOWED_DRIFT` reason still holds and whether `UNEXPECTED_DRIFT` entries are stale mirrors or newly intentional divergences.
 
 ## Dispatch flow
 
@@ -99,7 +99,7 @@ For skills mode, run a deterministic mechanical drift report (typically `scripts
 Return one report:
 
 ```markdown
-# Agent Audit Report — YYYY-MM-DD
+# Agent Audit Report: YYYY-MM-DD
 
 Mode: full | target | consult | wrappers | skills | record
 Scope reviewed: ...

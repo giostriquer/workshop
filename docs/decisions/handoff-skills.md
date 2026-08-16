@@ -11,14 +11,14 @@ Implemented.
 A recurring manual prompt sits at the end of branch work: *"keep the branch, open
 a PR on our behalf with the right ticket links, validate our rules, check we
 didn't leak anything, and review the task against the code first."* The maintainer
-writes some variant of this by hand every time, so it drifts — different wording,
+writes some variant of this by hand every time, so it drifts: different wording,
 different coverage, sometimes the leak check is dropped, sometimes the ticket link
 is forgotten.
 
 Two things make that prompt awkward to run inline:
 
 1. The reviewing/authoring work wants **fresh, unbiased context**. A session that
-   just wrote the code is the worst judge of whether the code matches the task —
+   just wrote the code is the worst judge of whether the code matches the task;
    it "knows" the intent and reads it into the diff. A genuinely unbiased pass
    has to re-derive the task from the ticket and the diff, not from session chat.
 2. Opening the PR often needs a **separately-authorized** session/agent. The
@@ -45,27 +45,27 @@ both skills.
 the *ticket's ground truth*.** The reviewer must not inherit the author's reading
 of the task (that's the bias being designed out), but it *does* need the task's
 acceptance criteria to judge against. Those two are different inputs, and the brief
-must carry the second — see the ticket-substance subsection under `handoff-review`.
+must carry the second: see the ticket-substance subsection under `handoff-review`.
 
 ## `handoff-review`
 
 A review-brief generator. It produces an unbiased review prompt; it does **not**
-review, and it does **not** prescribe which tools the reviewer should use —
-tool choice belongs to the session/agent that picks up the brief.
+review, and it does **not** prescribe which tools the reviewer should use.
+Tool choice belongs to the session/agent that picks up the brief.
 
 - **Trigger.** Work on a branch is done (or mid-way) and the operator wants a
   fresh, unbiased review before opening a PR.
 - **Inputs it discovers.** The ticket (auto-detect → confirm, see `handoff-pr`
   detection); the branch and its diff against the base branch; and a re-derived
   statement of what the task was *supposed* to do, drawn from the ticket and
-  commit messages — not from session chat.
-- **Output — a tool-agnostic review brief** that names *what* to check, never
+  commit messages rather than from session chat.
+- **Output: a tool-agnostic review brief** that names *what* to check, never
   *how*:
-  1. **Task vs. code** — does the diff actually do what the ticket asked?
-  2. **Rules / conventions conformance** — point the reviewer at the repo's own
+  1. **Task vs. code**: Does the diff actually do what the ticket asked?
+  2. **Rules / conventions conformance**: point the reviewer at the repo's own
      `CLAUDE.md` / `AGENTS.md` / convention docs; do not restate the rules in the
      brief.
-  3. **Information leak** — secrets / keys, internal hostnames / paths, and
+  3. **Information leak**: secrets / keys, internal hostnames / paths, and
      private domain content (tied to the repo's own sanitization discipline).
   4. **General correctness / quality.**
   - Plus an explicit instruction to the reviewer to **form its own judgment from
@@ -80,20 +80,20 @@ tool choice belongs to the session/agent that picks up the brief.
      access to the ticket URL), fetch the ticket body / acceptance criteria and
      embed it verbatim.
   2. Else, ask the operator to paste the acceptance criteria.
-  3. Else, include a task summary but explicitly label it **"implementer's claim —
+  3. Else, include a task summary but explicitly label it **"implementer's claim:
      verify against the actual ticket,"** paired with the "don't trust this summary"
      framing above.
   In spawn mode especially, the "what the task wanted" text must come from the
-  ticket, **not** the implementing session's paraphrase — a session-derived summary
+  ticket, **not** the implementing session's paraphrase: a session-derived summary
   is exactly the bias being designed out, so it only ever ships under the
   case-3 "implementer's claim" label.
 - **Modes.**
   - **default (spawn).** Generate the brief and dispatch a fresh, unbiased
     subagent (via the host's Agent tool / general-purpose agent) to run it;
-    return the findings. The subagent gets only the brief — no session history.
+    return the findings. The subagent gets only the brief: no session history.
   - **handoff (`handoff-review handoff` / `session`).** Write the brief to a
     repo-local scratch file (default `tmp/handoff-review-<branch-slug>.md`, with the
-    branch name sanitized — `/` → `-`) and print it for copy-paste into a new
+    branch name sanitized: `/` → `-`) and print it for copy-paste into a new
     session. No agent is spawned.
 
 ## `handoff-pr`
@@ -102,16 +102,16 @@ A PR-artifact generator for a separately-authorized session. It **never opens th
 PR**.
 
 - **Trigger.** The work is ready for a PR but the current session isn't authorized
-  to open one — package it for a session/agent that is.
+  to open one: package it for a session/agent that is.
 - **Inputs it discovers.** Branch and base; commits / diff; the ticket
   (auto-detect → confirm); and the review status (passed? link to the review
   findings?).
-- **Output — a structured PR artifact** (never opened here):
+- **Output: a structured PR artifact** (never opened here):
   - A suggested conventional-style title.
   - A body: change summary, **ticket link(s)** (ClickUp / Linear / Jira),
     validation / test status, review status, and any caveats / follow-ups.
   - Branch and base, plus an explicit note: *to open, an authorized session runs
-    `gh pr create` with the above* — the skill itself never runs it.
+    `gh pr create` with the above*: the skill itself never runs it.
 - **Ticket detection.** Parse the branch name, commit messages, and any existing
   PR description for a ClickUp / Linear / Jira id or URL; present what was found;
   ask the operator to confirm or supply the correct one. If nothing is found, ask.
@@ -122,7 +122,7 @@ PR**.
   field the operator fills from the review outcome; `handoff-pr` does not enforce
   that a review ran.
 
-## Packaging — Path A (fold into `reviewers`, keep the name)
+## Packaging: Path A (fold into `reviewers`, keep the name)
 
 The `reviewers` plugin keeps its name and install path (`reviewers@agent-workshop`).
 Its identity broadens from "four read-only review agents, no skills" to **review
@@ -131,7 +131,7 @@ and handoff tools (agents + skills)**: `handoff-review` *is* a review, and
 
 This touches several deliberately-agents-only invariants set by the original
 `reviewers` decision (`docs/decisions/agent-workshop-direct-use-agents-plugin.md`)
-and its comment-noise follow-up — those must be consciously loosened, not silently
+and its comment-noise follow-up; those must be consciously loosened, not silently
 broken:
 
 - **Validator.** `scripts/validate-native-plugin.ps1` `Assert-ReviewersPlugin`
@@ -150,16 +150,16 @@ broken:
 ## Source of truth and parity
 
 - **Canonical** lives at `.claude/skills/handoff-pr/SKILL.md` and
-  `.claude/skills/handoff-review/SKILL.md` — the single source of truth, usable
+  `.claude/skills/handoff-review/SKILL.md`: the single source of truth, usable
   while working in the scaffold itself.
 - **Plugin copies** at `plugins/reviewers/skills/<name>/SKILL.md` are
   byte-identical to canonical, enforced by the validator (same discipline the
-  agents already follow — no divergent variants).
+  agents already follow: no divergent variants).
 - **Host mirrors** per the skill-parity convention: `.codex/skills/<name>/SKILL.md`
   and `.gemini/skills/<name>/SKILL.md`, recorded in the project's skill-parity
   manifest with their expected per-host adaptation (default: byte-identical).
   `.opencode/` does not mirror skills by convention.
-- **Onboard references (required — confirmed by the validator, not optional).**
+- **Onboard references (required: confirmed by the validator, not optional).**
   `Assert-ReferenceSetMatchesSources` enforces, for **both** reference roots
   (`skills/agent-workshop-onboard/references/` and the byte-identical copy under
   `plugins/agent-workshop/skills/agent-workshop-onboard/references/`):
@@ -176,7 +176,7 @@ broken:
 
 The full landing footprint per skill (≈10 files): canonical SKILL.md, `.codex`
 mirror, `.gemini` mirror, plugin copy, two reference-skill mirrors, origin doc, two
-reference-doc mirrors — plus the shared `docs/skills/README.md` and its two mirrors,
+reference-doc mirrors: plus the shared `docs/skills/README.md` and its two mirrors,
 the validator change, the `reviewers` README + `plugin.json` version bump, and the
 matching `marketplace.json` version. This is why it needs a written plan, not an
 ad-hoc edit.
@@ -186,9 +186,9 @@ ad-hoc edit.
 - Neither skill performs the downstream action: `handoff-review` does not review,
   `handoff-pr` does not open the PR.
 - `handoff-review` does **not** name or invoke specific review tools/skills (e.g.
-  `code-review`, `security-review`) — the consuming agent chooses its own tools.
+  `code-review`, `security-review`): the consuming agent chooses its own tools.
 - Do not add an MCP server, app, hook, or runtime service to the plugin.
-- Do not fork the skills into divergent host copies — mirrors stay byte-identical
+- Do not fork the skills into divergent host copies: mirrors stay byte-identical
   to canonical except for recorded per-host adaptations.
 - Do not widen the `reviewers` curated *agent* set in this slice.
 

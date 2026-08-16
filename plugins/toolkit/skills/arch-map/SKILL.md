@@ -1,17 +1,17 @@
 ---
 name: arch-map
-description: Use when you need a visual architecture map of a codebase and no finished source document exists — an existing subsystem, a refactor in flight, or a proposed design — rendered as a self-contained HTML page. NOT for rendering a report that already exists — on disk or as findings reached in the conversation; that is html-report. Formerly structure-view.
+description: Use when you need a visual architecture map of a codebase and no finished source document exists (an existing subsystem, a refactor in flight, or a proposed design) rendered as a self-contained HTML page. NOT for rendering a report that already exists: on disk or as findings reached in the conversation; that is html-report. Formerly structure-view.
 ---
 
 # Arch Map
 
 ## Purpose
 
-Derive an architectural representation — from the repo, a diff, or a plan —
+Derive an architectural representation (from the repo, a diff, or a plan)
 and render a **self-contained HTML architecture map** optimized for
 orientation: a graphical mental model first, then the inventory that backs it.
 
-Sibling boundary — the line is *who authors the content*, not whether a file
+Sibling boundary: the line is *who authors the content*, not whether a file
 exists: `html-report` renders findings that already exist (as a document or
 as work done in the conversation) and may never invent content; `arch-map`
 **authors the representation** by reading code, and must trace every element
@@ -21,9 +21,9 @@ to something real (file, symbol, or diff hunk).
 
 Three input shapes, all derived from code rather than from prose:
 
-1. **Existing subsystem** — how a part of the codebase is structured today.
-2. **Refactor in flight** — branch/diff (or planned): what moves, what stays.
-3. **Proposed design** — plan or conversation; target state before commit.
+1. **Existing subsystem**: how a part of the codebase is structured today.
+2. **Refactor in flight**: branch/diff (or planned): what moves, what stays.
+3. **Proposed design**: plan or conversation; target state before commit.
 
 Not for: rendering a report that already exists, whether on disk or as
 findings reached in this session (use `html-report`); freeform diagrams
@@ -39,16 +39,16 @@ Everything an adopting project needs ships **next to this file**:
 | `references/refactor-specimen.html` | Worked refactor page (Today\|Target graph + stages) |
 
 Resolve these relative to the skill directory the host loaded (plugin cache
-or repo checkout). Do **not** look for workshop-local `tmp/` specimens —
+or repo checkout). Do **not** look for workshop-local `tmp/` specimens;
 they are not part of this package. The CSS tokens, markup scraps, and fit
 rules in this file are the complete contract; following them is enough.
 
-## Step 0 — house style
+## Step 0: house style
 
 1. Glob the **output project's** `tmp/` and `docs/` for a hand-authored
    standalone `.html` architecture page (inline styles; exclude
    `node_modules/`, `dist/`, etc.). **Genre test:** structural graphics
-   dominate (system map, layers, legend, before/after flow) — not a
+   dominate (system map, layers, legend, before/after flow), unlike a
    `html-report` report. If a sibling exists, match its tokens and component
    shapes.
 2. Otherwise use the **deep-dark glass** defaults below, copying structure
@@ -60,13 +60,13 @@ When analyzed repo ≠ output repo, glob both; **output repo sibling wins**.
 
 ## Pipeline
 
-### 1 — Derive
+### 1: Derive
 
 Mine boxes (modules, layers, components) and edges (calls, imports, data
 flow).
 
 - **Subsystem:** entry points → modules → edges. Prefer architecture /
-  dependency-rule tests first (`architecture.test`, boundary lint) — enforced
+  dependency-rule tests first (`architecture.test`, boundary lint): enforced
   rules beat guessed imports. Fan out explore subagents on large surfaces.
 - **Refactor:** classify diff into add / remove / move / rename; state **the
   invariant** (what does *not* change).
@@ -77,7 +77,7 @@ flow).
 symbol, or diff hunk (path in caption/`title`). Proposed = dashed, never
 silently mixed with observed.
 
-### 2 — Choose views
+### 2: Choose views
 
 At most **3 views** (plus the mandatory mental-model diagram). Each view
 opens with the question it answers.
@@ -90,10 +90,10 @@ opens with the question it answers.
 | Before / after | "What does this change?" | Linked compare panes (large refactors) |
 | Delta | "What does this change?" | One canvas, good/bad/dim chips (small refactors) |
 
-Deriving more than you show is fine. Name unchosen views in the intro — do
+Deriving more than you show is fine. Name unchosen views in the intro. Do
 not draw a fourth diagram.
 
-### 3 — Render
+### 3: Render
 
 Single HTML file (CDNs allowed: Inter/JetBrains fonts, Lucide, Mermaid,
 optional Tailwind for layout grids). Default output in the **project**:
@@ -101,7 +101,7 @@ optional Tailwind for layout grids). Default output in the **project**:
 full checklist, move to `docs/`. **English only** for all UI chrome and
 copy.
 
-## Visual language — deep-dark glass (rigid defaults)
+## Visual language: deep-dark glass (rigid defaults)
 
 ### Deep dark + glass
 
@@ -142,8 +142,8 @@ code{
 Fonts: **Inter** (UI) + **JetBrains Mono** (paths/chips) via Google Fonts.
 Lucide CDN for icons. Mermaid when needed (theme below).
 
-**Body text is `--ink` / `--soft`.** Use `--muted` for captions/paths only —
-never mid-grey paragraphs on black.
+**Body text is `--ink` / `--soft`.** Use `--muted` for captions/paths only,
+never for mid-grey paragraphs on black.
 
 ### Color scarcity
 
@@ -159,14 +159,14 @@ never mid-grey paragraphs on black.
 
 1. Sticky glass pill TOC (optional on short pages)
 2. Glass hero: emerald eyebrow + large Inter title + lede + fact tiles
-3. **§ Mental model** — SVG system map in a glass stage (+ optional Mermaid)
+3. **§ Mental model**: SVG system map in a glass stage (+ optional Mermaid)
 4. Supporting inventory (stack, layers, rules, flows, …)
 5. Provenance footer
 
 **Refactor pages**
 
 1. Glass hero (eyebrow + title + lede + fact tiles)
-2. **Today | Target** compare panes (the graph) — load-bearing
+2. **Today | Target** compare panes (the graph): load-bearing
 3. Rule card + migration stages (or other supporting views)
 4. Provenance footer
 
@@ -191,7 +191,7 @@ owners. Match `references/subsystem-specimen.html`.
 .arch-svg .wire-label{fill:#cbd5e1;font-family:var(--mono);font-weight:600}
 ```
 
-**SVG text must fit its box — SVG never wraps or clips.** This is the #1
+**SVG text must fit its box: SVG never wraps or clips.** This is the #1
 mechanical defect. Rules:
 
 - **Short labels only.** Box titles are one noun; `.sub` is a short path or
@@ -204,7 +204,7 @@ mechanical defect. Rules:
   symmetric and overflow is obvious.
 - **Last resort for an unavoidably long label:** add
   `textLength="<box-width-minus-pad>" lengthAdjust="spacingAndGlyphs"` to
-  compress-fit, or split into two `<tspan>` lines — do not let it bleed.
+  compress-fit, or split into two `<tspan>` lines. Do not let it bleed.
 - **Wrap the diagram, don't break the page.** The stage gets
   `overflow-x:auto`; give a dense `.arch-svg` a `min-width` so it scrolls
   *inside the stage* at narrow widths instead of forcing a horizontal page
@@ -238,17 +238,17 @@ dense import/dependency graphs only.
 
 ## Process rules
 
-- **Traceability** — no invented boxes/edges; proposed dashed.
-- **Provenance** — every view footed with derived-from + commit; hashes via
+- **Traceability**: no invented boxes/edges; proposed dashed.
+- **Provenance**: every view footed with derived-from + commit; hashes via
   live `git rev-parse` at generation time (analyzed repo when cross-repo).
-- **View economy** — mental model + ≤3 supporting views.
-- **Zoom** — ~30 visible boxes per view; group beyond that.
-- **Invariant** — required on refactor pages.
-- **Language** — English only for all generated chrome and copy.
-- **Fit** — SVG text stays inside its box; long paths/tokens (`code`,
+- **View economy**: mental model + ≤3 supporting views.
+- **Zoom**: ~30 visible boxes per view; group beyond that.
+- **Invariant**: required on refactor pages.
+- **Language**: English only for all generated chrome and copy.
+- **Fit**: SVG text stays inside its box; long paths/tokens (`code`,
   `.mod .path`, `.chip`) wrap via `overflow-wrap:anywhere`; the page never
   scrolls horizontally at common widths. Enforce by construction (short
-  labels, box sized to text, wrap CSS above) — spot-check three boxes and
+  labels, box sized to text, wrap CSS above): spot-check three boxes and
   a phone-width resize before finishing.
 - **One pass; direction change = clean rewrite; one knob at a time.**
 
@@ -267,7 +267,7 @@ dense import/dependency graphs only.
 10. Sticky TOC (if present) works; stacks at phone width; print stylesheet
     present when the page is long.
 11. No non-English UI chrome.
-12. **Fit holds** — every SVG `.title`/`.sub` sits inside its box (≥ 5u slack);
+12. **Fit holds**: every SVG `.title`/`.sub` sits inside its box (≥ 5u slack);
     `code` / `.mod .path` / `.chip` use `overflow-wrap:anywhere`; no horizontal
     page scroll when the viewport is narrowed to phone width. Spot-check at
     least three boxes against their rects.

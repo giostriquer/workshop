@@ -4,7 +4,7 @@ Ready-to-use AI agents and skills for Claude Code, Codex, Cursor, and Google Ant
 
 ## Install
 
-This repo doubles as a **plugin marketplace** — a catalog Claude Code can install plugins from directly.
+This repo doubles as a **plugin marketplace**: a catalog Claude Code can install plugins from directly.
 
 In a Claude Code session:
 
@@ -24,12 +24,12 @@ codex plugin add toolkit@workshop   # optional
 
 For Cursor, the plugin ships in the Cursor plugin format (`.cursor-plugin/`). Import this repo as a **Team Marketplace** (Teams/Enterprise, admin): **Dashboard → Settings → Plugins → Team Marketplaces → Add Marketplace → Import from Repo**, point it at `giostriquer/workshop`, then install `workbench` (and optionally `toolkit`) from **Customize** in the sidebar.
 
-For Google Antigravity, each plugin folder carries a native `plugin.json` manifest, which is what makes it installable. Antigravity discovers plugins by scanning two locations, so copy or link `plugins/workbench` (and optionally `plugins/toolkit`) into either: your workspace's `.agents/plugins/` directory, for that workspace only, or `~/.gemini/config/plugins/`, for every workspace. There is no registry file — a plugin folder is found because it sits in a scanned directory.
+For Google Antigravity, each plugin folder carries a native `plugin.json` manifest, which is what makes it installable. Antigravity discovers plugins by scanning two locations, so copy or link `plugins/workbench` (and optionally `plugins/toolkit`) into either: your workspace's `.agents/plugins/` directory, for that workspace only, or `~/.gemini/config/plugins/`, for every workspace. There is no registry file: a plugin folder is found because it sits in a scanned directory.
 
 ### Global Rules Adoption - Optional
 
-To install the workshop's shipped global agent configuration — its CLAUDE.md, AGENTS.md, rules, and Claude output styles — on a machine — additively, without overwriting what
-is already there — run `/adopt-global-rules` after installing `toolkit`. On a machine
+To install the workshop's shipped global agent configuration (its CLAUDE.md, AGENTS.md, rules, and Claude output styles) on a machine, additively, without overwriting what
+is already there: run `/adopt-global-rules` after installing `toolkit`. On a machine
 with no plugin installed, the same installer runs standalone:
 
 ```powershell
@@ -38,12 +38,12 @@ npx github:giostriquer/workshop --dry-run   # plan; drop --dry-run to apply
 
 ## The plugins
 
-### `workbench` — use right away
+### `workbench`: use right away
 
 Five read-only review agents, nine everyday skills, and the seven-skill **workbench**
-process layer — ready immediately after install, nothing to configure.
+process layer: ready immediately after install, nothing to configure.
 
-**Agents** — they inspect and report, never edit your files:
+**Agents**: they inspect and report, never edit your files:
 
 | Agent | Reviews |
 | --- | --- |
@@ -67,7 +67,7 @@ process layer — ready immediately after install, nothing to configure.
 | `get-pr-comments` | triages PR feedback into an action list |
 | `route-work` | the model × effort reference table + hard routing invariants |
 
-**Workbench** — the process layer, implementing [the workbench flow](docs/workbench-flow.md):
+**Workbench**: the process layer, implementing [the workbench flow](docs/workbench-flow.md):
 
 | Skill | Does |
 | --- | --- |
@@ -82,16 +82,16 @@ process layer — ready immediately after install, nothing to configure.
 
 Five workbench skills derive from [obra/superpowers](https://github.com/obra/superpowers)
 by Jesse Vincent (MIT), adapted per
-[`docs/decisions/workbench-system.md`](docs/decisions/workbench-system.md) — no hooks,
+[`docs/decisions/workbench-system.md`](docs/decisions/workbench-system.md): no hooks,
 no dispatcher, descriptions as honest triggers. Upstream drift tracking
 (`workbench-drift`, `.claude/skills/`) is repo-local maintenance tooling, not
 shipped in the plugin.
 
 Details in [`plugins/workbench/README.md`](plugins/workbench/README.md).
 
-### `toolkit` — optional, install when you want it
+### `toolkit`: optional, install when you want it
 
-Utilities kept out of `workbench` so integrators control token load — every
+Utilities kept out of `workbench` so integrators control token load: every
 installed skill's listing rides in each session's context:
 
 | Skill | Does |
@@ -107,6 +107,6 @@ Details in [`plugins/toolkit/README.md`](plugins/toolkit/README.md).
 
 ## Going deeper
 
-- [`docs/workbench-flow.md`](docs/workbench-flow.md) — the workbench system's canonical mental model (with an [arch-map rendering](docs/workbench-flow.html)).
-- [`docs/skills/`](docs/skills/) — the usage handbook: one page per shipped skill covering what it does, when to reach for it, and the questions people actually hit. Start at its [index](docs/skills/README.md).
-- [`docs/decisions/`](docs/decisions/) — the rationale layer: why each agent and skill exists and the calls made along the way. The specs themselves are self-contained.
+- [`docs/workbench-flow.md`](docs/workbench-flow.md): the workbench system's canonical mental model (with an [arch-map rendering](docs/workbench-flow.html)).
+- [`docs/skills/`](docs/skills/) is the usage handbook, with one page per shipped skill covering what it does, when to reach for it, and the questions people actually hit. Start at its [index](docs/skills/README.md).
+- [`docs/decisions/`](docs/decisions/) is the rationale layer, explaining why each agent and skill exists and the calls made along the way. The specs themselves are self-contained.

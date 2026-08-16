@@ -1,6 +1,6 @@
 ---
 name: me-human
-description: Act as a human user dogfooding this system for real work — tries before asking, escalates on bugs, stops at the scope edge — and reports what got in the way. User-invoked only.
+description: Act as a human user dogfooding this system for real work (tries before asking, escalates on bugs, stops at the scope edge) and reports what got in the way. User-invoked only.
 disable-model-invocation: true
 ---
 

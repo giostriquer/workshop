@@ -1,4 +1,4 @@
-# Decision: `self-audit` — a retrospective on the process, not the work
+# Decision: `self-audit`: a retrospective on the process, not the work
 
 **Date:** 2026-08-13
 
@@ -26,7 +26,7 @@ thorough.
 A user-invoked skill that turns the retrospective into a protocol whose
 structure resists self-flattery rather than trusting the session not to.
 
-- **Trace before verdict.** Step 1 records facts only — which skills fired and
+- **Trace before verdict.** Step 1 records facts only: which skills fired and
   what made them fire, which of the three gates arrived versus were decided for
   the user, every correction and dead end. Judgment is step 2. Facts are cheap
   to write down before there is a verdict riding on them.
@@ -40,7 +40,7 @@ structure resists self-flattery rather than trusting the session not to.
 - **A bar, and a no-findings out.** A proposal survives only if the change
   would have altered this session or the next of its shape. A clean result is
   reported as clean; padding is barred explicitly.
-- **Named target, named edit shape** — one piece (or *the absence of one*) and
+- **Named target, named edit shape**: one piece (or *the absence of one*) and
   one of: wording, gate, boundary, new, delete. "Clarify the handoff" is not a
   proposal; the replacement sentence is.
 - **Observation window stated first**, so a compacted session cannot be
@@ -54,7 +54,7 @@ structure resists self-flattery rather than trusting the session not to.
 - **Not an audit of the work.** Bugs, code quality, and test gaps stay with
   `audit` and the review pieces.
 - **Not a flow moment.** It is `disable-model-invocation: true` and carries no
-  row in `using-workbench`'s ownership table — it sits outside the flow looking
+  row in `using-workbench`'s ownership table; it sits outside the flow looking
   back at it, the same way `adopt-global-rules` sits outside. A session able to
   invoke its own retrospective would run one unprompted, at the worst moment,
   and grade itself.

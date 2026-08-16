@@ -5,25 +5,25 @@
 ## What changed
 
 1. **The attic now has exactly two tiers, one rule each** (operator call):
-   - `attic/skills/` and `attic/agents/` — pieces that are **in-progress or
+   - `attic/skills/` and `attic/agents/`: pieces that are **in-progress or
      need fixing**, intended to ship once right. Currently: `orchestrate`,
      `codex-implement`.
-   - `attic/deprecated/` — pieces with **no current function, kept as
+   - `attic/deprecated/`: pieces with **no current function, kept as
      history**. One folder per retired piece
      (`deprecated/skills/<name>/`, `deprecated/agents/<name>/`) holding its
      spec and its parked origin doc (`origin.md`) side by side.
 
-   The previous layout split each retired piece across two locations — spec
+   The previous layout split each retired piece across two locations: spec
    under `attic/skills/` / `attic/agents/`, origin doc flat under
-   `attic/deprecated/` — so every retired name appeared twice with nothing
+   `attic/deprecated/`, so every retired name appeared twice with nothing
    marking which copy was what. Moved: `agent-audit`, `doc-audit`,
    `handoff-review`, `research`, `visual-advisor` (skills, spec + origin
-   doc); `handoff-pr`, `structure-view` (origin doc only — their specs
+   doc); `handoff-pr`, `structure-view` (origin doc only: their specs
    evolved into the live `file-pr` / `arch-map`); `doc-indexer`, `research`,
    `vigil`, `visual-implementer` (agents, spec + origin doc).
 
 2. **`docs/agents/` deleted** (operator call). The live agents' origin docs
-   are gone — the doc layer followed `docs/skills/` (see
+   are gone: the doc layer followed `docs/skills/` (see
    `remove-docs-skills-layer.md`): the spec is the whole artifact, rationale
    lives in `docs/decisions/`. The four deprecated agents' origin docs were
    parked next to their specs in `attic/deprecated/agents/<name>/origin.md`
@@ -41,4 +41,4 @@
    `CLAUDE.md` removed with the rest.
 
 Older decision notes and change-log entries referencing the removed paths
-are ledger — left as written; this note supersedes their path information.
+are ledger: left as written; this note supersedes their path information.

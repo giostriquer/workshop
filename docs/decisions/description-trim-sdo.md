@@ -5,13 +5,13 @@
 ## Status
 
 Implemented (2026-08-11). Routing probe 8/8; `validate-native-plugin.ps1` passes.
-Ships in the unreleased `toolkit 0.20.0` batch — no separate bump.
+Ships in the unreleased `toolkit 0.20.0` batch: no separate bump.
 
 ## Context
 
 A boot-context analysis of the toolkit plugin measured what a fresh session pays
 for the skill/agent listing: ≈ 3,166 tokens, of which six legacy skills with
-paragraph-length descriptions carried ≈ 1,447 — `handoff-goal` (1,364 chars!),
+paragraph-length descriptions carried ≈ 1,447: `handoff-goal` (1,364 chars!),
 `route-work`, `qa-sweep`, `empirical-proof`, `arch-map`, `claim-check`. The
 workbench port had just adopted `writing-skills`, whose SDO section names this
 exact pattern as a defect, not just a cost: descriptions that summarize workflow
@@ -24,15 +24,15 @@ should state triggering conditions only, under ~500 chars.
 Rewrite the six descriptions to **triggers + disambiguation only**: every "use
 when" condition and NOT-for sibling pointer kept (qa-sweep ↔ empirical-proof ↔
 claim-check; arch-map ↔ doc-to-html), every workflow summary cut (fan-out
-mechanics, output shapes, file paths, delivery modes, visual-style detail — the
+mechanics, output shapes, file paths, delivery modes, visual-style detail: the
 bodies carry all of it). Key one-line boundaries kept where they gate invocation
 ("never dispatches", "never pursues the goal itself", "never implements the
 fix"). Result: 299–429 chars each.
 
-**Verification:** a fresh-context routing probe — the six new descriptions (+
+**Verification:** a fresh-context routing probe: the six new descriptions (+
 `doc-to-html` for the disambiguation pair) against eight scenarios including
 both traps (a markdown report must route to doc-to-html, not arch-map; an
-exploratory "look into X" must route to *none*, not handoff-goal) — scored 8/8.
+exploratory "look into X" must route to *none*, not handoff-goal): scored 8/8.
 
 ## Effect
 
@@ -43,6 +43,6 @@ grows.
 
 ## Non-goals
 
-- No body changes — this pass touched frontmatter descriptions only.
-- No method-set changes — those descriptions were written trigger-only from
+- No body changes: this pass touched frontmatter descriptions only.
+- No method-set changes: those descriptions were written trigger-only from
   birth.

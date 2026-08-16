@@ -1,10 +1,10 @@
 # doc-audit
 
-> **Parked 2026-08-11** — the onboarding `agent-workshop` plugin was deleted; the spec sits alongside this doc in [`SKILL.md`](SKILL.md). See `docs/decisions/drop-onboarding-plugin.md`.
+> **Parked 2026-08-11**: the onboarding `agent-workshop` plugin was deleted; the spec sits alongside this doc in [`SKILL.md`](SKILL.md). See `docs/decisions/drop-onboarding-plugin.md`.
 
 ## Origin
 
-The originating project's `wiki-maintainer` agent is **diff-driven by default** — it patches docs after code changes. By construction, it can't catch what *isn't* there: missing pages, undefined terms, orphaned files, missing decision records. After a few months, drift accumulated in those gaps that no diff-driven pass would have surfaced.
+The originating project's `wiki-maintainer` agent is **diff-driven by default**; it patches docs after code changes. By construction, it can't catch what *isn't* there: missing pages, undefined terms, orphaned files, missing decision records. After a few months, drift accumulated in those gaps that no diff-driven pass would have surfaced.
 
 `doc-audit` was introduced as the **proactive** complement to diff-driven maintenance. It surfaces gaps; it doesn't fix them. Confirmed fixes route back to `wiki-maintainer`.
 
@@ -38,11 +38,11 @@ Invocation forms: `/doc-audit` (full), `quick` (Tier 1), `deep` (Tiers 2–3), `
 Example `CLAUDE.md` block on proactive doc-surface audits:
 
 ```markdown
-For proactive audits that go beyond routing and vault-health — section-README coverage, terminology-candidate scans, change-log coverage, architecture-doc rhetorical-shape checks, ADR gap detection — invoke the `doc-audit` skill.
+For proactive audits that go beyond routing and vault-health (section-README coverage, terminology-candidate scans, change-log coverage, architecture-doc rhetorical-shape checks, ADR gap detection) invoke the `doc-audit` skill.
 
 The skill wraps `doc-indexer` Audit mode for the mechanical tier and adds threshold-based and judgment-level checks on top. It is report-only; it never edits docs directly.
 
-Use the skill when the user asks for a doc audit, a coverage check, a drift sweep, or "what's missing in our docs." Skip for small targeted changes — that stays diff-driven `wiki-maintainer` territory.
+Use the skill when the user asks for a doc audit, a coverage check, a drift sweep, or "what's missing in our docs." Skip for small targeted changes; that stays diff-driven `wiki-maintainer` territory.
 ```
 
 Example invocation:
@@ -62,4 +62,4 @@ Example invocation:
 - **Tier 1 Check 4 (frontmatter compliance)** depends on the project having a frontmatter-tags table somewhere (the originating project keeps it in `wiki-maintainer.md`). Adapt to your project's tag conventions or drop the check.
 - **Check 13 (link-syntax compliance)** is for projects that ban specific link syntaxes (e.g., Obsidian `[[...]]` for portability reasons). Drop if your project doesn't have such a ban.
 - The **threshold for terminology candidates** (5+ docs) is adjustable. Tune to your project's volume.
-- The skill **delegates Tier 1 to `doc-indexer`**. If you don't ship `doc-indexer`, the skill can run Tier 1 inline — but the delegation is cheaper for context.
+- The skill **delegates Tier 1 to `doc-indexer`**. If you don't ship `doc-indexer`, the skill can run Tier 1 inline, but the delegation is cheaper for context.

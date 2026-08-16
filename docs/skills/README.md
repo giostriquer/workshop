@@ -1,11 +1,11 @@
 # Skills handbook
 
-Usage pages for every skill shipped in a plugin — what each one does, when to
+Usage pages for every skill shipped in a plugin: what each one does, when to
 reach for it, what surprises people, and how to tell it worked.
 
 **What these pages are not.** They are not rationale, history, or design
 records. When you want to know *why* a skill is shaped the way it is, read
-[`docs/decisions/`](../decisions/) — that is where the arguments and the field
+[`docs/decisions/`](../decisions/), which is where the arguments and the field
 failures live. These pages answer the reader's question ("should I use this,
 and how?"), not the maintainer's ("why is it like this?").
 
@@ -15,7 +15,7 @@ wrong.
 
 ## Two plugins
 
-**`workbench`** is the process core — how work enters, gets scoped, gets built,
+**`workbench`** is the process core: how work enters, gets scoped, gets built,
 and lands. Start with [using-workbench](using-workbench.md), which maps the
 whole flow and tells you which piece owns which moment.
 
@@ -27,7 +27,7 @@ you want them, and skip to keep sessions lean.
 | The moment | The skill |
 | --- | --- |
 | Getting oriented; "which skill do I use for X?" | [using-workbench](using-workbench.md) |
-| Something to verify, hunt, or check | [audit](audit.md) — sizes it, then dispatches an engine |
+| Something to verify, hunt, or check | [audit](audit.md): sizes it, then dispatches an engine |
 | One premise, ticket, or hunch to settle | [claim-check](claim-check.md) |
 | A broad surface worth team-scale coverage | [qa-sweep](qa-sweep.md) |
 | Designing a feature or a refactor | [brainstorming](brainstorming.md) |
@@ -57,14 +57,14 @@ you want them, and skip to keep sessions lean.
 ## Two things worth knowing up front
 
 **Almost nothing here is compulsory.** Skills fire on relevance, not on
-obligation. The exceptions are the two default-on completion gates —
+obligation. The exceptions are the two default-on completion gates:
 `verification-before-completion` at every done-claim, and `code-quality-review`
 once an implementation is complete. Each stops only for an explicit decline or
 a repo process that supersedes it.
 
 **The expensive tiers are offered, never assumed.** `empirical-proof` and
 `qa-sweep` cost real time and budget. They run on your explicit ask, now or by
-standing rule — not because a session decided the work deserved them.
+standing rule, not because a session decided the work deserved them.
 
 ## Not documented here
 

@@ -4,24 +4,24 @@
 
 ## Status
 
-Implemented — the `writing-skills` description delta ships in `toolkit 0.3.1`;
+Implemented: the `writing-skills` description delta ships in `toolkit 0.3.1`;
 the manifest, script, and skill changes are repo-only.
 
 ## Context
 
 The operator edited `writing-skills`' frontmatter description to add "auditing
-existing skills" to its trigger list. That skill is `disposition: mirrored` —
-byte-for-byte from upstream `obra/superpowers`, exempt from the adaptation
+existing skills" to its trigger list. That skill has `disposition: mirrored` and is
+copied byte-for-byte from upstream `obra/superpowers`, exempt from the adaptation
 filter, with drift handling defined as *re-mirror, not judge-and-adapt*
 ([decision](writing-skills-mirrored-verbatim.md)).
 
-So the edit was not merely against policy — it was **ephemeral**. The next
+So the edit was not merely against policy; it was **ephemeral**. The next
 re-mirror re-copies the upstream tree wholesale and the word disappears, with
 nothing anywhere to say it had been deliberate.
 
 Three ways out were considered. Reverting loses a trigger the operator wants.
 Flipping the disposition to `adopted` reopens the whole adaptation filter for
-this piece — precisely the fork whose partial port caused the dangling
+this piece, precisely the fork whose partial port caused the dangling
 `examples/CLAUDE_MD_TESTING.md` pointer. The third is to keep the mirror and
 record the exception, which is what was chosen.
 
@@ -34,7 +34,7 @@ the upstream text it departs from, and the reason.
 Recording it in data alone was not sufficient. `drift-check.mjs` prints
 `adaptations` only inside the *Review required* block; its **Re-mirror** section
 printed nothing but paths and a changed-file count. A delta recorded there would
-have been invisible at the exact moment it mattered — during the re-copy that
+have been invisible at the exact moment it mattered: during the re-copy that
 destroys it. The script now carries `localDeltas` into the remirror result and
 prints them under the Re-mirror heading, flagged as re-apply-or-lose.
 

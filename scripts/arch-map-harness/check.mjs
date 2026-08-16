@@ -2,13 +2,13 @@
 // arch-map layout pressure-test harness.
 // Loads each arch-map HTML page in headless chromium and reports mechanical
 // layout defects: SVG text overflowing its box, HTML content overflowing its
-// container, and horizontal page overflow — across several viewport widths.
+// container, and horizontal page overflow: across several viewport widths.
 //
 // Usage:
 //   node check.mjs <file-or-glob> [more...]   (defaults to skill-shipped specimens)
 //   node check.mjs --json report.json <files...>
 //
-// Workshop-only maintainer tooling — not part of the plugin payload.
+// Workshop-only maintainer tooling; this is not part of the plugin payload.
 // Exit code is non-zero when any ERROR-level finding exists.
 
 import { chromium } from 'playwright';
@@ -152,13 +152,13 @@ async function main() {
     report.push({ file, findings: fileFindings });
 
     const name = path.basename(file);
-    if (!fileFindings.length) { console.log(`\n\u2713 ${name} — clean`); continue; }
-    console.log(`\n\u2717 ${name} — ${fileFindings.length} finding(s), ${errs} error(s)`);
+    if (!fileFindings.length) { console.log(`\n\u2713 ${name}: clean`); continue; }
+    console.log(`\n\u2717 ${name}: ${fileFindings.length} finding(s), ${errs} error(s)`);
     for (const f of fileFindings) {
       const tag = f.level === 'ERROR' ? 'ERR ' : 'warn';
       const w = f.width === 'any' ? '   ' : String(f.width).padStart(4);
       const where = f.label ? ` "${f.label}"` : (f.selector ? ` ${f.selector}` : '');
-      console.log(`  [${tag}] @${w} ${f.type}${where} — ${f.detail}`);
+      console.log(`  [${tag}] @${w} ${f.type}${where}: ${f.detail}`);
     }
   }
 

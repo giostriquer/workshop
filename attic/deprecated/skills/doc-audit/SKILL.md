@@ -1,13 +1,13 @@
 ---
 name: doc-audit
-description: Run a proactive audit of the project documentation surface. Surfaces gaps that diff-driven wiki-maintainer passes miss by construction — missing pages, broken links, undefined terms, missing decision records, orphaned files. Report-only; never edits docs directly. Use when the user asks for a doc audit, a coverage check, a drift sweep, or "what's missing in our docs."
+description: Run a proactive audit of the project documentation surface. Surfaces gaps that diff-driven wiki-maintainer passes miss by construction: missing pages, broken links, undefined terms, missing decision records, orphaned files. Report-only; never edits docs directly. Use when the user asks for a doc audit, a coverage check, a drift sweep, or "what's missing in our docs."
 ---
 
 # Doc Audit
 
 ## Purpose
 
-Surface proactive documentation gaps that diff-driven `wiki-maintainer` passes miss by construction. Everything this skill finds is about what *isn't* there — missing pages, missing terms, missing decision records, broken links — not about what just changed.
+Surface proactive documentation gaps that diff-driven `wiki-maintainer` passes miss by construction. Everything this skill finds is about what *isn't* there (missing pages, missing terms, missing decision records, broken links), not about what just changed.
 
 Produces one consolidated findings report in propose-before-apply shape. Never edits docs directly. Hands off confirmed fixes to `wiki-maintainer` (for writes) or to the main session (for judgment-level drafts such as ADRs).
 
@@ -18,25 +18,25 @@ Produces one consolidated findings report in propose-before-apply shape. Never e
 - Before a scope-doc refresh, to catch gaps upstream
 - When the user senses doc drift and wants a sweep
 
-Do NOT invoke for small targeted changes — that remains diff-driven `wiki-maintainer` territory.
+Do NOT invoke for small targeted changes; that remains diff-driven `wiki-maintainer` territory.
 
 ## Scope
 
 - Operates only within the current repository.
 - Reads docs, change-log, source files, and git log.
 - Does not commit, push, or edit any doc.
-- Does not dispatch agents automatically — the report lists findings and recommended next actions; the user decides which to act on.
+- Does not dispatch agents automatically: the report lists findings and recommended next actions; the user decides which to act on.
 
 ## Invocation forms
 
-- `/doc-audit` — runs all checks across all tiers
-- `/doc-audit quick` — runs only Tier 1 (mechanical checks)
-- `/doc-audit deep` — runs Tiers 2–3 (judgment-level checks)
-- `/doc-audit code-arch` — runs Tier 4 (code-architecture-specific checks)
+- `/doc-audit`: runs all checks across all tiers
+- `/doc-audit quick`: runs only Tier 1 (mechanical checks)
+- `/doc-audit deep`: runs Tiers 2–3 (judgment-level checks)
+- `/doc-audit code-arch`: runs Tier 4 (code-architecture-specific checks)
 
 ## Checks
 
-### Tier 1 — Mechanical (fully automatable)
+### Tier 1: Mechanical (fully automatable)
 
 **Check 1: Section-README coverage.** For each section README that advertises pages or topics, verify every advertised topic resolves to a linked page that exists on disk. Finding shape: README path → advertised topic → expected page path → status.
 
@@ -50,25 +50,25 @@ Do NOT invoke for small targeted changes — that remains diff-driven `wiki-main
 
 Tier 1 can be delegated to `doc-indexer` in Audit mode; the skill consolidates its output into the final report.
 
-### Tier 2 — Threshold-based candidates (user triages)
+### Tier 2: Threshold-based candidates (user triages)
 
 **Check 6: Terminology candidates by prominence.** Grep for capitalized or `PascalCase` / namespace-like noun phrases that appear in 5 or more non-terminology docs (threshold adjustable). For each candidate, check whether it is defined in the project's terminology source-of-truth doc. Report candidates sorted by occurrence count, with top 3 docs each appears in.
 
 **Check 7: Change-log coverage.** Scan `git log` for commits since the most recent `docs/change-log.md` date section. Flag commits whose message prefix suggests meaningful change (`feat:`, `add`, `introduce`, `remove`, scope-affecting keywords) but whose effect does not appear to be covered by an existing change-log entry.
 
-### Tier 3 — Judgment-level (user reviews)
+### Tier 3: Judgment-level (user reviews)
 
 **Check 8: Architecture-doc rhetorical shape.** Read each doc in `docs/architecture/` (or your project's equivalent) and classify:
 
-- `structural-description` — describes *how* a system works; no rationale framing
-- `decision-with-rationale` — describes *why* a decision was made; frames alternatives
-- `both` — covers structure and rationale in the same page
+- `structural-description`: describes *how* a system works; no rationale framing
+- `decision-with-rationale`: describes *why* a decision was made; frames alternatives
+- `both`: covers structure and rationale in the same page
 
 For any doc classed `structural-description` without a corresponding ADR in `docs/decisions/`, flag as an ADR candidate. Include specific quoted prose from the doc that reads like a stated decision without recorded rationale.
 
 **Check 9: ADR gap from recent change-log.** Read the last 30 days of `docs/change-log.md` entries. Flag entries whose prose suggests a durable decision (`decided to`, `chose X over Y`, `will now`, `the rule is`, `from now on`) and check whether a corresponding ADR exists.
 
-### Tier 4 — Code architecture (project-domain-focused)
+### Tier 4: Code architecture (project-domain-focused)
 
 Tier 4 targets the project's code-architecture documentation surface (typically `docs/architecture/code/`) and its relationship to the actual source tree. Adopting projects can omit this tier if their docs don't carry per-system architecture notes.
 
@@ -87,13 +87,13 @@ Tier 4 targets the project's code-architecture documentation surface (typically 
 One consolidated findings report:
 
 ```markdown
-# Doc Audit Report — <date>
+# Doc Audit Report: <date>
 
 Mode: full | quick | deep | code-arch
 Docs scanned: <count>
 Total findings: <count>
 
-## Tier 1 — Mechanical findings
+## Tier 1: Mechanical findings
 
 ### Check 1: Section-README coverage
 - <finding>
@@ -103,7 +103,7 @@ Total findings: <count>
 
 (continue for checks 3–5)
 
-## Tier 2 — Candidates for user triage
+## Tier 2: Candidates for user triage
 
 ### Check 6: Terminology candidates
 - <finding>
@@ -111,7 +111,7 @@ Total findings: <count>
 ### Check 7: Change-log coverage
 - <finding>
 
-## Tier 3 — Judgment-level flags
+## Tier 3: Judgment-level flags
 
 ### Check 8: Architecture-doc rhetorical shape
 - <finding>
@@ -119,7 +119,7 @@ Total findings: <count>
 ### Check 9: ADR gap from change-log
 - <finding>
 
-## Tier 4 — Code architecture (if run)
+## Tier 4: Code architecture (if run)
 
 ### Check 10–14: <findings>
 
@@ -141,7 +141,7 @@ If a tier has no findings, report the tier header with "No findings." rather tha
 - Does not edit any doc.
 - Does not commit, push, or modify git state.
 - Does not dispatch `wiki-maintainer` or any other agent automatically.
-- Does not judge whether a term is durable, whether a decision is ADR-worthy, or whether a doc needs updating — proposes candidates only.
+- Does not judge whether a term is durable, whether a decision is ADR-worthy, or whether a doc needs updating: proposes candidates only.
 - Does not run on a cadence. Invocation-only.
 - Does not replace `doc-indexer` Audit mode. Delegates Tier 1 to it and adds Tiers 2–4 on top.
 
@@ -160,7 +160,7 @@ If a tier has no findings, report the tier header with "No findings." rather tha
 - `doc-indexer` owns mechanical vault-health auditing. Tier 1 delegates to it.
 - `wiki-maintainer` owns doc-writing. This skill never writes; it hands off confirmed fixes.
 - `change-log` owns change-log entry formatting.
-- `spec-reviewer` and `pattern-reviewer` operate on code, not docs — unrelated.
+- `spec-reviewer` and `pattern-reviewer` operate on code, not docs: unrelated.
 
 ## Scope creep guard
 

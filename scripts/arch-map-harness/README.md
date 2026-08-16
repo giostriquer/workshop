@@ -1,7 +1,7 @@
 # arch-map layout harness (workshop only)
 
 Maintainer tooling for developing the `arch-map` skill in this repo. **Not
-part of the toolkit plugin payload** — adopters do not need it; the skill's
+part of the toolkit plugin payload**: adopters do not need it; the skill's
 fit rules and shipped specimens are the contract.
 
 Pressure-tests generated HTML for:

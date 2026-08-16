@@ -2,11 +2,11 @@
 
 > **Renamed 2026-08-05 → [`arch-map`](../../../../plugins/toolkit/skills/arch-map/SKILL.md).** Kept here so the
 > history of the design-first birth and Round 1 field notes stay findable
-> under the old name. Do not resume work under this name — use the live
+> under the old name. Do not resume work under this name: use the live
 > `arch-map` skill (`plugins/toolkit/skills/arch-map/`) and
 > `docs/decisions/arch-map-skill-draft.md`.
 >
-> Withdrawn from the toolkit plugin on 2026-07-31 — the day it landed —
+> Withdrawn from the toolkit plugin on 2026-07-31 (the day it landed)
 > pending more design thought. Historical parked draft:
 > [`docs/decisions/structure-view-skill-draft.md`](../../../../docs/decisions/structure-view-skill-draft.md).
 > Spec of record (historical):
@@ -16,17 +16,17 @@
 
 ## Origin
 
-The recurring want: *"I'm mid-refactor and I want to see what's moving —
+The recurring want: *"I'm mid-refactor and I want to see what's moving,
 but there's no document to render."* `doc-to-html` couldn't take the job,
 by design: its fourth-round comparative evaluation had already drawn the
-boundary — "information-architecture / content-discipline guidance belongs
-to an author, not a renderer" — and its rigid contract ("no markdown content
+boundary: "information-architecture / content-discipline guidance belongs
+to an author, not a renderer", and its rigid contract ("no markdown content
 dropped," "never invent a number") is precisely what makes it trustworthy
 for audits. Broadening it would have dissolved that. The authoring job was
 simply unowned.
 
-`structure-view` takes it: derive the representation — from the repo, a
-diff, or a plan — then render it with a visual language built for
+`structure-view` takes it: derive the representation: from the repo, a
+diff, or a plan: then render it with a visual language built for
 architecture rather than prose.
 
 **A design-first birth, recorded honestly.** Unlike its siblings, this skill
@@ -38,39 +38,39 @@ conventions are provisional until real rounds harden them (see Maturity).
 
 ## Problem
 
-Four failure families — the first three anticipated from watching sessions
+Four failure families: the first three anticipated from watching sessions
 improvise structural explanations, the fourth inherited from `doc-to-html`'s
 lived history:
 
 1. **Prose is the wrong medium for structure.** Asked "how is this
-   organized?", a session answers in paragraphs — accurate, linear, and
+   organized?", a session answers in paragraphs: accurate, linear, and
    useless for orientation. Structure is containment and edges; the reader
    needs to *see* where things live and what a change moves.
 2. **Invented architecture.** A diagram drawn from plausibility rather than
    the code: boxes with no files behind them, edges nobody verified. A
    confident-looking page is worse than no page when its shapes are
-   fabricated — the architectural equivalent of a report inventing a
+   fabricated: the architectural equivalent of a report inventing a
    number.
 3. **Unbounded diagrams.** Everything derivable gets rendered: a 200-box
-   canvas, every import an arrow. Complete, and unreadable — the page
+   canvas, every import an arrow. Complete, and unreadable: the page
    reproduces the complexity it was meant to tame.
 4. **Render failures already paid for once.** Edge overlays that drift when
    content reflows, raw OS scrollbars, desktop-only layouts, pages that die
-   when printed — the exact classes of bugs `doc-to-html` pinned shut for
+   when printed: the exact classes of bugs `doc-to-html` pinned shut for
    report pages would be rediscovered for arch pages.
 
 Plus a shape-specific one: an **ephemeral page consulted later** with no
-record of what state it described — orientation aids go stale silently.
+record of what state it described: orientation aids go stale silently.
 
 ## Solution shape
 
 A three-phase pipeline the renderer-sibling deliberately lacks, then a
 render contract:
 
-- **Derive.** Mine the input per shape — subsystem (entry points → modules
+- **Derive.** Mine the input per shape: subsystem (entry points → modules
   → edges; explore subagents fanned out for large surfaces), refactor (diff
-  classified into adds/removes/moves/renames; the **invariant** — what does
-  *not* change — identified, because it is the single most orienting fact),
+  classified into adds/removes/moves/renames; the **invariant**: what does
+  *not* change: identified, because it is the single most orienting fact),
   proposed design (components extracted from the plan, verified against the
   repo where they reference real code, marked proposed elsewhere). The
   load-bearing rule is **traceability**: every box and edge traces to a
@@ -82,17 +82,17 @@ render contract:
   changes," large refactors), delta overlay ("what changes," small ones).
   Deriving more than you show is fine; showing everything is not.
 - **Render.** A single self-contained HTML file (opens from disk), landing
-  in `tmp/<date>-<slug>.html` — ephemeral-first, an orientation aid — with
+  in `tmp/<date>-<slug>.html` (ephemeral-first, an orientation aid) with
   a **promote** pass (re-verify every trace, full checklist, move to
   `docs/`) when a page should become durable. Every view is footed with a
   **provenance stamp** ("derived from `<paths/diff-range>` at `<commit>`"),
   so a stale page at least says stale-as-of-what.
 
-Visual language evolved after withdrawal — see current `arch-map` origin
+Visual language evolved after withdrawal: see current `arch-map` origin
 and `arch-map-rename-and-visual.md`. The paragraphs below preserve the
 pre-rename dual-grammar / role-palette design for history:
 
-The visual language is **dual-grammar** — pick one layout engine per view:
+The visual language is **dual-grammar**: pick one layout engine per view:
 containment uses stacked strata (HTML nesting, scarce edges); flow uses
 swimlanes with thick labeled SVG wires; refactors use linked panes or a
 delta overlay with fill+badge change chrome that outranks role color. Role
@@ -104,7 +104,7 @@ deeper.
 Process rules inherited from `doc-to-html` where renderer-agnostic: one-pass
 generation, direction change = clean rewrite, one knob at a time, styled
 scrollbars, print stylesheet, narrow-screen stacking. Step 0 house-style
-matching is inherited *adapted*: only a hand-authored **arch-page** sibling
+matching is inherited in adapted form. Only a hand-authored **arch-page** sibling
 governs (genre test: structural graphics dominate), because a report sibling
 is a different genre.
 
@@ -133,10 +133,10 @@ the entries below are anticipated from the design review and from
 `doc-to-html`'s lived history, not yet field-observed. Early rounds should
 replace this caveat with real observations.
 
-- **Stale provenance hash (observed — GREEN round).** The generating session
+- **Stale provenance hash (observed: GREEN round).** The generating session
   stamped "repo HEAD" from its startup snapshot, three commits stale, while
   every analyzed-commit anchor on the same page was correct. The checklist's
-  original wording ("commit hash real") let it through — a real-but-stale
+  original wording ("commit hash real") let it through: a real-but-stale
   hash is still a false stamp. The rule now requires reading hashes live at
   generation time (`git rev-parse`), never from the snapshot.
 - **Boxes without files.** The moment a diagram is drawn from memory of the
@@ -147,7 +147,7 @@ replace this caveat with real observations.
   them was work. View economy and the box cap are the counters; "derived
   but not shown" is a sentence in the intro, not a fourth view.
 - **Legend drift.** A change-state color or dashed border used on the page
-  but missing from the legend — the page becomes self-decoding only to its
+  but missing from the legend: the page becomes self-decoding only to its
   author. Checklist item 2.
 - **Edge overlay drift.** Absolutely-positioned SVG drawn once at load
   drifts as content reflows (fonts, collapses, viewport). The reference JS
@@ -161,7 +161,7 @@ replace this caveat with real observations.
 
 ## Maturity
 
-Provisional until hardened by real rounds — expect these to move:
+Provisional until hardened by real rounds: expect these to move:
 
 - The **view cap (3)** and **box cap (~30)** are design-review numbers, not
   field-calibrated ones.
@@ -171,11 +171,11 @@ Provisional until hardened by real rounds — expect these to move:
 - The **genre test** in Step 0 (structural graphics dominate) has not yet
   had to classify a hard case.
 
-**Round 1 (2026-07-31) — cross-repo field exercise.** A fresh session
+**Round 1 (2026-07-31): cross-repo field exercise.** A fresh session
 derived a three-view page of a real external codebase (the artifact landing
-in this repo's `tmp/`). All checks passed — provenance read live from the
+in this repo's `tmp/`). All checks passed: provenance read live from the
 *source* repo, the house-style sibling correctly adopted from the *output*
-repo — and five gaps folded back into the skill: cross-repo resolution for
+repo, and five gaps folded back into the skill: cross-repo resolution for
 Step 0 (glob both, output repo wins) and for provenance (analyzed repo's
 hashes); the uniform fan-out pattern (one labeled edge or a caption, never
 a partial subset); a prescribed parse-check method; an orphan-box check
@@ -189,13 +189,13 @@ Record further rounds against the active [`arch-map`](../../../../plugins/toolki
 ## Adaptation notes
 
 - The role palette is a default taxonomy, not a claim about your
-  architecture — swap the roles (and tokens) for the ones your codebase
+  architecture: swap the roles (and tokens) for the ones your codebase
   actually has; keep the rule that the palette is consistent across pages
   and fully covered by the legend. *(Active skill dropped role paints.)*
 - The output path (`tmp/`, promote to `docs/`) follows this scaffold's
   scratch conventions; point both at your project's equivalents.
 - The traceability rule, provenance stamp, view economy, and zoom
-  discipline are the portable half — they apply to any visual style.
+  discipline are the portable half; they apply to any visual style.
 - Sibling boundary: `doc-to-html` renders finished documents (including
   documents *about* architecture); `structure-view` / now `arch-map` owns
   the doc-less cases.

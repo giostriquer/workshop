@@ -1,4 +1,4 @@
-# Decision: `docs/skills/` returns — as a usage handbook, not origin docs
+# Decision: `docs/skills/` returns: as a usage handbook, not origin docs
 
 **Date:** 2026-08-12
 
@@ -12,7 +12,7 @@ the record of why the previous layer had to go.
 
 Operator call: build a documentation page for every skill shipped in a plugin,
 covering what it does, when to reach for it, the questions people actually hit,
-and how to tell it worked — with a worked example supplied as the template.
+and how to tell it worked, with a worked example supplied as the template.
 
 The previous `docs/skills/` was deleted the same week, so this needed care
 rather than compliance. Reading the removal note first was the important step:
@@ -22,7 +22,7 @@ deleted because of what those particular pages *were*.
 Three failures are recorded there:
 
 1. **They were origin docs.** Per-skill pages sitting next to the spec invited
-   restating rationale and history — the same material `docs/decisions/`
+   restating rationale and history: the same material `docs/decisions/`
    already held.
 2. **Parity upkeep multiplied every edit.** A skill change became a doc change,
    and the doc changes kept re-leaking repo bookkeeping (decision-ledger
@@ -31,7 +31,7 @@ Three failures are recorded there:
    is what escalated it to a structural deletion.
 
 Only the first is inherent to the genre being asked for now. The new pages are
-**reader-facing usage documentation** — a different artifact from a rationale
+**reader-facing usage documentation**: a different artifact from a rationale
 record, aimed at someone deciding whether to invoke a skill, not at a
 maintainer reconstructing why it exists. Failure 3 does not apply at all:
 bookkeeping was forbidden in *shipped* text, and `docs/` is not shipped.
@@ -41,7 +41,7 @@ than hoped away.
 
 ## The shape
 
-- **`docs/skills/<name>.md`** — one page per skill shipped in `workbench` or
+- **`docs/skills/<name>.md`**: one page per skill shipped in `workbench` or
   `toolkit` (20 pages), plus `docs/skills/README.md` as the index and router.
   Repo-only skills (`change-log`, `push`, `workbench-drift`) get no page; they
   ship in no plugin and adopters never see them. Agents get no page.
@@ -56,12 +56,12 @@ than hoped away.
 - **The parity rule, stated explicitly**: when a shipped skill's behavior
   changes, its page changes in the same commit. When page and spec disagree,
   the spec wins and the page is the bug. This is what keeps failure 2 from
-  recurring — the burden is acknowledged rather than discovered later.
+  recurring: the burden is acknowledged rather than discovered later.
 
 ## Grounding constraint on the content
 
 The supplied template drew much of its value from citing a real public issue
-tracker — numbered issues, quoted maintainer replies, named beta-channel
+tracker: numbered issues, quoted maintainer replies, named beta-channel
 skills. This repo has no such corpus, and imitating one would mean inventing
 it. The pages therefore ground their "Common questions" sections in
 `docs/decisions/` instead, which is the authentic equivalent: those notes
@@ -79,7 +79,7 @@ prohibited, parity obligatory.
 
 ## Non-goals
 
-- Not reviving the deprecated origin docs parked in `attic/deprecated/` — those
+- Not reviving the deprecated origin docs parked in `attic/deprecated/`; those
   stay parked as history.
 - Not documenting agents. The review agents' specs remain the whole artifact.
 - Not a substitute for `README.md`'s install path or `using-workbench`'s

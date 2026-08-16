@@ -1,4 +1,4 @@
-# Decision: `handoff-pr` delivers in exactly one mode — file by default, `inline` on request
+# Decision: `handoff-pr` delivers in exactly one mode: file by default, `inline` on request
 
 **Date:** 2026-07-07
 
@@ -9,7 +9,7 @@ Implemented.
 ## Context
 
 The deliver step said: print the artifact inline **and** write it to
-`tmp/handoff-pr-<branch-slug>.md`. In lived use that duplicated a long artifact —
+`tmp/handoff-pr-<branch-slug>.md`. In lived use that duplicated a long artifact;
 the full PR body plus handoff notes landed in the session output *and* in the
 scratch file. The file is the useful copy (the authorized session reads it);
 the inline dump was noise on top. But sometimes the operator wants the opposite:
@@ -27,7 +27,7 @@ Delivery becomes a single-mode conditional keyed to the invocation argument:
 A rule reinforces it: exactly one mode, never both. Form (per `writing-skills`
 "match the form to the failure"): the baseline produced the wrong output shape
 (double delivery), so the fix is a conditional on an observable predicate (the
-argument) plus a recipe for what each mode's output is — not a bare prohibition.
+argument) plus a recipe for each mode's output instead of a bare prohibition.
 
 The `description` gains one sentence naming the default and the `inline` option,
 matching the house style set by `handoff-review` (whose description documents its
@@ -42,7 +42,7 @@ matching the house style set by `handoff-review` (whose description documents it
 
 ## Packaging
 
-- Canonical `plugins/toolkit/skills/handoff-pr/SKILL.md` edited (sole copy — not
+- Canonical `plugins/toolkit/skills/handoff-pr/SKILL.md` edited (sole copy; not
   in the repo's own `.claude/` working set or the onboarding bundle). Origin doc
   `docs/skills/handoff-pr.md` updated for parity.
 - `toolkit` `0.12.1` → `0.12.2` across all four manifests.

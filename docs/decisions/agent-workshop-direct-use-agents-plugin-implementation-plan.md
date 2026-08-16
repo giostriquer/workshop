@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Add a second Claude Code marketplace plugin, `reviewers`, that ships four curated standalone-capable agents (`spec-reviewer`, `test-quality-reviewer`, `vigil`, `pattern-reviewer`) as active plugin agents — no onboarding skill — and enhance `pattern-reviewer` with a discovery/inference fallback so it works in repos with no domain layout.
+**Goal:** Add a second Claude Code marketplace plugin, `reviewers`, that ships four curated standalone-capable agents (`spec-reviewer`, `test-quality-reviewer`, `vigil`, `pattern-reviewer`) as active plugin agents (no onboarding skill) and enhance `pattern-reviewer` with a discovery/inference fallback so it works in repos with no domain layout.
 
 **Architecture:** The four shipped agent files are byte-identical copies of the canonical `.claude/agents/<name>.md` specs (single source of truth, enforced by the validator). The `pattern-reviewer` enhancement is folded into the canonical spec and rippled to its origin doc and the onboarding plugin's bundled reference mirrors. A second entry is added to the existing `.claude-plugin/marketplace.json`, and `scripts/validate-native-plugin.ps1` is extended to validate the new plugin and the two-plugin marketplace. Claude Code is the only delivery host this slice.
 
@@ -10,16 +10,16 @@
 
 **Spec:** `docs/decisions/agent-workshop-direct-use-agents-plugin.md`
 
-**Commit policy for this plan:** Stay on `main`; do **not** create branches or worktrees. Do **not** commit — the working tree has unrelated uncommitted mid-refactor changes; committing is deferred to the operator. Each task's "done" gate is the validator, not a commit.
+**Commit policy for this plan:** Stay on `main`; do **not** create branches or worktrees. Do **not** commit: the working tree has unrelated uncommitted mid-refactor changes; committing is deferred to the operator. Each task's "done" gate is the validator, not a commit.
 
 ---
 
 ## File Structure
 
 **Modify (canonical sources + their enforced mirrors):**
-- `.claude/agents/pattern-reviewer.md` — add discovery mode
-- `docs/agents/pattern-reviewer.md` — origin doc: document discovery mode
-- `marketplace/catalog.json` — add an adoption note to the `pattern-reviewer` entry
+- `.claude/agents/pattern-reviewer.md`: add discovery mode
+- `docs/agents/pattern-reviewer.md`: origin doc: document discovery mode
+- `marketplace/catalog.json`: add an adoption note to the `pattern-reviewer` entry
 - Onboarding reference mirrors (kept byte-identical by the existing validator), both the root copy and the codex payload copy:
   - `skills/agent-workshop-onboard/references/agents/pattern-reviewer.md`
   - `plugins/agent-workshop/skills/agent-workshop-onboard/references/agents/pattern-reviewer.md`
@@ -27,11 +27,11 @@
   - `plugins/agent-workshop/skills/agent-workshop-onboard/references/docs/agents/pattern-reviewer.md`
   - `skills/agent-workshop-onboard/references/catalog.json`
   - `plugins/agent-workshop/skills/agent-workshop-onboard/references/catalog.json`
-- `.claude-plugin/marketplace.json` — add second plugin entry
-- `scripts/validate-native-plugin.ps1` — validate the new plugin + two-plugin marketplace
-- `README.md` — two-plugin overview
-- `docs/marketplace/README.md` — two-plugin path
-- `docs/change-log.md` — landing entry (via change-log skill)
+- `.claude-plugin/marketplace.json`: add second plugin entry
+- `scripts/validate-native-plugin.ps1`: validate the new plugin + two-plugin marketplace
+- `README.md`: two-plugin overview
+- `docs/marketplace/README.md`: two-plugin path
+- `docs/change-log.md`: landing entry (via change-log skill)
 
 **Create (the new plugin payload):**
 - `plugins/reviewers/.claude-plugin/plugin.json`
@@ -74,7 +74,7 @@ with:
 Immediately after the line `A mandated review stage must never silently no-op on a surface it did not examine.` insert this paragraph:
 
 ```
-This rule covers the case where a domain layout *exists* but does not reach some changed files. When the project defines **no domain layout at all** — no domain map and no convention docs anywhere — use Discovery mode instead (see the Discovery mode section) and fall back to discovered or inferred conventions rather than gapping every file.
+This rule covers the case where a domain layout *exists* but does not reach some changed files. When the project defines **no domain layout at all** (no domain map and no convention docs anywhere) use Discovery mode instead (see the Discovery mode section) and fall back to discovered or inferred conventions rather than gapping every file.
 ```
 
 - [ ] **Step 3: Insert the Discovery mode section**
@@ -86,7 +86,7 @@ Insert this entire section between the end of the `## Domain coverage gaps` sect
 
 The Domain coverage gaps rule assumes the project *has* a domain layout and some
 surface falls outside it. A different case is a project with **no domain layout at
-all** — no `CLAUDE.md` / `AGENTS.md` domain map and no `docs/conventions/<domain>/`
+all**: no `CLAUDE.md` / `AGENTS.md` domain map and no `docs/conventions/<domain>/`
 structure. There, refusing to review anything is unhelpful for a diff that clearly
 follows some de-facto convention.
 
@@ -94,11 +94,11 @@ When, and only when, the project defines no domain layout and no convention docs
 are discoverable, fall back to discovery mode instead of a blanket coverage gap:
 
 1. **Discover documented conventions anywhere.** Look for convention or pattern
-   docs outside the prescribed layout — `docs/` files whose names or headings
+   docs outside the prescribed layout: `docs/` files whose names or headings
    describe conventions, style, architecture, or patterns. If found, treat them as
    the convention source for this review and note where they live.
 2. **Infer from sibling files.** If no convention docs exist, infer the de-facto
-   conventions from the closest sibling files to those changed — the established
+   conventions from the closest sibling files to those changed: the established
    files in the same directory or module that the diff should resemble. Review the
    changed files for consistency with those inferred patterns: naming, folder
    placement, type-shape choices, import/layer boundaries, and test-file presence.
@@ -112,8 +112,8 @@ are discoverable, fall back to discovery mode instead of a blanket coverage gap:
 
 Discovery mode preserves the no-silent-false-confidence principle: it never emits a
 clean `pattern compliant` verdict on an unexamined surface. It examines, infers,
-labels the confidence, and names the missing documentation. It is a fallback only —
-when a domain layout *does* exist, the standard documented-domain behavior and the
+labels the confidence, and names the missing documentation. It is a fallback used only
+when no domain layout exists. Otherwise, the standard documented-domain behavior and the
 Domain coverage gaps rule apply unchanged.
 ```
 
@@ -152,7 +152,7 @@ In `docs/agents/pattern-reviewer.md`, insert this section immediately after the 
 
 The canonical spec assumes the project defines domains and `docs/conventions/<domain>/`
 docs. That assumption breaks when the agent runs in a repo with no domain layout at
-all — for example when it is installed as a direct-use plugin agent (see the
+all, for example when it is installed as a direct-use plugin agent (see the
 `reviewers` plugin) rather than adopted into a project that has done
 the profile work.
 
@@ -162,7 +162,7 @@ sibling files to those changed, reviewing against those inferred patterns. Findi
 are labelled **inferred (lower confidence)**, and the agent still reports that no
 conventions are documented and recommends adding them.
 
-This is additive. It does not weaken the strict documented-domain behavior — when a
+This is additive. It does not weaken the strict documented-domain behavior, when a
 domain layout exists, the Domain coverage gaps rule still applies and a clean pass on
 an unexamined surface is still forbidden. Discovery mode only changes the "no layout
 at all" case from "review nothing" to "review against inferred conventions, clearly
@@ -174,7 +174,7 @@ labelled."
 In `docs/agents/pattern-reviewer.md`, append this bullet to the end of the `## Adaptation notes` list:
 
 ```
-- Discovery mode lets the agent be useful in a repo with no domain layout (e.g. direct-use plugin installs). It is a labelled, lower-confidence fallback — not a substitute for documenting conventions. The moment the project documents domains and `docs/conventions/<domain>/` files, the agent uses those instead.
+- Discovery mode lets the agent be useful in a repo with no domain layout (e.g. direct-use plugin installs). It is a labelled, lower-confidence fallback, not a substitute for documenting conventions. The moment the project documents domains and `docs/conventions/<domain>/` files, the agent uses those instead.
 ```
 
 - [ ] **Step 3: Sync the two onboarding reference doc mirrors**
@@ -251,7 +251,7 @@ Expected: `native plugin validation ok`
 
 - [ ] **Step 1: Confirm graceful degradation of the three faithful agents**
 
-Before copying, read each of `.claude/agents/spec-reviewer.md`, `.claude/agents/test-quality-reviewer.md`, `.claude/agents/vigil.md` and confirm none contains a hard refuse-if-no-profile gate (i.e. each can produce a useful review when its profile slots are absent — pointed at a spec/plan, a test diff, or an agent layer respectively). If any does hard-fail without a profile, note it in the task result and stop for operator input rather than shipping a broken agent.
+Before copying, read each of `.claude/agents/spec-reviewer.md`, `.claude/agents/test-quality-reviewer.md`, `.claude/agents/vigil.md` and confirm none contains a hard refuse-if-no-profile gate (i.e. each can produce a useful review when its profile slots are absent: pointed at a spec/plan, a test diff, or an agent layer respectively). If any does hard-fail without a profile, note it in the task result and stop for operator input rather than shipping a broken agent.
 
 - [ ] **Step 2: Write the plugin manifest**
 
@@ -292,7 +292,7 @@ Create `plugins/reviewers/README.md`:
 Direct-use Claude Code plugin from [Agent Workshop](https://github.com/giostriquer/agent-workshop).
 
 Install this plugin when you want to **use** a curated set of Agent Workshop's
-review and governance agents directly — without running the onboarding/adoption
+review and governance agents directly, without running the onboarding/adoption
 flow. It ships only agents that work standalone in an arbitrary repo, with no
 project profile slots to fill.
 
@@ -304,18 +304,18 @@ onboarding skill is intentionally **not** part of this plugin.
 
 Installed agents are namespaced under the plugin, e.g. `reviewers:spec-reviewer`.
 
-- **spec-reviewer** — pre-implementation review of a spec or plan you point it at.
-- **test-quality-reviewer** — reviews a test diff for trustworthiness, risk coverage, and test design.
-- **pattern-reviewer** — reviews a diff for implementation-pattern conformance. In a
+- **spec-reviewer**: pre-implementation review of a spec or plan you point it at.
+- **test-quality-reviewer**: reviews a test diff for trustworthiness, risk coverage, and test design.
+- **pattern-reviewer**: reviews a diff for implementation-pattern conformance. In a
   repo with no documented domain layout it falls back to discovery mode: it discovers
   convention docs under `docs/` or infers conventions from sibling files, labelling
   findings as lower-confidence.
-- **vigil** — read-only governance review of a repo's agent / skill / wrapper layer.
+- **vigil**: read-only governance review of a repo's agent / skill / wrapper layer.
 
 ## Not included
 
 The profile-dependent and edit-capable agents (`doc-indexer`, `wiki-maintainer`,
-`visual-implementer`, `research`) are not shipped here — they need project-specific
+`visual-implementer`, `research`) are not shipped here; they need project-specific
 configuration or an approved baseline and belong to the onboarding adoption path.
 ```
 
@@ -377,7 +377,7 @@ In `.claude-plugin/marketplace.json`, the `plugins` array currently holds one en
 Run: `claude plugin validate .`
 Expected: `✔ Validation passed`
 
-(The PowerShell validator will fail at this point because it still expects exactly one plugin — Task 6 fixes that.)
+(The PowerShell validator will fail at this point because it still expects exactly one plugin: Task 6 fixes that.)
 
 ---
 
@@ -497,15 +497,15 @@ Expected: `✔ Validation passed`
 - Modify: `README.md`
 - Modify: `docs/marketplace/README.md`
 
-- [ ] **Step 1: README — add the new plugin to "What's here"**
+- [ ] **Step 1: README: add the new plugin to "What's here"**
 
 In `README.md`, immediately after the bullet that begins ``- `plugins/agent-workshop/` and `skills/agent-workshop-onboard/``` , add:
 
 ```markdown
-- `plugins/reviewers/` — a second Claude Code plugin that ships four standalone-capable agents (`spec-reviewer`, `test-quality-reviewer`, `pattern-reviewer`, `vigil`) as active plugin agents for direct use, with no onboarding skill. For people who want to use the agents without adopting the scaffold into a project. See [`docs/marketplace/README.md`](docs/marketplace/README.md).
+- `plugins/reviewers/`: a second Claude Code plugin that ships four standalone-capable agents (`spec-reviewer`, `test-quality-reviewer`, `pattern-reviewer`, `vigil`) as active plugin agents for direct use, with no onboarding skill. For people who want to use the agents without adopting the scaffold into a project. See [`docs/marketplace/README.md`](docs/marketplace/README.md).
 ```
 
-- [ ] **Step 2: README — note the direct-use path under "How to use it"**
+- [ ] **Step 2: README: note the direct-use path under "How to use it"**
 
 In `README.md`, immediately after the paragraph beginning `Start with the native onboarding plugin when your host supports it.` add:
 
@@ -513,17 +513,17 @@ In `README.md`, immediately after the paragraph beginning `Start with the native
 If instead you just want to *use* a few agents directly without adopting anything into a project, install the `reviewers` plugin. It exposes a curated, standalone-capable set (`spec-reviewer`, `test-quality-reviewer`, `pattern-reviewer`, `vigil`) as active plugin agents and includes no onboarding skill.
 ```
 
-- [ ] **Step 3: docs/marketplace/README — describe the two plugins**
+- [ ] **Step 3: docs/marketplace/README: describe the two plugins**
 
 In `docs/marketplace/README.md`, immediately after the paragraph beginning `For Claude Code and Codex, the preferred guided path is the native plugin` add:
 
 ```markdown
 The marketplace ships two Claude Code plugins for two different intents:
 
-- **`agent-workshop`** (bootstrapper) — exposes only `agent-workshop-onboard`, a
+- **`agent-workshop`** (bootstrapper): exposes only `agent-workshop-onboard`, a
   skill that plans and applies repo-local agent adoption. Use this to adopt the
   scaffold into a project.
-- **`reviewers`** (direct use) — ships a curated set of
+- **`reviewers`** (direct use): ships a curated set of
   standalone-capable agents (`spec-reviewer`, `test-quality-reviewer`,
   `pattern-reviewer`, `vigil`) as active plugin agents, with no onboarding skill.
   Use this to run those agents directly in any repo without adopting anything.

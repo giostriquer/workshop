@@ -12,11 +12,11 @@ invocable form of the recurring one-liner "CI is failing, take a look."
 It is a skill, not an agent, and that distinction is load-bearing. The fix
 happens in your session, under your permissions, with the context of the
 commits that broke the build. The read-only `ci-watcher` agent may be
-dispatched for the *waiting* — never for the fixing.
+dispatched for the *waiting*, never for the fixing.
 
 Its boundaries are what keep it safe to run unattended. It never force-pushes,
 amends, or rewrites published history; fixes land as ordinary commits on the
-current branch. It fixes only the cause of the red check — unrelated failures
+current branch. It fixes only the cause of the red check: unrelated failures
 and pre-existing dirty-tree changes are reported, never swept into the fix
 commit. It never deletes, skips, or weakens a failing test or check to get to
 green. And it stops: **two fix attempts maximum**, because "a repeating
@@ -34,7 +34,7 @@ phrasings like "CI is failing, take a look," and can be invoked directly.
 | You want a pass/fail verdict and nothing edited | the `ci-watcher` agent |
 | A finished branch should become a PR and be tended to green | `file-pr` (it runs `fix-ci`'s loop internally) |
 | A bug in the code itself, not surfaced by a check | `systematic-debugging` |
-| A failing check is really a question about intended behavior | `fix-ci` reports it as a decision — you answer it |
+| A failing check is really a question about intended behavior | `fix-ci` reports it as a decision for you to answer |
 
 ## The loop
 
@@ -50,16 +50,16 @@ phrasings like "CI is failing, take a look," and can be invoked directly.
    read the failing step's actual output. External checks: surface the link;
    if the cause isn't reachable from the repo, report rather than guess.
 4. **Diagnose in repo context.** "The branch's own recent commits are the
-   prime suspects" — check `git log` and the diff against the base before
+   prime suspects": check `git log` and the diff against the base before
    suspecting infrastructure.
 5. **Flake or fault?** An infra failure with no plausible code cause → `gh run
    rerun <run-id> --failed` **once**, note the flake, return to watching. A
    real fault → continue.
-6. **Reproduce locally when feasible** — run the failing step's local
+6. **Reproduce locally when feasible**: run the failing step's local
    equivalent, read from the workflow file, before the fix and again after.
 7. **Fix minimally, in-session.** The cause of the red check and nothing
    broader.
-8. **Commit and push per the repo's conventions** — pull first, use the repo's
+8. **Commit and push per the repo's conventions**: pull first, use the repo's
    own push skill if it ships one, stage only the files the fix touched.
 9. **Re-watch.** Hard cap: two fix attempts, plus the single flake rerun.
    Still red → stop and report the diagnosis and recommended next step.
@@ -67,8 +67,8 @@ phrasings like "CI is failing, take a look," and can be invoked directly.
 ## Common questions
 
 **It re-ran the job instead of fixing anything.** That is the flake path, and
-it fires once. A failure with no plausible code cause — runner died, network
-timeout, an unrelated job — gets one `--failed` rerun, noted as a flake. If it
+it fires once. A failure with no plausible code cause: runner died, network
+timeout, an unrelated job: gets one `--failed` rerun, noted as a flake. If it
 comes back red, the loop treats it as a fault.
 
 **It stopped after two attempts and left CI red.** That is the cap working.
@@ -97,7 +97,7 @@ zero and can collide with in-flight work; and the watcher's own design already
 said a tool that retries or pushes is "a different, higher-authority tool."
 `fix-ci` is that tool. ([decision](../decisions/fix-ci.md))
 
-**Can I keep working while it waits?** Yes — that is precisely when it
+**Can I keep working while it waits?** Yes. That is precisely when it
 dispatches `ci-watcher` in the background and picks up its report. The
 watching is delegable; the fixing is not.
 
@@ -114,7 +114,7 @@ re-watch shape is host-agnostic, but the commands are not.
 ## It's working if
 
 - The diagnosis quotes the failing step's actual output. A diagnosis offered
-  without a log having been pulled is the **negative signal** — evidence comes
+  without a log having been pulled is the **negative signal**: evidence comes
   before the fix, every time.
 - Each attempt is reported with what failed, the root cause, and what changed
   (files plus commit).
@@ -126,7 +126,7 @@ re-watch shape is host-agnostic, but the commands are not.
 
 ## Where it fits
 
-`fix-ci` sits in the landing stage of the workbench flow — the flow map lists
+`fix-ci` sits in the landing stage of the workbench flow: the flow map lists
 it as the piece that "tends the checks" after `file-pr`, a merge, or a push.
 `file-pr` composes it rather than duplicating it: when a freshly filed PR goes
 red, this loop is what runs. It pairs with the `ci-watcher` agent, which is

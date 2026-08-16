@@ -9,7 +9,7 @@ disable-model-invocation: true
 # Self Audit
 
 Look back over this session and audit **the process that ran it**. The subject
-is the workbench flow and its skills — not the code that got written, not the
+is the workbench flow and its skills, not the code that got written or the
 deliverable's quality, not the user's choices. One question, asked of every
 moment: *did the process earn its place here?*
 
@@ -19,7 +19,7 @@ reports; applying anything is a separate act the user authorizes.
 ## The evidence is this session, and only this session
 
 - **State the observation window first.** The whole session, or only what
-  survived a compaction. If the early part is gone from context, say so — do
+  survived a compaction. If the early part is gone from context, say so. Do
   not reconstruct it from the artifacts it left behind, and do not treat a
   summary of a moment as the moment.
 - **A finding needs a moment.** "The flow could in principle mishandle X" is
@@ -30,16 +30,16 @@ reports; applying anything is a separate act the user authorizes.
 
 ## Steps
 
-1. **Replay the session into a trace** — facts only, no verdicts yet:
+1. **Replay the session into a trace**: facts only, no verdicts yet:
 
    - How the work entered, and through which door: something to verify, an
      idea to build, or neither.
-   - Every skill that fired: which one, at what moment, and what made it fire —
+   - For every skill that fired, record which one, at what moment, and what made it fire:
      the session reaching for it, the user typing it, or the user asking for it
      after the fact.
    - Every skill that *should* have fired by its own description and didn't.
-   - The three user gates — size the workload, pick the route, PR or merge:
-     which arrived, which were actually asked, which the session decided on the
+   - For the three user gates (size the workload, pick the route, PR or merge), record
+     which arrived, which were actually asked, and which the session decided on the
      user's behalf.
    - Every user correction: redirects, "no", instructions repeated, work
      interrupted, scope pushed back on, visible frustration.
@@ -48,7 +48,7 @@ reports; applying anything is a separate act the user authorizes.
 
    Skip nothing for being unflattering. The trace is where honesty is cheap.
 
-2. **Classify each moment.** Three buckets — only the first yields a proposal:
+2. **Classify each moment.** Three buckets, only the first yields a proposal:
 
    | Bucket | Test | Yields |
    | --- | --- | --- |
@@ -59,22 +59,22 @@ reports; applying anything is a separate act the user authorizes.
    **The conversion rule:** an instruction the session reliably misses is a
    wording defect, not a discipline defect. If the trace shows the same rule
    ignored, misread, or fired late more than once, move it out of *session
-   defect* and into *process defect* — the fix belongs in the text.
+   defect* and into *process defect*: the fix belongs in the text.
 
 3. **Apply the bar.** A proposal survives only if making the change would have
    altered what happened here, or would alter the next session of this shape.
    Phrasing nits that cost nothing don't survive. Few load-bearing proposals
-   beat a long list, and **no findings is a legitimate result** — report it as
+   beat a long list, and **no findings is a legitimate result**: report it as
    one rather than padding to look thorough.
 
 4. **Name the target and the shape of the change.** Each surviving proposal
-   names one piece — a skill by name, or *the absence of one* — and one shape:
+   names one piece (a skill by name, or *the absence of one*) and one shape:
 
-   - **wording** — the instruction is there but reads wrong, ambiguous, or buried
-   - **gate** — fires too often, too rarely, or at the wrong moment
-   - **boundary** — two pieces overlap, or a moment had no owner
-   - **new** — a moment recurred with nothing owning it
-   - **delete** — a piece cost more than it returned
+   - **wording**: the instruction is there but reads wrong, ambiguous, or buried
+   - **gate**: fires too often, too rarely, or at the wrong moment
+   - **boundary**: two pieces overlap, or a moment had no owner
+   - **new**: a moment recurred with nothing owning it
+   - **delete**: a piece cost more than it returned
 
    Say what it cost *this* session, and be concrete enough to act on: "clarify
    the handoff" is not a proposal, the replacement sentence is.
@@ -88,7 +88,7 @@ reports; applying anything is a separate act the user authorizes.
 - **Proposals**, costliest first: target piece · the moment that exposed it ·
   the change · what it cost.
 - **Session defects**, listed separately and honestly, with no proposal
-  attached — the process owes nothing for these.
+  attached: the process owes nothing for these.
 - **What held**: pieces that were load-bearing this session, one line each. A
   retrospective that only ever subtracts will eventually subtract the parts
   that were working.
@@ -105,5 +105,5 @@ reports; applying anything is a separate act the user authorizes.
 - **Never re-runs the work** to check whether it was done right. The trace is
   the evidence; this is a retrospective, not a second attempt.
 - **Never grades the user.** Their corrections are evidence about the process,
-  not about them — a correction means the process left something for a human
+  not about them: a correction means the process left something for a human
   to catch.

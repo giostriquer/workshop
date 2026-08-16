@@ -11,7 +11,7 @@ Implemented (2026-08-11). `validate-native-plugin.ps1` passes.
 `docs/change-log.md` was a date-keyed diary (`## YYYY-MM-DD` sections) inherited
 from the change-log skill's origin project. But this repo's product is its
 **plugins**, and nearly every meaningful entry already recorded a version bump
-inline ("`toolkit` `0.16.5` → `0.17.0`") — the diary was release notes wearing a
+inline ("`toolkit` `0.16.5` → `0.17.0`"): the diary was release notes wearing a
 diary's structure. Operator call: the log should reflect what each toolkit version
 changed, not narrate every repo day.
 
@@ -19,22 +19,22 @@ changed, not narrate every repo day.
 
 **Sections are keyed by the released plugin version**, newest first:
 
-- `## toolkit X.Y.Z — date` — the primary product; `## reviewers X.Y.Z — date`
+- `## toolkit X.Y.Z: date`: the primary product; `## reviewers X.Y.Z: date`
   for the pre-2026-06-16 name. Batched releases keep multiple `###` entries under
   one version; a same-entry pair of patch bumps may share a heading
   (`## toolkit 0.15.0 / 0.15.1`).
-- `## agent-workshop X.Y.Z — date` — onboarding-plugin-only releases.
+- `## agent-workshop X.Y.Z: date`: onboarding-plugin-only releases.
   `agent-workshop` bumps that merely ride a toolkit release (mirror re-syncs) stay
   a note inside the toolkit entry.
-- `## repo — date` — work that shipped in no release (packaging, repo structure,
+- `## repo: date`: work that shipped in no release (packaging, repo structure,
   docs-only), kept in chronological position.
 
-The **entire history was re-keyed, bodies verbatim** — no entry text was rewritten;
+The **entire history was re-keyed, bodies verbatim**: no entry text was rewritten;
 inline bump sentences stay (they carry the from→to and co-bump detail). Two
 archaeology calls made during the migration: the 2026-06-29 `ci-watcher` entry
-moved above the `0.9.0` batch (it shipped `0.10.0`, after them — date order had
+moved above the `0.9.0` batch (it shipped `0.10.0`, after them: date order had
 hidden that); and the 2026-07-31 `handoff-goal` description-scope entry was
-confirmed via git (`d6276fb`) to have shipped **without** a bump — it sits under
+confirmed via git (`d6276fb`) to have shipped **without** a bump; it sits under
 `## repo` with a note that `0.14.1` first delivered it. The 2026-05-29 `reviewers`
 introduction records no version, so its heading is `## reviewers introduced` rather
 than a fabricated number.
@@ -57,7 +57,7 @@ else. Adopting projects that ship versioned artifacts inherit the variant.
 
 ## Non-goals
 
-- Not a rewrite of entry bodies — history stays verbatim.
+- Not a rewrite of entry bodies: history stays verbatim.
 - Not a per-plugin `CHANGELOG.md` shipped inside the plugin payloads; noted as a
   possible follow-up (adopters would see release notes at update time), decided
   separately if wanted.

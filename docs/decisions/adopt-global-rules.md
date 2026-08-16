@@ -1,10 +1,10 @@
-# Decision: `adopt-global-rules` — a portable global rules pack
+# Decision: `adopt-global-rules`: a portable global rules pack
 
 **Date:** 2026-08-12
 
 ## Status
 
-Implemented — ships in `toolkit 0.4.0`.
+Implemented: ships in `toolkit 0.4.0`.
 
 ## Context
 
@@ -40,7 +40,7 @@ reaches the same copy. One implementation, one pack, two entry points.
 ## The design
 
 **Two kinds of content, and they are not the same shape.** A **global
-instruction document** is authored **per host** — `globals/CLAUDE.md` and
+instruction document** is authored **per host**: `globals/CLAUDE.md` and
 `globals/AGENTS.md` are separate files, neither derived from the other. **Rules**
 are single-source and fan out to every host that applies.
 
@@ -50,8 +50,8 @@ meaningless on Claude Code, and the `CLAUDE.md` carries a BLUF communication
 preference the Codex copy does not. Deriving one from the other would force a
 choice between shipping irrelevant instructions to a host and inventing a
 conditional syntax to suppress them. Two authored documents is simpler and
-honest about what it is. The cost — the near-identical sections in the two
-documents can drift apart — is accepted, and is a content question for whoever
+honest about what it is. The accepted cost is that the near-identical sections in the two
+documents can drift apart. This is a content question for whoever
 edits them, not something the mechanism should paper over.
 
 Because a host's global document and its rules can share one file (Codex puts
@@ -64,19 +64,19 @@ pack owns; everything else on the machine is never rewritten. Claude gets
 whole-file ownership (an unmarked file at a rule's path is a collision, reported
 and untouched); Codex gets block ownership. HTML comments were chosen because
 block-level comments are stripped from memory files before they reach a model's
-context — the marker is free to carry.
+context: the marker is free to carry.
 
 **Script does mechanics, skill does judgment.** This is what makes shipping both
 worthwhile rather than redundant. The script detects, writes, and reports
 deterministically, and emits every byte of a single-file target that sits outside
 the fences. The skill reads that remainder and answers what a script structurally
-cannot: is this existing prose the same rule under another name, or does it
+cannot: Is this existing prose the same rule under another name, or does it
 contradict a core rule?
 
 **Tiers by dependency, not preference.** `core` rules have no external
 dependency and install unconditionally. A rule may instead declare a `requires`
-precondition — for example an MCP server that must be configured on that machine
-— and is skipped with a stated reason where it is unmet. On a machine without
+precondition, such as an MCP server that must be configured on that machine,
+and is skipped with a stated reason where it is unmet. On a machine without
 that server such a rule is worse than inert: it instructs the agent to reach for
 tools that are not there. The operator dropped the one optional rule that
 prompted this (`context7`) from the pack before it shipped, keeping it
@@ -87,8 +87,8 @@ same marker as both opening and closing fence. Left unhandled, adoption would
 append a duplicate. The installer recognises the paired-identical form for rules
 that declare `legacyMarkers` and upgrades it in place.
 
-**Hosts are data.** Gemini and opencode were deliberately left out — the operator
-drives Claude and Codex — but the host list is a manifest array, so adding either
+**Hosts are data.** Gemini and opencode were deliberately left out: the operator
+drives Claude and Codex, but the host list is a manifest array, so adding either
 is one entry plus its authored `globals/<HOST>.md`, not a code change.
 
 ## Scope judgment
@@ -101,26 +101,26 @@ publishing to npm: no account, no package name, no publish step coupled to every
 rules change.
 
 The toolkit plugin's description was widened from "artifact-making utilities" to
-"utilities" — this skill is machine setup, and leaving the description unchanged
+"utilities" because this skill is machine setup, and leaving the description unchanged
 would have made the plugin's own summary false.
 
 ## The pack is plugin payload, not a template
 
 This was the framing that took longest to get right, and it is the whole point
-of the piece. The `globals/` documents and `rules/` are **shipped content** —
-they travel with the plugin exactly as its skills do. Installing the plugin and
+of the piece. The `globals/` documents and `rules/` are **shipped content**.
+They travel with the plugin exactly as its skills do. Installing the plugin and
 running the skill puts *the workshop's* `CLAUDE.md` and `AGENTS.md` on the
 machine. Changes to that content are a plugin release.
 
-The alternative reading — a scaffold that helps each operator install their own
-rules — was written into the first draft and is wrong. It makes the pack a
+The alternative reading, a scaffold that helps each operator install their own
+rules, was written into the first draft and is wrong. It makes the pack a
 template, which would mean the content is per-machine configuration and nothing
 converges. What makes this worth building is precisely that the content is
 versioned with the plugin: a change released once reaches every machine on its
 next run.
 
 That resolves what looks like a contradiction with `route-work`. `model-floor`
-bans Haiku and Sonnet by name — the concrete fleet policy `route-work`
+bans Haiku and Sonnet by name: the concrete fleet policy `route-work`
 deliberately refuses to carry ([decision](route-work-model-floor-portable.md)).
 Both are right. `route-work` is a *reference* skill, and a reference that
 hard-codes one fleet ships a policy its readers never chose. This pack is where
@@ -131,7 +131,7 @@ it.
 `model-floor` began as the operator's machine-local `no-haiku-sonnet.md` and
 became shipped content, with two stale references corrected on the way in: it pointed at `toolkit:route-work` (the skill moved to
 `workbench` in the plugin split) and described a "model × effort table" (the
-effort axis was removed — see [decision](route-work-effort-axis-removed.md)).
+effort axis was removed: see [decision](route-work-effort-axis-removed.md)).
 Shipping it unfixed would have propagated both to every machine.
 
 ## Verification

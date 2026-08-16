@@ -4,7 +4,7 @@
 
 ## What changed
 
-- Added `test-quality-reviewer` as the eighth canonical agent — a code-first reviewer of implemented test code for trustworthiness and test design. Canonical spec at `.claude/agents/test-quality-reviewer.md`, with Codex / Gemini / OpenCode thin wrappers and an origin doc at `docs/agents/test-quality-reviewer.md`.
+- Added `test-quality-reviewer` as the eighth canonical agent: a code-first reviewer of implemented test code for trustworthiness and test design. Canonical spec at `.claude/agents/test-quality-reviewer.md`, with Codex / Gemini / OpenCode thin wrappers and an origin doc at `docs/agents/test-quality-reviewer.md`.
 - The implementation-review loop documented in `docs/examples/spec-driven-development.md` moved from three stages to four: spec compliance → code quality → pattern review → **test quality**.
 - Realigned the test-related review ownership between the existing reviewers:
   - `pattern-reviewer` now explicitly defers test quality and test design to `test-quality-reviewer` (deferral-line touch-up).
@@ -12,7 +12,7 @@
 
 ## Why
 
-A test that compiles, runs green, and asserts almost nothing passes every other review gate. In the originating project, weak, trivially-passing, and misleading tests became a recurring source of rework — a failure distinct from general code-quality review, which is focused on production code and tends to wave green tests through. A dedicated test-trustworthiness stage closes that gap.
+A test that compiles, runs green, and asserts almost nothing passes every other review gate. In the originating project, weak, trivially-passing, and misleading tests became a recurring source of rework: a failure distinct from general code-quality review, which is focused on production code and tends to wave green tests through. A dedicated test-trustworthiness stage closes that gap.
 
 The realignment exists so no two stages double-own test judgment: plan review checks only that the plan *names* the tests the spec calls for; per TDD discipline the implementer writes each test body fresh; and implemented test-code quality is reviewed on real test code at the fourth stage. Adopting `test-quality-reviewer` without the realignment would leave `spec-reviewer` reviewing test bodies that do not exist yet.
 
@@ -24,11 +24,11 @@ The originating project pairs this agent with engine-specific coverage tooling (
 
 Adopters that take `test-quality-reviewer` should also apply the handoff realignment to their `spec-reviewer` and `pattern-reviewer` so review ownership stays partitioned. See the Adaptation notes in `docs/agents/test-quality-reviewer.md`.
 
-## Addendum 2026-05-16 — mock-quality category added
+## Addendum 2026-05-16: mock-quality category added
 
-A review against the cross-repo `test-quality-reviewer` skeleton found the propagated checklist was missing the skeleton's mock anti-patterns ("tests that only reassert mocked values," "over-mocking of same-domain services"). The source agent this was sanitized from had dropped them — its domain's test surface is mock-light — and the propagation inherited the omission. Since the scaffold serves mock-heavy adopters (backends, services), a **Mock-saturated / tautological-mock tests** category was added to the Test-quality checklist, restoring parity with the skeleton's coverage. The category is generic — mock only across real boundaries; do not mock the behavior under test.
+A review against the cross-repo `test-quality-reviewer` skeleton found the propagated checklist was missing the skeleton's mock anti-patterns ("tests that only reassert mocked values," "over-mocking of same-domain services"). The source agent this was sanitized from had dropped them (its domain's test surface is mock-light) and the propagation inherited the omission. Since the scaffold serves mock-heavy adopters (backends, services), a **Mock-saturated / tautological-mock tests** category was added to the Test-quality checklist, restoring parity with the skeleton's coverage. The category is generic: mock only across real boundaries; do not mock the behavior under test.
 
-## Addendum 2026-05-23 — add risk and strategy lanes
+## Addendum 2026-05-23: add risk and strategy lanes
 
 The canonical agent was rewritten around explicit capability lanes instead of a single
 flat checklist. The baseline test-trustworthiness gate remains, but the agent now also

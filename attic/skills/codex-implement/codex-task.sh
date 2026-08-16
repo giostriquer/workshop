@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# codex-task.sh — dispatch an implementation task to Codex CLI (codex exec)
+# codex-task.sh: dispatch an implementation task to Codex CLI (codex exec)
 # and capture run artifacts for an orchestrating Claude Code session.
 #
 # Verified against codex-cli 0.141.0 on Windows git-bash (2026-07-02):
@@ -7,7 +7,7 @@
 #     (same id re-fires on resume)
 #   - `codex exec resume` has no -s/-C/--add-dir flags; sandbox comes from
 #     -c sandbox_mode=..., and it runs in the INVOKING cwd, not the thread's
-#     original root — hence the cd into --repo below.
+#     original root: hence the cd into --repo below.
 #   - --profile is unusable while ~/.codex/config.toml has legacy
 #     [profiles.*] tables; explicit flags only.
 set -euo pipefail

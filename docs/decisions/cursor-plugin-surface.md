@@ -9,7 +9,7 @@ Implemented (2026-06-30). `validate-native-plugin.ps1` passes.
 ## Context
 
 The repo already publishes its two plugins (`agent-workshop`, `toolkit`) through two
-native host marketplaces — Claude Code (`.claude-plugin/marketplace.json`) and Codex
+native host marketplaces: Claude Code (`.claude-plugin/marketplace.json`) and Codex
 (`.agents/plugins/marketplace.json`). Cursor has its own plugin-marketplace
 convention; this adds that third parallel surface so the same two plugins are
 installable from Cursor.
@@ -22,14 +22,14 @@ carrying the version, metadata, and `skills` / `agents` directory pointers.
 
 ## What was added
 
-- `.cursor-plugin/marketplace.json` (root) — owner + `metadata.description` + a
+- `.cursor-plugin/marketplace.json` (root): owner + `metadata.description` + a
   `plugins` array. Uses `metadata.pluginRoot: "plugins"` with short plugin `source`
   names (`agent-workshop`, `toolkit`), matching Cursor's multi-plugin convention.
 - `plugins/agent-workshop/.cursor-plugin/plugin.json` (`skills: ./skills/`) and
   `plugins/toolkit/.cursor-plugin/plugin.json` (`skills: ./skills/`, `agents:
-  ./agents/`). Versions mirror the existing manifests — `agent-workshop` `0.1.18`,
+  ./agents/`). Versions mirror the existing manifests: `agent-workshop` `0.1.18`,
   `toolkit` `0.11.0`.
-- `plugins/agent-workshop/LICENSE` and `plugins/toolkit/LICENSE` — the MIT text the
+- `plugins/agent-workshop/LICENSE` and `plugins/toolkit/LICENSE`: the MIT text the
   operator supplied. **Note:** the supplied text reads `Copyright (c) 2026 Cursor`
   (matching the Cursor plugins-repo template); change the holder if it should read
   Agent Workshop.
@@ -41,7 +41,7 @@ carrying the version, metadata, and `skills` / `agents` directory pointers.
 
 ## Why no version bump
 
-The Cursor manifests mirror the **current** plugin versions (`0.1.18` / `0.11.0`) —
+The Cursor manifests mirror the **current** plugin versions (`0.1.18` / `0.11.0`);
 this is an additive packaging surface, not a functional change to any skill or agent,
 so it ships at the versions already in flight rather than forcing another bump. The
 validator now refuses any future drift between the three surfaces' versions.

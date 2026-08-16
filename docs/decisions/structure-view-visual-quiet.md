@@ -1,4 +1,4 @@
-# Decision: structure-view visual — quiet change language
+# Decision: structure-view visual: quiet change language
 
 **Date:** 2026-08-05 (supersedes dual-grammar color-heavy pass same day)
 
@@ -13,13 +13,13 @@ Preferred reference at the time:
 
 ## What worked in the preferred example
 
-- **Binary change signal** — good / bad (and dim for background). Not four
+- **Binary change signal**: good / bad (and dim for background). Not four
   role colors plus three change colors fighting on every card.
-- **Layout is the structure** — side-by-side Today|Target panels, vertical
+- **Layout is the structure**: side-by-side Today|Target panels, vertical
   stacks, HTML connectors (line + label + arrow), boxes of chips.
-- **Dense names as chips** — monospace atoms; the eye compares sets, not
+- **Dense names as chips**: monospace atoms; the eye compares sets, not
   painted modules.
-- **One quiet chrome accent** — eyebrows / stage numbers only.
+- **One quiet chrome accent**: eyebrows / stage numbers only.
 
 ## What failed in the dual-grammar pass
 
@@ -33,9 +33,9 @@ Preferred reference at the time:
 2. Color is reserved for **change or verdict**: good, bad, optionally move
    (one amber). No architectural-role palette on modules.
 3. Prefer HTML flow connectors over SVG graphs. SVG only when a flow view
-   truly needs cross-lane wires — and then one wire color, hot on focus.
+   truly needs cross-lane wires, and then one wire color, hot on focus.
 4. Compare panes for refactors; stacked boxes for subsystem maps.
-5. Taste = spacing, type, and hierarchy — not more hues.
+5. Taste comes from spacing, type, and hierarchy rather than more hues.
 
 ## Artifacts
 

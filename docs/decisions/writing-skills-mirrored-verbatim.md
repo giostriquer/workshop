@@ -11,7 +11,7 @@ Implemented.
 Operator call: stop maintaining a local fork of `writing-skills` and carry
 upstream's copy verbatim, "and whatever it brings with that."
 
-The trigger was an audit finding two defects in the bundled corpus — a
+The trigger was an audit finding two defects in the bundled corpus: a
 self-contradiction about the `description` field, and a pointer to a worked
 example that did not exist. Investigating them turned up the more useful fact:
 **one of the two was caused by the partial port itself.** Upstream ships
@@ -28,12 +28,12 @@ small and, in two places, backwards:
 | `persuasion-principles.md`, `graphviz-conventions.dot` | byte-identical |
 | `testing-skills-with-subagents.md` | 1 line (a namespace prefix) |
 | `SKILL.md` | 18 lines (namespace prefixes, a dropped-piece link, repo-workflow wording, provenance footer) |
-| `render-graphs.js` | 13 lines — **ours was the stale one** |
+| `render-graphs.js` | 13 lines: **ours was the stale one** |
 | `examples/` | missing entirely |
 
 `render-graphs.js` is the notable one. Upstream had since replaced
 `execSync('which dot')` with `execFileSync('dot', ['-V'])`, carrying the comment
-that `which` "is not a command on Windows" — the operator's platform. Our fork
+that `which` "is not a command on Windows": the operator's platform. Our fork
 was holding a copy that fails there.
 
 The description contradiction is **upstream's own**: that file is byte-identical,
@@ -51,7 +51,7 @@ so the fork neither caused it nor was hiding a fix. Mirroring does not change it
 so leaving the entry mislabeled would have made future drift reviews silently
 ignore this piece. The script now buckets mirrored pieces into a **Re-mirror**
 section, and `workbench-drift`'s step 5 states that mirrored pieces skip the
-adaptation filter entirely — there is nothing to judge, so the action is
+adaptation filter entirely. There is nothing to judge, so the action is
 re-copying the tree wholesale, gained and lost files included.
 
 ## The accepted cost
@@ -59,8 +59,8 @@ re-copying the tree wholesale, gained and lost files included.
 A verbatim mirror reintroduces six references that do not resolve here: five
 `superpowers:`-namespaced skill references and one relative link to
 `../using-superpowers/references/`, a piece this repo deliberately dropped. In an
-installed environment those point at nothing. The skills they mean —
-`test-driven-development`, `systematic-debugging` — ship unprefixed in
+installed environment those point at nothing. The skills they mean:
+`test-driven-development`, `systematic-debugging`: ship unprefixed in
 `workbench`.
 
 This is the trade the operator chose: **fidelity to upstream over local

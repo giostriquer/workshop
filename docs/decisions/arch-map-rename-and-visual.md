@@ -5,7 +5,7 @@
 ## Status
 
 Shipped to the toolkit as `arch-map` (`toolkit` `0.16.0`). Visual chrome
-**superseded 2026-08-07** by idoso — see `arch-map-idoso-visual.md`. This
+**superseded 2026-08-07** by idoso: see `arch-map-idoso-visual.md`. This
 file remains the rename + mental-model-first decision of record; token values
 below are historical.
 
@@ -45,7 +45,7 @@ superseded.
 
 ### Reference specimen
 
-`tmp/architecture-overview.html` — match this when no house-style sibling
+`tmp/architecture-overview.html`: match this when no house-style sibling
 exists.
 
 ## Artifacts

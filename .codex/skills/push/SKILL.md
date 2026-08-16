@@ -7,7 +7,7 @@ description: Use when committing and pushing changes in the project repository; 
 
 Commit and push changes to the current branch.
 
-This skill is not restricted to a particular branch — it always operates on the branch currently checked out. Adapt the trailer line in step 8 below to your project's commit-attribution preference.
+This skill is not restricted to a particular branch; it always operates on the branch currently checked out. Adapt the trailer line in step 8 below to your project's commit-attribution preference.
 
 ## Quick start
 

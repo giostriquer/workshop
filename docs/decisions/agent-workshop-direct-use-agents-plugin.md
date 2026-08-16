@@ -19,7 +19,7 @@ a second audience: people who just want to **use** a few of the agents directly
 in whatever repo they are in, without running an adoption flow first.
 
 This decision adds a second, separate plugin for that audience. Keeping it
-separate preserves the bootstrapper's intent — the onboarding skill is not part
+separate preserves the bootstrapper's intent: the onboarding skill is not part
 of the new plugin, and the new plugin ships no skills.
 
 ## Relationship to the existing non-goal
@@ -32,8 +32,8 @@ runtime tools."
 
 This decision **consciously and narrowly reverses** that boundary:
 
-- The reversal is *bounded*. Only agents that genuinely work standalone — with no
-  project profile slots to fill — ship as active plugin agents. The full set is
+- The reversal is *bounded*. Only agents that genuinely work standalone, with no
+  project profile slots to fill: ship as active plugin agents. The full set is
   not exposed.
 - The bootstrapper plugin and its project-local-contract philosophy are
   unchanged. The two plugins coexist; users install whichever fits.
@@ -56,7 +56,7 @@ install it and invoke those agents directly (e.g.
   agent discovery.
 - Do not add an MCP server, app, or runtime service.
 - Do not deliver this plugin to Codex, Gemini, or OpenCode in this slice.
-- Do not fork the curated agents into divergent copies — the canonical
+- Do not fork the curated agents into divergent copies: the canonical
   `.claude/agents/` files remain the single source of truth.
 
 ## Curated set
@@ -82,22 +82,22 @@ through the onboarding plugin.
 The canonical `pattern-reviewer` is built around the project defining domains and
 `docs/conventions/<domain>/` docs. In a repo with no domain layout it would, by
 design, raise a coverage gap on everything rather than review against documented
-rules — useless as a direct-use agent.
+rules: useless as a direct-use agent.
 
 Add a documented **discovery mode** to `.claude/agents/pattern-reviewer.md` that
 activates only when no domain layout / convention-doc structure is found:
 
-1. **Discover** — look for convention/pattern docs anywhere under `docs/`, not
+1. **Discover**: look for convention/pattern docs anywhere under `docs/`, not
    only the prescribed `docs/conventions/<domain>/` layout.
-2. **Infer** — if none are found, infer de-facto conventions from the closest
+2. **Infer**, if none are found, infer de-facto conventions from the closest
    sibling files to those changed, and review the diff against those inferred
    patterns.
-3. **Label honestly** — inferred-pattern findings are marked lower-confidence,
+3. **Label honestly**: inferred-pattern findings are marked lower-confidence,
    and the agent still reports "no documented conventions found" as an
    observation recommending the project document them.
 
 This preserves the existing **no-silent-false-confidence** principle: a coverage
-gap no longer means "review nothing and pass" — it means "review against inferred
+gap no longer means "review nothing and pass"; it means "review against inferred
 patterns, clearly labeled." The strict documented-domain behavior is unchanged
 when a domain layout exists; the fallback is additive.
 
@@ -107,7 +107,7 @@ Because this changes a canonical agent, it ripples to:
   its adaptation notes).
 - the onboarding plugin's bundled reference copies of `pattern-reviewer.md` (the
   existing validator enforces reference == canonical, so these must re-sync).
-- `marketplace/catalog.json` — add a note to the `pattern-reviewer` entry that a
+- `marketplace/catalog.json`: add a note to the `pattern-reviewer` entry that a
   standalone discovery fallback now exists. Its `profile-required` maturity is
   unchanged for full domain-aware operation.
 
@@ -166,10 +166,10 @@ Extend `scripts/validate-native-plugin.ps1`:
 ## Documentation updates
 
 - This decision doc.
-- `docs/agents/pattern-reviewer.md` — discovery-mode origin/adaptation notes.
-- `README.md` and `docs/marketplace/` — describe the two-plugin marketplace
+- `docs/agents/pattern-reviewer.md`: discovery-mode origin/adaptation notes.
+- `README.md` and `docs/marketplace/`: describe the two-plugin marketplace
   ("onboard scaffolding" vs "use agents directly").
-- `docs/change-log.md` — entry via the `change-log` skill when the plugin lands.
+- `docs/change-log.md`: entry via the `change-log` skill when the plugin lands.
 
 ## Acceptance criteria
 
@@ -188,13 +188,13 @@ Extend `scripts/validate-native-plugin.ps1`:
 
 Settled for this slice:
 
-- Plugin name is `reviewers` — deliberately not prefixed with the repo name. A
+- Plugin name is `reviewers`: deliberately not prefixed with the repo name. A
   plugin name only needs to be unique within its marketplace, and it doubles as
   the agent-invocation namespace (`reviewers:spec-reviewer`), so the shorter name
   reads better and avoids redundant duplication of the `agent-workshop`
   marketplace name. The bootstrapper plugin keeps the name `agent-workshop` (its
   marketplace namesake): renaming it would cascade into its `agent-workshop-onboard`
-  skill and its Codex delivery — a cross-host rebrand out of scope for this
+  skill and its Codex delivery: a cross-host rebrand out of scope for this
   Claude-only slice.
 - Curated set is `spec-reviewer`, `test-quality-reviewer`, `vigil`,
   `pattern-reviewer`.

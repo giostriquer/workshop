@@ -12,7 +12,7 @@ Read that file before acting and treat it as the source of truth for the role's 
 ## Quick scope
 
 - Documentation supervisor. Diff-driven by default; audit mode on explicit request.
-- Patches docs directly — not a review gate. Edit-mode authority.
+- Patches docs directly; this is edit-mode authority, not a review gate.
 - Ends with the `change-log` skill (preloaded) for log-worthy changes.
 - End-of-flow consolidated pass at branch closure: fresh dispatch over the full branch diff (`git diff <base-branch>...HEAD`).
 

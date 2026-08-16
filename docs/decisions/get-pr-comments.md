@@ -8,8 +8,8 @@ Implemented (2026-06-30). `validate-native-plugin.ps1` passes.
 
 ## Context
 
-PR feedback is scattered across three GitHub surfaces — the conversation tab, review
-verdicts, and inline comments pinned to diff lines — and reading them in the UI to
+PR feedback is scattered across three GitHub surfaces: the conversation tab, review
+verdicts, and inline comments pinned to diff lines, and reading them in the UI to
 work out "what must I actually change" is slow and easy to do incompletely.
 `get-pr-comments` collapses that into one `gh` pass: fetch all three, group by
 severity and actionability, and return a prioritized action list plus the open
@@ -20,7 +20,7 @@ questions still waiting on a human.
 The defining design choice is a **boundary, not a feature**: the skill **must not
 reply to, resolve, react to, or otherwise respond to any PR comment unless the
 operator explicitly asks** for that specific action. Summarizing feedback and
-*answering* it are different acts with different stakes — auto-replying on a shared
+*answering* it are different acts with different stakes: auto-replying on a shared
 PR is exactly the kind of outward-facing side effect that should never fall out of
 "show me the comments." The rule is the first item in the skill's **Boundaries**
 section and is restated in the description and the origin doc so it can't be missed.
@@ -33,18 +33,18 @@ The spec was clean Claude Code skill format; changes were minimal:
   line) for discoverability, the scaffold's description convention.
 - **Workflow** kept the spec's four steps and made them concrete with the actual
   `gh` commands (resolve PR, fetch conversation + reviews + inline comments).
-- **Boundaries** section added — the no-reply rule plus read-only (no edits, no PR
+- **Boundaries** section added: the no-reply rule plus read-only (no edits, no PR
   state changes) and a plain-failure note when there's no PR / `gh` is
   unauthenticated.
 
 ## Placement: toolkit-only
 
-`get-pr-comments` is **self-contained** — just `gh` against the current branch's PR,
+`get-pr-comments` is **self-contained**: just `gh` against the current branch's PR,
 no project profile or convention docs. So it ships **direct-use in the `toolkit`
 plugin** (one canonical copy at `plugins/toolkit/skills/get-pr-comments/SKILL.md`)
 and is **not** in the onboarding adoption set. It sits naturally alongside the
-`ci-watcher` agent — comments vs. CI — as the two read-only "what's the state of my
-PR" tools.
+`ci-watcher` agent, giving maintainers two read-only tools for answering "what's
+the state of my PR?": comments and CI.
 
 ## What changed
 
@@ -72,6 +72,6 @@ PR" tools.
 
 - `/get-pr-comments` resolves the branch's PR, pulls conversation + review + inline
   comments, and returns a severity-grouped, prioritized action list with open
-  questions split out — **without** touching the PR.
+  questions split out: **without** touching the PR.
 - `toolkit` at `0.11.0`, `agent-workshop` at `0.1.18`, consistent across manifests and
   the marketplace; `scripts/validate-native-plugin.ps1` passes.

@@ -8,7 +8,7 @@ invariants that hold regardless of which models you run. You consult it when a
 model choice needs grounding and is not already settled.
 
 It is a lookup, and nothing else. Its own description draws the line: "A
-lookup, not a process — not a step before every dispatch, and it never
+lookup, not a process or a step before every dispatch, and it never
 dispatches anything." There is no rubric to grade your task against, no output
 contract to fill in, no process pattern to select, and no dispatch mechanics.
 It does not decide for you; it gives you the numbers and the invariants and
@@ -22,7 +22,7 @@ content.
 ## When to reach for it
 
 Invoke `/route-work` when you are about to make a model choice that you cannot
-already justify, or when the fleet changes and the table needs updating. The canonical copy "lives here and nowhere else" — an operator's
+already justify, or when the fleet changes and the table needs updating. The canonical copy "lives here and nowhere else": an operator's
 always-injected rules file carries only the hard invariants and points at this
 skill, so the table has exactly one place to go stale.
 
@@ -50,12 +50,12 @@ Scores are 1-10, higher is better.
 | grok-4.6 | 5 | 8 | 8 | 8 | 7 |
 
 There is **one row per model**, "graded at the effort that model is actually
-run at." Effort is not a separate axis — if you change the effort you
+run at." Effort is not a separate axis, if you change the effort you
 habitually run a model at, you re-grade its row rather than adding one.
 
 The axes are defined precisely, and two of them are easy to misread:
 
-- **Cost** is "subscription-limit burn, not dollars" — the fleet runs on
+- **Cost** is "subscription-limit burn, not dollars": the fleet runs on
   subscriptions, so a low cost score means "eats the weekly limit fast," not
   "expensive per token." Higher is cheaper.
 - **Speed** is wall-clock turnaround on the same task. It is scored apart from
@@ -63,7 +63,7 @@ The axes are defined precisely, and two of them are easy to misread:
   weekly limit fail in different ways and constrain different work." Higher is
   faster.
 - **Intelligence** is how hard a problem the model can carry unsupervised.
-- **Taste** covers user-facing surfaces only — UI/UX, copy, API shape, docs
+- **Taste** covers user-facing surfaces only: UI/UX, copy, API shape, docs
   voice.
 - **Code** is coding craft: how correct and well-built the implementation comes
   out when the work is code.
@@ -75,12 +75,12 @@ The axes are defined precisely, and two of them are easy to misread:
 - Judgment-heavy, taste-critical, or silent-failure work goes to the frontier.
   "Putting high-tier judgment at the plan while a cheaper tier implements is
   often the better spend."
-- "A shipping taste surface needs taste >= 7 — luna is not a taste route."
+- "A shipping taste surface needs taste >= 7: luna is not a taste route."
 - "Speed breaks ties, never quality": level rows go to the faster one, but speed
   "does not buy a drop on intelligence, taste, or code."
 
 **The cross-ladder caveat.** Rows drawn from different subscriptions are not
-comparable on cost alone, "so a row another dominates on paper is not retired —
+comparable on cost alone, "so a row another dominates on paper is not retired;
 when one pool's weekly limit is the constraint, a row on another pool is the
 relief valve."
 
@@ -91,7 +91,7 @@ fleet.
 
 | Invariant | What it means in practice |
 | --- | --- |
-| **Set a model floor and enforce it upward** | Decide the weakest model allowed to touch real work, write it into the rules file that loads every session, then override anything selecting below it — agent definitions, tool defaults, `--model` flags, SDK calls — without asking |
+| **Set a model floor and enforce it upward** | Decide the weakest model allowed to touch real work, write it into the rules file that loads every session, then override any lower selection in agent definitions, tool defaults, `--model` flags, or SDK calls without asking |
 | **Orchestration stays home** | Decomposing, dispatching, and judging a set of work always run on the session's own model, never a weaker-model subagent |
 | **Standing escalation permission** | When output misses the bar, rerun or redo on a smarter tier without asking. "Judge the output, not the price tag" |
 | **Cost and speed are tie-breakers only** | When axes conflict for anything that ships: intelligence > taste > cost > speed. Neither of the last two buys a drop on the first two |
@@ -101,20 +101,20 @@ fleet.
 
 **Doesn't this skill ban Haiku and Sonnet?**
 
-Not any more. The first invariant used to read "**Never Haiku or Sonnet — any
+Not any more. The first invariant used to read "**Never Haiku or Sonnet: any
 task, no exceptions**," naming specific models from one operator's subscription
-mix. That is a fine policy for that operator — and it belongs in their
+mix. That is a fine policy for that operator, and it belongs in their
 always-injected rules file, not in a plugin every adopter installs. The
 invariant now ships the shape instead: set a floor, write it into your rules
 file, enforce upward, and "where the floor sits is the operator's call; having
 one, and never silently dropping under it, is the invariant"
 ([decision](../decisions/route-work-model-floor-portable.md)). If you want a
-model banned in your environment, that goes in your own rules file — this skill
+model banned in your environment, that goes in your own rules file; this skill
 will not carry it for you.
 
 **The table lists models I don't have.**
 
-Expected. "The values are the operator's own calibration — adopters swap the
+Expected. "The values are the operator's own calibration: adopters swap the
 rows for their fleet and re-grade." What you keep is the axis definitions, the
 reading notes, and the invariants; what you replace is every row.
 
@@ -122,7 +122,7 @@ reading notes, and the invariants; what you replace is every row.
 
 No. It used to: earlier versions carried a five-axis grading rubric, four named
 process patterns, a three-line `route:` / `why:` / `grades:` output contract,
-worked examples, and dispatch mechanics. All of it was cut — the skill read as a
+worked examples, and dispatch mechanics. All of it was cut: the skill read as a
 dispatch procedure and was being treated as a step before every subagent
 dispatch ([decision](../decisions/route-work-recalibration-and-trim.md)). What
 remains is the table, the calibration note, the invariants, and four reading
@@ -130,7 +130,7 @@ notes. You do the grading.
 
 **Why does the cheapest model have the highest cost score?**
 
-Because cost is scored like every other axis — higher is better. A 10 means
+Because cost is scored like every other axis: higher is better. A 10 means
 lowest burn: fast and light on the weekly limit. Read the column as "cheapness,"
 not "price."
 
@@ -139,14 +139,14 @@ not "price."
 Whatever effort you graded the row at. The table has one row per model, "graded
 at the effort that model is actually run at," so the numbers already assume your
 habitual setting. If you start running a model at a different effort and its
-behaviour moves, re-grade that row — do not add a second row for the new tier.
+behaviour moves, re-grade that row. Do not add a second row for the new tier.
 
 **Two models tie on intelligence. Which do I pick?**
 
 Look at which axis the work actually loads. Implementation work reads the code
 column the way user-facing work reads taste. If the axes genuinely conflict for
 something that ships, the order is intelligence, then taste, then cost, then
-speed — neither cost nor speed breaks a tie in its own favor when quality is at
+speed: neither cost nor speed breaks a tie in its own favor when quality is at
 stake. Between rows that are genuinely level on the axis the work loads, take
 the faster one.
 
@@ -163,7 +163,7 @@ conflict."
 
 **When do I edit the table?**
 
-When the fleet changes — a model launches, a tier is retired, a calibration
+When the fleet changes: a model launches, a tier is retired, a calibration
 proves wrong in use. Dead rows leave rather than lingering for reference; a
 stale row is the exact failure the skill exists to prevent, since an
 always-injected copy of a table has no update trigger
@@ -185,9 +185,9 @@ always-injected copy of a table has no update trigger
 
 `route-work` sits off the workbench spine. Nothing in the flow requires it, and
 no stage hands off to it; it is consulted from wherever a model or effort
-decision happens to land — a dispatch, an agent definition, a rules file being
+decision happens to land: a dispatch, an agent definition, a rules file being
 written. Its closest neighbor in kind is `using-workbench`, the other pure
 reference in the set: one tells you which piece owns the moment, the other tells
 you what to run it on. Its closest neighbors in practice are the moments that
-spend model budget — the route gate at the end of `brainstorming`, `audit`'s
+spend model budget: the route gate at the end of `brainstorming`, `audit`'s
 sizing question, and any fan-out a session is about to launch.

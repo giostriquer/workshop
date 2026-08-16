@@ -1,9 +1,9 @@
 ---
 name: codex-implement
-description: Use when dispatching implementation tasks to Codex CLI (GPT-5.5) as the coder while this session plans and judges — a written plan or task brief exists and coding labor should be delegated to codex exec. Not for planning, review, or tasks that need conversation with the user.
+description: Use when dispatching implementation tasks to Codex CLI (GPT-5.5) as the coder while this session plans and judges: a written plan or task brief exists and coding labor should be delegated to codex exec. Not for planning, review, or tasks that need conversation with the user.
 ---
 
-# codex-implement — this session plans and judges, Codex codes
+# codex-implement: this session plans and judges, Codex codes
 
 Dispatch coding tasks to Codex CLI (`codex exec`, GPT-5.5) and judge the
 results. The orchestrating session never writes the implementation code
@@ -16,7 +16,7 @@ iterates.
 - Target repo is a git repository; snapshot `git status --porcelain` before
   dispatch so codex's changes are attributable.
 - bash (git-bash on Windows). The wrapper is bash-only. Pass `--repo`,
-  `--brief`, and `--run-dir` as POSIX-style paths (`/c/Users/...`) — the
+  `--brief`, and `--run-dir` as POSIX-style paths (`/c/Users/...`): the
   wrapper writes them into meta.json unescaped, so backslash Windows paths
   would produce invalid JSON.
 
@@ -34,7 +34,7 @@ iterates.
    `events.jsonl` (full event stream), `last-message.md` (codex's final
    message), `meta.json` (session_id, exit_code, wall_seconds, usage),
    `diff-stat.txt` + `status-porcelain.txt` (what actually changed).
-4. Record `session_id` — fix rounds resume it.
+4. Record `session_id`: fix rounds resume it.
 
 ## Fix rounds
 
@@ -44,32 +44,32 @@ iterates.
 Resume caveats (verified on codex 0.141.0): no `--add-dir`; the wrapper cds
 into `--repo` because codex resume runs in the invoking cwd, not the thread's
 original root. If the `new` dispatch needed `--add-dir`, verify writes still
-succeed on resume before relying on it — otherwise start a fresh session with
+succeed on resume before relying on it: otherwise start a fresh session with
 a full re-brief.
 
 ## Brief authoring
 
 Codex starts with zero conversational context. Every brief carries:
 
-- **Goal** — what to build or fix, one paragraph.
-- **Repo map** — exact paths to touch, and exact paths to read first for
+- **Goal**: what to build or fix, one paragraph.
+- **Repo map**: exact paths to touch, and exact paths to read first for
   conventions and context (spec, plan, style docs).
-- **Constraints** — style rules, forbidden patterns, dependency policy, and a
+- **Constraints**: style rules, forbidden patterns, dependency policy, and a
   scope fence ("do not touch anything outside X, Y").
-- **Tests** — expected coverage, the exact build/test commands, and an
+- **Tests**: expected coverage, the exact build/test commands, and an
   instruction to RUN them and iterate until green before returning (codex
-  runs unsandboxed by default — operator decision 2026-07-02 — precisely so
+  runs unsandboxed by default (operator decision 2026-07-02) precisely so
   it self-verifies instead of bouncing compiler output through the
   orchestrator's context).
-- **Definition of done** — observable criteria; require the final message to
+- **Definition of done**: observable criteria; require the final message to
   end with files changed + commands run + their results.
 
-Be explicit about exact file content down to newlines — codex reproduces
+Be explicit about exact file content down to newlines: codex reproduces
 literally what the brief specifies and no more.
 
 ## Failure handling (non-zero wrapper exit)
 
-A non-zero exit is NOT a fix round — the run may not even be resumable.
+A non-zero exit is NOT a fix round: the run may not even be resumable.
 Before deciding retry vs fallback, classify the failure from the tail of
 `events.jsonl`, `stderr.txt`, and `last-message.md`:
 
@@ -88,7 +88,7 @@ The wrapper defaults to `--sandbox danger-full-access`: automated codex runs
 execute unsandboxed with approvals off, so codex builds and tests its own
 work and returns only finished iterations. The orchestrator still runs ONE
 firsthand verification pass plus the host repo's review gates on the final
-diff — trust, but verify once.
+diff: trust, but verify once.
 
 Why not workspace-write: the unelevated Windows sandbox allows creates and
 in-place writes but **denies all deletes/rename-replace**, so cargo (and any
@@ -98,7 +98,7 @@ codex 0.141.0. Interactive codex avoids this because `approval_policy =
 "on-request"` runs approved commands outside the sandbox.
 
 `--sandbox workspace-write` remains available for untrusted contexts; under
-it, codex is a pure code-writer — brief it NOT to run build/test commands,
+it, codex is a pure code-writer: brief it NOT to run build/test commands,
 run them yourself, and feed failures back via resume briefs (this bloats the
 orchestrator's context on iterative tasks; that trade-off is why the operator
 chose full access).
@@ -112,7 +112,7 @@ Send findings back as a resume brief quoting each finding exactly.
 
 ## Escalation rule (defaults; a host repo's plan may override)
 
-Every fix round — firsthand verification failure OR review-gate finding —
+Every fix round (firsthand verification failure OR review-gate finding)
 counts toward one per-task budget. Fall back to the host repo's native
 implementer path when:
 
@@ -133,20 +133,20 @@ and resume. Record the failure mode whenever you fall back.
 
 - **Taste caveat:** GPT-5.5's taste (UI/UX, copy, API design) trails its
   engineering. For user-facing surfaces either keep a native implementer or
-  expect taste findings at review — plan a Fable/Opus design pass.
+  expect taste findings at review: plan a Fable/Opus design pass.
 - **Read-only investigation:** for token-hungry analysis (long files, logs,
   data crunching) that would bloat the orchestrator's context, dispatch the
   wrapper with `--sandbox read-only` and a self-contained question brief;
   consume only `last-message.md`.
 - **Inside Agent/Workflow fan-outs** (the model parameter only takes Claude
   models): spawn a thin Claude wrapper agent (`model: opus`, `effort: high`
-  or `xhigh` — Sonnet and Haiku are banned outright per the operator's model
+  or `xhigh`: Sonnet and Haiku are banned outright per the operator's model
   rules) whose prompt says to write a self-contained codex brief, run
   `codex-task.sh` via Bash, and return codex's final message verbatim. The
   courier agent must not editorialize or re-review.
 - See also `~/.claude/rules/model-selection.md` for the cross-model routing
   rubric (cost/intelligence/taste).
 - **For a SET of work** (multiple units, a feature campaign): the
-  `orchestrate` skill carries the campaign doctrine — decomposition, state
+  `orchestrate` skill carries the campaign doctrine: decomposition, state
   tracking, per-unit judging, re-planning, and whole-of-work completion.
   This skill stays the per-dispatch mechanics layer underneath it.

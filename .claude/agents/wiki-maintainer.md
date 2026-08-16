@@ -33,11 +33,11 @@ Expected default:
 - update relevant systems / math / formula docs when active core-system rules changed
 - add or update decision records (typically `docs/decisions/`) only when the change is a durable architectural, scope, or implementation-direction decision that deserves its own record
 
-Documentation impact is part of completion for meaningful work — not optional cleanup after.
+Documentation impact is part of completion for meaningful work. It is not optional cleanup afterward.
 
 ## Primary workflow: diff-driven
 
-Use this workflow by default when maintaining docs after a code or scope change. The agent operates in edit-mode and patches docs directly — it is the documentation authority for the repository, not a review gate.
+Use this workflow by default when maintaining docs after a code or scope change. The agent operates in edit-mode and patches docs directly; it is the documentation authority for the repository, not a review gate.
 
 1. Start with the current diff.
 2. Classify the change:
@@ -49,7 +49,7 @@ Use this workflow by default when maintaining docs after a code or scope change.
 4. Update existing docs when possible.
 5. Create new docs only when the change introduces a genuinely new subsystem, structural boundary, or architectural decision.
 6. Ensure the change leaves the required documentation trace if it is meaningful.
-7. **Record the change via the `change-log` skill.** The skill is preloaded via the `skills:` frontmatter — apply its classification, format, and idempotency rules directly. A no-entry-needed outcome is acceptable for trivial changes.
+7. **Record the change via the `change-log` skill.** The skill is preloaded via the `skills:` frontmatter: apply its classification, format, and idempotency rules directly. A no-entry-needed outcome is acceptable for trivial changes.
 8. **Post-diff consistency sweep:** After the primary diff-driven pass, check secondary docs that are plausibly touched by the current change. Common secondary surfaces that drift:
    - `CLAUDE.md` and `AGENTS.md` workflow rules and folder/type listings
    - section READMEs that index pages or topics
@@ -75,13 +75,13 @@ Use this workflow only when explicitly asked to review the full documentation su
 
 Audit mode defaults to propose-before-apply: the findings report is the primary output. Apply changes only after the invoker has confirmed which items to act on.
 
-Once the invoker confirms the report, the agent resumes its edit-mode authority for the approved items — patch directly, do not produce a second report.
+Once the invoker confirms the report, the agent resumes its edit-mode authority for the approved items: patch directly, do not produce a second report.
 
 ## End-of-flow consolidated pass
 
 A specialization of the diff-driven primary workflow: at branch closure, this agent runs once against the full branch diff before any merge or PR step.
 
-Operate in diff-driven primary workflow, not audit mode. The dispatch is fresh, not a `SendMessage`-resume of any per-task session — the full-branch diff is a different artifact from any per-task diff.
+Operate in diff-driven primary workflow, not audit mode. The dispatch is fresh, not a `SendMessage`-resume of any per-task session: the full-branch diff is a different artifact from any per-task diff.
 
 Cross-task coherence drift is the priority for this pass:
 
@@ -101,7 +101,7 @@ Use this during the post-diff consistency sweep or as part of the audit workflow
 - **Structure:** Do `README.md`, routing indexes, and architecture docs match the real repo layout?
 - **Tooling docs:** If a repo-local tool changed, does its `tooling/<tool>/README.md` (or equivalent) still cover run/test commands, endpoints, and operator workflow?
 - **Operational workflow:** Does `AGENTS.md` (and `CLAUDE.md`) still match the actual agent setup, review gates, and workflow sequence? Do references to agents, skills, and scripts point at files that still exist?
-- **Host-file workflow-rule parity:** Workflow rules that fire during a session must live inline in each host's auto-loaded file: `CLAUDE.md` for Claude Code, `AGENTS.md` for Codex, `GEMINI.md` for Gemini. **Do not dedupe these into a single canonical file with the others as pointers** — only the file each host auto-loads is reliably in front of the model at decision time. When a workflow rule changes, update all host files that carry it.
+- **Host-file workflow-rule parity:** Workflow rules that fire during a session must live inline in each host's auto-loaded file: `CLAUDE.md` for Claude Code, `AGENTS.md` for Codex, `GEMINI.md` for Gemini. **Do not dedupe these into a single canonical file with the others as pointers**, because only the file each host auto-loads is reliably in front of the model at decision time. When a workflow rule changes, update all host files that carry it.
 - **Linking mandate:** Every new document MUST be linked from the closest section README or routing doc.
 - **Section-README coverage:** Does every topic advertised in a section README's pages list resolve to a linked page in that section?
 - **Duplication health:** If the same information appears in multiple docs, is one authoritative and the others linking to it?
@@ -168,7 +168,7 @@ Usually ignore:
 
 ## Output expectations
 
-This agent is the documentation authority and patches docs directly as its primary action — not a review gate. After any doc pass, report:
+This agent is the documentation authority and patches docs directly as its primary action. It is not a review gate. After any doc pass, report:
 
 - files updated, one line each with a short reason
 - whether the `change-log` skill was invoked and its outcome (entry added, entry amended, or no entry needed)

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// adopt-global-rules — install the workshop's global agent configuration onto
+// adopt-global-rules: install the workshop's global agent configuration onto
 // this machine, additively.
 //
 // Three kinds of content:
@@ -8,7 +8,7 @@
 //                  block.
 //   rules/         discrete single-source rules fanned out to every host.
 //   output-styles/ whole files for hosts that have a first-class surface for
-//                  them; installed, never activated — selecting one is the
+//                  them; installed, never activated: selecting one is the
 //                  user's call.
 //
 // The contract is narrow on purpose: the pack owns its own marked blocks and
@@ -31,11 +31,11 @@ const val = (flag) => {
 };
 
 if (has("--help") || has("-h")) {
-  console.log(`adopt-global-rules — install global agent configuration onto this machine
+  console.log(`adopt-global-rules: install global agent configuration onto this machine
 
   --dry-run        plan only; write nothing
   --json           machine-readable plan/result
-  --tier <t>       core | all   (default: all — core plus eligible optional)
+  --tier <t>       core | all   (default: all: core plus eligible optional)
   --host <ids>     comma-separated host ids (default: every detected host)
   --skip-globals   install rules only; leave the global instruction doc alone
   --root <dir>     treat <dir> as the home directory (testing)
@@ -68,7 +68,7 @@ const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 const NS = "workshop";
 // Namespaces this installer still recognises on disk but no longer writes.
 // A marker rename that does not carry its predecessors makes every block
-// already on a machine invisible — the installer would append a second copy of
+// already on a machine invisible: the installer would append a second copy of
 // everything and report no orphan, because orphan detection keys on the same
 // pattern. Retire an entry only once no machine can still be carrying it.
 const LEGACY_NS = ["agent-workshop"];
@@ -148,7 +148,7 @@ function diffLines(before, after) {
 }
 
 // ── per-file edit accumulation ───────────────────────────────────────────────
-// A single file can receive several blocks — on Codex the global doc and every
+// A single file can receive several blocks: on Codex the global doc and every
 // rule all land in AGENTS.md. Reading and writing it once per block would make
 // each pass blind to the previous one, so all edits accumulate in memory and
 // the file is written exactly once.
@@ -203,7 +203,7 @@ function upsertBlock(st, id, body, legacyMarkers = []) {
 }
 
 // ── whole-file targets ───────────────────────────────────────────────────────
-// The marker rides at the top of a file the pack owns outright — except where
+// The marker rides at the top of a file the pack owns outright: except where
 // the file opens with YAML frontmatter. A host parses that block from byte
 // zero, so a marker ahead of it would break the very file it is meant to
 // manage; there it goes immediately after the closing fence instead.
@@ -230,7 +230,7 @@ function installWholeFile(host, dir, item, kind) {
       kind,
       action: "collision",
       path,
-      reason: "a file already exists at this path without a pack marker — it is yours, so it was left untouched",
+      reason: "a file already exists at this path without a pack marker; it is yours, so it was left untouched",
     };
   }
   if (st.text === desired) return { hostId: host.id, ruleId: item.id, kind, action: "unchanged", path };
@@ -254,7 +254,7 @@ function scanDir(host, dir) {
       if (prune) deletes.add(p);
     }
     // Such a directory is a flat namespace, so something the user wrote under a
-    // different filename never collides — it just sits alongside the pack's copy
+    // different filename never collides; it just sits alongside the pack's copy
     // saying the same thing twice. Only a reader catches that.
     if (!ids.length) unmanaged[host.id].push({ source: p, content: body.trim() });
   }
@@ -388,19 +388,19 @@ if (asJson) {
 
 // ── report ───────────────────────────────────────────────────────────────────
 const icon = { added: "+", updated: "~", unchanged: "=", skipped: ".", collision: "!" };
-console.log(`adopt-global-rules — pack v${manifest.packVersion}${dryRun ? " (dry run — nothing written)" : ""}`);
+console.log(`adopt-global-rules: pack v${manifest.packVersion}${dryRun ? " (dry run: nothing written)" : ""}`);
 console.log(`home: ${root}\n`);
 
 for (const host of hosts) {
   const mine = actions.filter((a) => a.hostId === host.id);
   const targets = [...new Set([host.globalDoc && !skipGlobals ? host.globalDoc.target : null, host.target, host.outputStyles?.target ?? null].filter(Boolean))];
   const where = host.present ? targets.join(" + ") : "not installed";
-  console.log(`## ${host.label} — ${where}`);
+  console.log(`## ${host.label}: ${where}`);
   for (const a of mine) {
     const kindNote = { "global-doc": " (global doc)", "output-style": " (output style)" }[a.kind] ?? "";
     const label = a.ruleId ? `${a.ruleId}${kindNote}` : "(host)";
     console.log(
-      `  ${icon[a.action] ?? "?"} ${label} — ${a.action}${a.reason ? `: ${a.reason}` : ""}${a.migratedFrom ? ` (migrated legacy ${a.migratedFrom})` : ""}`
+      `  ${icon[a.action] ?? "?"} ${label}: ${a.action}${a.reason ? `: ${a.reason}` : ""}${a.migratedFrom ? ` (migrated legacy ${a.migratedFrom})` : ""}`
     );
     if (a.diff) console.log(a.diff.split("\n").map((l) => `      ${l}`).join("\n"));
   }
@@ -409,7 +409,7 @@ for (const host of hosts) {
 
 const landedStyles = actions.filter((a) => a.kind === "output-style" && ["added", "updated"].includes(a.action));
 if (landedStyles.length) {
-  console.log(`## Output styles — installed, not activated`);
+  console.log(`## Output styles: installed, not activated`);
   console.log(`A style does nothing until you select it. In Claude Code: /output-style`);
   for (const a of landedStyles) {
     const title = outputStyles.find((x) => x.id === a.ruleId)?.title ?? a.ruleId;
@@ -420,27 +420,27 @@ if (landedStyles.length) {
 
 const unmanagedCount = Object.values(unmanaged).reduce((n, list) => n + list.length, 0);
 if (unmanagedCount) {
-  console.log(`## Unmanaged — ${unmanagedCount}`);
+  console.log(`## Unmanaged: ${unmanagedCount}`);
   console.log(`Content the pack does not own. Read it: something you wrote under a different`);
   console.log(`name is not a collision, it is a duplicate nothing here can detect.`);
   for (const [hostId, list] of Object.entries(unmanaged)) {
-    for (const u of list) console.log(`  ? ${hostId} — ${u.source} (${u.content.split("\n").length} lines)`);
+    for (const u of list) console.log(`  ? ${hostId}: ${u.source} (${u.content.split("\n").length} lines)`);
   }
   console.log("");
 }
 
 if (orphans.length) {
-  console.log(`## Orphans — ${orphans.length}`);
+  console.log(`## Orphans: ${orphans.length}`);
   for (const o of orphans) {
-    console.log(`  ? ${o.ruleId} in ${o.path} — no longer in the manifest${o.pruned ? " (pruned)" : "; re-run with --prune to remove"}`);
+    console.log(`  ? ${o.ruleId} in ${o.path}: no longer in the manifest${o.pruned ? " (pruned)" : "; re-run with --prune to remove"}`);
   }
   console.log("");
 }
 
 if (collisions.length) {
-  console.log(`## Collisions — ${collisions.length}`);
+  console.log(`## Collisions: ${collisions.length}`);
   console.log(`These were left exactly as found. They are yours, not the pack's.`);
-  for (const c of collisions) console.log(`  ! ${c.ruleId} — ${c.path}`);
+  for (const c of collisions) console.log(`  ! ${c.ruleId}: ${c.path}`);
   console.log("");
 }
 

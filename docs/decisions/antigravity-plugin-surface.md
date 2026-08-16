@@ -11,9 +11,9 @@ Implemented. `validate-native-plugin.ps1` passes.
 The repo publishes its two plugins (`workbench`, `toolkit`) across multiple host
 ecosystems:
 
-- Claude Code — `.claude-plugin/marketplace.json`, `<plugin>/.claude-plugin/plugin.json`
-- Codex — `.agents/plugins/marketplace.json`, `<plugin>/.codex-plugin/plugin.json`
-- Cursor — `.cursor-plugin/marketplace.json`, `<plugin>/.cursor-plugin/plugin.json`
+- Claude Code: `.claude-plugin/marketplace.json`, `<plugin>/.claude-plugin/plugin.json`
+- Codex: `.agents/plugins/marketplace.json`, `<plugin>/.codex-plugin/plugin.json`
+- Cursor: `.cursor-plugin/marketplace.json`, `<plugin>/.cursor-plugin/plugin.json`
 
 Google Antigravity defines its own packaging convention
 ([antigravity.google/docs/plugins](https://antigravity.google/docs/plugins)):
@@ -31,10 +31,10 @@ Google Antigravity defines its own packaging convention
 
 ## What was added
 
-- `plugins/workbench/plugin.json` and `plugins/toolkit/plugin.json` — the root
+- `plugins/workbench/plugin.json` and `plugins/toolkit/plugin.json`: the root
   marker manifests. They carry the same `name`, `version`, and `description` as
   the other hosts' manifests, so version parity is checkable in one place.
-- `scripts/validate-native-plugin.ps1` — extended to check each root
+- `scripts/validate-native-plugin.ps1`: extended to check each root
   `plugin.json` for presence, valid JSON, matching name, and version parity
   with the Claude manifest.
 - Install instructions in the root and per-plugin READMEs.

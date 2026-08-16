@@ -3,8 +3,8 @@
 // a webm/mp4 video (the human-shareable evidence).
 //
 // Ships with the ui-demo-video skill. Copy this file into the project (e.g. tmp/)
-// next to your scenario file — it must resolve the project's own Playwright
-// install — then:
+// next to your scenario file; it must resolve the project's own Playwright
+// Install, then run:
 //
 //   import { recordUiDemo } from "./harness.mjs";
 //
@@ -39,7 +39,7 @@ async function loadChromium() {
     }
   }
   throw new Error(
-    "ui-demo-video harness: neither @playwright/test nor playwright is installed in this project — run: npm i -D @playwright/test && npx playwright install chromium",
+    "ui-demo-video harness: neither @playwright/test nor playwright is installed in this project: run: npm i -D @playwright/test && npx playwright install chromium",
   );
 }
 
@@ -152,7 +152,7 @@ export async function recordUiDemo(config, scenario) {
       );
       manifest.files.mp4 = mp4Path;
     } catch {
-      console.log("  (ffmpeg unavailable — kept webm only)");
+      console.log("  (ffmpeg unavailable: kept webm only)");
     }
 
     manifest.finishedAt = new Date().toISOString();

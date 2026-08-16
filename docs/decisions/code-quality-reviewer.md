@@ -9,16 +9,16 @@ Implemented (2026-06-29). `validate-native-plugin.ps1` passes.
 ## Context
 
 The scaffold's implementation-review loop always named a **code-quality** stage
-ahead of pattern and test review — `pattern-reviewer`'s own description says it runs
+ahead of pattern and test review: `pattern-reviewer`'s own description says it runs
 "after code-quality review," and `docs/agents/README.md` listed "the project's
-code-quality reviewer" as the first implementation-review step — but no such agent
+code-quality reviewer" as the first implementation-review step, but no such agent
 shipped. Every adopting project had to supply it. This adds the missing agent.
 
 It is the dispatchable counterpart to the `code-quality-review` skill added in the
 same batch: the **skill is the rubric**, the **agent loads that rubric and applies
 it to a diff** in its own subagent context. The agent's spec was operator-provided
 (originating in a Cursor "team kit") and **adapted into the scaffold** rather than
-copied verbatim — the skill addition was the verbatim one; this agent needed
+copied verbatim: the skill addition was the verbatim one; this agent needed
 sanitization.
 
 ## Adaptations from the supplied spec
@@ -27,7 +27,7 @@ The supplied spec was Cursor-specific; the scaffold version keeps its identity a
 changes what doesn't port:
 
 - **De-branded.** "Thermo-nuclear" is dropped throughout (name, description, body),
-  matching the same scrub applied to the skill — see
+  matching the same scrub applied to the skill: see
   [`docs/decisions/code-quality-review.md`](code-quality-review.md).
 - **Name** is `code-quality-reviewer` (spec working title
   `thermo-nuclear-code-quality-review`).
@@ -38,14 +38,14 @@ changes what doesn't port:
   on hosts that don't auto-load skills.
 - **Orchestration made host-agnostic.** The spec hardcoded Cursor subagent types
   (`subagent_type: "shell"`, `"explore"`, `"thermo-nuclear-code-quality-review"`).
-  The scaffold version describes the same flow — collect `git diff <base>...HEAD`
+  The scaffold version describes the same flow: collect `git diff <base>...HEAD`
   (default base `main`) and changed-file contents, then dispatch with
-  `### Git / diff output` and `### Changed file contents` sections — in terms of
+  `### Git / diff output` and `### Changed file contents` sections: in terms of
   "the host's Task / subagent mechanism," and the canonical spec carries
   Claude-format frontmatter (`tools: Read, Grep, Glob, Bash`, `model: inherit`) with
   thin `.codex` / `.gemini` / `.opencode` wrappers, like the other review agents.
 - **Robust input.** It reviews the labeled sections when supplied, and gathers the
-  diff itself when they aren't — so it works both as a parent-orchestrated stage and
+  diff itself when they aren't, so it works both as a parent-orchestrated stage and
   standalone.
 
 ## What changed across the scaffold

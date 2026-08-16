@@ -1,6 +1,6 @@
 {
   "name": "toolkit",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "Optional utilities for the workshop: html-report (report to a polished dark HTML page, from a doc or from session findings), arch-map (derived architecture maps), ui-demo-video (Playwright walkthroughs with verification frames), writing-skills (TDD for skill authoring, derived from obra/superpowers, MIT), adopt-global-rules (installs the workshop's shipped global CLAUDE.md / AGENTS.md, rules, and Claude output styles onto a machine, additively), and me-human (act as a human user dogfooding a system for real work). Install alongside workbench when you want them; skip to keep sessions lean.",
   "author": {
     "name": "Workshop",
@@ -14,7 +14,7 @@
   "interface": {
     "displayName": "Toolkit",
     "shortDescription": "Optional utilities for Codex.",
-    "longDescription": "A Codex manifest for the Workshop toolkit plugin. Codex exposes the html-report, ui-demo-video, arch-map, writing-skills, adopt-global-rules, and me-human skills from this package — the optional layer next to the workbench plugin.",
+    "longDescription": "A Codex manifest for the Workshop toolkit plugin. Codex exposes the html-report, ui-demo-video, arch-map, writing-skills, adopt-global-rules, and me-human skills from this package: the optional layer next to the workbench plugin.",
     "developerName": "Workshop",
     "category": "Productivity",
     "capabilities": ["Skills"],

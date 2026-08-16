@@ -11,18 +11,18 @@
 
 Two pressures, one skill.
 
-The first: a prompt the maintainer rewrote by hand at the end of nearly every branch — "give this a fresh, unbiased review before we open the PR — does the code match the task, does it follow our rules, did we leak anything." Written ad hoc, it drifted: different wording each time, the leak check sometimes dropped, the review sometimes run by the same session that wrote the code (the worst possible judge).
+The first was a prompt the maintainer rewrote by hand at the end of nearly every branch: "Give this a fresh, unbiased review before we open the PR. Does the code match the task? Does it follow our rules? Did we leak anything?" Written ad hoc, it drifted through different wording each time; sometimes the leak check disappeared, and sometimes the same session that wrote the code ran the review, making it the worst possible judge.
 
-The second surfaced in lived-in use: the narrow pre-PR framing saw low usage, because the moment that actually wants a fresh session is not "the branch is done, review it" but **this session's context has gone bad and I want to start over without losing the work.** Restarting by hand re-introduced the exact bias the review removes — the new session trusted the prior session's claims and built on unverified work.
+The second surfaced in lived-in use: the narrow pre-PR framing saw low usage, because the moment that actually wants a fresh session is not "the branch is done, review it" but **this session's context has gone bad and I want to start over without losing the work.** Restarting by hand re-introduced the exact bias the review removes: the new session trusted the prior session's claims and built on unverified work.
 
-`handoff-review` formalizes both into one self-contained brief that a *different* agent or session runs: verify the work unbiased, and — when needed — continue it from a verified foundation.
+`handoff-review` formalizes both into one self-contained brief that a *different* agent or session runs: verify the work unbiased, and (when needed) continue it from a verified foundation.
 
 ## Problem
 
 Three failure modes in the ad-hoc flow:
 
 1. **Biased reviewer.** The implementing session "knows" the intent and reads it into the diff, so it confirms its own work. A genuinely fresh review has to re-derive the task from the ticket and the diff.
-2. **Hollow task-vs-code check.** Handed only a ticket id, a fresh reviewer can't open it and silently falls back to reviewing commits alone — gutting the most important dimension.
+2. **Hollow task-vs-code check.** Handed only a ticket id, a fresh reviewer can't open it and silently falls back to reviewing commits alone: gutting the most important dimension.
 3. **Continuation on sand.** A hand-rolled restart trusts the prior (possibly compromised) session's "done" and builds on top of unverified work, propagating whatever sent the first session sideways.
 
 ## Solution shape
@@ -33,9 +33,9 @@ The load-bearing idea that unifies review and continuation: **verification is th
 
 Three modes:
 
-- **default (spawn)** — a fresh agent verifies and returns findings.
-- **handoff / session** — write a verify-only brief to a scratch file for a new session.
-- **continue / resume** — write a verify-**then-continue** brief: it adds current state (re-derived from the repo), the remaining work as an outcome, and concrete operating rules; gates continuation on a clean verification; and, for substantial forward work, points at `handoff-goal` rather than duplicating its acceptance-checks / integrity apparatus.
+- **default (spawn)**: a fresh agent verifies and returns findings.
+- **handoff / session**: write a verify-only brief to a scratch file for a new session.
+- **continue / resume**: write a verify-**then-continue** brief. It adds current state (re-derived from the repo), the remaining work as an outcome, and concrete operating rules; gates continuation on a clean verification; and, for substantial forward work, points at `handoff-goal` rather than duplicating its acceptance-checks / integrity apparatus.
 
 The standalone constraint still holds: "zero shared context" excludes the prior session's interpretation (the bias) but includes the ticket's ground truth (what the receiver checks against).
 
@@ -57,7 +57,7 @@ Writes a verify-then-continue brief to the same scratch path: a new session veri
 
 - **Letting the prior session's paraphrase stand in for the ticket.** That paraphrase is exactly the bias being removed; it ships only under the explicit "implementer's claim, verify" label.
 - **Naming tools in the brief.** The consuming agent owns tool choice. The one allowed pointer is `continue` mode's nudge toward `handoff-goal` for substantial forward work.
-- **Continuing before verifying.** The `continue` brief gates the build on a clean verification — building on the prior session's unverified "done" is the failure the recovery mode exists to prevent.
+- **Continuing before verifying.** The `continue` brief gates the build on a clean verification: building on the prior session's unverified "done" is the failure the recovery mode exists to prevent.
 - **Treating it as a doer.** It produces the brief; it never reviews and never pursues the continuation.
 - **Bloating the continuation.** The extension stays light (state + outcome + rules). Full forward-work discipline lives in `handoff-goal`; the brief points there rather than copying it.
 

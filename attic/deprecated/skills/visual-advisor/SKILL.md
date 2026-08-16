@@ -26,7 +26,7 @@ Keep the advisor and implementer roles separate.
 | Mode | When to use | Anchors | Promotion path |
 |---|---|---|---|
 | `refinement` | Sprite intake, animation, runtime proof, presentation wiring under a settled visual thesis | Current baselines are constraints | study-only → candidate → runtime proof → baseline promotion |
-| `exploration` | The current direction feels stuck on one look. Broadening visual options. Surveying alternatives before committing. | Current baselines are context only — do NOT re-impose them on candidates | study-only outputs only; cannot promote to baseline directly |
+| `exploration` | The current direction feels stuck on one look. Broadening visual options. Surveying alternatives before committing. | Current baselines are context only. Do NOT re-impose them on candidates. | study-only outputs only; cannot promote to baseline directly |
 | `rebaseline` | The user has decided a current baseline must change and a new thesis needs to be drafted | Current baselines are the thing being replaced | requires explicit thesis-ratification gate before any refinement work resumes |
 
 Default to `refinement`. Switch to `exploration` when the user uses divergence language: "explore", "broaden", "different", "alternatives", "stuck", "same look", "diverge", "what if". Switch to `rebaseline` only when the user explicitly says a baseline needs replacing or names a different visual thesis they want adopted.
@@ -74,7 +74,7 @@ Exploration mode (replaces the refinement ladder):
 
 - `Reject`: variants collapsed into the current baseline language, were functionally identical to each other, or were too noisy to read.
 - `Exploration noted`: kept in scratch as reference; no promotion path from this pass.
-- `Promising direction — escalate to rebaseline`: at least one variant is strong enough that the user should consider drafting a new thesis around it.
+- `Promising direction: escalate to rebaseline`: at least one variant is strong enough that the user should consider drafting a new thesis around it.
 
 Rebaseline mode:
 
@@ -108,7 +108,7 @@ When producing a prompt for exploration mode, use this shape:
 - This skill is advisory. It does not import, wire, or promote visual assets.
 - It does not bless its own prompts as production-ready.
 - It does not let a worker's self-verdict substitute for advisor review of actual images and runtime proof.
-- It does not arbitrate gameplay / product math, balance, or core logic — visual surfaces only.
+- It does not arbitrate gameplay / product math, balance, or core logic: visual surfaces only.
 
 ## Suggested invocation
 

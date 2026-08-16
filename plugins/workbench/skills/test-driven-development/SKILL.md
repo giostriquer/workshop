@@ -1,6 +1,6 @@
 ---
 name: test-driven-development
-description: Use when implementing a feature or bugfix in a repo that has a test harness — the workbench flow's default discipline there, as a default rather than a mandate; the repo's own implementation and testing conventions take precedence when they conflict (where no harness exists, skip without ceremony). Write the failing test first, watch it fail, write minimal code to pass, refactor.
+description: Use when implementing a feature or bugfix in a repo that has a test harness. This is the workbench flow's default discipline there, not a mandate; the repo's own implementation and testing conventions take precedence when they conflict. Where no harness exists, skip without ceremony. Write the failing test first, watch it fail, write minimal code to pass, and refactor.
 metadata:
   system: workbench
 ---
@@ -15,33 +15,33 @@ Write the test first. Watch it fail. Write minimal code to pass.
 
 **Violating the letter of the rules is violating the spirit of the rules.**
 
-## Precedence — a default, not a mandate
+## Precedence: a default, not a mandate
 
 Implementation inherits the repo's patterns first. This skill is the workbench
-default where the repo is silent — never an enforcement layer over the repo's
+default where the repo is silent, never an enforcement layer over the repo's
 own rules:
 
 - **A stated repo or user convention that conflicts with a step wins.** A rule
-  like "no test runs before manual validation" displaces Verify RED/GREEN —
-  the run defers to the repo's gate; this skill's MANDATORY labels do not
+  like "no test runs before manual validation" displaces Verify RED/GREEN.
+  The run defers to the repo's gate; this skill's MANDATORY labels do not
   override it.
 - **Announce the conflict, don't absorb it silently.** One line naming the
   repo rule and the step it displaces ("repo forbids test runs before manual
-  validation — writing the test now, deferring the run"), then follow the
+  validation: writing the test now, deferring the run"), then follow the
   repo. Apply whatever of the cycle remains compatible: the test is still
   written first.
-- **Only a stated rule displaces a step.** Your own convenience never does —
+- **Only a stated rule displaces a step.** Your own convenience never does:
   "just this once" with no repo rule behind it is exactly what the
   rationalization table below catches.
 
 Absent a conflicting repo pattern, everything below applies as written.
 
-## Scope boundary — tests for this work, tickets for the neighborhood
+## Scope boundary: tests for this work, tickets for the neighborhood
 
-TDD turns the **accepted work's** behaviors into tests — it is not a license
+TDD turns the **accepted work's** behaviors into tests; it is not a license
 to grow the diff. Edge cases *of the behavior being implemented* get tests;
 defects discovered in *adjacent* code get **recorded as follow-up work**, not
-a failing test and a fix here — unless the change under implementation is
+a failing test and a fix here: unless the change under implementation is
 unsafe or incorrect without them (then say so before expanding). The
 discover-a-defect → test it → fix it → discover more loop is how a one-ticket
 change becomes a fifty-file workset; breaking out of it is a question for the
@@ -55,7 +55,7 @@ user, not a unilateral push forward.
 - Refactoring
 - Behavior changes
 
-**Where the repo has no test harness:** skip silently — this discipline
+**Where the repo has no test harness, skip silently.** This discipline
 conditions on infrastructure that exists; scaffolding a harness is its own
 decision for the user, not a TDD side effect.
 
@@ -65,7 +65,7 @@ decision for the user, not a TDD side effect.
 - Configuration files
 
 Harness exists and you're thinking "skip TDD just this once"? Stop. That's
-rationalization. (A stated repo rule is not "just this once" — see Precedence.)
+rationalization. (A stated repo rule is not "just this once": see Precedence.)
 
 ## The Iron Law
 
@@ -243,7 +243,7 @@ Next failing test for next feature.
 | **Shows intent** | Demonstrates desired API | Obscures what code should do |
 
 When writing or changing any test, read [writing-good-tests.md](writing-good-tests.md) for the rules that keep tests honest:
-- Name the production change that would make the test fail — before writing it
+- Name the production change that would make the test fail: before writing it
 - Assert on real behavior, never on mock behavior
 - Keep test-only code in test utilities, out of production classes
 - Understand a dependency's side effects before mocking it
@@ -253,14 +253,14 @@ When writing or changing any test, read [writing-good-tests.md](writing-good-tes
 | Excuse | Reality |
 |--------|---------|
 | "Too simple to test" | Simple code breaks. Test takes 30 seconds. |
-| "I'll test after" | Tests written after pass immediately — which proves nothing. They may test the wrong thing, test the implementation instead of the behavior, or miss the edge case you forgot. You never watched it fail, so you never proved it can catch the bug. Test-first forces that failure. |
-| "Tests after achieve same goals (spirit not ritual)" | Tests-after answer "what does this do?"; tests-first answer "what should this do?" Tests written after are biased by the code you already wrote — you verify the cases you remembered, not the ones you'd have discovered. Coverage without proof the tests work. |
+| "I'll test after" | Tests written after pass immediately, which proves nothing. They may test the wrong thing, test the implementation instead of the behavior, or miss the edge case you forgot. You never watched it fail, so you never proved it can catch the bug. Test-first forces that failure. |
+| "Tests after achieve same goals (spirit not ritual)" | Tests-after answer "what does this do?"; tests-first answer "what should this do?" Tests written after are biased by the code you already wrote; you verify the cases you remembered, not the ones you'd have discovered. Coverage without proof the tests work. |
 | "Already manually tested" | Manual testing is ad-hoc: no record of what you covered, no way to re-run it when the code changes, easy to forget cases under pressure. "Worked when I tried it" ≠ comprehensive. Automated tests run the same way every time. |
-| "Deleting X hours is wasteful" | Sunk cost fallacy — that time is already spent either way. The real choice: rewrite with TDD (high confidence) vs. keep it and bolt tests on after (low confidence, likely bugs). Keeping code you can't trust is the waste. |
+| "Deleting X hours is wasteful" | Sunk cost fallacy. That time is already spent either way. The real choice is to rewrite with TDD (high confidence) or keep it and bolt tests on after (low confidence, likely bugs). Keeping code you can't trust is the waste. |
 | "Keep as reference, write tests first" | You'll adapt it. That's testing after. Delete means delete. |
 | "Need to explore first" | Fine. Throw away exploration, start with TDD. |
 | "Test hard = design unclear" | Listen to test. Hard to test = hard to use. |
-| "TDD will slow me down" | TDD IS the pragmatic path: catches bugs before commit, prevents regressions, lets you refactor without fear. "Pragmatic" shortcuts mean debugging in production — slower, not faster. |
+| "TDD will slow me down" | TDD IS the pragmatic path: catches bugs before commit, prevents regressions, lets you refactor without fear. "Pragmatic" shortcuts mean debugging in production: slower, not faster. |
 | "Manual test faster" | Manual doesn't prove edge cases. You'll re-test every change. |
 | "Existing code has no tests" | You're improving it. Add tests for existing code. |
 
@@ -356,7 +356,7 @@ Production code → test exists and failed first
 Otherwise → not TDD
 ```
 
-No exceptions without the user's permission — a stated repo or user
+No exceptions without the user's permission: a stated repo or user
 convention is that permission in standing form (see Precedence).
 
 ---

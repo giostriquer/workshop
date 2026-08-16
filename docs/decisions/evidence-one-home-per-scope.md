@@ -16,18 +16,18 @@ three per-agent system-temp directories
 Q12 already named the location (`.workbench/<work_scope>/`), but two gaps let
 the scatter happen:
 
-1. **Subagents never see the convention** — `using-workbench` explicitly
+1. **Subagents never see the convention**: `using-workbench` explicitly
    tells dispatched subagents to skip orientation, and the engines' operating
    contracts (`qa-sweep`, `empirical-proof`) listed environment facts and
    evidence *capture* without naming an evidence *location*. Each agent
    invented its own temp dir.
-2. `claim-check`'s persist rule still said `tmp/<date>-<slug>-claim-check.md`
-   — text predating Q12.
+2. `claim-check`'s persist rule still said `tmp/<date>-<slug>-claim-check.md`:
+   text predating Q12.
 
 ## The shape
 
-**Q17:** everything a work-stream produces — dispatched agents' evidence
-included — lands in the **same** `.workbench/<work_scope>/` folder, with the
+**Q17:** everything a work-stream produces: dispatched agents' evidence
+included: lands in the **same** `.workbench/<work_scope>/` folder, with the
 path **handed to agents in their contract** (agents never pick their own
 locations); never per-agent temp dirs, never the system temp.
 
@@ -40,7 +40,7 @@ repro artifacts follow. Q17 added to both flow-doc ledgers and inline in
 
 ## Non-goals
 
-- No change to what counts as evidence or to the disposable/promotion rules —
+- No change to what counts as evidence or to the disposable/promotion rules.
   Q12's substance stands; Q17 fixes where it lands and who decides.
 
 ## Packaging

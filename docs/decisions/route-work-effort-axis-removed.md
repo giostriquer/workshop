@@ -4,7 +4,7 @@
 
 ## Status
 
-Implemented — ships in `workbench 0.22.0`.
+Implemented: ships in `workbench 0.22.0`.
 
 ## Context
 
@@ -17,15 +17,15 @@ internally contradictory in six places, and the worst of them was not cosmetic:
 
 - The column header still read `model + effort` when no row carried an effort
   tier.
-- The frontmatter description — the activation surface — still advertised
+- The frontmatter description (the activation surface) still advertised
   "cost / intelligence / taste / code per model **and effort tier**", omitting
   `speed` and promising a grain the table no longer had.
-- The reading notes instructed "**Climb effort before hopping models — sol
+- The reading notes instructed "**Climb effort before hopping models: sol
   xhigh before leaving the ladder**", naming two rows that no longer existed.
   This is the skill's central operating instruction, and it had become
   unfollowable.
 - `speed` arrived undefined while every other axis carried a precise
-  definition — and it **double-counted** `cost`, which was explicitly
+  definition, and it **double-counted** `cost`, which was explicitly
   "subscription-limit burn **plus wall-clock**". Wall-clock was being scored
   twice.
 - The cross-ladder caveat still said "the GPT and Claude rows burn different
@@ -37,7 +37,7 @@ internally contradictory in six places, and the worst of them was not cosmetic:
 
 **Effort is no longer a modeled axis.** One row per model, graded at the effort
 that model is actually run at. If the habitual effort changes, the row is
-re-graded rather than split — stated explicitly in the skill so the grain of
+re-graded rather than split: stated explicitly in the skill so the grain of
 the numbers is not left to inference.
 
 **Cost and speed are separated.** `cost` is now subscription-limit burn alone;
@@ -63,6 +63,6 @@ account of what changed.
 
 ## Not changed
 
-The hard invariants. The model-floor invariant in particular is untouched — an
+The hard invariants. The model-floor invariant in particular is untouched: an
 operator's always-injected rules file points at this skill for the fuller
 doctrine, and that pointer still resolves.

@@ -1,4 +1,4 @@
-# Decision: `handoff-goal` right-sizes review cadence — reviewers for chunks, adversarial review at phase exit
+# Decision: `handoff-goal` right-sizes review cadence: reviewers for chunks, adversarial review at phase exit
 
 **Date:** 2026-08-09
 
@@ -15,7 +15,7 @@ prompted to *refute* done, or at minimum a clean re-run of the Verify
 command") reads as offering a per-check choice, and in live pursuit
 sessions over-chose the heavy branch: reviewer subagents dispatched for
 every small task, burning wall-clock and context on work a verify re-run
-already covers — while the one review that most deserves adversarial
+already covers, while the one review that most deserves adversarial
 weight, the completed phase's cumulative diff, had no mandated slot.
 
 ## The decision (operator-mandated)
@@ -25,7 +25,7 @@ Review effort scales with the size of the landed work, stated in the
 
 - **Small routine tasks:** the independent pass is a clean re-run of the
   Verify command. Reviewer subagents are **not** dispatched per task.
-- **Substantial chunks** — a feature, a bug fix, a risky refactor —
+- **Substantial chunks**: a feature, a bug fix, a risky refactor:
   get the reviewers after they land.
 - **Phase completion** gets an **adversarial code-quality review** of the
   phase's cumulative diff: the `code-quality-review` skill where the

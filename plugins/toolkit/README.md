@@ -1,7 +1,7 @@
 # toolkit
 
 Optional utilities from
-[Workshop](https://github.com/giostriquer/workshop) — the grab-bag of optional tools next
+[Workshop](https://github.com/giostriquer/workshop): the grab-bag of optional tools next
 to the [`workbench`](../workbench/README.md). Install it when you want these; skip
 it to keep sessions lean. The set grows with more optional utilities over time.
 
@@ -21,7 +21,7 @@ codex plugin marketplace add giostriquer/workshop --ref main
 codex plugin add toolkit@workshop
 ```
 
-**Cursor** — Team Marketplace (Teams/Enterprise, admin): import
+**Cursor**: Team Marketplace (Teams/Enterprise, admin): import
 `giostriquer/workshop`, then install `toolkit` from **Customize**.
 
 **Google Antigravity:** Copy or link this folder into your workspace's `.agents/plugins/toolkit/` (that workspace only) or into `~/.gemini/config/plugins/toolkit/` (every workspace). Antigravity scans both; there is no registry file to edit.
@@ -30,12 +30,12 @@ codex plugin add toolkit@workshop
 
 | Skill | Does |
 | --- | --- |
-| `html-report` | renders a report — a markdown doc, or findings reached in-session — as a polished standalone dark HTML page |
-| `arch-map` | derives a visual architecture map — subsystem, refactor, or proposed design — when no source doc exists |
-| `ui-demo-video` | Playwright walkthrough of the running app — verification frames for the model, mp4 for the PR |
-| `writing-skills` | TDD applied to skill authoring — baselines, micro-tested wording, loophole closing |
-| `adopt-global-rules` | installs the workshop's shipped global CLAUDE.md / AGENTS.md, rules, and Claude output styles onto this machine, additively — user-invoked only |
-| `me-human` | act as a human user putting a system to real work — tries before asking, escalates on bugs, stops at the scope edge — user-invoked only |
+| `html-report` | renders a markdown report or findings reached in-session as a polished standalone dark HTML page |
+| `arch-map` | derives a visual architecture map of a subsystem, refactor, or proposed design when no source doc exists |
+| `ui-demo-video` | provides a Playwright walkthrough of the running app, verification frames for the model, and an MP4 for the PR |
+| `writing-skills` | applies TDD to skill authoring through baselines, micro-tested wording, and loophole closing |
+| `adopt-global-rules` | installs the workshop's shipped global CLAUDE.md / AGENTS.md, rules, and Claude output styles onto this machine additively; user-invoked only |
+| `me-human` | acts as a human user putting a system to real work by trying before asking, escalating on bugs, and stopping at the scope edge; user-invoked only |
 
 `adopt-global-rules` also runs without any plugin installed, for bootstrapping a
 bare machine:
@@ -51,5 +51,5 @@ npx github:giostriquer/workshop --dry-run   # plan; drop --dry-run to apply
 
 ## Not included
 
-No MCP servers, no hooks, no dispatchers — skills activate on their own triggers
+No MCP servers, no hooks, no dispatchers: skills activate on their own triggers
 or your invocation.

@@ -1,10 +1,10 @@
 # research
 
-> **Parked 2026-08-11** — the onboarding `agent-workshop` plugin was deleted; the spec sits alongside this doc in this folder. See `docs/decisions/drop-onboarding-plugin.md`.
+> **Parked 2026-08-11**: the onboarding `agent-workshop` plugin was deleted; the spec sits alongside this doc in this folder. See `docs/decisions/drop-onboarding-plugin.md`.
 
 ## Origin
 
-The originating project produced a steady stream of "we should think about X" notes — half-formed forward-looking ideas that didn't fit critique (which evaluates validated checkpoints) or specs (which design committed work). They accumulated as scattered bullets in chat, occasional README appendices, or one-off `docs/research-X.md` files with inconsistent shape.
+The originating project produced a steady stream of "we should think about X" notes: half-formed forward-looking ideas that didn't fit critique (which evaluates validated checkpoints) or specs (which design committed work). They accumulated as scattered bullets in chat, occasional README appendices, or one-off `docs/research-X.md` files with inconsistent shape.
 
 The skill-and-agent pair was introduced to **standardize forward-looking research**: consistent inputs per category, a shared scoring framework, and an output structure stable enough to triage across runs and across categories.
 
@@ -31,7 +31,7 @@ Five-axis scoring plus Horizon flag, applied to every finding:
 - Urgency (now / next / later / deferred)
 - Horizon (current / near-term / vision)
 
-Horizon is intentionally non-scored — a `Direction fit: high` + `Horizon: vision` finding is preserved-with-flag, not silently suppressed.
+Horizon is intentionally non-scored: a `Direction fit: high` + `Horizon: vision` finding is preserved-with-flag, not silently suppressed.
 
 Required output structure: `# Title` with metadata → `## Purpose anchor` → `## Questions` → `## Findings` (with `### Existing surface review` and `### Net-new candidates`) → `## Gaps and risks` → `## Promotion candidates` → `## Conclusion` → `## Sources`.
 
@@ -56,16 +56,16 @@ Or, for a custom one-off run:
 ## Pitfalls observed
 
 - **Post-hoc questions.** Drafting findings first, then writing the Questions section to match. The questions stop anchoring the work and become decorative. Write Questions before Findings.
-- **Suppressing low-confidence findings.** A finding with `Confidence: low` is not invalid — it's a transparency disclosure. Surface it; don't omit. The scoring framework treats `Confidence: low` as honest, not as a discard signal.
+- **Suppressing low-confidence findings.** A finding with `Confidence: low` is not invalid; it is a transparency disclosure. Surface it; don't omit. The scoring framework treats `Confidence: low` as honest, not as a discard signal.
 - **Suppressing vision-horizon findings.** A `Direction fit: high` + `Horizon: vision` finding is information about a future state. Preserve with the Horizon flag; don't silently filter.
 - **Cleaning failed studies.** Rejected variants and exploration outputs belong in scratch space (`.temp` or equivalent), not in the research note. Clean output keeps the surface readable.
 - **Auto-promoting findings.** The skill never auto-promotes. The user triages using the paste-ready rows in `Promotion candidates`. Auto-promotion erodes the gate the structure exists to provide.
-- **Cadence runs.** This is invocation-only. There is no "run research weekly" cadence — that would dilute the surface. Each run should give weeks of triage material.
+- **Cadence runs.** This is invocation-only. There is no "run research weekly" cadence because that would dilute the surface. Each run should give weeks of triage material.
 
 ## Adaptation notes
 
-- The category list is **project-specific**. Pick a small set that maps to recurring research questions in your work — common shapes include `architecture`, `tests`, `code-quality`, `ui-ux`, `project-org`, plus a domain-specific one or two for your area. Start with one or two high-frequency categories; add more as the pattern earns its keep.
-- A **lens** dimension orthogonal to category (e.g., `inventory` / `prioritization` / `regression` / `ops-health`) is a useful layering when one category needs multiple shapes of pass. This is **advanced layering** — adopt only after the simple category framework has earned its value over several runs. The scaffold ships only the category framework.
+- The category list is **project-specific**. Pick a small set that maps to recurring research questions in your work: common shapes include `architecture`, `tests`, `code-quality`, `ui-ux`, `project-org`, plus a domain-specific one or two for your area. Start with one or two high-frequency categories; add more as the pattern earns its keep.
+- A **lens** dimension orthogonal to category (e.g., `inventory` / `prioritization` / `regression` / `ops-health`) is a useful layering when one category needs multiple shapes of pass. This is **advanced layering**: adopt only after the simple category framework has earned its value over several runs. The scaffold ships only the category framework.
 - Per-category recipes are the project-specific binding between category and inputs. Document them in the skill file or in a sibling reference doc. The agent reads the brief; the skill assembles it from the recipe.
 - External lookup integration (Context7 for library docs, WebSearch for design patterns) is opt-in per category. Some categories don't benefit from external research and should declare `external_sources: none` so the agent skips the lookup phase.
-- The contents-block update is held until validation passes — the agent never updates the index itself. This separation is load-bearing; without it, malformed notes get indexed before being noticed.
+- The contents-block update is held until validation passes: the agent never updates the index itself. This separation is load-bearing; without it, malformed notes get indexed before being noticed.

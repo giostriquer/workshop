@@ -9,9 +9,9 @@ description: Forward-looking research skill. Produces docs/research/-conforming 
 
 Standardize forward-looking research across recurring categories with consistent input recipes, scoring framework, and output structure. Produces research notes conforming to the project's `docs/research/` schema.
 
-This skill is the **orchestrator**. The actual research work — file reads, external lookups, drafting, scoring — runs in the dispatched `research` agent (`model: inherit`). The skill owns invocation parsing, per-category recipes, brief assembly, and post-agent output validation.
+This skill is the **orchestrator**. The actual research work (file reads, external lookups, drafting, scoring) runs in the dispatched `research` agent (`model: inherit`). The skill owns invocation parsing, per-category recipes, brief assembly, and post-agent output validation.
 
-The pattern: **thin skill, heavy agent** — invocation logic and validation here; reasoning and writing in the agent.
+The pattern: **thin skill, heavy agent**: invocation logic and validation here; reasoning and writing in the agent.
 
 ## When to invoke
 
@@ -22,7 +22,7 @@ The pattern: **thin skill, heavy agent** — invocation logic and validation her
 
 ## Default posture
 
-Heavy. A run reads many internal files, makes external lookups (Context7 / WebSearch / WebFetch) for categories where they help, and produces a single Markdown research note plus an index update. Not a daily skill — invocation cadence is bounded by the user.
+Heavy. A run reads many internal files, makes external lookups (Context7 / WebSearch / WebFetch) for categories where they help, and produces a single Markdown research note plus an index update. Not a daily skill: invocation cadence is bounded by the user.
 
 ## Invocation forms
 
@@ -68,7 +68,7 @@ A minimum recipe for a new category looks like:
 
 OR
 
-**External sources:** none — this category does not benefit from external research.
+**External sources:** none, because this category does not benefit from external research.
 ```
 
 Adopting projects start with one or two recipes for their highest-frequency research categories and add more as the pattern earns its keep.
@@ -100,19 +100,19 @@ Each finding row uses this shape:
 - Urgency: now | next | later | deferred
 - Horizon: current | near-term | vision
 
-<Body — concrete, anchored to specific files / docs / external references. Cite sources. State the reasoning that produced the scores.>
+<Body: concrete, anchored to specific files / docs / external references. Cite sources. State the reasoning that produced the scores.>
 ```
 
 ## Brief shape
 
 The skill assembles a brief and dispatches the `research` agent. Brief fields:
 
-- `category` — the category name
-- `purpose_anchor` — paragraph from the recipe
-- `internal_sources` — list of files and folders
-- `external_sources` — opt-in shape for external lookups
-- `output_filename` — `docs/research/YYYY-MM-DD-<category>[-<short-topic>].md`
-- `schema` — required schema sections, scoring axes, Horizon flag values, validation rules
+- `category`: the category name
+- `purpose_anchor`: paragraph from the recipe
+- `internal_sources`: list of files and folders
+- `external_sources`: opt-in shape for external lookups
+- `output_filename`: `docs/research/YYYY-MM-DD-<category>[-<short-topic>].md`
+- `schema`: required schema sections, scoring axes, Horizon flag values, validation rules
 
 The `research` agent reads its full spec at `.claude/agents/research.md` for canonical behavior.
 
@@ -120,10 +120,10 @@ The `research` agent reads its full spec at `.claude/agents/research.md` for can
 
 After the agent writes the draft note, the skill validates it against the schema before applying any index update. Validation gates the agent honors:
 
-1. **Required sections present in order** — `# Title` with metadata block → `## Purpose anchor` → `## Questions` → `## Findings` (with `### Existing surface review` and `### Net-new candidates` subsections) → `## Gaps and risks` → `## Promotion candidates` → `## Conclusion` → `## Sources`.
-2. **All findings scored** — every finding row carries all five axes and the Horizon flag.
-3. **Sources block present** — either lists external citations or carries the explicit line `No external sources consulted.`
-4. **Index entry returned** — the agent returns a 2–4 clause index entry the skill will paste into `docs/research/README.md` `## Contents`.
+1. **Required sections present in order**: `# Title` with metadata block → `## Purpose anchor` → `## Questions` → `## Findings` (with `### Existing surface review` and `### Net-new candidates` subsections) → `## Gaps and risks` → `## Promotion candidates` → `## Conclusion` → `## Sources`.
+2. **All findings scored**: every finding row carries all five axes and the Horizon flag.
+3. **Sources block present**: either lists external citations or carries the explicit line `No external sources consulted.`
+4. **Index entry returned**: the agent returns a 2–4 clause index entry the skill will paste into `docs/research/README.md` `## Contents`.
 
 If the first pass fails, the skill returns validation findings to the agent for one revision pass. If the second pass also fails, the skill surfaces the validation diff to the user, leaves the malformed file on disk, and explicitly states the index was not updated.
 
@@ -131,11 +131,11 @@ The skill applies the index-update edit only after a clean PASS.
 
 ## What the skill does NOT do
 
-- Does not write the research note itself — that's the agent's job.
+- Does not write the research note itself; that's the agent's job.
 - Does not modify source-of-truth docs beyond the new note and the index update.
 - Does not auto-promote findings into seeds, future-ideas, or specs.
 - Does not commit or push.
-- Does not run on a cadence — invocation only.
+- Does not run on a cadence: invocation only.
 
 ## Boundary with existing surfaces
 

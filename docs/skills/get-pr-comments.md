@@ -3,9 +3,9 @@
 ## What it does
 
 `get-pr-comments` collapses a pull request's scattered feedback into one
-prioritized list. PR feedback lives on three separate GitHub surfaces — the
+prioritized list. PR feedback lives on three separate GitHub surfaces: the
 conversation tab, review verdicts and summaries, and inline comments pinned to
-diff lines — and reading them in the UI to work out "what must I actually
+diff lines, and reading them in the UI to work out "what must I actually
 change" is slow and easy to do incompletely. This skill fetches all three in
 one `gh` pass, groups them by **severity** (blocking / should-fix / nit) and
 **actionability** (a clear change requested versus an open question), and
@@ -15,7 +15,7 @@ a human answer.
 **It is read-only, and this is the point of the skill, not a caveat.** Its
 first boundary is emphatic: "Do NOT reply to, resolve, react to, or otherwise
 respond to any PR comment unless the user explicitly asks you to. This skill
-*reads and summarizes* feedback — it never posts a reply, resolves a thread,
+*reads and summarizes* feedback; it never posts a reply, resolves a thread,
 adds a reaction, or comments on the PR on its own. Posting any response
 requires an explicit, per-action instruction from the user." It also does not
 edit code, push, or change PR state.
@@ -55,7 +55,7 @@ so plainly rather than guessing.
 ## Common questions
 
 **Why didn't it reply to the reviewer or resolve the thread?** Because that
-rule is the defining design choice of the skill — a decision note calls it "a
+rule is the defining design choice of the skill: a decision note calls it "a
 boundary, not a feature." Summarizing feedback and *answering* it are
 different acts with different stakes: auto-replying on a shared PR is exactly
 the kind of outward-facing side effect that should never fall out of "show me
@@ -70,7 +70,7 @@ answered in the comment thread (`gh api
 repos/{owner}/{repo}/pulls/{pr}/comments/{id}/replies`), not as a top-level PR
 comment.
 
-**It summarized but changed nothing.** Correct — acting on the feedback is a
+**It summarized but changed nothing.** Correct: acting on the feedback is a
 separate step the user directs. Run `receiving-code-review` next.
 
 **Will it catch the comments pinned to diff lines?** Yes, and that is why it
@@ -81,7 +81,7 @@ them up.
 **Does it treat a bot's review differently from a human's?** It groups
 everything by severity and actionability regardless of source. Judging whether
 a suggestion is technically right for this codebase is `receiving-code-review`'s
-job — it has explicit handling for feedback from external reviewers versus
+job. It has explicit handling for feedback from external reviewers versus
 from the user.
 
 **Non-GitHub review host?** It assumes `gh`. The group-by-severity-and-
@@ -104,4 +104,4 @@ actionability shape ports; the fetch commands don't.
 landing. The flow reads: `get-pr-comments` triages what arrived →
 `receiving-code-review` governs acting on it → verified fixes re-enter
 implementation. It is the comments counterpart to the `ci-watcher` agent's CI
-verdict — the two read-only "what's the state of my PR" tools.
+verdict: the two read-only "what's the state of my PR" tools.

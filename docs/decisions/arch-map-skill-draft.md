@@ -1,18 +1,18 @@
 > **Shipped 2026-08-05 as `arch-map`.** Canonical:
 > `plugins/toolkit/skills/arch-map/SKILL.md`. Visual chrome updated
-> 2026-08-07 to **idoso** (`arch-map-idoso-visual.md`) — this draft body
+> 2026-08-07 to **idoso** (`arch-map-idoso-visual.md`); this draft body
 > is the pre-idoso Cursor-dark archaeology copy. Do not resume from it.
 
 ---
 name: arch-map
-description: Use when you need a visual architecture map of a codebase and no finished source doc exists — an existing subsystem (how it is structured today), a refactor in flight (what moves), or a proposed design (target state). Derives boxes and edges from the repo, diff, or plan, then renders a self-contained HTML page whose first job is a graphical mental model (SVG system map), followed by supporting inventory. Cursor-like dark high-contrast chrome; scarce color (accent + good/bad only); CDNs allowed for fonts/icons/Mermaid. Ephemeral in tmp/ with promote-to-durable on request. NOT for rendering an existing markdown report — that is doc-to-html. Formerly structure-view.
+description: Use when you need a visual architecture map of a codebase and no finished source doc exists, whether for an existing subsystem (how it is structured today), a refactor in flight (what moves), or a proposed design (target state). Derives boxes and edges from the repo, diff, or plan, then renders a self-contained HTML page whose first job is a graphical mental model (SVG system map), followed by supporting inventory. Uses Cursor-like dark high-contrast chrome and scarce color (accent plus good/bad only); CDNs are allowed for fonts, icons, and Mermaid. Starts as an ephemeral file in tmp/ and promotes to durable storage on request. Use doc-to-html to render an existing markdown report. Formerly structure-view.
 ---
 
 # Arch Map
 
 ## Purpose
 
-Derive an architectural representation — from the repo, a diff, or a plan —
+Derive an architectural representation (from the repo, a diff, or a plan)
 and render a **self-contained HTML architecture map** optimized for
 orientation: a graphical mental model first, then the inventory that backs it.
 
@@ -24,18 +24,18 @@ every element to something real (file, symbol, or diff hunk).
 
 Three input shapes, all doc-less:
 
-1. **Existing subsystem** — how a part of the codebase is structured today.
-2. **Refactor in flight** — branch/diff (or planned): what moves, what stays.
-3. **Proposed design** — plan or conversation; target state before commit.
+1. **Existing subsystem**: how a part of the codebase is structured today.
+2. **Refactor in flight**: branch/diff (or planned): what moves, what stays.
+3. **Proposed design**: plan or conversation; target state before commit.
 
 Not for: rendering existing markdown (use `doc-to-html`); freeform diagrams
 disconnected from this repo's code, diff, or plan.
 
-## Step 0 — house style
+## Step 0: house style
 
 Glob `tmp/` and `docs/` for a hand-authored standalone `.html` architecture
 page (inline styles; exclude `node_modules/`, `dist/`, etc.). **Genre test:**
-structural graphics dominate (system map, layers, legend) — not a
+structural graphics dominate (system map, layers, legend), unlike a
 `doc-to-html` report. If a sibling exists, match its tokens and component
 shapes. Otherwise use the defaults below (specimen:
 `tmp/architecture-overview.html`).
@@ -44,13 +44,13 @@ When analyzed repo ≠ output repo, glob both; **output repo sibling wins**.
 
 ## Pipeline
 
-### 1 — Derive
+### 1: Derive
 
 Mine boxes (modules, layers, components) and edges (calls, imports, data
 flow).
 
 - **Subsystem:** entry points → modules → edges. Prefer architecture /
-  dependency-rule tests first (`architecture.test`, boundary lint) — enforced
+  dependency-rule tests first (`architecture.test`, boundary lint): enforced
   rules beat guessed imports. Fan out explore subagents on large surfaces.
 - **Refactor:** classify diff into add / remove / move / rename; state **the
   invariant** (what does *not* change).
@@ -61,7 +61,7 @@ flow).
 symbol, or diff hunk (path in caption/`title`). Proposed = dashed, never
 silently mixed with observed.
 
-### 2 — Choose views
+### 2: Choose views
 
 At most **3 views** (plus the mandatory mental-model diagram). Each view
 opens with the question it answers.
@@ -74,10 +74,10 @@ opens with the question it answers.
 | Before / after | "What does this change?" | Linked compare panes (large refactors) |
 | Delta | "What does this change?" | One canvas, good/bad/dim chips (small refactors) |
 
-Deriving more than you show is fine. Name unchosen views in the intro — do
+Deriving more than you show is fine. Name unchosen views in the intro. Do
 not draw a fourth diagram.
 
-### 3 — Render
+### 3: Render
 
 Single HTML file (CDNs allowed for fonts, Lucide, Mermaid). Default:
 `tmp/<YYYY-MM-DD>-<slug>.html`. **Promote** on request: re-verify traces,
@@ -104,7 +104,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 var(--sans)}
 ```
 
 Fonts via Google Fonts CDN; icons via Lucide CDN; Mermaid via jsDelivr when
-needed. **Primary text is `--ink` / `--soft` — never mid-grey body on black.**
+needed. **Primary text is `--ink` / `--soft`, never mid-grey body on black.**
 
 ### Color scarcity
 
@@ -116,14 +116,14 @@ needed. **Primary text is `--ink` / `--soft` — never mid-grey body on black.**
 
 1. Sticky TOC
 2. Hero (eyebrow + title + lede) + optional facts grid
-3. **§ Mental model** — SVG system map (bands Browser → API → capabilities →
+3. **§ Mental model**: SVG system map (bands Browser → API → capabilities →
    infra → external) with dependency arrows; legend; optional Mermaid
    "what may import what"
 4. Supporting sections as needed: stack, layers, rules, capabilities, API,
    flows, data, scripts
 5. Provenance footer(s)
 
-A page that skips (3) fails the skill — inventory without a diagram is the
+A page that skips (3) fails the skill: inventory without a diagram is the
 failure mode this skill exists to prevent.
 
 ### Mental-model SVG pattern
@@ -146,12 +146,12 @@ paths. Use Mermaid when the story is a dense import/dependency graph.
 
 ## Process rules
 
-- **Traceability** — no invented boxes/edges; proposed dashed.
-- **Provenance** — every view footed with derived-from + commit; hashes via
+- **Traceability**: no invented boxes/edges; proposed dashed.
+- **Provenance**: every view footed with derived-from + commit; hashes via
   live `git rev-parse` at generation time (analyzed repo when cross-repo).
-- **View economy** — mental model + ≤3 supporting views.
-- **Zoom** — ~30 visible boxes per view; group beyond that.
-- **Invariant** — required on refactor pages.
+- **View economy**: mental model + ≤3 supporting views.
+- **Zoom**: ~30 visible boxes per view; group beyond that.
+- **Invariant**: required on refactor pages.
 - **One pass; direction change = clean rewrite; one knob at a time.**
 
 ## Pre-finish checklist
@@ -191,7 +191,7 @@ CDN head:
 </script>
 ```
 
-Module card + layer band (neutral — no role colors):
+Module card + layer band (neutral: no role colors):
 
 ```html
 <div class="layer">

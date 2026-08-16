@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-// drift-check.mjs — deterministic half of the workbench-drift skill.
+// drift-check.mjs: deterministic half of the workbench-drift skill.
 // Fetches the upstream repo named in the manifest, diffs lastReviewed..HEAD over
 // the watched paths, maps every change through the manifest's pieces, and emits
-// a grouped report (markdown to stdout; --json for machine output). Judgment —
-// adopt / adapt / ignore — belongs to the skill, never to this script.
+// a grouped report (markdown to stdout; --json for machine output). The skill,
+// not this script, owns the adopt / adapt / ignore judgment.
 //
 // Usage: node drift-check.mjs [--manifest <path>] [--cache <dir>] [--json]
 
@@ -74,7 +74,7 @@ if (track === "releases") {
   head = git(["rev-parse", `origin/${ref}`], { cwd: cacheDir });
 }
 
-// How far the branch has run past the release we are targeting — reported so an
+// How far the branch has run past the release we are targeting: reported so an
 // operator can see there is unreleased work, without it entering the review.
 const unreleasedCount =
   track === "releases"
@@ -111,7 +111,7 @@ if (!lastReviewed.commit) {
   if (asJson) {
     console.log(JSON.stringify(result, null, 2));
   } else {
-    console.log(`# workbench-drift — initial pin\n`);
+    console.log(`# workbench-drift: initial pin\n`);
     console.log(
       headRelease
         ? `Upstream: ${repo} @ ${headRelease} (\`${head}\`)\n`
@@ -151,7 +151,7 @@ for (const c of changes) {
     if (!groups.reviewRequired.has(piece.upstreamPath)) groups.reviewRequired.set(piece.upstreamPath, { piece, files: [] });
     groups.reviewRequired.get(piece.upstreamPath).files.push(c);
   } else if (piece.disposition === "mirrored") {
-    // Mirrored pieces are copied verbatim — no diff to judge, but they must not
+    // Mirrored pieces are copied verbatim: no diff to judge, but they must not
     // fall into the dropped bucket, which would silently ignore upstream changes.
     if (!groups.remirror.has(piece.upstreamPath)) groups.remirror.set(piece.upstreamPath, { piece, files: [] });
     groups.remirror.get(piece.upstreamPath).files.push(c);
@@ -195,9 +195,9 @@ if (asJson) {
   process.exit(0);
 }
 
-console.log(`# workbench-drift — upstream drift report\n`);
+console.log(`# workbench-drift: upstream drift report\n`);
 if (track === "releases") {
-  console.log(`Upstream: ${repo} — tracking published releases (\`${tagPattern}\`)`);
+  console.log(`Upstream: ${repo}: tracking published releases (\`${tagPattern}\`)`);
   console.log(`Target:   ${headRelease} (\`${head}\`)`);
 } else {
   console.log(`Upstream: ${repo} (branch tip \`${ref}\`)`);
@@ -207,14 +207,14 @@ console.log(`Reviewed: \`${lastReviewed.commit}\`${lastReviewed.release ? ` (${l
 if (unreleasedCount > 0) {
   console.log(
     `> ${unreleasedCount} unreleased commit(s) sit on \`${ref}\` past ${headRelease}. ` +
-      `Excluded — work in progress is not reviewed or mirrored.\n`
+      `Excluded: work in progress is not reviewed or mirrored.\n`
   );
 }
 if (result.upToDate) {
   console.log(`No changes under watched paths since the last review. Up to date.`);
   process.exit(0);
 }
-console.log(`## Review required (adopted pieces) — ${reviewBlocks.length}\n`);
+console.log(`## Review required (adopted pieces): ${reviewBlocks.length}\n`);
 for (const b of reviewBlocks) {
   console.log(`### ${b.upstreamPath} → ${b.localPath}`);
   console.log(`Recorded rationale: ${b.why}`);
@@ -222,19 +222,19 @@ for (const b of reviewBlocks) {
   console.log(`Files: ${b.files.map((f) => `${f.status} ${f.path}`).join(", ")}\n`);
   console.log("```diff\n" + b.diff + "\n```\n");
 }
-console.log(`## Re-mirror (mirrored pieces — copy upstream wholesale, do not adapt) — ${result.remirror.length}\n`);
+console.log(`## Re-mirror: ${result.remirror.length} mirrored piece(s) (copy upstream wholesale; do not adapt)\n`);
 for (const m of result.remirror) {
-  console.log(`- ${m.upstreamPath} → ${m.localPath} — ${m.changedFiles} changed file(s); re-copy the upstream tree verbatim`);
+  console.log(`- ${m.upstreamPath} → ${m.localPath}: ${m.changedFiles} changed file(s); re-copy the upstream tree verbatim`);
   if (m.localDeltas?.length) {
-    console.log(`  !! ${m.localDeltas.length} recorded local delta(s) — re-apply after copying or they are lost:`);
+    console.log(`  !! ${m.localDeltas.length} recorded local delta(s): re-apply after copying or they are lost:`);
     for (const d of m.localDeltas) console.log(`     - ${d}`);
   }
 }
-console.log(`\n## Intentionally dropped (FYI only) — ${result.intentionallyDropped.length}\n`);
+console.log(`\n## Intentionally dropped (FYI only): ${result.intentionallyDropped.length}\n`);
 for (const d of result.intentionallyDropped) {
-  console.log(`- ${d.upstreamPath} — ${d.changedFiles} changed file(s); disposition stands unless the operator reopens it`);
+  console.log(`- ${d.upstreamPath}: ${d.changedFiles} changed file(s); disposition stands unless the operator reopens it`);
 }
-console.log(`\n## Unmapped (new upstream pieces — need a disposition) — ${result.unmapped.length}\n`);
+console.log(`\n## Unmapped: ${result.unmapped.length} new upstream piece(s) needing a disposition\n`);
 for (const u of result.unmapped) {
   console.log(`- ${u.status} ${u.path}`);
 }
