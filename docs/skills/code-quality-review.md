@@ -2,7 +2,7 @@
 
 ## What it does
 
-This skill runs an unusually strict maintainability review over a finished change: abstraction quality, structure, file sprawl, and spaghetti growth. Its distinguishing posture is ambition. It is not looking for local cleanup opportunities; it is looking for **"code judo" moves: restructurings that preserve behavior while making the implementation dramatically simpler, smaller, more direct, and more elegant.** Where a normal review says "this could be cleaner," this one asks whether the change can be reframed so whole branches, helpers, modes, or layers disappear.
+This skill runs a strict maintainability review over a finished change: abstraction quality, structure, pattern drift, file sprawl, and spaghetti growth. Its distinguishing posture is ambition. It is not looking for local cleanup opportunities; it is looking for **"code judo" moves: restructurings that preserve behavior while making the implementation dramatically simpler, smaller, more direct, and more elegant.** Where a normal review says "this could be cleaner," this one asks whether the change can be reframed so whole branches, helpers, modes, or layers disappear.
 
 It is **default-on**. Once a work-stream's implementation is complete, **"this review runs whether or not anyone asked for it. Exactly two things stop it: the user explicitly declining, or the repo's own process superseding it."** The skill enumerates the non-reasons directly: a small diff, a confident implementation, a clean-looking change, time pressure, or the session's own sense that this one doesn't need it. That last one is the point: the session's judgment that a change looks fine is precisely what an adversarial pass exists to distrust.
 

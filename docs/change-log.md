@@ -8,6 +8,16 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.23.2: 2026-08-18
+
+- **`code-quality-review` names its posture in the body, not the trigger.**
+  The skill's description now carries only when it fires (a strict or
+  adversarial code quality review, required once a work-stream's
+  implementation is complete, right before PR-or-merge, never
+  mid-implementation); the rubric's opening line states the review's focus
+  and gains **pattern drift** alongside abstraction quality, maintainability,
+  and codebase health. Usage page and plugin README follow the wording.
+
 ## workbench 0.23.1: 2026-08-16
 
 - **The workbench copy now avoids em dashes without flattening the prose.**
@@ -246,25 +256,4 @@ deletes the oldest (git history keeps everything). Sections from before the
   description never used the word, so asking for "an adversarial code quality
   review" matched on "code quality review" alone. The on-request clause now
   reads "a strict **or adversarial** code quality review".
-  ([decision](decisions/adversarial-review-is-default-on.md))
-
-## workbench 0.20.9: 2026-08-12
-
-- **The adversarial code-quality review is default-on, not offered.** Sessions
-  were finishing an implementation and going straight to the landing gate,
-  because the flow layer told them the review was optional in four places,
-  most damagingly in `using-workbench`'s "`verification-before-completion` is the
-  **only** always-on piece," which says in plain terms that
-  `code-quality-review` is not. All four sites now state the rule the same
-  way: once a work-stream's implementation is complete, the review runs, and
-  exactly two things stop it: the user explicitly declining, or the repo's own
-  process superseding it. A small diff, a confident implementation, time
-  pressure, or the session's own sense that this one looks fine are named as
-  non-reasons.
-- **`code-quality-review`'s description re-shaped from request-triggered to
-  completion-triggered.** "Use for a strict code quality review…" waited on the
-  user's words; it now says the review is required at completion and should run
-  unasked, while keeping the on-request entry point.
-- Scope discipline is unchanged: still once per work-stream, still never
-  mid-implementation, out-of-scope findings still become follow-ups.
   ([decision](decisions/adversarial-review-is-default-on.md))
