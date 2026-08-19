@@ -8,6 +8,27 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.25.0: 2026-08-19
+
+- **The adversarial review is dispatched, never self-served.** Sessions were
+  running the rubric over their own diff and reporting that as the gate, which
+  the shipped text permitted: `using-workbench`'s Boundaries said workbench
+  "never dictates execution agency", its ownership row pointed at the skill
+  rather than the agent, and the usage page answered "inline or dispatch?" with
+  "Either". `code-quality-review` now opens with *Who runs it*: a fresh reviewer
+  context handed the diff and the changed files' contents, being the
+  `code-quality-reviewer` agent or the host's equivalent. The implementing
+  session holds every justification that produced the code, so the structure
+  reads as inevitable rather than as a choice, and the code-judo move the rubric
+  exists to find is what it is blindest to.
+- **Agency stays the user's call everywhere else.** The boundary carves out this
+  one exception instead of weakening, the hooks claim splits into its own bullet
+  so the exception cannot be misread as covering activation, and the flow
+  diagram and ownership row both say dispatched. Where a host offers no subagent
+  mechanism, the diff goes to a fresh session and the report names that route.
+  Rubric, timing, and the two outs are unchanged.
+  ([decision](decisions/adversarial-review-is-dispatched.md))
+
 ## workbench 0.24.0: 2026-08-19
 
 - **A repo's own completion gate now invites `empirical-proof`.** The skill
@@ -223,31 +244,3 @@ deletes the oldest (git history keeps everything). Sections from before the
   work"` description was ignored; that is the compulsion framing this fork
   removes.
   ([decision](decisions/brainstorming-three-paths-adopted.md))
-
-## toolkit 0.3.0: 2026-08-12
-
-- **`writing-skills` is now mirrored from upstream byte-for-byte**, at
-  `b36e082`, including the `examples/` directory the earlier partial port left
-  behind. That omission was the cause of the dangling
-  `examples/CLAUDE_MD_TESTING.md` pointer: the file was valid upstream all
-  along, so the fork was the bug.
-- **Two fixes arrive with the mirror.** The worked test-campaign example
-  resolves again, and `render-graphs.js` picks up upstream's Windows-safe
-  graphviz probe: ours still ran `execSync('which dot')`, which upstream had
-  already replaced precisely because `which` is not a command on Windows.
-- **Accepted cost, recorded rather than hidden:** the verbatim copy carries five
-  `superpowers:`-namespaced references and one link to `../using-superpowers/`,
-  a dropped piece. Those six resolve to nothing in an installed environment.
-  Fidelity to upstream was chosen over local correctness; the skill's usage page
-  says so.
-- **The drift manifest gains a `mirrored` disposition.** `drift-check.mjs`
-  branched on `adopted` and sent everything else to the dropped/FYI bucket, so
-  the new label would have made future reviews silently skip this piece; it now
-  reports a Re-mirror section, and `workbench-drift` states that mirrored pieces
-  bypass the adaptation filter. The reviewed-commit pin was deliberately **not**
-  advanced: `brainstorming` has unreviewed upstream changes, and an advanced
-  pin would assert they had been seen.
-- Unchanged: the description contradiction inside `anthropic-best-practices.md`.
-  That file is byte-identical to upstream, so it is upstream's defect; mirroring
-  neither causes nor fixes it.
-  ([decision](decisions/writing-skills-mirrored-verbatim.md))

@@ -9,6 +9,25 @@ Use this skill for a strict review focused on implementation quality, maintainab
 
 Above all, this skill should push the reviewer to be **ambitious** about code structure. Do not merely identify local cleanup opportunities. Actively search for "code judo" moves: restructurings that preserve behavior while making the implementation dramatically simpler, smaller, more direct, and more elegant.
 
+## Who runs it: a reviewer that did not write the code
+
+This review is **dispatched, never self-served.** Run it in a fresh reviewer
+context handed the diff and the changed files' contents: the
+`code-quality-reviewer` agent, or the host's equivalent subagent mechanism.
+
+The session that implemented the change is the one context that cannot perform
+this review. It holds every justification that produced the code, so the
+structure reads as inevitable rather than as a choice someone made, and the
+code-judo move this rubric exists to find is precisely what that context is
+blindest to. A self-served pass reliably returns "nothing blocking" on a diff a
+fresh reviewer takes apart. Dispatching also keeps the full diff and file
+contents out of the implementing session's window.
+
+Where the host offers no subagent mechanism, the review still does not run
+inside the implementing context: hand the diff to a fresh session and name that
+route in the report. An author's pass over their own work is reported as what it
+is and never as this gate.
+
 ## Core Prompt
 
 Start from this baseline:

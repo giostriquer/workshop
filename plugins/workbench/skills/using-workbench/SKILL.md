@@ -65,8 +65,9 @@ COMPLETION (enters only when the work-stream's implementation is believed comple
   test-quality review → deemed ready = verified with evidence
   (verification-before-completion; empirical-proof offered if runnable) →
   ONE adversarial review: REQUIRED, not offered (code-quality-review +
-  comment trim, per repo rules); skipped only on an explicit user decline or a
-  superseding repo process; fires here and nowhere else, right before the
+  comment trim, per repo rules); dispatched to a reviewer context that did not
+  write the code, never self-served; skipped only on an explicit user decline
+  or a superseding repo process; fires here and nowhere else, right before the
   PR-or-merge ask, never mid-implementation →
   in-scope findings fixed + re-verified, out-of-scope → follow-ups,
   proceed (no re-review) →
@@ -90,7 +91,7 @@ FEEDBACK
 | A bug, before proposing fixes | `systematic-debugging` |
 | About to claim done / ready | `verification-before-completion` (offer `empirical-proof` if runnable) |
 | The implementation's tests | `test-quality-reviewer` |
-| The one adversarial pass: **required** once the work-stream is complete, right before PR-or-merge | `code-quality-review` |
+| The one adversarial pass: **required** once the work-stream is complete, right before PR-or-merge, **dispatched** to a reviewer that did not write the code | `code-quality-review`, run by the `code-quality-reviewer` agent |
 | Landing | outline gate → `file-pr` / merge / push; `fix-ci` |
 | Review feedback arrives | `get-pr-comments` → `receiving-code-review` |
 | Authoring or editing skills | `writing-skills` (ships in the `toolkit` plugin) |
@@ -193,5 +194,10 @@ pre-authorize). Everything else is the session's to drive.
   work?" by starting the flow. The two default-on completion gates are the
   exceptions: they are the process the user configured, so skipping one is
   the user's call to make, never the session's.
-- Workbench never dictates execution agency (in-session vs dispatched) and ships no hooks;
-  skill descriptions and the user's own rules are the entire activation surface.
+- Workbench never dictates execution agency (in-session vs dispatched), with
+  one exception: the adversarial `code-quality-review` is **dispatched** to a
+  reviewer context that did not write the code (the `code-quality-reviewer`
+  agent, or the host's equivalent), because a session reviewing its own diff is
+  not adversarial. Everywhere else agency is the user's and the harness's call.
+- Workbench ships no hooks; skill descriptions and the user's own rules are the
+  entire activation surface.

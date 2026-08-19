@@ -68,11 +68,13 @@ do not read the map.
 - **Implementation**: `test-driven-development` where a test harness exists
   (repo conventions take precedence on conflict), `systematic-debugging` on
   any bug before fixes. Execution agency is the user's and the harness's call;
-  workbench never dictates in-session versus dispatched.
+  workbench never dictates in-session versus dispatched, save for the one
+  exception noted under Completion.
 - **Completion**: entered only when the work-stream's implementation is
   believed complete: test-quality review, then "deemed ready" (verified with
   evidence), then one adversarial review right before the PR-or-merge ask,
-  then the user gate.
+  dispatched to a reviewer context that did not write the code, then the user
+  gate.
 - **Feedback**: `get-pr-comments` triages, `receiving-code-review` governs
   acting on it, verified fixes re-enter implementation.
 
@@ -181,9 +183,13 @@ user's ([decision](../decisions/expensive-verification-user-optioned.md)).
 
 **Does it decide whether work runs in-session or gets dispatched to agents?**
 
-No. "Workbench never dictates execution agency (in-session vs dispatched)."
-That is the user's and the harness's call. The flow's only job at that moment
-is handing the implementer the plan or goal when one exists.
+Once, and nowhere else. The adversarial `code-quality-review` is dispatched to
+a reviewer context that did not write the code, because a session reviewing its
+own diff is not adversarial. Everywhere else the rule stands: "Workbench never
+dictates execution agency (in-session vs dispatched)." That is the user's and
+the harness's call, and the flow's only job at that moment is handing the
+implementer the plan or goal when one exists
+([decision](../decisions/adversarial-review-is-dispatched.md)).
 
 **Does it enforce anything with hooks or an injected dispatcher?**
 
