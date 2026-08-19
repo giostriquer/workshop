@@ -23,6 +23,14 @@ implementation is complete. Each "runs unless **the user explicitly declines
 it**, or **the repo's own process supersedes it**." Everything else on the map
 is a default the user configured; it fires on relevance.
 
+Repo precedence is a general rule on the map, and it runs in both directions.
+Where the repo carries its own process document, the session follows it for
+worktrees, test discipline, and completion gates instead of re-running the
+flow's version of the same ceremony. A repo gate can also *invite* a tier the
+flow would otherwise only offer. What survives regardless are the three user
+gates and the adversarial review before PR-or-merge, and the session names which
+of those it skips and why.
+
 ## When to reach for it
 
 It fires by itself. Its description triggers at conversation start, so a
@@ -92,7 +100,10 @@ assignments: load one when its moment arrives, not preemptively."
 **Cost and authority.** `empirical-proof` and `qa-sweep` are the expensive
 tiers: "**offer them, never default to them**." They run on the user's explicit
 ask, now or standing. Running one uninvited spends time and budget on ceremony
-nobody ordered.
+nobody ordered. A repo's own completion gate that requires driving the real
+artifact for a change of this kind counts as that standing ask: the session runs
+it, names the gate that invited it, and reports the run as part of satisfying
+the gate.
 
 **Artifacts are disposable.** Audit reports, brainstorm designs, route plans,
 outlines: all working material. They live in `.workbench/<work_scope>/` (or
@@ -160,7 +171,9 @@ wants one sets it in its own rules.
 
 **Should I be running `empirical-proof` or `qa-sweep`?**
 
-Only if you ask for them. They are offered, never automatic. The flow's earlier
+Only if you ask for them, or if your repo's own process document already
+requires driving the real artifact for the change in hand, which counts as the
+ask. Otherwise they are offered, never automatic. The flow's earlier
 wording ("empirical-proof if runnable", "the deeper sibling") read as an
 instruction to run them whenever a change qualified. They are expensive due to
 subagent fan-outs, booted apps, and corroboration loops, and the choice is the

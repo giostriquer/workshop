@@ -31,6 +31,14 @@ confident implementation, a tidy-looking change, or time pressure are not
 among them, and neither is the session's own judgment that this one looks
 fine.
 
+**Repo process takes precedence, in both directions.** When the repo carries
+its own process document (`CLAUDE.md`, `AGENTS.md`, `CONTRIBUTING`), follow it
+for worktrees, test discipline, and completion gates rather than re-running the
+flow's version of the same ceremony. Precedence is not only subtraction: a repo
+gate can also invite a tier the flow would otherwise only offer, such as
+`empirical-proof`. What survives regardless are the three user gates and the
+adversarial review before PR-or-merge. Name which of those you skip and why.
+
 ## The flow at a glance
 
 ```
@@ -114,7 +122,10 @@ assignments: load one when its moment arrives, not preemptively.
 and stop only for an explicit user decline or a superseding repo process.
 `empirical-proof` and `qa-sweep` are the expensive tiers.
 **Offer them; never default to them.** They run on the user's explicit ask
-(now or standing) and not otherwise. Most changes don't warrant them, and
+(now or standing) and not otherwise. A repo's own completion gate that requires
+driving the real artifact for a change of this kind **is** that standing ask:
+run it, name the gate that invited it, and report the run as part of satisfying
+the gate rather than offering it first. Most changes don't warrant them, and
 running one uninvited spends the user's time and budget on ceremony they
 didn't order.
 

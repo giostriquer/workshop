@@ -1,6 +1,6 @@
 ---
 name: empirical-proof
-description: Use when a just-finished change touched a surface a real client can drive (an MCP tool, a REST endpoint, runnable app behavior, or a generator's emitted artifact) and the user asked for empirical verification (offer it otherwise; never run it uninvited). NOT for a release- or branch-wide pass (qa-sweep), verifying a premise or ticket (claim-check), or driving an app to hunt for unknown bugs in a surface, which is ordinary session work rather than this protocol.
+description: Use when a just-finished change touched a surface a real client can drive (an MCP tool, a REST endpoint, runnable app behavior, or a generator's emitted artifact) and the user asked for empirical verification, which includes a repo completion gate that requires driving the real artifact (offer it otherwise; never run it uninvited). NOT for a release- or branch-wide pass (qa-sweep), verifying a premise or ticket (claim-check), or driving an app to hunt for unknown bugs in a surface, which is ordinary session work rather than this protocol.
 ---
 # Empirical Proof
 
@@ -15,6 +15,14 @@ in: both are the operator's separate step.
 After finishing work that touched a surface the running software can prove: an
 MCP tool, a REST API endpoint, any behavior a client can drive, and before
 reporting it done.
+
+**A repo's own completion gate is a standing ask.** When the repo's process
+document (`CLAUDE.md`, `AGENTS.md`, `CONTRIBUTING`) requires driving the real
+artifact for a change of this kind, that requirement **is** the invitation this
+skill waits for. Run it without asking, name the gate that invited it, and
+report the run as part of satisfying that gate rather than offering it first.
+Precedence runs both ways: a repo document that can supersede a flow gate can
+also invite a tier the flow would otherwise only offer.
 
 **Not for** a release- or branch-wide pass (`qa-sweep`), verifying a premise or
 ticket (`claim-check`), diffs with no runtime surface (docs, pure test changes),

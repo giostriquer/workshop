@@ -8,6 +8,27 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.24.0: 2026-08-19
+
+- **A repo's own completion gate now invites `empirical-proof`.** The skill
+  said "never run it uninvited" and counted only the user as the inviter, so a
+  session in a repo whose `AGENTS.md` requires booting the real app would have
+  offered the run, waited, and shipped. Both trigger surfaces now name a repo
+  process document that requires driving the real artifact as the standing ask
+  it already was: run it, name the gate that invited it, and report the run as
+  part of satisfying that gate rather than offering it first. Rigor once it
+  runs is unchanged.
+- **`using-workbench` states repo precedence once, and in both directions.**
+  The rule lived scattered across `test-driven-development`,
+  `code-quality-review`, and the two standing gates, and in every place it
+  could only subtract ceremony. *At session start* now carries it plainly:
+  follow the repo's own process document for worktrees, test discipline, and
+  completion gates instead of re-running the flow's version, and let a repo
+  gate invite a tier the flow would otherwise only offer. The three user gates
+  and the adversarial review before PR-or-merge survive regardless, and the
+  session names which of those it skips and why.
+  ([decision](decisions/repo-gate-invites-empirical-proof.md))
+
 ## workbench 0.23.3: 2026-08-18
 
 - **Skill and agent descriptions parse as YAML again.** `receiving-code-review`,
@@ -230,29 +251,3 @@ deletes the oldest (git history keeps everything). Sections from before the
   That file is byte-identical to upstream, so it is upstream's defect; mirroring
   neither causes nor fixes it.
   ([decision](decisions/writing-skills-mirrored-verbatim.md))
-
-## workbench 0.20.12: 2026-08-12
-
-- **`empirical-proof` no longer absorbs exploratory runtime work.** It was the
-  only skill in the flow that says "drive the running app," and its `NOT for`
-  list didn't exclude hunting for unknown bugs, so that work landed here and
-  inherited a gate and verdicts built for proving one finished change. Both
-  trigger surfaces now exclude it, and the body explains the misfire rather
-  than just prohibiting it. Exploratory driving gets no new skill: it is
-  ordinary session work, per `using-workbench`'s standing rule that when no
-  frame fits, you keep the standard and drop the frame.
-- **Launching the app is in scope; `blocked` is demoted to last resort.** The
-  gate read "make **one clean start attempt**… Anything beyond it is not yours
-  to do… Fixing local setup is out of scope by design," which made a single
-  launch hiccup terminal. It now covers everything the project's docs prescribe
- (install, example env, build, dev server) plus a clean retry, and states
-  that a fresh worktree or clean install is ordinary setup, not environment
-  fabrication. "One failed launch is not a blocked verdict; a documented path
-  you have actually exhausted is." The closing Rules recap was corrected to
-  match, having restated the old "one documented start attempt at most."
-- **Unchanged on purpose:** the "Do not conjure the environment" prohibition.
-  Stubbing a listener, faking an env var, or editing a boot check is still
-  forbidden, and repairing the machine is still out of scope. The fix separates
-  *don't fabricate dependencies* (kept) from *don't try twice to start the app*
-  (removed).
-  ([decision](decisions/empirical-proof-stops-absorbing-exploration.md))

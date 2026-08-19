@@ -4,13 +4,13 @@
 
 This skill proves a just-finished change **at the running software**, not on paper. You start the real app, drive the surface your change touched over the boundary a real client uses, record the exchanges verbatim, and return a verdict: `verified`, `broken`, or `blocked`. Every "verified" traces to a recorded exchange with the genuinely running app. Code reading predicts; green unit tests are prerequisites; a mocked call or in-process harness exercises a different artifact. None of those produce a verdict here.
 
-It is an **expensive tier that is offered, never run uninvited**. It fans out subagents, boots applications, and re-drives results firsthand for corroboration. The rule across the flow is that `verification-before-completion` is the always-on gate and this skill is a user option: the session offers it when a change qualifies and runs it only on your explicit ask, in the moment or by standing rule ([decision](../decisions/expensive-verification-user-optioned.md)).
+It is an **expensive tier that is offered, never run uninvited**. It fans out subagents, boots applications, and re-drives results firsthand for corroboration. The rule across the flow is that `verification-before-completion` is the always-on gate and this skill is a user option: the session offers it when a change qualifies and runs it only on your explicit ask, in the moment or by standing rule ([decision](../decisions/expensive-verification-user-optioned.md)). A repo process document that requires driving the real artifact for a change of this kind *is* that standing ask, so the session runs it, names the gate that invited it, and reports the run as part of satisfying the gate.
 
 It stops at the verdict. The skill says so twice over: it **"does not fix what it finds, and it does not fix the environment it runs in; both are the operator's separate step."** A bug found during the run is reported `broken` with its evidence, not patched. A "verified after I fixed it in passing" is, in the skill's words, **"unreviewed implementation wearing a verification badge."** One thing it *does* do that it used to refuse is launch the app. Installing dependencies, copying the example env, building, and starting the dev server are all in scope now, along with a clean retry.
 
 ## When to reach for it
 
-Ask for it after finishing work that touched a surface the running software can prove (an MCP tool, a REST endpoint, runnable app behavior, or the artifact a generator emits) and before reporting that work done. If you have a standing rule authorizing it, it runs on qualifying changes without a fresh ask; otherwise the session should offer and wait.
+Ask for it after finishing work that touched a surface the running software can prove (an MCP tool, a REST endpoint, runnable app behavior, or the artifact a generator emits) and before reporting that work done. If you have a standing rule authorizing it, or your repo's `CLAUDE.md` / `AGENTS.md` / `CONTRIBUTING` requires booting the real app for changes of this kind, it runs on qualifying changes without a fresh ask; otherwise the session should offer and wait.
 
 The exclusion worth memorizing: **driving an app to hunt for unknown bugs is not this skill.** It is ordinary session work with no protocol at all: get the app up, drive it, reproduce what you find, report it.
 
@@ -74,6 +74,10 @@ No. The bait harness used to develop this skill held four of four green unit tes
 
 **My project generates code, and there is no app to boot.**
 The emitted artifact is the runnable surface. Run the generator via the documented path, then build and drive its output the way a real consumer would: compile it, boot it, hit its endpoints. Reading the emitted source is still reading. One boundary shift applies here: an emitted artifact that fails to build or boot is a **`broken` verdict against the generator**, not `blocked`, because the generator's output is the change under test. This case was added after a real project whose deliverable was emitted source code found the skill assumed a bootable app ([decision](../decisions/verification-shape-feedback.md)).
+
+**My repo's `AGENTS.md` already says to boot the app before calling a change done. Does the session still stop and offer?**
+
+No. It runs. That precedence was one-directional at first: a repo process document could supersede a flow gate and remove ceremony, but nothing let one *add* a tier, so "never run it uninvited" read as a prohibition even where the repo's own completion gate demanded exactly this run. A session obeying the skill literally would skip the boot its repo required. The gate itself is the invitation now, and the run is reported as part of satisfying it rather than offered first ([decision](../decisions/repo-gate-invites-empirical-proof.md)).
 
 **Where does the evidence go?**
 Into the work scope's single folder, handed to every dispatched agent in its contract. Agents never pick their own locations. This became explicit after an audit run scattered its evidence across three separate per-agent system-temp directories although all of it belonged to one work scope ([decision](../decisions/evidence-one-home-per-scope.md)). One proof, one folder.
