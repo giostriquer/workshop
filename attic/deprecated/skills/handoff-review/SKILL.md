@@ -1,6 +1,6 @@
 ---
 name: handoff-review
-description: Use when work on a branch needs a fresh, unbiased pair of eyes: a pre-PR review, or a clean restart when this session's context has gone bad and a new session should independently verify what was already done and continue it. Produces a self-contained brief (task-vs-code, rules conformance, information leak, correctness) that re-derives the task from ticket + diff, never trusting the prior session. Default spawns a fresh reviewer (verify-only); `handoff`/`session` writes the brief to a scratch file for a new session (verify-only); `continue`/`resume` writes a verify-then-continue brief carrying current state, remaining work, and operating rules, pointing to handoff-goal for substantial forward work.
+description: Use when work on a branch needs a fresh, unbiased pair of eyes, whether a pre-PR review or a clean restart when this session's context has gone bad and a new session should independently verify what was already done and continue it. Produces a self-contained brief (task-vs-code, rules conformance, information leak, correctness) that re-derives the task from ticket + diff, never trusting the prior session. Default spawns a fresh reviewer (verify-only); `handoff`/`session` writes the brief to a scratch file for a new session (verify-only); `continue`/`resume` writes a verify-then-continue brief carrying current state, remaining work, and operating rules, pointing to handoff-goal for substantial forward work.
 ---
 
 # Handoff Review

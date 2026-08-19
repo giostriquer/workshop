@@ -1,6 +1,6 @@
 {
   "name": "toolkit",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "description": "Optional utilities for the workshop: html-report (report to a polished dark HTML page, from a doc or from session findings), arch-map (derived architecture maps), ui-demo-video (Playwright walkthroughs with verification frames), writing-skills (TDD for skill authoring, derived from obra/superpowers, MIT), adopt-global-rules (installs the workshop's shipped global CLAUDE.md / AGENTS.md, rules, and Claude output styles onto a machine, additively), and me-human (act as a human user dogfooding a system for real work). Install alongside workbench when you want them; skip to keep sessions lean.",
   "author": { "name": "Workshop" },
   "homepage": "https://github.com/giostriquer/workshop",

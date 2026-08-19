@@ -1,6 +1,6 @@
 ---
 name: doc-audit
-description: Run a proactive audit of the project documentation surface. Surfaces gaps that diff-driven wiki-maintainer passes miss by construction: missing pages, broken links, undefined terms, missing decision records, orphaned files. Report-only; never edits docs directly. Use when the user asks for a doc audit, a coverage check, a drift sweep, or "what's missing in our docs."
+description: Run a proactive audit of the project documentation surface. Surfaces gaps that diff-driven wiki-maintainer passes miss by construction, such as missing pages, broken links, undefined terms, missing decision records, orphaned files. Report-only; never edits docs directly. Use when the user asks for a doc audit, a coverage check, a drift sweep, or "what's missing in our docs."
 ---
 
 # Doc Audit

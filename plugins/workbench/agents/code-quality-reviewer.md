@@ -1,6 +1,6 @@
 ---
 name: code-quality-reviewer
-description: Run a strict code-quality audit over a diff: maintainability, structure, the 1k-line rule, spaghetti growth, and code-judo simplification. Use as the code-quality stage of an implementation review, before pattern-reviewer. Loads its rubric from the code-quality-review skill.
+description: Run a strict code-quality audit over a diff covering maintainability, structure, the 1k-line rule, spaghetti growth, and code-judo simplification. Use as the code-quality stage of an implementation review, before pattern-reviewer. Loads its rubric from the code-quality-review skill.
 tools: Read, Grep, Glob, Bash
 model: inherit
 ---

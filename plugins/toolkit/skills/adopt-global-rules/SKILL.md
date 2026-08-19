@@ -1,6 +1,6 @@
 ---
 name: adopt-global-rules
-description: Install the workshop's shipped global agent configuration onto this machine, additively: a per-host instruction document (CLAUDE.md / AGENTS.md), discrete rules, and output styles. Reconciles what is already there instead of overwriting it. User-invoked only.
+description: Install the workshop's shipped global agent configuration onto this machine, additively; the payload is a per-host instruction document (CLAUDE.md / AGENTS.md), discrete rules, and output styles. Reconciles what is already there instead of overwriting it. User-invoked only.
 disable-model-invocation: true
 ---
 

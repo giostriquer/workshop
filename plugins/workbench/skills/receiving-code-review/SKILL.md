@@ -1,6 +1,6 @@
 ---
 name: receiving-code-review
-description: Use when review feedback arrives, before implementing suggestions, especially if feedback seems unclear or technically questionable: requires technical rigor and verification, not performative agreement or blind implementation. Pairs with get-pr-comments, which triages a PR's feedback into the list this skill governs acting on.
+description: Use when review feedback arrives, before implementing suggestions, especially if feedback seems unclear or technically questionable; requires technical rigor and verification, not performative agreement or blind implementation. Pairs with get-pr-comments, which triages a PR's feedback into the list this skill governs acting on.
 metadata:
   system: workbench
 ---

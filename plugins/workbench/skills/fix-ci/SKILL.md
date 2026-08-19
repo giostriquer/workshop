@@ -1,6 +1,6 @@
 ---
 name: fix-ci
-description: Watch the current branch's CI through to a verdict and fix what breaks. Use when CI is failing ("CI is failing, take a look"), after a push to see the checks through to green, or when a red check needs diagnosing and fixing. Pulls the failing log, diagnoses in-session, applies a minimal fix, pushes per repo conventions, and re-watches: bounded attempts, never a force-push.
+description: Watch the current branch's CI through to a verdict and fix what breaks. Use when CI is failing ("CI is failing, take a look"), after a push to see the checks through to green, or when a red check needs diagnosing and fixing. Pulls the failing log, diagnoses in-session, applies a minimal fix, pushes per repo conventions, and re-watches, with bounded attempts and never a force-push.
 ---
 
 # Fix CI

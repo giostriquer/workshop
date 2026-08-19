@@ -8,6 +8,25 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.23.3: 2026-08-18
+
+- **Skill and agent descriptions parse as YAML again.** `receiving-code-review`,
+  `fix-ci`, `qa-sweep`, and the `code-quality-reviewer` agent carried an
+  unquoted `description:` with a colon-space inside it, which YAML rejects
+  ("mapping values are not allowed in this context") and hosts refused to
+  load. Each is reworded, not quoted; the trigger text reads the same.
+  The plugin validator now checks every shipped frontmatter for this class
+  of defect. ([decision](decisions/frontmatter-plain-scalars.md))
+
+## toolkit 0.7.2: 2026-08-18
+
+- **Skill descriptions parse as YAML again.** `adopt-global-rules` and
+  `arch-map` carried an unquoted `description:` with a colon-space inside
+  it, which YAML rejects and hosts refused to load. Each is reworded, not
+  quoted; the trigger text reads the same. The plugin validator now checks
+  every shipped frontmatter for this class of defect.
+  ([decision](decisions/frontmatter-plain-scalars.md))
+
 ## workbench 0.23.2: 2026-08-18
 
 - **`code-quality-review` names its posture in the body, not the trigger.**
@@ -237,23 +256,3 @@ deletes the oldest (git history keeps everything). Sections from before the
   *don't fabricate dependencies* (kept) from *don't try twice to start the app*
   (removed).
   ([decision](decisions/empirical-proof-stops-absorbing-exploration.md))
-
-## workbench 0.20.11: 2026-08-12
-
-- **`code-quality-review`'s description trimmed back to purpose and usage.**
-  Making the review default-on (0.20.9) pushed execution policy into the
-  always-loaded description, when to run it unasked, both exceptions, the
-  once-per-work-stream rule, which is the description bloat this repo's own
-  token audit flags elsewhere. The policy lives in the body; the description
-  is 65 words → 31, leaner than the 40 it started at, and still carries
-  "required" so the gate fires by default.
-  ([decision](decisions/adversarial-review-is-default-on.md))
-
-## workbench 0.20.10: 2026-08-12
-
-- **"Adversarial" now matches the review that answers to it.** The flow names
-  this pass adversarial everywhere it appears, but `code-quality-review`'s
-  description never used the word, so asking for "an adversarial code quality
-  review" matched on "code quality review" alone. The on-request clause now
-  reads "a strict **or adversarial** code quality review".
-  ([decision](decisions/adversarial-review-is-default-on.md))

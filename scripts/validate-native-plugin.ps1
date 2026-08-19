@@ -43,6 +43,57 @@ function Assert-SameFileList {
     }
 }
 
+function Assert-Frontmatter {
+    # Strict check of a skill/agent .md YAML frontmatter. PowerShell has no
+    # built-in YAML parser, so this validates the flat shape the plugins use:
+    # `key: value` lines (plus one level of indented nesting) whose unquoted
+    # values must be legal plain scalars. Hosts reject the file otherwise
+    # ("mapping values are not allowed in this context").
+    param([Parameter(Mandatory = $true)] [string] $Path)
+
+    $lines = @((Get-Content -LiteralPath $Path -Raw) -split "\r?\n")
+    if ($lines.Count -lt 3 -or $lines[0] -ne "---") {
+        Fail "${Path}: frontmatter must open with --- on line 1"
+    }
+    $end = -1
+    for ($i = 1; $i -lt $lines.Count; $i++) {
+        if ($lines[$i] -eq "---") { $end = $i; break }
+    }
+    if ($end -lt 0) {
+        Fail "${Path}: frontmatter never closes with ---"
+    }
+
+    $keys = @()
+    for ($i = 1; $i -lt $end; $i++) {
+        $line = $lines[$i]
+        $lineNo = $i + 1
+        if ($line.Trim() -eq "" -or $line.TrimStart().StartsWith("#")) { continue }
+        if ($line -notmatch '^(\s*)([A-Za-z0-9_-]+):(\s+(.*))?$') {
+            Fail "${Path}:${lineNo}: frontmatter line is not key: value"
+        }
+        if ($Matches[1] -eq "") { $keys += $Matches[2] }
+        if (-not $Matches[3]) { continue }   # nested block follows
+        $value = $Matches[4].TrimEnd()
+        if ($value -eq "") { continue }
+        $first = $value[0]
+        if ($first -eq '"' -or $first -eq "'" -or $first -eq '|' -or $first -eq '>' -or $first -eq '[' -or $first -eq '{') { continue }
+        if ($first -in @('&', '*', '!', '%', '@', '`') -or $value.StartsWith("- ") -or $value -eq "-") {
+            Fail "${Path}:${lineNo}: unquoted value starts with reserved YAML indicator '$first'"
+        }
+        if ($value.Contains(": ") -or $value.EndsWith(":")) {
+            Fail "${Path}:${lineNo}: unquoted value contains ': ' (reword it; do not quote)"
+        }
+        if ($value.Contains(" #")) {
+            Fail "${Path}:${lineNo}: unquoted value contains ' #' (starts a YAML comment)"
+        }
+    }
+    foreach ($required in @("name", "description")) {
+        if ($keys -notcontains $required) {
+            Fail "${Path}: frontmatter missing required key '$required'"
+        }
+    }
+}
+
 # The marketplace ships two plugins: workbench (the process core: agents,
 # everyday skills, and the workbench flow layer) and toolkit (optional
 # artifact-making utilities). The repo's own working set (.claude/, .codex/,
@@ -123,6 +174,7 @@ function Assert-Plugin {
         if (-not (Test-Path -LiteralPath "$skillsDir/$skillName/SKILL.md" -PathType Leaf)) {
             Fail "$name skill missing SKILL.md: $skillName"
         }
+        Assert-Frontmatter "$skillsDir/$skillName/SKILL.md"
     }
 
     if ($null -ne $Spec.ExpectedAgents) {
@@ -132,6 +184,9 @@ function Assert-Plugin {
         }
         $actual = @(Get-ChildItem -LiteralPath $agentDir -File | Select-Object -ExpandProperty Name | Sort-Object)
         Assert-SameFileList $Spec.ExpectedAgents $actual "$name agents"
+        foreach ($agentFile in $actual) {
+            Assert-Frontmatter "$agentDir/$agentFile"
+        }
     }
     elseif (Test-Path -LiteralPath "$root/agents" -PathType Container) {
         Fail "$name must not contain an agents directory"

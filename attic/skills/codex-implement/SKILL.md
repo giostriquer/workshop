@@ -1,6 +1,6 @@
 ---
 name: codex-implement
-description: Use when dispatching implementation tasks to Codex CLI (GPT-5.5) as the coder while this session plans and judges: a written plan or task brief exists and coding labor should be delegated to codex exec. Not for planning, review, or tasks that need conversation with the user.
+description: Use when dispatching implementation tasks to Codex CLI (GPT-5.5) as the coder while this session plans and judges, once a written plan or task brief exists and coding labor should be delegated to codex exec. Not for planning, review, or tasks that need conversation with the user.
 ---
 
 # codex-implement: this session plans and judges, Codex codes
