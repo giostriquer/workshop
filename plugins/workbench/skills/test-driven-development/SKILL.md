@@ -1,6 +1,6 @@
 ---
 name: test-driven-development
-description: Use when implementing a feature or bugfix in a repo that has a test harness. This is the workbench flow's default discipline there, not a mandate; the repo's own implementation and testing conventions take precedence when they conflict. Where no harness exists, skip without ceremony. Write the failing test first, watch it fail, write minimal code to pass, and refactor.
+description: Use when implementing a feature or bugfix in a repo that has a test harness. Where the repo has no harness, skip without ceremony.
 metadata:
   system: workbench
 ---

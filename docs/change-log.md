@@ -8,6 +8,36 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.30.0: 2026-08-20
+
+- **Six descriptions stop summarizing what the skill does.** `writing-skills`
+  carries a tested rule: a description that summarizes the workflow creates a
+  shortcut the agent takes instead of reading the body. An audit of all sixteen
+  workbench skills found six carrying post-fire protocol in the trigger, and
+  `test-driven-development` was almost word for word the worked bad example
+  that skill ships ("write test first, watch it fail, write minimal code,
+  refactor").
+- **`test-driven-development`, `fix-ci`, `self-audit`, `brainstorming`,
+  `claim-check`, and `model-reference`** now state only when they fire.
+  `fix-ci` and `self-audit` also stop opening with an imperative or a noun
+  phrase. Nothing was deleted: every clause already lived in its skill's body,
+  bar `model-reference`'s "a lookup, not a step before every dispatch", which
+  moved into its opening. Exclusions stayed in the triggers, since they route
+  between near-neighbour skills.
+- **`verification-before-completion`'s trigger narrows** to the moment it
+  fires, and its per-file attribution footer is dropped; the plugin `LICENSE`
+  already names it among the superpowers-derived portions.
+- `empirical-proof` and `qa-sweep` were left long on purpose: their bulk is
+  routing between near neighbours, which is trigger work.
+  ([decision](decisions/skill-descriptions-state-when-not-what.md))
+
+## toolkit 0.8.2: 2026-08-20
+
+- **`writing-skills` drops a paragraph of dangling pointers.** Its opening
+  linked `../using-superpowers/references/codex-tools.md` and its Gemini
+  sibling, neither of which exists in this package, so an installed copy
+  pointed at nothing.
+
 ## workbench 0.29.0: 2026-08-20
 
 - **`route-work` is now `model-reference`.** The old name named a verb the
@@ -199,34 +229,3 @@ deletes the oldest (git history keeps everything). Sections from before the
   Skill, template, reference, plugin, and supporting documentation text was
   rewritten so each clause keeps its meaning through ordinary sentence
   structure instead of a glyph substitution.
-
-## toolkit 0.7.0: 2026-08-14
-
-- **`adopt-global-rules` ships the communication guidance as a Claude output
-  style.** The BLUF / Simplified Technical English section leaves
-  `globals/CLAUDE.md` and installs as `bluf-ste` in
-  `~/.claude/output-styles/`: the surface Claude Code built for it, and one the
-  user can switch off. `globals/AGENTS.md` keeps the guidance inline because
-  Codex has no equivalent. Output styles are a **third kind of pack content**
-  (pack v3), declared per host and installed **never activated**: the run names
-  `/output-style` and touches no settings. The installer now places a managed
-  marker below leading YAML frontmatter, and rules and output styles share one
-  whole-file install and directory scan, so collisions, orphans, and `--prune`
-  behave identically in both.
-  ([decision](decisions/adopt-global-rules-output-styles.md))
-
-## workbench 0.23.0: 2026-08-13
-
-- **New skill: `self-audit`.** A retrospective on **the process that ran the
-  session**: the flow and its skills, never the code or the deliverable. It
-  replays the session into a trace of facts first, then classifies each moment
-  as *process defect* (yields a proposal), *session defect* (reported, no edit),
-  or *clean*. The conversion rule keeps that split honest: an instruction the
-  session reliably misses is a wording defect, not a discipline defect.
-  Proposals must name one piece and one edit shape: wording, gate, boundary,
-  new, delete, and clear a bar: the change would have altered this session or
-  the next of its shape. No findings is a legitimate result. It reports and
-  stops; the edit belongs to `writing-skills`. User-invoked only
-  (`disable-model-invocation: true`), and deliberately absent from
-  `using-workbench`'s ownership table; it sits outside the flow, looking back
-  at it. ([decision](decisions/self-audit.md))

@@ -1,6 +1,6 @@
 ---
 name: verification-before-completion
-description: Use when about to claim work is complete, fixed, or passing, before committing or creating PRs. The workbench flow's "deemed ready" gate requires verification commands and confirmed output before any success claim; evidence comes before assertions. For changes with a runnable surface, empirical-proof is the deeper sibling and is offered rather than automatic.
+description: Use when about to claim work is complete, fixed, or passing.
 metadata:
   system: workbench
 ---
@@ -128,7 +128,3 @@ Skip any step = lying, not verifying
 - Paraphrases and synonyms
 - Implications of success
 - ANY communication suggesting completion/correctness
-
----
-
-*Derived from [obra/superpowers](https://github.com/obra/superpowers) (MIT, (c) Jesse Vincent), adapted for the workbench system.*

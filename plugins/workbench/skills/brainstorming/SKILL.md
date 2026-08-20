@@ -1,6 +1,6 @@
 ---
 name: brainstorming
-description: Use when designing a feature or a refactor (the workbench flow runs this before any such design) and when an idea carries questions the codebase can't answer (intent, preference, trade-offs). Explores user intent, requirements, and design through collaborative dialogue, ending at the user's route pick. Not for confirmed small fixes or work whose design is already settled.
+description: Use when designing a feature or a refactor (the workbench flow runs this before any such design) and when an idea carries questions the codebase can't answer (intent, preference, trade-offs). Not for confirmed small fixes or work whose design is already settled.
 metadata:
   system: workbench
 ---

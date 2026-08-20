@@ -1,6 +1,6 @@
 ---
 name: self-audit
-description: Retrospective on the session so far, find where the workbench process itself degraded or misled the model, stayed silent when it should have spoken, or pointed the session wrong, and propose the specific fixes. User-invoked only.
+description: Use when the session should look back at how the workbench process itself ran, rather than at the code it produced or the user's choices. User-invoked only.
 metadata:
   system: workbench
 disable-model-invocation: true

@@ -7,8 +7,8 @@ graded on cost, intelligence, taste, code, and speed, plus the routing
 invariants that hold regardless of which models you run. You consult it when a
 model choice needs grounding and is not already settled.
 
-It is a lookup, and nothing else. Its own description draws the line: "a
-lookup, not a step before every dispatch, and it never dispatches anything."
+It is a lookup, and nothing else. The skill draws the line itself: "a lookup,
+not a step before every dispatch, and it never dispatches anything."
 There is no rubric to grade your task against, no output contract to fill in,
 no process pattern to select, and no dispatch mechanics. It does not decide for
 you; it gives you the numbers and the invariants and leaves the call where it
@@ -27,8 +27,8 @@ already justify, or when the fleet changes and the table needs updating. The can
 always-injected rules file carries only the hard invariants and points at this
 skill, so the table has exactly one place to go stale.
 
-Do not invoke it before every dispatch. That is the misuse the skill names in
-its own description.
+Do not invoke it before every dispatch. That is the misuse the skill names,
+in its trigger and again in its opening.
 
 | The problem | The skill |
 | --- | --- |

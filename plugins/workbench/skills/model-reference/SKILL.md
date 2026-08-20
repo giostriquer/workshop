@@ -1,6 +1,6 @@
 ---
 name: model-reference
-description: Use when a model choice needs grounding and is not already settled, or when the fleet changes. Reference table for the model fleet across cost, intelligence, taste, code, and speed, plus the hard routing invariants. This is a lookup, not a step before every dispatch, and it never dispatches anything.
+description: Use when a model choice needs grounding and is not already settled, or when the fleet changes. Not a step before every dispatch.
 ---
 
 # Model Reference
@@ -8,6 +8,9 @@ description: Use when a model choice needs grounding and is not already settled,
 The model reference table: consult it when picking a model, update it when the
 fleet changes. The canonical copy lives here and nowhere else; the operator's
 always-injected rules file carries only the hard invariants and points here.
+
+This is a lookup, not a step before every dispatch, and it never dispatches
+anything.
 
 ## The table
 

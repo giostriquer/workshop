@@ -1,6 +1,6 @@
 ---
 name: claim-check
-description: Use when you have a premise to verify before acting on it (a tracker ticket, a hunch you are carrying, or a bare question) and you want a deep, unbiased, evidence-grounded investigation rather than a guess. "Needs more information" is a legitimate outcome. Builds a repro to prove or break a code claim but never implements the fix.
+description: Use when you have a premise to verify before acting on it (a tracker ticket, a hunch you are carrying, or a bare question) and you want a deep, evidence-grounded investigation rather than a guess. Not for implementing the fix the premise calls for.
 ---
 
 # Claim Check
