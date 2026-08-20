@@ -11,11 +11,47 @@ Before filing, the branch diff has had an adversarial code quality review: the
 `code-quality-review` skill, dispatched to a reviewer context that did not
 write the code. If it has not run, run it now and act on its findings first.
 
+**Violating the letter of this gate is violating the spirit of it.** The
+review exists to be run by someone who did not write the code; a session that
+reasons its way past it has produced the exact outcome the gate prevents.
+
 Two exemptions, and only these two:
 
-- The branch is a trivial, non-code, or documentation-only change.
-- The review already ran for this work-stream. Loading this skill is not a
-  reason to run it a second time.
+- **The branch changes no code.** Documentation, comments, and config-only
+  edits with no behavior change. Measured on the diff, not on how routine the
+  work felt.
+- **The review already ran on this diff.** It was dispatched, it came back,
+  and its findings were acted on. Loading this skill is not a reason to run it
+  a second time.
+
+Nothing else is an exemption. Not a deadline, not a reviewer waiting, not a
+branch that has been open a long time, not the user asking for the PR
+directly. If the gate cannot be satisfied, say so and ask; do not file and
+mention it afterward.
+
+### What the exemptions are not
+
+| The reasoning | What is actually true |
+|---|---|
+| "This is trivial: one file, small diff." | Trivial is not an exemption. Only *no code changed* is. A one-line change to a conditional is code. |
+| "It's just a refactor, behavior is identical." | A refactor is the change class this review exists for. Structure is its entire subject. |
+| "It's config / a version bump / generated output." | Config that changes behavior is code. If the diff changes what runs, the gate applies. |
+| "I reviewed it carefully as I wrote it." | The author is the one context that cannot run this review. That is stated in `code-quality-review`, not implied. |
+| "I ran the rubric over my own diff and found nothing." | A self-served pass is not this gate. It is reported as an author's pass or not at all. |
+| "The review ran earlier in this work-stream." | Earlier on *this diff*, or it did not run. Commits added since the review are unreviewed code. |
+| "The user asked for a PR now, so they've accepted the trade." | Asking for a PR is not waiving the gate. If time is the constraint, surface it and let them waive it explicitly. |
+| "CI is green and the tests pass." | Passing tests say the code works. This review asks whether it should be built this way. |
+| "I'll open it as a draft and get the review after." | A draft PR is a filed PR. The gate is before filing. |
+
+### Red flags: stop and dispatch the review
+
+- Reaching for a synonym of "trivial" to describe a diff that changes code.
+- Counting your own pass over your own diff as the review.
+- Counting a review that predates commits now in the diff.
+- Treating urgency, a waiting reviewer, or a direct "open the PR" as a waiver.
+- Filing as a draft to defer the gate.
+
+**Each of these means: dispatch the review, then file.**
 
 File a finished branch as a PR and see it through: a template-true body, `gh pr
 create`, then an autonomous tend loop that fixes red CI (via the `fix-ci` skill) and

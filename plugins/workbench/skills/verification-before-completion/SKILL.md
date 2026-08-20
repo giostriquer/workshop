@@ -1,8 +1,6 @@
 ---
 name: verification-before-completion
 description: Use when about to claim work is complete, fixed, or passing.
-metadata:
-  system: workbench
 ---
 
 # Verification Before Completion

@@ -1,8 +1,6 @@
 ---
 name: audit
 description: Use when asked to do an audit or check. Not for work that starts from an idea to build (that path grounds against the codebase and goes to brainstorming).
-metadata:
-  system: workbench
 ---
 
 # Audit

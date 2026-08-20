@@ -25,7 +25,7 @@ decides on its own to stop and grade the process.
 | Where did the process cost more than it returned? | `self-audit` |
 | Is the code right? | [audit](audit.md) → [claim-check](claim-check.md) / [qa-sweep](qa-sweep.md) |
 | Is this diff maintainable? | [code-quality-review](code-quality-review.md) |
-| Now write the fix into the skill | [writing-skills](writing-skills.md) |
+| Now write the fix into the skill | `writing-skills` (repo-local, shipped in no plugin) |
 
 ## The protocol
 
@@ -94,7 +94,7 @@ reporting it as such is worth more than a manufactured list."
 **Will it apply the fixes?**
 
 No. It reports and stops. Applying anything is your call, and the edit itself
-belongs to [writing-skills](writing-skills.md).
+belongs to `writing-skills`.
 
 **Why does it report what *worked*?**
 
@@ -117,6 +117,6 @@ that were load-bearing, one line each.
 
 Outside the flow, looking back at it. Nothing hands off to `self-audit` and it
 hands off to nothing automatically: its output is a list you decide to act on,
-at which point [writing-skills](writing-skills.md) does the editing. Its closest
+at which point `writing-skills` does the editing. Its closest
 relative is [audit](audit.md), and the contrast is the whole point: `audit`
 investigates the work, `self-audit` investigates the process that ran it.

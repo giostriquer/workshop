@@ -33,7 +33,6 @@ codex plugin add toolkit@workshop
 | `html-report` | renders a markdown report or findings reached in-session as a polished standalone dark HTML page |
 | `arch-map` | derives a visual architecture map of a subsystem, refactor, or proposed design when no source doc exists |
 | `ui-demo-video` | provides a Playwright walkthrough of the running app, verification frames for the model, and an MP4 for the PR |
-| `writing-skills` | applies TDD to skill authoring through baselines, micro-tested wording, and loophole closing |
 | `get-pr-comments` | triages the PR's conversation, review, and inline comments into a prioritized action list; read-only |
 | `adopt-global-rules` | installs the workshop's shipped global CLAUDE.md / AGENTS.md, rules, and Claude output styles onto this machine additively; user-invoked only |
 | `me-human` | acts as a human user putting a system to real work by trying before asking, escalating on bugs, and stopping at the scope edge; user-invoked only |
@@ -44,11 +43,6 @@ bare machine:
 ```powershell
 npx github:giostriquer/workshop --dry-run   # plan; drop --dry-run to apply
 ```
-
-> **Attribution:** `writing-skills` is derived from
-> [obra/superpowers](https://github.com/obra/superpowers) by **Jesse Vincent**
-> (MIT), adapted per the
-> [workbench-system decision](https://github.com/giostriquer/workshop/blob/main/docs/decisions/workbench-system.md).
 
 ## Not included
 

@@ -1,8 +1,6 @@
 ---
 name: test-driven-development
 description: Use when implementing a feature or bugfix in a repo that has a test harness. Where the repo has no harness, skip without ceremony.
-metadata:
-  system: workbench
 ---
 
 # Test-Driven Development (TDD)

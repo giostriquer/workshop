@@ -59,7 +59,6 @@ You ask, or it does not run.
 | --- | --- |
 | Get the workshop's global configuration onto this machine | `adopt-global-rules` |
 | Which model should this work run on | [model-reference](model-reference.md) |
-| Write or edit a skill | [writing-skills](writing-skills.md) |
 
 ## What "additive" actually means
 

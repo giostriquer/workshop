@@ -63,9 +63,9 @@
     },
     {
       "upstreamPath": "skills/writing-skills/",
-      "localPath": "plugins/toolkit/skills/writing-skills/",
+      "localPath": ".claude/skills/writing-skills/",
       "disposition": "mirrored",
-      "why": "The RED→GREEN skill-authoring loop; the operator authors skills constantly. Ships in the toolkit plugin.",
+      "why": "The RED→GREEN skill-authoring loop; the operator authors skills constantly. Repo-local, shipped in no plugin.",
       "adaptations": "Mirrored byte-for-byte from upstream, exempt from the adaptation filter, except for the entries in `localDeltas`. Mirrored at the published release v6.3.0 (b36e0829c6d0140e93cfef2ca599b1b07d4a7797), which added the bundled examples/ directory (fixing a dangling pointer created by the earlier partial port) and a Windows-safe graphviz probe (execFileSync instead of `which dot`). Accepted cost: the mirror carries five `superpowers:`-namespaced skill references and one relative link to `../using-superpowers/`. This dropped piece is dead in an installed environment. Re-porting under the adaptation filter would fix them; the operator chose fidelity over local correctness. Drift handling for this piece is re-mirror, not judge-and-adapt.",
       "localDeltas": [
         "SKILL.md frontmatter `description`: adds \"auditing existing skills\" to the trigger list (upstream reads \"Use when creating new skills, editing existing skills, or verifying skills work before deployment\"). Operator call: auditing an existing skill is a distinct trigger from editing one, and the description is the activation surface. Re-apply after every re-mirror."

@@ -1,8 +1,6 @@
 ---
 name: receiving-code-review
 description: Always use when receiving any sort of code review feedback.
-metadata:
-  system: workbench
 ---
 
 # Code Review Reception

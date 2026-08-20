@@ -109,7 +109,7 @@ $plugins = @(
     },
     @{
         Name           = "toolkit"
-        ExpectedSkills = @("adopt-global-rules", "arch-map", "get-pr-comments", "html-report", "me-human", "ui-demo-video", "writing-skills")
+        ExpectedSkills = @("adopt-global-rules", "arch-map", "get-pr-comments", "html-report", "me-human", "ui-demo-video")
         ExpectedAgents = $null   # no agents directory
     }
 )

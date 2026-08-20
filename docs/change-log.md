@@ -8,6 +8,39 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.31.0: 2026-08-20
+
+- **`file-pr`'s review gate stops being negotiable.** The MUST gate shipped
+  with two exemptions and nothing defending them, which `writing-skills`
+  classifies as the wrong form for a discipline failure: a prohibition needs a
+  rationalization table and red flags beside it. "Trivial, non-code, or
+  documentation-only" becomes **the branch changes no code**, measured on the
+  diff rather than on how routine the work felt, and "already ran for this
+  work-stream" becomes **already ran on this diff**, since commits added since
+  the review are unreviewed code.
+- **Nine rationalizations and five red flags are named**, including the two
+  `code-quality-review` already forbids that a session under pressure still
+  reaches for: an author's own careful reading, and a self-served pass over
+  its own diff. A closing sentence forbids everything else, deadlines and
+  waiting reviewers and a direct "open the PR" included, and a
+  spirit-versus-letter line at the top cuts off the rest as a class.
+  ([decision](decisions/file-pr-gate-bulletproofed.md))
+- **`metadata: system: workbench` is gone from all eight skills that had it.**
+  No host or script read the field, and it sat on exactly half the set with no
+  pattern separating the halves.
+- `using-workbench` and `self-audit` no longer name `writing-skills`, which
+  has left the plugins; an installed workbench cannot reach a repo-local skill.
+
+## toolkit 0.9.0: 2026-08-20
+
+- **`writing-skills` leaves the plugin** and becomes repo-local tooling
+  alongside `change-log`, `push`, and `workbench-drift`. Toolkit ships no
+  superpowers-derived piece any more, so its `LICENSE` loses the
+  derived-portions clause and its README loses the attribution block; the MIT
+  notice moves to the repository's root `LICENSE`, since the obligation
+  follows the code.
+  ([decision](decisions/writing-skills-moves-repo-local.md))
+
 ## workbench 0.30.0: 2026-08-20
 
 - **Six descriptions stop summarizing what the skill does.** `writing-skills`
@@ -215,17 +248,3 @@ deletes the oldest (git history keeps everything). Sections from before the
   mid-implementation); the rubric's opening line states the review's focus
   and gains **pattern drift** alongside abstraction quality, maintainability,
   and codebase health. Usage page and plugin README follow the wording.
-
-## workbench 0.23.1: 2026-08-16
-
-- **The workbench copy now avoids em dashes without flattening the prose.**
-  Skill, agent, plugin, and supporting documentation text was rewritten so
-  each clause keeps its meaning through ordinary sentence structure instead
-  of a glyph substitution.
-
-## toolkit 0.7.1: 2026-08-16
-
-- **The toolkit copy now avoids em dashes without flattening the prose.**
-  Skill, template, reference, plugin, and supporting documentation text was
-  rewritten so each clause keeps its meaning through ordinary sentence
-  structure instead of a glyph substitution.

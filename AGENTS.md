@@ -28,7 +28,7 @@ The one per-skill layer is `docs/skills/`, which contains **usage** pages for sh
 
 ## Cross-host parity
 
-Canonical definitions live in the shipped plugins (`workbench` for the process core, `toolkit` for optional utilities). This repo's own host dirs (`.claude/`, `.codex/`, `.opencode/`) carry only the small set the repo runs (`change-log`, `push`, `workbench-drift`, `wiki-maintainer`); `.claude/` is canonical for those. Parked pieces live in `attic/` (see `attic/README.md`): in the repo, shipped by no plugin, discovered by no host. Two tiers: `attic/skills/` and `attic/agents/` for in-progress pieces still intended to ship; `attic/deprecated/` for retired pieces kept as history.
+Canonical definitions live in the shipped plugins (`workbench` for the process core, `toolkit` for optional utilities). This repo's own host dirs (`.claude/`, `.codex/`, `.opencode/`) carry only the small set the repo runs (`change-log`, `push`, `workbench-drift`, `writing-skills`, `wiki-maintainer`); `.claude/` is canonical for those. Parked pieces live in `attic/` (see `attic/README.md`): in the repo, shipped by no plugin, discovered by no host. Two tiers: `attic/skills/` and `attic/agents/` for in-progress pieces still intended to ship; `attic/deprecated/` for retired pieces kept as history.
 
 ## Reviewer sessions
 

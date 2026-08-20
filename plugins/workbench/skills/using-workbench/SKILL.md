@@ -1,8 +1,6 @@
 ---
 name: using-workbench
 description: Use before coding, auditing, planning, shipping, filing a PR, debugging or using any workbench skill.
-metadata:
-  system: workbench
 ---
 
 If you were dispatched as a subagent to execute a specific task, skip this orientation.
@@ -93,7 +91,6 @@ FEEDBACK
 | The one adversarial pass: **required** once the work-stream is complete, right before PR-or-merge, **dispatched** to a reviewer that did not write the code | `code-quality-review`, run by the `code-quality-reviewer` agent |
 | Landing | outline gate → `file-pr` / merge / push; `fix-ci` |
 | Review feedback arrives | `receiving-code-review` |
-| Authoring or editing skills | `writing-skills` (ships in the `toolkit` plugin) |
 
 ## Picking the verification piece
 

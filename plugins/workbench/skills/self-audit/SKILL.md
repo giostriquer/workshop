@@ -1,8 +1,6 @@
 ---
 name: self-audit
 description: Use when the session should look back at how the workbench process itself ran, rather than at the code it produced or the user's choices. User-invoked only.
-metadata:
-  system: workbench
 disable-model-invocation: true
 ---
 
@@ -80,7 +78,8 @@ reports; applying anything is a separate act the user authorizes.
    the handoff" is not a proposal, the replacement sentence is.
 
 5. **Report and stop.** Verdict-first. Whether to apply anything is the user's
-   call, and the edit itself belongs to `writing-skills`, not here.
+   call, and the edit itself belongs to whatever skill-authoring discipline the
+   environment provides, not here.
 
 ## Output
 
