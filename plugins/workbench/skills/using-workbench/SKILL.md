@@ -109,7 +109,8 @@ them all:
 - `qa-sweep`: a broad decomposable surface (release, branch, feature area)
   at team scale.
 - `claim-check`: one premise, ticket, or hunch to investigate.
-- `file-pr`: landing, not verification; it assumes the gates already ran.
+- `file-pr`: landing, not verification; it assumes the gates already ran,
+  except the adversarial review, which it will not file a code PR without.
 
 When no frame fits the work's shape, keep the standard and drop the frame:
 prove the deliverable the way its real consumer would exercise it, and

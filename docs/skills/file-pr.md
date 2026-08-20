@@ -28,10 +28,16 @@ stop[s]. This skill does not fall back to producing artifacts."
 ## When to reach for it
 
 Reach for it when the work on the current branch is done and someone should
-file the PR and see it through. It assumes the completion gates already ran.
-`using-workbench` puts it plainly: "`file-pr`: landing, not verification; it
-assumes the gates already ran." It is not the place to discover your change is
-half-finished.
+file the PR and see it through. It assumes the completion gates already ran,
+with one exception it backstops itself: it will not file a code PR whose diff
+has not had the adversarial `code-quality-review`, dispatched to a reviewer
+that did not write the code. If that review has not run, `file-pr` runs it and
+acts on the findings first. The two exemptions are a trivial, non-code, or
+documentation-only branch, and a review that already ran for this work-stream.
+
+Everything else it still assumes. `using-workbench` puts the rest plainly:
+"`file-pr`: landing, not verification." It is not the place to discover your
+change is half-finished.
 
 | The problem | The skill |
 | --- | --- |
@@ -163,5 +169,6 @@ are gone, and there is no flag to bring them back.
 user gate where the session outlines what was done and asks "PR or merge?"
 (the other two being a direct merge and a plain push). Everything before it:
 test-quality review, `verification-before-completion`, the one adversarial
-`code-quality-review`, is assumed done. Everything after it is the feedback
+`code-quality-review`, is assumed done, and the adversarial review is the one
+`file-pr` checks rather than assumes. Everything after it is the feedback
 loop: `receiving-code-review` governs acting on what reviewers say.

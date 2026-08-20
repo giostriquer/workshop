@@ -1,6 +1,6 @@
 ---
 name: receiving-code-review
-description: Use when review feedback arrives, before implementing suggestions, especially if feedback seems unclear or technically questionable; requires technical rigor and verification, not performative agreement or blind implementation.
+description: Always use when receiving any sort of code review feedback.
 metadata:
   system: workbench
 ---

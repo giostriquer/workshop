@@ -1,7 +1,7 @@
 {
   "name": "workbench",
   "displayName": "Workbench",
-  "version": "0.26.0",
+  "version": "0.27.0",
   "description": "A complete process system for how work starts, gets designed, gets verified, and lands: user-sized audits, brainstorming that ends at your route pick (direct / plan / goal handoff), implementation discipline (TDD, systematic debugging, evidence-gated readiness), one adversarial review, and landing that files the PR and tends CI to green. Backed by five read-only review agents. Core process skills derived from obra/superpowers (MIT): no hooks, no dispatcher; skills fire on relevance.",
   "author": {
     "name": "Workshop"

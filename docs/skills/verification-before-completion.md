@@ -20,7 +20,7 @@ In the workbench flow this gate is what "deemed ready" means. An implementation 
 | One just-finished change touched a surface a real client can drive, and you want proof at the running app | `empirical-proof` (expensive; run only on your explicit ask or standing rule) |
 | A whole release, branch, or feature area needs a broad verification pass at team scale | `qa-sweep` (expensive; same authority rule) |
 | A premise, ticket, or hunch needs investigating before you act on it | `claim-check` |
-| The branch is ready and needs to become a PR | `file-pr` assumes the gates already ran |
+| The branch is ready and needs to become a PR | `file-pr` assumes the gates already ran, bar the adversarial review |
 
 ## The gate function
 

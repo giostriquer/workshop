@@ -1,9 +1,21 @@
 ---
 name: file-pr
-description: Use when a branch is ready to become a PR and the session should file it and see it through. Derives the body from the repo's own PR template, opens the PR with gh, then autonomously watches CI and fixes failing checks or merge conflicts until the PR is green and mergeable. Bounded fix loops, never force-pushes, never merges the PR. Formerly handoff-pr, which stopped at producing a handoff artifact.
+description: Always use before or to file/open a PR.
 ---
 
 # File PR
+
+## MUST: the adversarial review runs before the PR is filed
+
+Before filing, the branch diff has had an adversarial code quality review: the
+`code-quality-review` skill, dispatched to a reviewer context that did not
+write the code. If it has not run, run it now and act on its findings first.
+
+Two exemptions, and only these two:
+
+- The branch is a trivial, non-code, or documentation-only change.
+- The review already ran for this work-stream. Loading this skill is not a
+  reason to run it a second time.
 
 File a finished branch as a PR and see it through: a template-true body, `gh pr
 create`, then an autonomous tend loop that fixes red CI (via the `fix-ci` skill) and

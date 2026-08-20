@@ -94,7 +94,7 @@ tells you to pick by the work's shape rather than read them all.
 | One just-finished change with a drivable surface | `empirical-proof` |
 | A broad decomposable surface at team scale | `qa-sweep` |
 | One premise, ticket, or hunch | `claim-check` |
-| Landing (assumes the gates already ran) | `file-pr` |
+| Landing (assumes the gates already ran, bar the adversarial review) | `file-pr` |
 
 Two principles ride with it: "When no frame fits the work's shape, keep the
 standard and drop the frame," and "The protocols are checkpoints, not reading
