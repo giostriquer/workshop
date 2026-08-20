@@ -8,6 +8,41 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## toolkit 0.8.0: 2026-08-20
+
+- **`get-pr-comments` ships here again.** The skill is self-contained (one `gh`
+  pass against the current branch's PR, read-only, no dependency on any
+  workbench piece), which is the placement argument that predates the plugin
+  split; the split had carried it into `workbench` without re-testing it. The
+  text is unchanged, only its plugin is.
+  ([decision](decisions/get-pr-comments-returns-to-toolkit.md))
+
+## workbench 0.26.0: 2026-08-20
+
+- **`get-pr-comments` leaves workbench, and no workbench text names it.** The
+  flow's feedback stage is now `receiving-code-review` alone.
+  `receiving-code-review`'s description drops its "pairs with get-pr-comments"
+  sentence and its body states the stage without pointing outside the plugin;
+  `using-workbench`'s flow diagram and ownership row follow. An installed
+  workbench without toolkit no longer reads a pointer to a skill that is not
+  there. Triage still happens when toolkit is installed; the flow does not
+  depend on it.
+  ([decision](decisions/get-pr-comments-returns-to-toolkit.md))
+- **`audit`'s trigger names the ask, not the protocol.** The description packed
+  the whole division of labor into the frontmatter (sizing, engine dispatch,
+  uncertainty confirmation, exit routing), which is what the skill does after it
+  fires, not what makes it fire. It now reads as the ask itself: use when asked
+  to do an audit or check, with the one exclusion that still matters kept, that
+  an idea to build goes to `brainstorming` instead. The protocol summary moves
+  verbatim into the skill body's opening line, where the session reads it once
+  the skill is already loaded.
+- **`using-workbench`'s trigger names the moments it precedes.** "Use when
+  starting any conversation to orient the session" became the work the
+  orientation comes before: coding, auditing, planning, shipping, filing a PR,
+  debugging, or reaching for any other workbench skill.
+- Usage pages follow all three. Tiers, engines, gates, and exit routes are
+  unchanged.
+
 ## workbench 0.25.0: 2026-08-19
 
 - **The adversarial review is dispatched, never self-served.** Sessions were
@@ -176,71 +211,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 - The frontmatter description advertised the old grain and omitted `speed`.
   Because it is the activation surface, it was corrected with the table rather than
   after it. ([decision](decisions/route-work-effort-axis-removed.md))
-
-## toolkit 0.4.0: 2026-08-12
-
-- **New skill: `adopt-global-rules`.** Installs the workshop's own shipped
-  global agent configuration onto a machine **additively**: a per-host instruction document
-  (`~/.claude/CLAUDE.md`, `~/.codex/AGENTS.md`) plus discrete rules (one marked
-  file each in `~/.claude/rules/`, fenced blocks in `AGENTS.md`). The pack owns
-  only what its `<!-- workshop:rule id=… -->` markers delimit; an unmarked
-  file at a rule's path is reported as a collision and left exactly as found. It
-  is user-invoked only (`disable-model-invocation: true`).
-- **Global documents are authored per host, not derived.** `globals/CLAUDE.md`
-  and `globals/AGENTS.md` are separate files because hosts want different things
-  said: sandbox-escalation instructions are meaningless to one, a communication
-  preference may not belong in the other. Rules are the opposite: one body fanned
-  out everywhere. `--skip-globals` installs rules only.
-- **Two entry points, one implementation.** The skill runs `adopt.mjs` from its
-  own directory; `npx github:giostriquer/workshop` runs the same file
-  through a root `bin/` shim, so a machine with no plugin installed can still
-  bootstrap. The pack lives inside the skill directory because that is the only
-  copy an installed plugin can reach.
-- **The script does mechanics; the skill does judgment.** `--dry-run --json`
-  returns the plan plus every byte of a single-file target sitting *outside* the
-  pack's fences, verbatim: the skill reads that to answer what no script can:
-  whether existing prose duplicates or contradicts a rule about to be installed.
-- **Drift is fixed, not reported.** Managed blocks are pack-owned: a re-run
-  overwrites a drifted block and prints the diff. Hand-maintained legacy fences
-  (the same marker used to open and close) are recognised and migrated in place
-  rather than duplicated. Rules whose precondition is unmet, such as an optional rule
-  needing an MCP server that machine lacks, are skipped with a reason instead
-  of installed as misleading dead weight.
-  ([decision](decisions/adopt-global-rules.md))
-- **`writing-skills` now fires on auditing an existing skill**, not just
-  creating, editing, or verifying one: a distinct trigger that was falling
-  through the description.
-- **The edit is recorded rather than doomed.** This skill is mirrored
-  byte-for-byte from upstream, so the next re-mirror would have silently erased
-  the word. Its manifest entry keeps `disposition: mirrored` and gains a
-  `localDeltas` list; `drift-check.mjs` prints those under the Re-mirror heading:
-  it previously showed only paths and a file count, making a recorded delta
-  invisible at the one moment it matters, and `workbench-drift` makes
-  re-applying them part of the re-mirror. Flipping to `adopted` was rejected: it
-  reopens the fork that caused the earlier dangling-pointer defect.
-  ([decision](decisions/mirrored-pieces-local-deltas.md))
-
-## workbench 0.21.0: 2026-08-12
-
-- **`brainstorming` gains a three-path classifier.** Before the first question it
-  now sorts the request into **spike** (a feasibility question whose output is an
-  answer, not code), **bounded** (a well-scoped change to a flow already in the
-  repo), or **architectural** (new subsystems, restructuring, interfaces others
-  depend on), and says the classification out loud so you can override it. Each
-  path carries its own checklist. The point is that a one-file fix stops
-  receiving the ceremony designed for a new subsystem.
-- **Two rules keep it honest.** Bounded measures the repo, not the session's
-  familiarity: if there is no existing flow to change, the task is architectural.
-  And the ratchet is one-way, when torn take the heavier path, hidden complexity
-  upgrades mid-task, nothing downgrades. A red-flags table names the
-  rationalizations that break each rule.
-- **The approval gate does not scale.** A two-sentence design is still presented
-  and still waits for a yes; what shrinks with simplicity is the artifact.
-- Adopted from upstream and retargeted on the way in: every path ends at the
-  workbench **route gate** rather than upstream's `writing-plans` (a dropped
-  piece), a spike ends at a recommendation with no route pick, and the
-  After-the-Design section is scoped to the architectural path so bounded work
-  never writes a design doc. Upstream's `"You MUST use this before any creative
-  work"` description was ignored; that is the compulsion framing this fork
-  removes.
-  ([decision](decisions/brainstorming-three-paths-adopted.md))

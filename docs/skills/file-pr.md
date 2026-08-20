@@ -38,7 +38,7 @@ half-finished.
 | A finished branch should become a PR, and someone should tend it to green | `file-pr` |
 | A branch or PR already exists and its checks are red | `fix-ci` |
 | You want to know whether CI passed and nothing else touched | the `ci-watcher` agent |
-| The PR is open and review feedback arrived | `get-pr-comments`, then `receiving-code-review` |
+| The PR is open and review feedback arrived | `receiving-code-review` |
 | You are not confident the work is actually complete | `verification-before-completion` |
 | The change should be merged directly rather than reviewed | a plain merge or push: `file-pr` never merges |
 
@@ -164,5 +164,4 @@ user gate where the session outlines what was done and asks "PR or merge?"
 (the other two being a direct merge and a plain push). Everything before it:
 test-quality review, `verification-before-completion`, the one adversarial
 `code-quality-review`, is assumed done. Everything after it is the feedback
-loop: `get-pr-comments` triages what reviewers say, and `receiving-code-review`
-governs acting on it.
+loop: `receiving-code-review` governs acting on what reviewers say.

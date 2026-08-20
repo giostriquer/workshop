@@ -40,7 +40,7 @@ you want them, and skip to keep sessions lean.
 | Picking a model | [route-work](route-work.md) |
 | Turning a branch into a PR and seeing it green | [file-pr](file-pr.md) |
 | CI is red | [fix-ci](fix-ci.md) |
-| Review feedback arrived | [get-pr-comments](get-pr-comments.md) → [receiving-code-review](receiving-code-review.md) |
+| Review feedback arrived | [receiving-code-review](receiving-code-review.md) |
 | Looking back at how the process itself ran | [self-audit](self-audit.md) |
 
 ## The optional toolkit
@@ -51,6 +51,7 @@ you want them, and skip to keep sessions lean.
 | An architecture map derived from the code | [arch-map](arch-map.md) |
 | A recorded walkthrough of UI work, with frames the model reads back | [ui-demo-video](ui-demo-video.md) |
 | To write or edit a skill | [writing-skills](writing-skills.md) |
+| To triage a PR's scattered feedback into one action list | [get-pr-comments](get-pr-comments.md) |
 | To install the workshop's global CLAUDE.md / AGENTS.md and rules on a machine | [adopt-global-rules](adopt-global-rules.md) |
 | To use a system as a real human user and report what got in the way | [me-human](me-human.md) |
 

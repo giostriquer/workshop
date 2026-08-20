@@ -2,7 +2,8 @@
 
 ## What it does
 
-`get-pr-comments` collapses a pull request's scattered feedback into one
+`get-pr-comments` ships in the optional `toolkit` plugin. It collapses a
+pull request's scattered feedback into one
 prioritized list. PR feedback lives on three separate GitHub surfaces: the
 conversation tab, review verdicts and summaries, and inline comments pinned to
 diff lines, and reading them in the UI to work out "what must I actually
@@ -100,8 +101,8 @@ actionability shape ports; the fetch commands don't.
 
 ## Where it fits
 
-`get-pr-comments` opens the feedback stage of the workbench flow, after
-landing. The flow reads: `get-pr-comments` triages what arrived →
-`receiving-code-review` governs acting on it → verified fixes re-enter
-implementation. It is the comments counterpart to the `ci-watcher` agent's CI
+`get-pr-comments` feeds the workbench flow's feedback stage from outside it.
+The stage itself is `receiving-code-review`, which governs acting on the
+feedback before verified fixes re-enter implementation; install `toolkit` and
+this skill does the triage first. It is the comments counterpart to the `ci-watcher` agent's CI
 verdict: the two read-only "what's the state of my PR" tools.

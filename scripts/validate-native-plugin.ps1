@@ -104,12 +104,12 @@ function Assert-Frontmatter {
 $plugins = @(
     @{
         Name           = "workbench"
-        ExpectedSkills = @("audit", "brainstorming", "claim-check", "code-quality-review", "empirical-proof", "file-pr", "fix-ci", "get-pr-comments", "handoff-goal", "qa-sweep", "receiving-code-review", "route-work", "self-audit", "systematic-debugging", "test-driven-development", "using-workbench", "verification-before-completion")
+        ExpectedSkills = @("audit", "brainstorming", "claim-check", "code-quality-review", "empirical-proof", "file-pr", "fix-ci", "handoff-goal", "qa-sweep", "receiving-code-review", "route-work", "self-audit", "systematic-debugging", "test-driven-development", "using-workbench", "verification-before-completion")
         ExpectedAgents = @("ci-watcher.md", "code-quality-reviewer.md", "pattern-reviewer.md", "spec-reviewer.md", "test-quality-reviewer.md")
     },
     @{
         Name           = "toolkit"
-        ExpectedSkills = @("adopt-global-rules", "arch-map", "html-report", "me-human", "ui-demo-video", "writing-skills")
+        ExpectedSkills = @("adopt-global-rules", "arch-map", "get-pr-comments", "html-report", "me-human", "ui-demo-video", "writing-skills")
         ExpectedAgents = $null   # no agents directory
     }
 )

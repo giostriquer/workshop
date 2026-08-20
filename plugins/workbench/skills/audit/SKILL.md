@@ -1,11 +1,13 @@
 ---
 name: audit
-description: Use when starting from something to verify, hunt, or check, such as a bug to identify, a refactor to confirm complete, or a premise to test ("audit X", "check whether ...", "is this actually done?"). Asks the user to size the workload first, dispatches the right engine, brings flagged uncertainties back for confirmation, then routes the exit by shape. This is pure protocol and never investigates by itself. Not for work that starts from an idea to build (that path grounds against the codebase and goes to brainstorming).
+description: Use when asked to do an audit or check. Not for work that starts from an idea to build (that path grounds against the codebase and goes to brainstorming).
 metadata:
   system: workbench
 ---
 
 # Audit
+
+Asks the user to size the workload first, dispatches the right engine, brings flagged uncertainties back for confirmation, then routes the exit by shape. This is pure protocol and never investigates by itself.
 
 The workbench flow's door A: turn "something to check" into a sized, engine-run,
 user-confirmed investigation. This skill is **protocol, not investigation**.

@@ -113,8 +113,7 @@ proceeding when you can't verify. Each has a stated fix.
 [obra/superpowers](https://github.com/obra/superpowers) (MIT, (c) Jesse
 Vincent) and adapted for the workbench system. When the workbench set was
 assembled, it was the one borderline upstream skill kept: recorded as earning
-its place because it complements `get-pr-comments` and the adversarial-review
-flow. ([decision](../decisions/workbench-system.md))
+its place because it complements the adversarial-review flow. ([decision](../decisions/workbench-system.md))
 
 ## It's working if
 
@@ -132,9 +131,8 @@ flow. ([decision](../decisions/workbench-system.md))
 
 ## Where it fits
 
-`receiving-code-review` is the second half of the workbench flow's feedback
-stage: `get-pr-comments` triages what arrived, this skill governs acting on
-it, and verified fixes re-enter implementation, where the usual disciplines
+`receiving-code-review` is the workbench flow's feedback stage: it governs
+acting on what arrived, and verified fixes re-enter implementation, where the usual disciplines
 (`test-driven-development`, `systematic-debugging`) and the usual completion
 gates apply again. It is the mirror image of `code-quality-review`: one
 governs giving a hard review, this one governs taking it.

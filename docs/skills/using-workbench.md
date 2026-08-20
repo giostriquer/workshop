@@ -33,8 +33,9 @@ of those it skips and why.
 
 ## When to reach for it
 
-It fires by itself. Its description triggers at conversation start, so a
-session orients before its first response. There is no hook behind this because
+It fires by itself. Its description triggers before the session codes, audits,
+plans, ships, files a PR, debugs, or reaches for any other workbench skill, so
+the map is loaded before the flow starts. There is no hook behind this because
 workbench "ships no hooks; skill descriptions and the user's own rules are the
 entire activation surface." You can also invoke it on demand, and the two
 questions it is built to answer are "how does the workbench flow work?" and
@@ -75,8 +76,8 @@ do not read the map.
   evidence), then one adversarial review right before the PR-or-merge ask,
   dispatched to a reviewer context that did not write the code, then the user
   gate.
-- **Feedback**: `get-pr-comments` triages, `receiving-code-review` governs
-  acting on it, verified fixes re-enter implementation.
+- **Feedback**: `receiving-code-review` governs acting on what arrived,
+  verified fixes re-enter implementation.
 
 **The three user gates.** This is the system's signature: the user decides at
 exactly three moments: size the workload (`audit`), pick the route (after

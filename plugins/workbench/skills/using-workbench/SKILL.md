@@ -1,12 +1,11 @@
 ---
 name: using-workbench
-description: Use when starting any conversation to orient the session in the workbench flow before the first response. Covers how work enters, who owns each moment, and which skill to invoke when one applies. Also answers "how does the workbench flow work?" and "which skill do I use for X?" on demand.
+description: Use before coding, auditing, planning, shipping, filing a PR, debugging or using any workbench skill.
 metadata:
   system: workbench
 ---
 
-If you were dispatched as a subagent to execute a specific task, skip this
-orientation.
+If you were dispatched as a subagent to execute a specific task, skip this orientation.
 
 # Using Workbench
 
@@ -76,7 +75,7 @@ COMPLETION (enters only when the work-stream's implementation is believed comple
   fix-ci tends the checks
 
 FEEDBACK
-  get-pr-comments triages → receiving-code-review governs acting on it →
+  receiving-code-review governs acting on what arrived →
   verified fixes re-enter implementation
 ```
 
@@ -93,7 +92,7 @@ FEEDBACK
 | The implementation's tests | `test-quality-reviewer` |
 | The one adversarial pass: **required** once the work-stream is complete, right before PR-or-merge, **dispatched** to a reviewer that did not write the code | `code-quality-review`, run by the `code-quality-reviewer` agent |
 | Landing | outline gate → `file-pr` / merge / push; `fix-ci` |
-| Review feedback arrives | `get-pr-comments` → `receiving-code-review` |
+| Review feedback arrives | `receiving-code-review` |
 | Authoring or editing skills | `writing-skills` (ships in the `toolkit` plugin) |
 
 ## Picking the verification piece

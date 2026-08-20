@@ -21,10 +21,10 @@ report, or in `brainstorming`, or at the route gate, never mid-repair.
 
 ## When to reach for it
 
-Type `/audit`, or phrase the ask the way the skill's trigger reads: "audit X",
-"check whether ...", "is this actually done?". A session following the
-workbench flow will also reach for it on its own when the work starts from
-something to verify rather than something to build.
+Type `/audit`, or ask for one in words: "audit X", "check whether ...". The
+trigger fires on the ask itself. A session following the workbench flow will
+also reach for it on its own when the work starts from something to verify
+rather than something to build.
 
 It fits when you have a claim, a suspicion, or a deliverable whose state you
 distrust. It does not fit when you already know what you want built; that path

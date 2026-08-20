@@ -58,7 +58,6 @@ They inspect and report; none can edit your files (reviewers use
 | `qa-sweep` | fans a QA team over independent slices, corroborates every verdict-moving finding firsthand |
 | `empirical-proof` | proves a finished change at the running app: real calls, raw evidence; verified / broken / blocked |
 | `code-quality-review` | strict, structure-first maintainability review of a diff |
-| `get-pr-comments` | triages the PR's conversation, review, and inline comments into a prioritized action list; read-only |
 | `route-work` | reference table for the model fleet: model × effort scores plus the hard routing invariants; a lookup, not a dispatch step |
 
 ## Workbench: the process layer

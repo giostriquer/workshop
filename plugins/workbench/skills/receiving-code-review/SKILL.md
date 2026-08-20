@@ -1,6 +1,6 @@
 ---
 name: receiving-code-review
-description: Use when review feedback arrives, before implementing suggestions, especially if feedback seems unclear or technically questionable; requires technical rigor and verification, not performative agreement or blind implementation. Pairs with get-pr-comments, which triages a PR's feedback into the list this skill governs acting on.
+description: Use when review feedback arrives, before implementing suggestions, especially if feedback seems unclear or technically questionable; requires technical rigor and verification, not performative agreement or blind implementation.
 metadata:
   system: workbench
 ---
@@ -13,9 +13,8 @@ Code review requires technical evaluation, not emotional performance.
 
 **Core principle:** Verify before implementing. Ask before assuming. Technical correctness over social comfort.
 
-In the workbench flow this governs the feedback loop after landing: `get-pr-comments`
-triages what arrived; this skill governs acting on it; verified fixes re-enter
-implementation.
+In the workbench flow this governs the feedback loop after landing: it governs
+acting on the feedback that arrived, and verified fixes re-enter implementation.
 
 ## The Response Pattern
 

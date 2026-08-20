@@ -64,7 +64,6 @@ process layer: ready immediately after install, nothing to configure.
 | `qa-sweep` | team-scale QA over a broad surface, corroborated |
 | `empirical-proof` | proves a finished change at the running app |
 | `code-quality-review` | strict structure-first review of a diff |
-| `get-pr-comments` | triages PR feedback into an action list |
 | `route-work` | the model × effort reference table + hard routing invariants |
 
 **Workbench**: the process layer, implementing [the workbench flow](docs/workbench-flow.md):
@@ -99,6 +98,7 @@ installed skill's listing rides in each session's context:
 | `html-report` | report → polished dark HTML page (from a doc, or from session findings) |
 | `arch-map` | visual architecture map when no doc exists |
 | `ui-demo-video` | Playwright walkthrough video + verification frames |
+| `get-pr-comments` | triages PR feedback into an action list |
 | `writing-skills` | TDD applied to authoring skills (derived from obra/superpowers, MIT) |
 | `adopt-global-rules` | installs the workshop's shipped global CLAUDE.md / AGENTS.md, rules, and Claude output styles onto a machine, additively (user-invoked only) |
 | `me-human` | act as a human user dogfooding a system for real work (user-invoked only) |

@@ -57,7 +57,7 @@ flowchart LR
     TQ -->|"deemed ready = verified<br/>(verification-before-completion;<br/>empirical-proof offered if runnable)"| AR
     AR -->|"findings → fixed + re-verified<br/>(no re-review)"| OG
     OG --> L
-    L -.->|"feedback: get-pr-comments →<br/>receiving-code-review; verified fixes re-enter"| I
+    L -.->|"feedback: receiving-code-review;<br/>verified fixes re-enter"| I
 ```
 
 ## Not in the flow: removed deliberately
