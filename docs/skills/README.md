@@ -37,7 +37,7 @@ you want them, and skip to keep sessions lean.
 | About to claim something is done | [verification-before-completion](verification-before-completion.md) |
 | Proving one finished change at the running app | [empirical-proof](empirical-proof.md) |
 | The adversarial pass before PR-or-merge | [code-quality-review](code-quality-review.md) |
-| Picking a model | [route-work](route-work.md) |
+| Picking a model | [model-reference](model-reference.md) |
 | Turning a branch into a PR and seeing it green | [file-pr](file-pr.md) |
 | CI is red | [fix-ci](fix-ci.md) |
 | Review feedback arrived | [receiving-code-review](receiving-code-review.md) |

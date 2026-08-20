@@ -53,7 +53,7 @@ do not read the map.
 | One premise, ticket, or hunch to investigate | `claim-check` |
 | About to claim done, fixed, or passing | `verification-before-completion` |
 | A work-stream's implementation is complete | `code-quality-review` |
-| Picking a model or an effort tier | `route-work` |
+| Picking a model | `model-reference` |
 | Authoring or editing a skill | `writing-skills` (ships in `toolkit`) |
 
 ## The map

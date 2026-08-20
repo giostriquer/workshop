@@ -104,7 +104,7 @@ function Assert-Frontmatter {
 $plugins = @(
     @{
         Name           = "workbench"
-        ExpectedSkills = @("audit", "brainstorming", "claim-check", "code-quality-review", "empirical-proof", "file-pr", "fix-ci", "handoff-goal", "qa-sweep", "receiving-code-review", "route-work", "self-audit", "systematic-debugging", "test-driven-development", "using-workbench", "verification-before-completion")
+        ExpectedSkills = @("audit", "brainstorming", "claim-check", "code-quality-review", "empirical-proof", "file-pr", "fix-ci", "handoff-goal", "model-reference", "qa-sweep", "receiving-code-review", "self-audit", "systematic-debugging", "test-driven-development", "using-workbench", "verification-before-completion")
         ExpectedAgents = @("ci-watcher.md", "code-quality-reviewer.md", "pattern-reviewer.md", "spec-reviewer.md", "test-quality-reviewer.md")
     },
     @{

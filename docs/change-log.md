@@ -8,6 +8,31 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.29.0: 2026-08-20
+
+- **`route-work` is now `model-reference`.** The old name named a verb the
+  skill does not perform: it routes nothing and dispatches nothing, and three
+  earlier trims exist because sessions kept reading it as a dispatch procedure
+  to run before every fan-out. Those trims removed the rubric, the process
+  patterns, and the output contract, but the name kept re-teaching what the
+  body had stopped saying. Invoke it as `/model-reference`.
+- **The model-floor invariant leaves.** It shipped the *shape* of a floor after
+  an earlier note replaced a hard "never Haiku or Sonnet" with that portable
+  form. A floor is still fleet policy, one abstraction up, and this skill
+  carries none; `adopt-global-rules` ships a `model-floor.md` rules file, which
+  is where a floor belongs. The operator-calibration paragraph and the
+  cross-ladder caveat go with it, both restating a boundary the opening states
+  once.
+- **The table gets clearer and re-graded.** Axis definitions become a list
+  rather than a paragraph, `taste` extends from "docs voice" to docs, research,
+  and audits, and `gpt-5.6-luna` re-grades to 4 on taste and code. The
+  orchestration invariant names the operator's rules file as the alternative to
+  the session's own model.
+- `adopt-global-rules`'s shipped `model-floor.md` pointed at
+  `workbench:route-work` and now points at `workbench:model-reference`; a
+  machine that already adopted it carries the stale pointer until the skill is
+  re-run. ([decision](decisions/route-work-renamed-model-reference.md))
+
 ## workbench 0.28.0: 2026-08-20
 
 - **`handoff-goal` is for long-running work only.** The description asked that
@@ -205,16 +230,3 @@ deletes the oldest (git history keeps everything). Sections from before the
   (`disable-model-invocation: true`), and deliberately absent from
   `using-workbench`'s ownership table; it sits outside the flow, looking back
   at it. ([decision](decisions/self-audit.md))
-
-## toolkit 0.6.0: 2026-08-13
-
-- **New skill: `me-human`.** Puts the session in the stance of a human user
-  putting a system to real work: eager, learning by doing, reporting what got
-  in the way. Three behaviors carry it: try before asking, escalate before
-  declaring a blocker (investigate, make a targeted local change, report, and ask
-  after two failed attempts), and stop at the scope edge rather than growing
-  the work. It answers whether the thing is any good to use, while the
-  verification pieces answer whether it works. The skill states the
-  stance only: the target system, entry point, goal, and driving mechanism come
-  from you at invocation. User-invoked only
-  (`disable-model-invocation: true`). ([decision](decisions/me-human.md))

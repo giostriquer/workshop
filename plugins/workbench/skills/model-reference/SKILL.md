@@ -1,9 +1,9 @@
 ---
-name: route-work
-description: Use when a model choice needs grounding and is not already settled. Reference table for the model fleet across cost, intelligence, taste, code, and speed, plus the hard routing invariants. This is a lookup, not a step before every dispatch, and it never dispatches anything.
+name: model-reference
+description: Use when a model choice needs grounding and is not already settled, or when the fleet changes. Reference table for the model fleet across cost, intelligence, taste, code, and speed, plus the hard routing invariants. This is a lookup, not a step before every dispatch, and it never dispatches anything.
 ---
 
-# Route Work
+# Model Reference
 
 The model reference table: consult it when picking a model, update it when the
 fleet changes. The canonical copy lives here and nowhere else; the operator's
@@ -11,20 +11,22 @@ always-injected rules file carries only the hard invariants and points here.
 
 ## The table
 
-Scores are 1–10, higher is better. **Cost is subscription-limit burn, not
-dollars**: the fleet runs on subscriptions, so a low cost score means "eats
-the weekly limit fast," not "expensive per token." **Speed** is wall-clock
-turnaround on the same task, scored separately from cost because a model that
-thinks for ten minutes and one that drains the weekly limit fail in different
-ways and constrain different work. Intelligence is how hard a problem the
-model can carry unsupervised. Code is coding craft: how correct and
-well-built the implementation comes out when the work is code. Taste covers
-user-facing surfaces only: UI/UX, copy, API shape, docs voice.
+Scores are 1–10, higher is better.
+
+- **Cost** is subscription-limit burn, not dollars. The fleet runs on
+  subscriptions, so a low cost score means "eats the weekly limit fast," not
+  "expensive per token."
+- **Speed** is wall-clock turnaround on the same task.
+- **Intelligence** is how hard a problem the model can carry unsupervised.
+- **Code** is coding craft: how correct and well-built the implementation
+  comes out when the work is code.
+- **Taste** covers user-facing surfaces only: UI/UX, copy, API shape, docs,
+  research, audits.
 
 | model | cost | intelligence | taste | code | speed |
 |---|---|---|---|---|---|
 | gpt-5.6-sol | 6 | 9 | 8.5 | 9 | 6 |
-| gpt-5.6-luna | 10 | 5 | 5 | 5 | 8 |
+| gpt-5.6-luna | 10 | 5 | 4 | 4 | 8 |
 | opus-5 | 5 | 8 | 8 | 8 | 8 |
 | fable-5 | 1 | 10 | 9.5 | 9 | 5 |
 | grok-4.6 | 5 | 8 | 8 | 8 | 7 |
@@ -33,12 +35,6 @@ user-facing surfaces only: UI/UX, copy, API shape, docs voice.
 Effort is not a separate axis here, if you change the effort you habitually
 run a model at, re-grade its row rather than adding one.
 
-The values are the operator's own calibration: adopters swap the rows for
-their fleet and re-grade. One cross-ladder caveat: rows drawn from
-**different subscriptions** are not comparable on cost alone, so a row another
-dominates on paper is not retired, when one pool's weekly limit is the
-constraint, a row on another pool is the relief valve.
-
 ## Hard invariants
 
 These carry the *shape* of each rule. The concrete policy, which models are
@@ -46,15 +42,9 @@ in, which are out, where the floor sits: belongs to the operator's
 always-injected rules file, not to this skill; a plugin that hard-codes one
 operator's fleet ships a policy its adopters never chose.
 
-- **Set a model floor and enforce it upward.** Decide the weakest model
-  allowed to touch real work and write it into the rules file that loads
-  every session. Then override anything that would select below it: agent
-  definitions, tool defaults, `--model` flags, SDK calls, without asking.
-  Where the floor sits is the operator's call; having one, and never
-  silently dropping under it, is the invariant.
 - **Orchestration stays home.** Decomposing, dispatching, and judging a set
-  of work always run on the session's own model, never a weaker-model
-  subagent.
+  of work always run on the session's own model, or on whatever the operator's
+  rules file specifies, never on a weaker-model subagent.
 - **Standing escalation permission.** When output misses the bar, rerun or
   redo on a smarter tier without asking. Judge the output, not the price
   tag: escalating costs less than shipping mediocre work.

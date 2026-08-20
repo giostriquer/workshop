@@ -64,7 +64,7 @@ process layer: ready immediately after install, nothing to configure.
 | `qa-sweep` | team-scale QA over a broad surface, corroborated |
 | `empirical-proof` | proves a finished change at the running app |
 | `code-quality-review` | strict structure-first review of a diff |
-| `route-work` | the model × effort reference table + hard routing invariants |
+| `model-reference` | the model fleet reference table + hard routing invariants |
 
 **Workbench**: the process layer, implementing [the workbench flow](docs/workbench-flow.md):
 

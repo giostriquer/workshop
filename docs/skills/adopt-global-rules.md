@@ -58,7 +58,7 @@ You ask, or it does not run.
 | The problem | The skill |
 | --- | --- |
 | Get the workshop's global configuration onto this machine | `adopt-global-rules` |
-| Which model should this work run on | [route-work](route-work.md) |
+| Which model should this work run on | [model-reference](model-reference.md) |
 | Write or edit a skill | [writing-skills](writing-skills.md) |
 
 ## What "additive" actually means
@@ -182,7 +182,7 @@ single-file host is a manifest entry and one authored document.
 `adopt-global-rules` sits entirely outside the workbench flow. Nothing hands off
 to it and it hands off to nothing; it is machine setup, run once per machine and
 then whenever the pack is released. Its closest relative in spirit is
-[route-work](route-work.md): route-work describes the routing doctrine and
+[model-reference](model-reference.md): model-reference describes the routing doctrine and
 deliberately carries no concrete fleet policy, while this skill is where the
 workshop's concrete policy (its model floor included) actually ships and
 reaches a machine.

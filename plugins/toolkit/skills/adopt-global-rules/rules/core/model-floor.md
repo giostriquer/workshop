@@ -13,5 +13,5 @@ tasks, and dispatched executors.
   the bar, escalate to a stronger model without asking.
 
 The fuller routing doctrine (the fleet table and the routing invariants)
-lives in the `workbench:route-work` skill. This file exists only to make the
+lives in the `workbench:model-reference` skill. This file exists only to make the
 Haiku/Sonnet ban unconditional and always-injected.
