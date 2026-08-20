@@ -1,6 +1,6 @@
 ---
 name: ui-demo-video
-description: Use after UI work that can be verified visually, such as a new element, layout change, or user flow in a web app whose dev server a browser can drive. Records a Playwright-driven video walkthrough of the running app and emits per-scene PNG frames that provide both shareable evidence (PR demo) and a model feedback loop. Use the frames as the visual feedback loop even when nobody asked for a video. NOT for API-only or non-visual changes, and not a test suite; scenes demonstrate and verify visually but do not assert.
+description: Use after UI work that can be verified visually, such as a new element, layout change, or user flow in a web app whose dev server a browser can drive. Not for API-only or non-visual changes, and not a test suite.
 ---
 
 # UI Demo Video
@@ -15,7 +15,8 @@ human-shareable artifact (GitHub PR descriptions accept mp4 drag-drop).
 
 After UI work that a video can verify: a new element, layout change, or flow.
 Use the frames as the visual feedback loop even when nobody asked for a video.
-Not for API-only or non-visual changes.
+Not for API-only or non-visual changes, and not as a test suite: scenes
+demonstrate and verify visually, they do not assert.
 
 ## Prerequisites
 

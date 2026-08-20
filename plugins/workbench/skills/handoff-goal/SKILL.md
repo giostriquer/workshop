@@ -1,6 +1,6 @@
 ---
 name: handoff-goal
-description: Use when a defined goal (the rest of an in-flight plan, a scoped slice of it, or a concrete new objective) should be handed to a fresh session to pursue autonomously, or when an existing goal contract needs critique or tightening. Fits work whose outcome is stateable up front and verifiable by checks that can fail. Open-ended research and "look into X" handoffs fit a plain task instead. Never pursues the goal itself.
+description: Use only for long-running work that must outlive this session, meaning a defined goal a fresh session pursues autonomously over many turns, or an existing goal contract that needs critique. Not for work this session can finish, and not for open-ended research.
 ---
 
 # Handoff Goal
@@ -9,11 +9,13 @@ Package a goal into a **self-contained goal contract** (a directory holding `goa
 
 ## When to use
 
+**Only for long-running work.** The goal must be one that outlives this session: many turns of pursuit, waiting, and recovery, not something this session would finish if it simply kept going. When the work fits in the session at hand, a plain task is the right tool and this skill is the wrong one, however well-defined the goal is.
+
 Work should continue beyond this session (the remaining slices of a plan, a scoped piece of one, or something the operator has only just described) and a new session should be able to run with it without re-explaining the goal, the state, or the working rules. Also: an existing goal contract needs a fresh audit (see *Critique mode*).
 
 ## Check goal fit first
 
-A goal handoff pays off when pursuit is a **loop**: progress needs repeated attempts, waiting, or recovery; done can be measured by checks that can fail; after a failure the pursuer can choose its next move without a fresh preference decision from the operator. When most of that is false (one-shot work, taste-driven choices at every step, no credible verifier, unbounded external action) say so and recommend the lighter tool (a plain task in this session). Proceed only if the operator insists.
+A goal handoff pays off when pursuit is a **loop**: progress needs repeated attempts, waiting, or recovery; done can be measured by checks that can fail; after a failure the pursuer can choose its next move without a fresh preference decision from the operator. When most of that is false (work that fits in one session, one-shot work, taste-driven choices at every step, no credible verifier, unbounded external action) say so and recommend the lighter tool (a plain task in this session). Proceed only if the operator insists.
 
 ## The two rules that make this work
 

@@ -12,13 +12,16 @@ It has a second mode. Pointed at an existing goal directory (or simply asked to 
 
 It activates in two ways. Most often it is one of the three routes at `brainstorming`'s terminal route gate, presented to the user as **Long-running goal** alongside Direct and Plan. It also activates directly when a defined goal (the rest of an in-flight plan, a scoped slice of one, or a concrete new objective) should continue beyond this session, and when an existing contract needs critique.
 
-Before writing anything, the skill runs a **fit check**. A goal handoff pays off when pursuit is a **loop**: "progress needs repeated attempts, waiting, or recovery; done can be measured by checks that can fail; after a failure the pursuer can choose its next move without a fresh preference decision from the operator." When most of that is false (one-shot work, taste-driven choices at every step, no credible verifier, unbounded external action) the skill says so and recommends the lighter tool, a plain task in this session. It proceeds anyway only if you insist.
+The hard constraint is **long-running work only**. The goal must outlive this session: many turns of pursuit, waiting, and recovery, not something this session would finish if it simply kept going. Length is not a proxy for importance here, so a well-defined goal that fits in the session at hand is still the wrong fit; a plain task is the right tool.
+
+Before writing anything, the skill runs a **fit check**. A goal handoff pays off when pursuit is a **loop**: "progress needs repeated attempts, waiting, or recovery; done can be measured by checks that can fail; after a failure the pursuer can choose its next move without a fresh preference decision from the operator." When most of that is false (work that fits in one session, one-shot work, taste-driven choices at every step, no credible verifier, unbounded external action) the skill says so and recommends the lighter tool, a plain task in this session. It proceeds anyway only if you insist.
 
 The exclusion worth internalizing: this is not for exploratory handoffs. The skill's own trigger text once listed "a brand-new idea" as a valid goal source, which invited "look into X" handoffs that the fit check already excluded; the description was rescoped so trigger and gate point the same way ([decision](../decisions/handoff-goal-description-scope.md)).
 
 | The problem | The skill |
 | --- | --- |
 | A stateable outcome, verifiable by checks that can fail, pursued over a long loop by a fresh session | `handoff-goal` |
+| Work this session could finish, however well-defined | a plain task; not a contract |
 | "Look into X": open-ended research, outcome not stateable yet | a plain task; not a contract |
 | A design that carries questions the codebase can't answer | `brainstorming` (its route gate offers this skill) |
 | One premise, ticket, or hunch to verify | `claim-check` |

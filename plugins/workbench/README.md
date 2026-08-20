@@ -53,7 +53,7 @@ They inspect and report; none can edit your files (reviewers use
 | --- | --- |
 | `file-pr` | files the branch's PR from the repo's own template, then tends it to green-and-mergeable; never merges |
 | `fix-ci` | watch-and-fix loop on the branch's CI: diagnose the failing log, minimal fix, push, re-watch; two attempts max |
-| `handoff-goal` | emits a goal contract a fresh session pursues autonomously; never pursues it itself |
+| `handoff-goal` | emits a goal contract a fresh session pursues autonomously; long-running work only, never pursues it itself |
 | `claim-check` | evidence-graded investigation of a ticket / hunch / question: verdict + readiness dossier; never implements |
 | `qa-sweep` | fans a QA team over independent slices, corroborates every verdict-moving finding firsthand |
 | `empirical-proof` | proves a finished change at the running app: real calls, raw evidence; verified / broken / blocked |

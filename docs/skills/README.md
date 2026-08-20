@@ -31,7 +31,7 @@ you want them, and skip to keep sessions lean.
 | One premise, ticket, or hunch to settle | [claim-check](claim-check.md) |
 | A broad surface worth team-scale coverage | [qa-sweep](qa-sweep.md) |
 | Designing a feature or a refactor | [brainstorming](brainstorming.md) |
-| A goal a fresh session should pursue alone | [handoff-goal](handoff-goal.md) |
+| A long-running goal a fresh session should pursue alone | [handoff-goal](handoff-goal.md) |
 | Implementing where a test harness exists | [test-driven-development](test-driven-development.md) |
 | A bug, before proposing any fix | [systematic-debugging](systematic-debugging.md) |
 | About to claim something is done | [verification-before-completion](verification-before-completion.md) |

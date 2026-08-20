@@ -60,7 +60,8 @@ up. Nothing downgrades mid-task.
   them pick: **direct** (implement straight from this conversation), **plan**
   (write one: using the user's own plan mechanism: a plugin or repo skill, the
   repo's planning standards, or the harness's plan mode as fallback), or
-  **handoff-goal** (a contract for a fresh session to pursue autonomously). The
+  **handoff-goal** (a contract for a fresh session to pursue autonomously, for
+  long-running work only). The
   choice is theirs, not yours; the path only shapes what you recommend: bounded
   work usually wants **direct**, architectural work usually wants **plan** or
   **handoff-goal**.

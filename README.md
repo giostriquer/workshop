@@ -59,7 +59,7 @@ process layer: ready immediately after install, nothing to configure.
 | --- | --- |
 | `file-pr` | files the branch's PR, tends it to green-and-mergeable |
 | `fix-ci` | watches CI, fixes red in-session |
-| `handoff-goal` | hands a defined goal to a fresh autonomous session |
+| `handoff-goal` | hands a long-running goal to a fresh autonomous session |
 | `claim-check` | deep verdict on a ticket / hunch / premise |
 | `qa-sweep` | team-scale QA over a broad surface, corroborated |
 | `empirical-proof` | proves a finished change at the running app |

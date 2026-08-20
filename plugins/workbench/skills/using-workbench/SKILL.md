@@ -85,7 +85,7 @@ FEEDBACK
 | --- | --- |
 | Something to verify / hunt / check | `audit` (engines: `claim-check`, `qa-sweep`) |
 | Designing a feature or refactor | `brainstorming` → the user's route pick |
-| Big autonomous goal | `handoff-goal` |
+| A long-running autonomous goal, outliving this session | `handoff-goal` |
 | Implementing with a test harness | `test-driven-development` |
 | A bug, before proposing fixes | `systematic-debugging` |
 | About to claim done / ready | `verification-before-completion` (offer `empirical-proof` if runnable) |

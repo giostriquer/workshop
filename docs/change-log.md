@@ -8,6 +8,35 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.28.0: 2026-08-20
+
+- **`handoff-goal` is for long-running work only.** The description asked that
+  a goal be *defined* (stateable up front, verifiable by checks that can fail)
+  and never asked how long pursuit would take, so a small well-specified task
+  passed the trigger and got a contract directory the session could have
+  finished without. Definedness and duration are independent, and only the
+  first was being tested. The trigger now leads with the constraint: a goal
+  that must outlive this session, pursued over many turns, and not work this
+  session can finish. The body says the same at the top of *When to use*, and
+  the fit check's disqualifiers gain "work that fits in one session".
+- **Both places that offer the route follow.** `brainstorming`'s route gate
+  marks the handoff long-running-work-only, and `using-workbench`'s ownership
+  row reads "a long-running autonomous goal, outliving this session". Critique
+  mode is unaffected: auditing an existing contract has no duration test.
+  ([decision](decisions/handoff-goal-long-running-only.md))
+
+## toolkit 0.8.1: 2026-08-20
+
+- **`ui-demo-video`'s trigger drops its protocol.** The description explained
+  what the skill records and emits, and carried an instruction ("use the frames
+  even when nobody asked for a video") that is not a firing condition at all.
+  Both already live in the body. What is left is when it fires and what it is
+  not: UI work verifiable visually in an app a browser can drive, never
+  API-only changes and never a test suite.
+- **`arch-map` drops "Formerly structure-view."** The rename note has done its
+  work in the trigger; `docs/skills/arch-map.md` still records it for anyone
+  searching the old name.
+
 ## workbench 0.27.0: 2026-08-20
 
 - **`file-pr` now backstops the adversarial review instead of assuming it.**
@@ -189,23 +218,3 @@ deletes the oldest (git history keeps everything). Sections from before the
   stance only: the target system, entry point, goal, and driving mechanism come
   from you at invocation. User-invoked only
   (`disable-model-invocation: true`). ([decision](decisions/me-human.md))
-
-## toolkit 0.5.0: 2026-08-12
-
-- **Renamed `agent-workshop` → `workshop`.** Install with
-  `/plugin install toolkit@workshop` from `giostriquer/workshop`; the standalone
-  installer is now `npx github:giostriquer/workshop`. **You must update
-  `enabledPlugins` and `extraKnownMarketplaces` in your settings and re-add the
-  marketplace**: the plugin namespace changed, and nothing detects that for you.
-- **`adopt-global-rules` markers move to `<!-- workshop:rule … -->`.** Retired
-  namespaces are recorded, so a machine that adopted `0.4.0` has its old blocks
-  **rewritten in place** rather than duplicated. A marker rename that dropped its
-  predecessor would make existing blocks invisible: orphan detection keys on the
-  same pattern, and append a second copy of everything.
-  ([decision](decisions/rename-to-workshop.md))
-
-## workbench 0.22.1: 2026-08-12
-
-- **Renamed `agent-workshop` → `workshop`** across the plugin manifests and
-  attribution URLs. Install with `/plugin install workbench@workshop`. Same
-  settings caveat as toolkit: the namespace change is not detected for you.
