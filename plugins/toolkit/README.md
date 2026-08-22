@@ -26,6 +26,8 @@ codex plugin add toolkit@workshop
 
 **Google Antigravity:** Copy or link this folder into your workspace's `.agents/plugins/toolkit/` (that workspace only) or into `~/.gemini/config/plugins/toolkit/` (every workspace). Antigravity scans both; there is no registry file to edit.
 
+**OpenCode:** No marketplace file exists on this surface; opencode loads skills by scanning directories. Point your global config's `"skills": { "paths": [...] }` at this folder's `skills/` directory in a clone of the repo, or copy individual skill folders into `~/.config/opencode/skill/`.
+
 ## Skills
 
 | Skill | Does |

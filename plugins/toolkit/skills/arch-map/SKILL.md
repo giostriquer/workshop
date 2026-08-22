@@ -1,6 +1,7 @@
 ---
 name: arch-map
 description: Use when you need a visual architecture map of a codebase and no finished source document exists (an existing subsystem, a refactor in flight, or a proposed design) rendered as a self-contained HTML page. NOT for rendering a report that already exists, on disk or as findings reached in the conversation; that is html-report.
+disable-model-invocation: true
 ---
 
 # Arch Map

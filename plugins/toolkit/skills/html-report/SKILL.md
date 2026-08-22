@@ -1,6 +1,7 @@
 ---
 name: html-report
 description: Use when turning a report, audit, review, or research/findings into a polished self-contained dark-themed HTML page (whether the source is a markdown document or material that exists only in the conversation) or when revising such a page through content tweaks, section changes, severity ordering, repo-style matching, or "this looks noisy / unreadable / ugly / off" feedback. For deriving an architectural representation from code, a diff, or a plan when no source document exists, use arch-map instead.
+disable-model-invocation: true
 ---
 
 # HTML Report

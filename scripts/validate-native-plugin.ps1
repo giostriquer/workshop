@@ -94,6 +94,36 @@ function Assert-Frontmatter {
     }
 }
 
+function Assert-SkillName {
+    # opencode's skill loader keys a skill on its SKILL.md frontmatter name,
+    # which must be lowercase-hyphenated, at most 64 chars, and match the
+    # folder name. Claude Code wants the same folder parity, so the rule is
+    # enforced across hosts from one place.
+    param(
+        [Parameter(Mandatory = $true)] [string] $Path,
+        [Parameter(Mandatory = $true)] [string] $FolderName
+    )
+
+    $lines = @((Get-Content -LiteralPath $Path -Raw) -split "\r?\n")
+    $value = $null
+    for ($i = 1; $i -lt $lines.Count; $i++) {
+        if ($lines[$i] -eq "---") { break }
+        if ($lines[$i] -match '^name:(\s+(.*))?$') { if ($Matches[2]) { $value = $Matches[2].Trim() }; break }
+    }
+    if (-not $value) {
+        Fail "${Path}: frontmatter 'name' has no value"
+    }
+    if ($value -notmatch '^[a-z0-9]+(-[a-z0-9]+)*$') {
+        Fail "${Path}: skill name '$value' must be lowercase hyphen-separated"
+    }
+    if ($value.Length -gt 64) {
+        Fail "${Path}: skill name exceeds 64 characters"
+    }
+    if ($value -ne $FolderName) {
+        Fail "${Path}: skill name '$value' must match its folder '$FolderName'"
+    }
+}
+
 # The marketplace ships two plugins: workbench (the process core: agents,
 # everyday skills, and the workbench flow layer) and toolkit (optional
 # artifact-making utilities). The repo's own working set (.claude/, .codex/,
@@ -175,6 +205,7 @@ function Assert-Plugin {
             Fail "$name skill missing SKILL.md: $skillName"
         }
         Assert-Frontmatter "$skillsDir/$skillName/SKILL.md"
+        Assert-SkillName "$skillsDir/$skillName/SKILL.md" $skillName
     }
 
     if ($null -ne $Spec.ExpectedAgents) {
@@ -250,6 +281,15 @@ foreach ($entry in $cursorPlugins) {
 
 if (Test-Path -LiteralPath "plugins/agent-workshop" -PathType Container) {
     Fail "plugins/agent-workshop was deleted 2026-08-11; it must not reappear"
+}
+
+# opencode has no manifest convention: skills load by directory scan
+# (skills.paths or ~/.config/opencode/skill/), so a per-plugin manifest
+# directory would be inert fiction (docs/decisions/opencode-plugin-surface.md).
+foreach ($name in @("workbench", "toolkit")) {
+    if (Test-Path -LiteralPath "plugins/$name/.opencode-plugin" -PathType Container) {
+        Fail "plugins/$name/.opencode-plugin must not exist: opencode has no manifest convention; adoption is skills.paths or copying into a scanned directory"
+    }
 }
 
 Write-Output "native plugin validation ok"
