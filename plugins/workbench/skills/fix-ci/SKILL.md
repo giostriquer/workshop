@@ -35,8 +35,8 @@ recurring one-liner "CI is failing, take a look."
    flake, and return to watching. A real fault → continue.
 6. **Reproduce locally when feasible.** Run the failing step's local equivalent
    (read the workflow file for the command) before the fix and again after it.
-7. **Fix minimally, in-session.** Address the cause of the red check and nothing
-   broader.
+7. **Fix in-session.** Address the cause of the red check; do not bundle
+   unrelated changes into the fix.
 8. **Commit and push per the repo's conventions**: pull first, use the repo's own
    push skill if it ships one, and stage only the files the fix touched.
 9. **Re-watch** (step 2). Hard cap: **two fix attempts** (plus the single flake
