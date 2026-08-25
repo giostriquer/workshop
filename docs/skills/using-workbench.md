@@ -120,12 +120,6 @@ verifying the directory is ignored (`git check-ignore .worktrees`) before the
 worktree exists. "Never place a worktree in the system temp directory or any
 path outside the repository unless the user explicitly asks."
 
-**Scope guard.** Two tripwires, either of which stops the work and brings a
-question instead of growing the diff: **spread** (the change starts crossing
-owner areas or subsystems the ask never named) and **size** (the diff grows
-well past what the accepted work implied). "Stopping to ask 'should this
-split?' is flow-correct behavior; growing scope silently is the failure."
-
 ## Common questions
 
 **It fired at the start of my session. Is it about to run a process on me?**
@@ -160,16 +154,12 @@ dispatching, put the path in the contract.
 
 **My one-ticket change turned into a sprawl. Does workbench catch that?**
 
-Now it does, via the scope guard. A workbench-governed session grew a
-one-ticket persistence change into a 52-file workset across six subsystems, by
-looping through implement, find an adjacent defect, treat it as required, add
-tests and a fix, review the larger implementation, find more defects. Nothing
-in the flow tripped on diff size or subsystem spread. The two tripwires exist
-because of that run, along with the rule that adjacent defects get recorded as
-follow-up work rather than folded in
-([decision](../decisions/scope-guards-q15-q16.md)). The thresholds are
-deliberately qualitative because there is no numeric size limit, and a repo that
-wants one sets it in its own rules.
+No. Scope is the user's to define in the ask and the session's to follow; a
+general guard on it proved too interpretative to state safely and was removed
+([decision](../decisions/scope-guard-removed.md)). What remains is narrower:
+the adversarial review labels every finding in-scope or out-of-scope, and
+out-of-scope findings become follow-ups rather than diff growth. State the
+boundary in the ask, or in the repo's own rules, when it matters.
 
 **Should I be running `empirical-proof` or `qa-sweep`?**
 

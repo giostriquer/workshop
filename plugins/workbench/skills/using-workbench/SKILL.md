@@ -20,9 +20,7 @@ have to follow it. Most of these are defaults the user configured rather than
 gates: they fire on relevance, not compulsion.
 
 **Two pieces are the exception. They fire by default, not by relevance.**
-`verification-before-completion` at every done/fixed/passing claim, and the
-adversarial `code-quality-review` once a work-stream's implementation is
-complete. Each runs unless **the user explicitly declines it**, or **the repo's
+`verification-before-completion` at every done/fixed/passing claim. Run unless **the user explicitly declines it**, or **the repo's
 own process supersedes it**. Those are the only two outs: a small diff, a
 confident implementation, a tidy-looking change, or time pressure are not
 among them, and neither is the session's own judgment that this one looks
@@ -34,7 +32,7 @@ for worktrees, test discipline, and completion gates rather than re-running the
 flow's version of the same ceremony. Precedence is not only subtraction: a repo
 gate can also invite a tier the flow would otherwise only offer, such as
 `empirical-proof`. What survives regardless are the three user gates and the
-adversarial review before PR-or-merge. Name which of those you skip and why.
+adversarial review before PR-or-merge.
 
 ## The flow at a glance
 
@@ -129,9 +127,7 @@ didn't order.
 
 ## Artifacts are disposable
 
-Everything the flow produces along the way, including audit reports written to disk,
-brainstorm design docs, route plans, and outlines, is **working material, not
-deliverable**: it endures only while the work is being done. Save such
+Everything the workbench flow produces along the way is disposable. Save such
 artifacts under **`.workbench/<work_scope>/`** (or `.tmp/workbench/<work_scope>/`
 in repos that centralize scratch under `.tmp/`), typically gitignored. Promotion
 to a durable artifact is **the user's call**: it happens only when they
@@ -142,9 +138,7 @@ working material into committed docs.
 **One home per work scope.** Evidence and artifacts from dispatched agents
 belong in the **same** folder as the rest of the scope's material: the
 dispatching session hands the scope folder's path to every agent in its
-contract; agents never invent their own locations. A run that scatters
-evidence across per-agent temp directories (or the system temp) has lost its
-scope: one work scope, one folder.
+contract; agents never invent their own locations.
 
 ## Worktree location
 
@@ -158,24 +152,7 @@ under
 ignored (`git check-ignore .worktrees`), adding it to `.gitignore` before the
 worktree exists if not, so a checkout never lands in the index. Never place
 a worktree in the system temp directory or any path outside the repository
-unless the user explicitly asks: temp space is for disposable non-repository
-artifacts (logs, screenshots, evidence), not for a repository checkout.
-
-## Scope guard
-
-The accepted work defines the boundary. Two tripwires: either one stops
-the work and brings a question to the user instead of growing the diff:
-
-- **Spread:** the change starts crossing owner areas or subsystems the ask
-  never named.
-- **Size:** the diff grows well past what the accepted work implied: tens
-  of files where a few were expected.
-
-Stopping to ask "should this split?" is flow-correct behavior; growing
-scope silently is the failure. Adjacent defects discovered along the way
-are recorded as follow-up work, not folded in, and the adversarial
-review's findings follow the same rule (out-of-scope → follow-up unless
-they prove the change unsafe or incorrect).
+unless the user explicitly asks.
 
 ## The three user gates
 
@@ -191,10 +168,4 @@ pre-authorize). Everything else is the session's to drive.
   work?" by starting the flow. The two default-on completion gates are the
   exceptions: they are the process the user configured, so skipping one is
   the user's call to make, never the session's.
-- Workbench never dictates execution agency (in-session vs dispatched), with
-  one exception: the adversarial `code-quality-review` is **dispatched** to a
-  reviewer context that did not write the code (the `code-quality-reviewer`
-  agent, or the host's equivalent), because a session reviewing its own diff is
-  not adversarial. Everywhere else agency is the user's and the harness's call.
-- Workbench ships no hooks; skill descriptions and the user's own rules are the
-  entire activation surface.
+  
