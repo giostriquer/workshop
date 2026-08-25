@@ -8,6 +8,15 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.34.0: 2026-08-25
+
+- **`handoff-goal` is user-invoked only.** It carries
+  `disable-model-invocation: true`, like `self-audit`: whether work should
+  outlive the session is the operator's call, so a session never packages a
+  goal contract on its own judgment. The route pick still offers the option;
+  choosing it is the user invoking the skill.
+  ([decision](decisions/handoff-goal-user-invoked-only.md))
+
 ## workbench 0.33.0: 2026-08-25
 
 - **The scope-language sweep.** A cross-cutting audit of all workbench
@@ -246,13 +255,3 @@ deletes the oldest (git history keeps everything). Sections from before the
   and the adversarial review before PR-or-merge survive regardless, and the
   session names which of those it skips and why.
   ([decision](decisions/repo-gate-invites-empirical-proof.md))
-
-## workbench 0.23.3: 2026-08-18
-
-- **Skill and agent descriptions parse as YAML again.** `receiving-code-review`,
-  `fix-ci`, `qa-sweep`, and the `code-quality-reviewer` agent carried an
-  unquoted `description:` with a colon-space inside it, which YAML rejects
-  ("mapping values are not allowed in this context") and hosts refused to
-  load. Each is reworded, not quoted; the trigger text reads the same.
-  The plugin validator now checks every shipped frontmatter for this class
-  of defect. ([decision](decisions/frontmatter-plain-scalars.md))

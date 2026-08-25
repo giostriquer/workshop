@@ -1,6 +1,7 @@
 ---
 name: handoff-goal
 description: Use only for long-running work that must outlive this session, meaning a defined goal a fresh session pursues autonomously over many turns, or an existing goal contract that needs critique. Not for work this session can finish, and not for open-ended research.
+disable-model-invocation: true
 ---
 
 # Handoff Goal
