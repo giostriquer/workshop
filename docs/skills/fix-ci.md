@@ -57,8 +57,8 @@ phrasings like "CI is failing, take a look," and can be invoked directly.
    real fault → continue.
 6. **Reproduce locally when feasible**: run the failing step's local
    equivalent, read from the workflow file, before the fix and again after.
-7. **Fix minimally, in-session.** The cause of the red check and nothing
-   broader.
+7. **Fix in-session.** The cause of the red check; unrelated changes are not
+   bundled into the fix.
 8. **Commit and push per the repo's conventions**: pull first, use the repo's
    own push skill if it ships one, stage only the files the fix touched.
 9. **Re-watch.** Hard cap: two fix attempts, plus the single flake rerun.

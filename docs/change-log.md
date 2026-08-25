@@ -8,6 +8,21 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.33.0: 2026-08-25
+
+- **The scope-language sweep.** A cross-cutting audit of all workbench
+  skills and agents for text that bounds reading or root-causing.
+  `test-driven-development` loses its "Scope boundary" section: "adjacent
+  code → follow-up, not a fix here" sent a session that had traced a bug to
+  its source elsewhere back to a symptom fix, against `systematic-debugging`.
+  `code-quality-reviewer` no longer reviews "only what they show": the
+  supplied sections define what is under review, and it reads whatever
+  surrounding code it needs; cross-file tracing is unconditional.
+  `pattern-reviewer` drops its one-reference-file reading cap, `fix-ci`
+  drops "fix minimally ... nothing broader", and `handoff-goal`'s contract
+  placeholder asks for actions to escalate, not "boundaries".
+  ([decision](decisions/scope-language-sweep.md))
+
 ## workbench 0.32.0: 2026-08-25
 
 - **`using-workbench` drops the scope guard.** Field sessions read "the
@@ -241,12 +256,3 @@ deletes the oldest (git history keeps everything). Sections from before the
   load. Each is reworded, not quoted; the trigger text reads the same.
   The plugin validator now checks every shipped frontmatter for this class
   of defect. ([decision](decisions/frontmatter-plain-scalars.md))
-
-## toolkit 0.7.2: 2026-08-18
-
-- **Skill descriptions parse as YAML again.** `adopt-global-rules` and
-  `arch-map` carried an unquoted `description:` with a colon-space inside
-  it, which YAML rejects and hosts refused to load. Each is reworded, not
-  quoted; the trigger text reads the same. The plugin validator now checks
-  every shipped frontmatter for this class of defect.
-  ([decision](decisions/frontmatter-plain-scalars.md))

@@ -97,7 +97,7 @@ On the first turn, run this workflow in full. On a revision-round turn, use the 
 6. Record any changed files outside the active review domains as not reviewed by this mode. If changed files match no defined domain at all, raise a coverage gap rather than a clean pass (see Domain coverage gaps). If the project defines no domain layout at all, use Discovery mode (see the Discovery mode section) instead of a blanket coverage gap.
 7. Read the project's known-drift surface (typically `docs/conventions/<domain>/known-drift.md`).
 8. Read only the relevant convention docs for the active review domains.
-9. Read the active-domain changed files plus the closest active-domain reference file if needed.
+9. Read the active-domain changed files and whatever neighbouring code (callers, sibling modules, reference files) is needed to judge conformance.
 10. Run any cheap pattern-oriented checks the project's conventions document (e.g. naming-pattern greps, namespace audits). Do not replace the code-quality reviewer or full verification gates.
 11. Classify the active-domain result:
     - pattern compliant

@@ -61,12 +61,6 @@ Wrote code before the test? Delete it and start over, and the skill closes the u
 
 The skill also ships a verification checklist to run before marking work complete (every new function has a test; you watched each fail; each failed for the expected reason; minimal code to pass; all tests pass; pristine output; real code over mocks; edge cases covered) and a **When Stuck** table that reads test pain as design feedback: "Must mock everything" means the code is too coupled, "Test too complicated" means the design is.
 
-## The scope boundary
-
-TDD turns the **accepted work's** behaviors into tests. It "is not a license to grow the diff." Edge cases *of the behavior being implemented* get tests; defects discovered in *adjacent* code get recorded as follow-up work (not a failing test and a fix here) unless the change under implementation is unsafe or incorrect without them, in which case say so before expanding.
-
-This boundary was added after a workbench-governed session grew a one-ticket persistence change into a 52-file workset across six subsystems, through exactly the loop the skill now names: implement the ticket, find an adjacent defect, treat it as required, add a failing test and a fix, review the larger implementation, find more defects, repeat ([decision](../decisions/scope-guards-q15-q16.md)). Breaking out of that loop is a question for the user, not a unilateral push forward.
-
 ## The bundled test-writing reference
 
 `writing-good-tests.md` sits in the same folder and loads **on demand**: "when writing or changing tests, adding mocks, or adding cleanup/helper methods for tests." Two principles govern it: "Every test names the break it catches" and "Every test exercises the real thing."

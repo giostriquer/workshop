@@ -18,13 +18,13 @@ This is the **code-quality stage** of an implementation review. It runs before `
 
 ## Input
 
-A parent agent has typically already collected the change set and passes it in your prompt as labeled sections: usually `### Git / diff output` and `### Changed file contents`. When those sections are present, review **only** what they show.
+A parent agent has typically already collected the change set and passes it in your prompt as labeled sections: usually `### Git / diff output` and `### Changed file contents`. Those sections define what is under review; read whatever surrounding code you need to judge it.
 
 If the change set is not supplied, gather it yourself: `git diff <base>...HEAD` (default base `main`) for the diff, then read the full contents of the changed files.
 
 ## Work
 
-- Apply the rubric only to the change under review. Trace cross-file impact when the change touches module boundaries.
+- Findings target the change under review; trace callers, callees, and cross-file impact wherever that is needed to judge it.
 - Output findings in the **priority order** the rubric specifies. Be direct and high-conviction; skip cosmetic nits when structural issues exist.
 - Do **not** spawn nested subagents unless the parent explicitly asks.
 - Review-only: do not edit, commit, or push.

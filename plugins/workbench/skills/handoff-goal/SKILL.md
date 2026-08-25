@@ -105,7 +105,7 @@ Whatever the source, the contract states the goal as an **outcome with a definit
 > - **Push / PR:** `<push policy; whether, when, and where a PR opens>`
 > - **Validation:** `<gates that must pass, and when>`
 > - **Quality posture:** `<operator-set; default is reliability over speed. Never skip a gate or weaken a check to save time; a slower correct path beats a fast plausible one; when uncertain, verify or ask rather than guess>`
-> - **Scope / stop-and-ask:** `<boundaries; what must go back to the operator>`
+> - **Scope / stop-and-ask:** `<actions that must go back to the operator>`
 >
 > ## When to stop
 > - **Done** when every acceptance check is independently verified, and never earlier.
