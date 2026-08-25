@@ -8,6 +8,18 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.32.0: 2026-08-25
+
+- **`using-workbench` drops the scope guard.** Field sessions read "the
+  accepted work defines the boundary" as a limit on reading, refused to trace
+  causes into subsystems the ticket never named, and never reached the root
+  cause. A rewrite that pinned the boundary to the diff tested clean but only
+  added interpretation. Scope is the user's to define in the ask; a general
+  guard cannot be stated precisely enough to avoid downgrading behavior, so
+  the section is gone. The adversarial review's in-scope / out-of-scope
+  finding labels are unchanged.
+  ([decision](decisions/scope-guard-removed.md))
+
 ## workbench 0.31.0: 2026-08-20
 
 - **`file-pr`'s review gate stops being negotiable.** The MUST gate shipped
@@ -238,13 +250,3 @@ deletes the oldest (git history keeps everything). Sections from before the
   quoted; the trigger text reads the same. The plugin validator now checks
   every shipped frontmatter for this class of defect.
   ([decision](decisions/frontmatter-plain-scalars.md))
-
-## workbench 0.23.2: 2026-08-18
-
-- **`code-quality-review` names its posture in the body, not the trigger.**
-  The skill's description now carries only when it fires (a strict or
-  adversarial code quality review, required once a work-stream's
-  implementation is complete, right before PR-or-merge, never
-  mid-implementation); the rubric's opening line states the review's focus
-  and gains **pattern drift** alongside abstraction quality, maintainability,
-  and codebase health. Usage page and plugin README follow the wording.
