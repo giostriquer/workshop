@@ -146,7 +146,8 @@ The prompt is one self-contained message containing:
 - **Method**: TDD red-first; assertions on the **emitted artifact and runtime behavior**,
   not internals; controls that pin prior fixes byte-stable.
 - **Rules**: the epic's standing rules verbatim (comments, debt, naming, read-only
-  trackers), plus the toolchain specifics (`tsgo` not `tsc`, format before commit,
+  trackers), including that debt and follow-ups noticed in passing get reported rather
+  than fixed or dropped, plus the toolchain specifics (`tsgo` not `tsc`, format before commit,
   conventional commits).
 - **Advisory coordination, never hard exclusions**: name what other lanes own and say
   "proceed if your clean fix needs it and record it under FORKS/DEVIATIONS." Hard
@@ -167,6 +168,7 @@ PER TICKET: <ID> · <fix in one sentence> · red: <n + test names> · green: <co
 CHECKS: <suite> <n>/<n> · typecheck · lint · format
 REVIEW: <n blocking / n advisory, one-line disposition each>
 FORKS/DEVIATIONS: <numbered, or "none">
+DEBT + FOLLOW-UPS: <numbered: what, anchor, why not now, or "none">
 BLOCKED ON (only if blocked): <what, why, your recommendation>
 ```
 
@@ -234,12 +236,37 @@ Lanes stop and ask; you decide, with evidence:
   document a limit), recommend one and let the operator rule; record the ruling on the
   ticket so it is a decision, not a drift.
 
+## Nothing actionable lives only in context
+
+A session ends and its context dies with it. Anything actionable, or anything still
+needing verification, survives only as a ticket under the epic. **If it would be work
+later, it is a ticket now.**
+
+| Found where | What gets filed |
+| --- | --- |
+| A lane's `DEBT + FOLLOW-UPS` or `FORKS/DEVIATIONS` | one ticket each: what it is, the anchor, why it was not done now |
+| Your own validation | anything the ticket did not cover: a second live instance, an over-strict fix, a caller the change would break |
+| A ruling you made | the ruling recorded on the ticket, so it is a decision rather than a drift |
+| A finding you scoped out | a ticket saying it was scoped out and why, never silence |
+| The blind re-audit | every finding, including the ones it reports as dropped, with the reason |
+
+Each entry is closed by a ticket id before the wave closes, and that id goes back into
+the record that raised it. "I put it in the report" is not filing it. "The operator saw
+it in chat" is not filing it. A follow-up that exists only in a paragraph you wrote is
+work nobody will do.
+
+**Debt the epic creates is yours to file too.** A fix that widened a type, left a shim
+in place, or pinned a version to get green is debt the moment it merges, and the lane
+that wrote it is the only context that knows why. It goes in the same wave it was
+created, not in a cleanup pass that never gets scheduled.
+
 ## Non-negotiables
 
 - **Never modify a ticket the operator does not own.** Create your own under the epic and
   reference theirs as context; duplicate coverage is fine, absorbing their scope is not.
-- **Every deferral becomes a ticket** under the epic, with why it was deferred. Nothing
-  lives only in a report.
+- **Nothing actionable lives only in context.** Deferrals, debt, follow-ups, forks, and
+  anything you found that the ticket did not cover become tickets under the epic before
+  the wave closes.
 - **Close each ticket with its fixing PR and what the behavior is now**, including
   corrections to the ticket's own anchor when the fix landed elsewhere.
 - **State what you did not verify.** Coverage claims that outrun the evidence are the one

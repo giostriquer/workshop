@@ -8,6 +8,19 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.36.0: 2026-09-04
+
+- **`epic-orchestration` stops letting actionable work die in context.** The
+  rule shipped as one non-negotiable about deferrals ("nothing lives only in a
+  report"), which left out debt noticed in passing, follow-ups, and anything
+  the orchestrator itself turns up while validating. It is now a section with a
+  table of the five places such items surface, and the structural half that
+  makes it stick: `DEBT + FOLLOW-UPS` is a required slot in the lane report
+  format, so a lane fills it in or visibly leaves it blank. Each entry closes
+  with a ticket id before the wave closes. Debt the epic's own fixes create is
+  filed in the wave that created it.
+  ([decision](decisions/epic-orchestration.md))
+
 ## workbench 0.35.0: 2026-09-04
 
 - **`epic-orchestration` joins the process core.** The epic-owner role the
@@ -234,24 +247,3 @@ deletes the oldest (git history keeps everything). Sections from before the
   debugging, or reaching for any other workbench skill.
 - Usage pages follow all three. Tiers, engines, gates, and exit routes are
   unchanged.
-
-## workbench 0.25.0: 2026-08-19
-
-- **The adversarial review is dispatched, never self-served.** Sessions were
-  running the rubric over their own diff and reporting that as the gate, which
-  the shipped text permitted: `using-workbench`'s Boundaries said workbench
-  "never dictates execution agency", its ownership row pointed at the skill
-  rather than the agent, and the usage page answered "inline or dispatch?" with
-  "Either". `code-quality-review` now opens with *Who runs it*: a fresh reviewer
-  context handed the diff and the changed files' contents, being the
-  `code-quality-reviewer` agent or the host's equivalent. The implementing
-  session holds every justification that produced the code, so the structure
-  reads as inevitable rather than as a choice, and the code-judo move the rubric
-  exists to find is what it is blindest to.
-- **Agency stays the user's call everywhere else.** The boundary carves out this
-  one exception instead of weakening, the hooks claim splits into its own bullet
-  so the exception cannot be misread as covering activation, and the flow
-  diagram and ownership row both say dispatched. Where a host offers no subagent
-  mechanism, the diff goes to a fresh session and the report names that route.
-  Rubric, timing, and the two outs are unchanged.
-  ([decision](decisions/adversarial-review-is-dispatched.md))
