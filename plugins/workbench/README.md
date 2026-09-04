@@ -60,6 +60,7 @@ They inspect and report; none can edit your files (reviewers use
 | `qa-sweep` | fans a QA team over independent slices, corroborates every verdict-moving finding firsthand |
 | `empirical-proof` | proves a finished change at the running app: real calls, raw evidence; verified / broken / blocked |
 | `code-quality-review` | strict, structure-first maintainability review of a diff |
+| `epic-orchestration` | owns a multi-ticket epic: writes the lane prompts the operator dispatches by hand, validates each report against the repo, authorizes the PR; never implements; user-invoked only |
 | `model-reference` | reference table for the model fleet across cost, intelligence, taste, code, and speed, plus the hard routing invariants; a lookup, not a dispatch step |
 
 ## Workbench: the process layer

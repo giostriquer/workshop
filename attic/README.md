@@ -3,7 +3,7 @@
 Skills and agents that live in the repo but ship in **no plugin** and run on
 **no host**. The folder is inert by location: nothing here is discovered by
 Claude Code, Codex, or Cursor, and plugin manifests and
-`scripts/validate-native-plugin.ps1` must never reference it.
+`scripts/validate-native-plugin.sh` must never reference it.
 
 Two tiers, one rule each:
 

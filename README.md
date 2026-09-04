@@ -74,6 +74,7 @@ process layer: ready immediately after install, nothing to configure.
 | `empirical-proof` | proves a finished change at the running app |
 | `code-quality-review` | strict structure-first review of a diff |
 | `model-reference` | the model fleet reference table + hard routing invariants |
+| `epic-orchestration` | owns a multi-ticket epic whose lanes other sessions implement (user-invoked only) |
 
 **Workbench**: the process layer, implementing [the workbench flow](docs/workbench-flow.md):
 

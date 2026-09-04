@@ -8,6 +8,27 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.35.0: 2026-09-04
+
+- **`epic-orchestration` joins the process core.** The epic-owner role the
+  operator had been running out of a private global skill (`epic-relay`) now
+  ships: it writes the paste-ready lane prompts other sessions execute,
+  validates each report against the repository rather than trusting it, and
+  authorizes the PR without ever implementing, committing, or merging. The
+  rename drops "relay", which named the transport rather than the job.
+- **It is wired to the skills it was describing in prose.** Lanes run
+  `code-quality-review` before handing back (dispatched, never self-served),
+  and authorization files through `file-pr` with an explicit statement that its
+  review gate is already satisfied, so no lane burns a second review pass on a
+  diff that already had one. That wiring is why the skill lands in `workbench`
+  rather than `toolkit`, which installs without it.
+- **The validation section gets a rationalization table and red flags.** It is
+  the step the whole pattern exists to defend and it shipped as bare
+  imperatives, which `writing-skills` classifies as the wrong form for a
+  discipline failure. Eight excuses are named, including the one the skill's
+  own text manufactures: that the lane's `code-quality-review` covers it.
+  ([decision](decisions/epic-orchestration.md))
+
 ## workbench 0.34.0: 2026-08-25
 
 - **`handoff-goal` is user-invoked only.** It carries
@@ -234,24 +255,3 @@ deletes the oldest (git history keeps everything). Sections from before the
   mechanism, the diff goes to a fresh session and the report names that route.
   Rubric, timing, and the two outs are unchanged.
   ([decision](decisions/adversarial-review-is-dispatched.md))
-
-## workbench 0.24.0: 2026-08-19
-
-- **A repo's own completion gate now invites `empirical-proof`.** The skill
-  said "never run it uninvited" and counted only the user as the inviter, so a
-  session in a repo whose `AGENTS.md` requires booting the real app would have
-  offered the run, waited, and shipped. Both trigger surfaces now name a repo
-  process document that requires driving the real artifact as the standing ask
-  it already was: run it, name the gate that invited it, and report the run as
-  part of satisfying that gate rather than offering it first. Rigor once it
-  runs is unchanged.
-- **`using-workbench` states repo precedence once, and in both directions.**
-  The rule lived scattered across `test-driven-development`,
-  `code-quality-review`, and the two standing gates, and in every place it
-  could only subtract ceremony. *At session start* now carries it plainly:
-  follow the repo's own process document for worktrees, test discipline, and
-  completion gates instead of re-running the flow's version, and let a repo
-  gate invite a tier the flow would otherwise only offer. The three user gates
-  and the adversarial review before PR-or-merge survive regardless, and the
-  session names which of those it skips and why.
-  ([decision](decisions/repo-gate-invites-empirical-proof.md))
