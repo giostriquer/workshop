@@ -86,6 +86,32 @@ Apart from those, the body is verbatim. It arrived with lived-in proof, which is
 the inclusion bar; rewriting field-earned text on arrival would discard the
 reason it qualifies.
 
+## Follow-up: actionable work does not live in context (0.36.0)
+
+The first release carried one non-negotiable covering this: "every deferral
+becomes a ticket... nothing lives only in a report." Too narrow on both axes.
+*Deferral* excludes debt a lane notices in passing, follow-ups, and the things
+the orchestrator itself turns up while validating, none of which were deferred
+by anyone. *A report* excludes the chat, the diff, and the session's own
+reasoning, which is where most of it actually dies.
+
+`writing-skills` classifies this failure as omitting a required element from
+something the session already produces, for which the prescribed form is
+structural, not a prose reminder. So the fix has two halves:
+
+- **A required slot.** `DEBT + FOLLOW-UPS` joins the lane report format beside
+  `FORKS/DEVIATIONS`. A lane fills it in or visibly leaves it empty; there is no
+  way to silently not consider it.
+- **A section naming the five surfaces** where such items appear (lane report,
+  the orchestrator's own validation, a ruling, a scoped-out finding, the blind
+  re-audit) and the closing condition: a ticket id, before the wave closes,
+  written back into the record that raised it.
+
+The clause that matters most in practice is the last one, because it is the
+only one about the epic's own output: a fix that widened a type, left a shim,
+or pinned a version to get green is debt the moment it merges, and the lane
+that wrote it is the only context that knows why.
+
 ## Why `workbench`, after first landing in `toolkit`
 
 The first call was `toolkit`, on the reasoning that orchestrating a
@@ -122,6 +148,6 @@ carries it.
 
 ## Packaging
 
-`workbench 0.35.0`. Usage page: `docs/skills/epic-orchestration.md`. Removed from
+`workbench 0.35.0`, broadened in `0.36.0`. Usage page: `docs/skills/epic-orchestration.md`. Removed from
 the operator's global `~/.claude/skills/` scope in the same change, so there is
 one copy and the plugin is it.

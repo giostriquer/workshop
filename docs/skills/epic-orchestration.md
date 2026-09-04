@@ -111,6 +111,24 @@ No, and it is required to say so plainly rather than imply otherwise. What it
 must reproduce is anything that would alter scope, reverse a prior fix, or
 claim a regression.
 
+**Where do debt and follow-ups go?**
+
+Into the epic, as tickets, before the wave closes. The skill treats anything
+actionable that lives only in context as lost: a paragraph in a report, a line
+in chat, or the session's own reasoning all die when the session does. Five
+surfaces are named (a lane's report, the orchestrator's own validation, a
+ruling, a finding that got scoped out, the blind re-audit), and each entry is
+closed by a ticket id written back into the record that raised it.
+
+The structural half is what makes it hold: `DEBT + FOLLOW-UPS` is a required
+slot in the lane report format, so a lane either fills it in or visibly leaves
+it empty. It cannot be silently skipped.
+
+This includes debt the epic itself creates. A fix that widened a type, left a
+shim in place, or pinned a version to get CI green is debt the moment it merges,
+and it gets filed in the wave that created it rather than a cleanup pass nobody
+schedules.
+
 **When is the epic done?**
 
 On a **blind re-audit**, not on an empty ticket list. The auditor starts from
@@ -130,7 +148,8 @@ review mechanics; ticket ids live in the branch and the Why section.
 - Reports come back validated against the repo, with the checks named and the
   unverified parts stated as unverified.
 - Lanes that touch the same file arrive in the same prompt.
-- Deferrals become tickets under the epic rather than living in a report.
+- Debt, follow-ups, and deferrals become tickets under the epic with ids,
+  rather than living in a report or in the chat.
 - Negative signal: a lane report accepted because it looked complete. The whole
   pattern exists to stop coverage claims that outrun their evidence.
 
