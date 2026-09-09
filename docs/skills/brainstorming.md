@@ -3,30 +3,18 @@
 ## What it does
 
 `brainstorming` turns an idea into a design you have approved, through
-one-question-at-a-time dialogue. It explores the current project state, asks
+dialogue that batches independent questions. It explores the current project state, asks
 what only you can answer, proposes two or three approaches with a
 recommendation, presents the design section by section, self-reviews the
-written result, and stops at a gate where you pick how the work gets
-implemented.
+written result, and follows the authorized route or asks for a missing material route choice.
 
-It is a dialogue protocol with a hard stop at both ends. The rule at the top is
-unambiguous: "no implementation before the design is presented and approved.
-Don't write code, scaffold projects, or invoke implementation skills
-mid-brainstorm." And the far end is a gate, not a launch: "Brainstorming never
-starts the implementation itself."
+The protocol resolves outcome-changing design decisions before dependent implementation. Existing approval remains valid. A settled design can proceed, while unanswered choices pause only work that depends on them.
 
-The skill does not decide anything for you at the boundary moments. The design
-needs your approval before it is written up, the written design needs your
-review before it proceeds, and the route (direct, plan, or long-running goal)
-is "theirs, not yours."
+The user owns material design and delivery choices. The session presents the design, performs its self-review, and asks for genuinely missing decisions; it does not request the same approval once per section or reopen a settled route.
 
 ## When to reach for it
 
-Type `/brainstorming`, or let it fire on the situation: designing a feature or
-a refactor. In the workbench flow this is not optional: "features and refactors
-get this treatment, always." It also fires when an idea carries questions the
-codebase cannot answer: intent, priorities, taste, constraints the code does not
-record.
+Invoke `/brainstorming` for unresolved feature or refactor design. Ground questions in the repository, and ask for intent, priorities, trade-offs, and constraints that the code cannot establish.
 
 Skip it for confirmed small fixes (a bug an audit already pinned down) and for
 work whose design was settled elsewhere.
@@ -36,7 +24,7 @@ work whose design was settled elsewhere.
 | An idea to build; a feature or refactor to design | `brainstorming` |
 | Something to verify, hunt, or check | `audit` |
 | A premise or ticket to prove before acting on it | `claim-check` |
-| A bug in front of you, before proposing fixes | `systematic-debugging` |
+| An unresolved failure requiring investigation | `systematic-debugging` |
 | The design is settled; a fresh session should pursue it autonomously | `handoff-goal` (the route gate's third option) |
 | Implementing with a test harness | `test-driven-development` |
 
@@ -48,19 +36,13 @@ ceremony follows.
 
 | Path | What it is | What you get |
 | --- | --- | --- |
-| **Spike** | A feasibility question such as "can we…" where "quick and dirty is fine" and the output is an answer, not code you keep | The question and probe plan in two or three sentences, a nod, then findings as a recommendation. Anything built is labelled throwaway. No design doc, no route pick. |
-| **Bounded** | A well-scoped change to a flow that already exists in the repo: a new flag, a small endpoint, a one-file fix | The questions that matter, then a short design **in chat**, then a stop for approval, then the route gate. No design doc. |
-| **Architectural** | New projects, new subsystems, changes that restructure how components fit or alter interfaces others depend on | The full sequence: questions, approaches, sectioned design, a written design, self-review, your review, route gate. |
+| **Spike** | An explicit feasibility investigation where "quick and dirty is fine" and the output is an answer, not code you keep | The question and probe plan in two or three sentences, resolve any missing probe scope, then findings as a recommendation. Anything built is labelled throwaway. No design doc, no route pick. |
+| **Bounded** | A well-scoped change to a flow that already exists in the repo: a new flag, a small endpoint, a one-file fix | The questions that matter, then a short design **in chat**, then resolution of missing material choices, then the authorized route. No design doc. |
+| **Architectural** | Substantial unresolved projects/subsystems, changes that restructure how components fit or alter interfaces others depend on | The full sequence: questions, approaches, sectioned design, a written design, self-review, your review, route gate. |
 
-Two rules keep the classifier honest. **Bounded measures the repo, not your
-familiarity**: understanding the *kind* of app is not enough; if there is no
-existing flow to change, the task is architectural. And **the ratchet is
-one-way**: when torn, take the heavier path; hidden complexity found mid-task
-upgrades it; nothing downgrades mid-task.
+Classification follows actual constraints and interfaces. A small new project can be bounded; a familiar project can be architectural. Reclassify in either direction when evidence changes the required depth.
 
-What never scales is the approval. "The ceremony scales with the task; the
-approval gate never does": a two-sentence design still gets presented and
-still waits for a yes.
+An explicit implementation request can already settle the design and route. Ask only when a remaining choice would materially change the result, scope, cost, or ownership.
 
 ## The dialogue
 
@@ -74,18 +56,14 @@ multiple independent subsystems, that is flagged immediately and the project
 gets decomposed into sub-projects before any detail work. Each sub-project then
 gets its own design, route, and implementation cycle.
 
-Questions come **one per message**: "if a topic needs more exploration, break
-it into several", and the skill answers from the codebase itself whatever the
-codebase can answer, spending your attention only on what it can't. Multiple
-choice is preferred where it fits.
+Batch independent questions in one structured prompt. Ask sequentially when a later answer depends on an earlier one. The session answers repository questions itself and uses the user's attention for missing decisions.
 
 **Exploring approaches.** Two or three approaches with trade-offs, presented
 conversationally, recommendation first with reasoning. "YAGNI ruthlessly:
 remove unnecessary features from every approach and design."
 
 **Presenting the design.** Section by section, each scaled to its complexity:
-a few sentences when straightforward, up to 200-300 words when nuanced, with a
-check after each section on whether it still looks right. Coverage:
+a few sentences when straightforward, up to 200-300 words when nuanced, with related sections presented together unless a later choice depends on an earlier answer. Coverage:
 architecture, components, data flow, error handling, testing.
 
 **Design for isolation.** Units with one clear purpose, well-defined
@@ -108,7 +86,7 @@ fixed inline with no second pass:
 | Scope check | Focused enough for a single route, or needs decomposition |
 | Ambiguity check | Requirements readable two ways: pick one and make it explicit |
 
-**Use the route gate and stop.** Three routes, presented with a one-line read on
+**Follow the authorized route, or resolve a missing route choice.** Three routes, presented with a one-line read on
 which fits and why:
 
 | Route (user-facing label) | What it means |
@@ -123,12 +101,9 @@ equivalent) when one is available, with the recommended route first and marked
 
 ## Common questions
 
-**Why one question at a time? It's slow.**
+**Can independent questions be asked together?**
 
-That is the rule, and it comes with a companion that makes it cheaper than it
-sounds: the session answers from the codebase whatever the codebase can answer,
-so the questions you actually see are the ones only you can settle. If you are
-being asked things the repo already records, the skill is being applied badly.
+Yes. Independent questions can share a prompt. Keep dependent questions sequential, and do not ask the user for facts already established by the repository.
 
 **I described a whole platform and it refused to design it.**
 
@@ -149,9 +124,7 @@ it goes where that convention says. "Never quietly promote it."
 
 **Does it pick the route for me?**
 
-No. It recommends one and marks it, then waits. The gate is one of the three
-moments in the workbench flow that belong to the user: size the workload, pick
-the route, PR or merge.
+It follows your authorized route. If a material route choice is missing, it recommends one and asks; it does not ask you to repeat a settled decision.
 
 **The labels and the skill names don't match.**
 
@@ -179,24 +152,20 @@ follow-up work rather than folded in
 
 **Can it start coding once I approve the design?**
 
-Not from inside the skill. Approval leads to the written design, the
-self-review, your review, then the route gate, and there it stops. What
-happens next depends on which route you pick.
+Yes, after the applicable design steps and necessary decisions are settled, when implementation is already authorized. Architectural work retains its written design and self-review; a bounded change does not acquire those steps just to repeat approval.
 
 ## It's working if
 
 - The first thing that happens is the session reading the project, not asking
   you questions it could have answered itself.
-- Questions arrive one per message.
+- Independent questions are batched; dependent questions remain sequential.
 - You see two or three approaches with trade-offs and a stated recommendation,
   not a single proposal presented as the only option.
-- The design arrives in sections, each with a "does this look right so far?"
+- Related design sections arrive together; questions identify material unresolved choices.
 - The written design has no TBDs, and the session says it ran the self-review.
-- The last message is a route question with three options, and nothing has been
-  implemented.
-- Negative signal: code, scaffolding, or file edits appear before you approved
-  the design. Also negative: it runs for a confirmed one-line fix that an audit
-  already pinned down; that work skips straight to the route gate.
+- Design and necessary decisions are settled before dependent implementation; existing approval and route authorization carry forward.
+- Negative signal: dependent implementation starts while an outcome-changing design decision remains unresolved. Also negative: it runs for a confirmed one-line fix that an audit
+  already pinned down; that work follows the authorized route.
 
 ## Where it fits
 

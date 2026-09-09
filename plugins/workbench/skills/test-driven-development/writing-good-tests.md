@@ -79,10 +79,10 @@ BEFORE writing the test body:
 
 ## Principle 2: Exercise the Real Thing
 
-**The mock earns no assertions.** A mock assertion passes when the mock
-is present and fails when it is absent; it says nothing about the
-component. Assert the real component's behavior; if the mock is what you
-are checking, unmock it or delete the assertion.
+**Assert the contract, not mere mock presence.** An assertion that a mock exists
+says nothing about the component. Assert real behavior; when calls, arguments,
+or ordering are themselves part of the boundary contract, assert those on the
+double as described below. Otherwise unmock the component or remove the assertion.
 
 ```typescript
 // ✅ Real behavior
@@ -92,7 +92,7 @@ expect(screen.getByRole('navigation')).toBeInTheDocument();
 expect(screen.getByTestId('sidebar-mock')).toBeInTheDocument();
 ```
 
-**your human partner's correction:** "Are we testing the behavior of a
+**the user's correction:** "Are we testing the behavior of a
 mock?"
 
 **Mock at the right level.** Learn every side effect of the real method
@@ -115,20 +115,20 @@ part of the contract, assert them: a fake that accepts anything verifies
 nothing. Give each branch (success, error, malformed) its own fixture or
 spy, so the wrong branch cannot satisfy the expectation.
 
-**Mirror real data completely.** Mock the complete structure as it exists
-in reality (all documented fields), not just the ones your test reads.
-Partial mocks fail silently when downstream code reads an omitted field:
-the test passes while integration breaks.
+**Model realistic data for the exercised contract.** Include required fields
+and fields consumed by the real downstream path. Use typed or schema-checked
+fixtures when available. Do not invent every optional field; missing fields
+should be deliberate cases rather than accidental omissions.
 
-**Production classes carry production methods only.** Cleanup that only
-tests need lives in test utilities, never as a `destroy()` on the
-production class. Ask: is this method called only from tests? Does this
+**Production classes carry production responsibilities.** Test-only cleanup
+belongs in test utilities. A resource owner may legitimately expose `destroy()`
+or disposal even when current callers are tests. Ask: is this method called only from tests? Does this
 class own this resource's lifecycle? Wrong answers → test utility.
 
 **Prefer real components over complex mocks.** When mock setup outgrows
 the test logic, mocks miss methods the real components have, or tests
 break when the mock changes, switch to an integration test with real
-components. **your human partner's question:** "Do we need to be using a
+components. **the user's question:** "Do we need to be using a
 mock here?"
 
 ### Gate Function
@@ -138,12 +138,12 @@ BEFORE adding a mock or test helper:
   List the real method's side effects; keep the ones the test
   depends on real: mock the slow/external level below them.
 
-  Mock responses mirror the complete real structure.
+  Mock responses model required fields and the exercised downstream contract.
 
-  A method only tests call lives in test utilities, not production.
+  A method only tests call belongs in test utilities unless it implements a real production responsibility, such as resource disposal.
 
   About to assert on the mock itself?
-    Unmock it or delete the assertion.
+    If it checks mere mock presence, unmock it or remove it; retain contractual interaction assertions.
 ```
 
 ## Tests Ship With the Implementation
@@ -175,10 +175,10 @@ test as tautological.
 | Build an expected value | Derive it by hand; never with the code under test |
 | Test a script or document | Run it / pressure-test its consumer; never grep its text |
 | Reach for a dependency test | Test your boundary contract, not their documented mechanics |
-| Want to assert on a mocked element | Test the real component, or unmock it |
+| Want to assert on a mocked element | Test observable behavior or an actual interaction contract; do not prove only the mock's setup |
 | Are about to mock a method | Learn its side effects; mock the slow/external level |
-| Build a mock response | Mirror the real structure completely |
-| Need cleanup only tests use | Put it in test utilities |
+| Build a mock response | Model the required and exercised contract |
+| Need cleanup only tests use | Put test-only scaffolding in test utilities; preserve legitimate resource-owner disposal APIs |
 | Watch mock setup balloon | Switch to an integration test with real components |
 | Finish a test file | Run the mutation check |
 

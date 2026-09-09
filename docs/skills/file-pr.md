@@ -17,13 +17,9 @@ it." If your repo ships a pull request template, the body *is* that template
 filled in, with its exact headings, order, checkboxes and hidden
 `<!-- markers -->`.
 
-It stops short of two things people expect. It **never merges the PR**; it
-never enables auto-merge, closes it, or re-targets it; green-and-mergeable is
-the end state and merging stays human. And it never force-pushes, rebases
-published commits, or rewrites history; conflict resolution is merge-based. It
-also has no fallback mode. If the session isn't authorized to push and open a
-PR (unauthenticated `gh`, no PR write access), it "say[s] so plainly and
-stop[s]. This skill does not fall back to producing artifacts."
+It never merges, enables auto-merge, closes or re-targets the PR, force-pushes, or rewrites published history.
+
+If access or publishing authority is missing, complete the local reviewable preparation and identify the exact remaining delivery step. Existing authorization does not need to be requested again.
 
 ## When to reach for it
 
@@ -32,8 +28,7 @@ file the PR and see it through. It assumes the completion gates already ran,
 with one exception it backstops itself: it will not file a code PR whose diff
 has not had the adversarial `code-quality-review`, dispatched to a reviewer
 that did not write the code. If that review has not run, `file-pr` runs it and
-acts on the findings first. The two exemptions are a trivial, non-code, or
-documentation-only branch, and a review that already ran for this work-stream.
+acts on the findings first. Nonbehavioral documentation/formatting changes, explicit user waivers, and superseding repository processes can change that gate. A prior review must cover the current revision and risk: verify direct corrections; obtain focused independent follow-up for material new behavior or risk.
 
 Everything else it still assumes. `using-workbench` puts the rest plainly:
 "`file-pr`: landing, not verification." It is not the place to discover your
@@ -101,9 +96,7 @@ invisible locally when hooks were bypassed. A recorded field run had a PR fail
 CI on a single formatter check (one unformatted line) while type-check,
 lint, integration, e2e, and API-compat all passed; commits had been made with
 `--no-verify`, so the pre-commit formatter never fired. The skill now names
-that hazard: if any commit bypassed hooks, "the formatter and linter never ran
-on it: run them manually now." And it fixes what fails before filing, because
-"a PR opened on a known-red baseline wastes the tend loop's bounded attempts."
+that hazard: bypassed hooks do not establish that their checks passed. Run the affected required checks or reuse applicable evidence from the unchanged state. Fix in-scope failures before filing and disclose baseline issues; do not spend the bounded tend loop rediscovering known failures.
 ([decision](../decisions/handoff-pr-prepush-validation-gate.md))
 
 **It stopped mid-way and handed me a conflict.** That is by design when the
@@ -130,9 +123,7 @@ discovered gate commands and each result, by kind (format / lint / type-check
 field for it. When it does, the evidence is the commands run and their
 results, not bare test-file names.
 
-**Will the PR body mention that a model wrote it?** No. The body stays
-tooling-agnostic: "no named editors, bots, or AI assistants, and no 'generated
-by' footers. Describe the change, not how it was produced."
+**Will the PR body mention its tooling?** Keep the substance focused on the change. Include attribution required by governing host/user/repository instructions; do not invent an extra footer. Preserve the repository template.
 
 **I remember this as `handoff-pr`.** It was. `handoff-pr` stopped at producing
 a handoff artifact (a template-true body plus notes) for a separately
@@ -166,9 +157,10 @@ are gone, and there is no flag to bring them back.
 ## Where it fits
 
 `file-pr` is one of the three landing options in the workbench flow, after the
-user gate where the session outlines what was done and asks "PR or merge?"
-(the other two being a direct merge and a plain push). Everything before it:
+landing decision where the session outlines what was done and carries existing PR/merge authority forward, asking only if the choice remains open (the other two options being a direct merge and a plain push). Everything before it:
 test-quality review, `verification-before-completion`, the one adversarial
 `code-quality-review`, is assumed done, and the adversarial review is the one
 `file-pr` checks rather than assumes. Everything after it is the feedback
 loop: `receiving-code-review` governs acting on what reviewers say.
+
+Review still precedes filing, including draft PRs. Respect explicit user waivers and superseding repository processes. Verify direct corrections; material changes receive focused independent follow-up. Discover local gates from workflows, hooks, package/build targets, and contributor docs, including bypassed hooks; run focused local tests rather than copying every CI suite. Watching always uses a separate Opus/Sol agent and evidence for the target SHA; check mergeability separately.

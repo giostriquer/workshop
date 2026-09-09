@@ -11,7 +11,7 @@ invocable form of the recurring one-liner "CI is failing, take a look."
 
 It is a skill, not an agent, and that distinction is load-bearing. The fix
 happens in your session, under your permissions, with the context of the
-commits that broke the build. The read-only `ci-watcher` agent may be
+commits that broke the build. The read-only designated `ci-watcher` agent is always
 dispatched for the *waiting*, never for the fixing.
 
 Its boundaries are what keep it safe to run unattended. It never force-pushes,
@@ -33,19 +33,17 @@ phrasings like "CI is failing, take a look," and can be invoked directly.
 | CI is red on this branch and should be fixed | `fix-ci` |
 | You want a pass/fail verdict and nothing edited | the `ci-watcher` agent |
 | A finished branch should become a PR and be tended to green | `file-pr` (it runs `fix-ci`'s loop internally) |
-| A bug in the code itself, not surfaced by a check | `systematic-debugging` |
+| A persistent or unclear bug in the code itself | `systematic-debugging`; obvious localized fixes use focused reproduction and verification |
 | A failing check is really a question about intended behavior | `fix-ci` reports it as a decision for you to answer |
 
 ## The loop
 
 1. **Resolve the target.** `git branch --show-current`, then `gh pr view
-   --json number,url,headRefName`. A branch with a PR → work its checks. A
+   --json number,url,headRefName,headRefOid`. Pin the target SHA and expected required checks. A branch with a PR → work its checks. A
    branch with no PR but CI on push → work the branch's runs via `gh run list
-   --branch <branch> --limit 5`. No branch, no CI, or unauthenticated `gh` →
+   --branch <branch> --commit <target-sha> --limit 5`. No branch, no CI, or unauthenticated `gh` →
    report plainly and stop.
-2. **Read the state.** All green → report green, done. Pending → watch it with
-   `gh pr checks --watch --fail-fast` when the session is otherwise idle, or
-   dispatch `ci-watcher` in the background if other work should continue.
+2. **Read the state through a separate watcher.** Always dispatch `ci-watcher`: Opus on Claude, `gpt-5.6-sol` on Codex, never Astra or Fable. This holds even when the parent is idle or already uses Opus/Sol. Give it the target SHA and expected checks. Green requires complete required-check coverage for that revision; missing, pending, or superseded checks are not success.
 3. **Red → collect evidence first.** `gh run view <run-id> --log-failed` and
    read the failing step's actual output. External checks: surface the link;
    if the cause isn't reachable from the repo, report rather than guess.
@@ -55,12 +53,10 @@ phrasings like "CI is failing, take a look," and can be invoked directly.
 5. **Flake or fault?** An infra failure with no plausible code cause → `gh run
    rerun <run-id> --failed` **once**, note the flake, return to watching. A
    real fault → continue.
-6. **Reproduce locally when feasible**: run the failing step's local
-   equivalent, read from the workflow file, before the fix and again after.
+6. **Reproduce locally when feasible**: read the workflow, select the focused affected case, and run it before the fix and again after. Run mandatory local gates too; full suites normally run in PR CI unless an explicit requirement or named integration risk calls for them locally.
 7. **Fix in-session.** The cause of the red check; unrelated changes are not
    bundled into the fix.
-8. **Commit and push per the repo's conventions**: pull first, use the repo's
-   own push skill if it ships one, stage only the files the fix touched.
+8. **Deliver under existing authority and repo conventions**: pull first when committing/pushing, use the repo's own push skill if it ships one, and stage only files the fix touched. Explicit no-commit/no-push instructions override these defaults; complete the local fix and report the remaining delivery step.
 9. **Re-watch.** Hard cap: two fix attempts, plus the single flake rerun.
    Still red → stop and report the diagnosis and recommended next step.
 
@@ -84,8 +80,7 @@ rules regardless of how obviously convenient it looks.
 
 **My branch has no PR.** It still works. Push-triggered runs on a branch (a
 direct-to-main workflow, for instance) are handled through `gh run list` and
-`gh run view`. That is one of two deliberate widenings beyond what the
-`ci-watcher` agent covers; the single flake rerun is the other.
+`gh run view` through the designated watcher, pinned to the target commit. The watcher remains read-only; the parent owns any authorized flake rerun.
 ([decision](../decisions/fix-ci.md))
 
 **Why not just give `ci-watcher` the ability to fix things?** That was
@@ -97,9 +92,7 @@ zero and can collide with in-flight work; and the watcher's own design already
 said a tool that retries or pushes is "a different, higher-authority tool."
 `fix-ci` is that tool. ([decision](../decisions/fix-ci.md))
 
-**Can I keep working while it waits?** Yes. That is precisely when it
-dispatches `ci-watcher` in the background and picks up its report. The
-watching is delegable; the fixing is not.
+**Can I keep working while it waits?** Yes. All polling runs through a separate Opus (Claude) or Sol (Codex) watcher, regardless of whether the parent has other work. The parent picks up its report and owns any fixes. If designated dispatch is unavailable, report that capability gap instead of polling in the parent.
 
 **My working tree had unrelated changes and they didn't get committed.**
 Correct. It stages only the files the fix touched, and reports the rest rather
@@ -122,7 +115,7 @@ re-watch shape is host-agnostic, but the commands are not.
 - **Negative signal:** a force-push, an amended commit, a deleted or skipped
   test, or a third fix attempt. Any of those means the loop's guardrails were
   not followed.
-- On a green branch it reports green and stops, without inventing work.
+- With complete green required-check coverage for the pinned target SHA, it reports green and stops, without inventing work.
 
 ## Where it fits
 
@@ -131,3 +124,5 @@ it as the piece that "tends the checks" after `file-pr`, a merge, or a push.
 `file-pr` composes it rather than duplicating it: when a freshly filed PR goes
 red, this loop is what runs. It pairs with the `ci-watcher` agent, which is
 its read-only watch half.
+
+All polling belongs to that separate watcher, even if the parent is idle or already uses Opus/Sol. Never Astra/Fable. If designated dispatch is unavailable, report the gap instead of polling in the parent. Preserve before/after local reproduction with focused tests and mandatory gates; full suites normally run in PR CI. Existing no-commit/no-push instructions remain binding.

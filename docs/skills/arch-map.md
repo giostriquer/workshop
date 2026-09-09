@@ -79,11 +79,9 @@ diagram. Each view opens by stating the question it answers.
 "Deriving more than you show is fine. Name unchosen views in the intro. Do not
 draw a fourth diagram."
 
-**3: Render.** A single HTML file. CDNs are allowed here (Inter and JetBrains
-Mono, Lucide, Mermaid, optionally Tailwind for layout grids). Default output is
-`tmp/<YYYY-MM-DD>-<slug>.html` in the project. **Promote** on request: re-verify
-traces, run the full checklist, move to `docs/`. All generated chrome and copy is
-English only.
+Render self-contained offline HTML with inline CSS, JavaScript, SVG, and system fonts. Use bundled rendering code if needed. Reference specimens demonstrate style; do not copy their remote imports.
+
+Default output is the work scope's `.workbench/<work_scope>/<slug>.html` (or the repo's equivalent). **Promote** to `docs/` only on request or under an established repository convention: re-verify the traces and run the full checklist before moving the artifact. Verify the final path.
 
 **Process rules:** traceability; provenance on every view (derived-from plus
 commit, with hashes read from a live `git rev-parse` at generation time); view
@@ -95,8 +93,7 @@ a time." A 12-item pre-finish checklist closes the run.
 
 Deep-dark glass, shipped as rigid defaults: a near-black canvas
 (`#020408` → `#050811`) with a subtle sky glow at the top, translucent glass
-panels rather than flat chrome, Inter for UI and JetBrains Mono for paths and
-chips, a sky accent (`#38bdf8`), and scarce emerald/rose.
+panels rather than flat chrome, locally available/bundled Inter for UI and JetBrains Mono for paths and chips (system-font fallback), a sky accent (`#38bdf8`), and scarce emerald/rose.
 
 Two rules inside that carry weight. **Body text is `--ink` or `--soft`**; muted
 grey is for captions and paths only: "never mid-grey paragraphs on black." And
@@ -125,14 +122,10 @@ Detailed lists belong in the HTML layer cards below the diagram, not in SVG text
 **The diagram is too crowded.** Group boxes: don't shrink fonts. The zoom rule
 caps a view at about 30 visible boxes; beyond that you group and link deeper.
 
-**Can it use CDNs? `html-report` refuses to.** Yes, and the two skills genuinely
-differ here. `arch-map` permits fonts, Lucide, Mermaid, and optional Tailwind
-from CDNs; `html-report` is strictly self-contained with no external assets. If
-your page must open offline or survive in an archive, say so up front.
+Render self-contained offline HTML with inline CSS, JavaScript, SVG, and system fonts. Use bundled rendering code if needed. Reference specimens demonstrate style; do not copy their remote imports.
 
 **It drew part of my plan dashed, or left something out entirely.** Proposed
-elements render dashed by rule, and anything that can't be traced to a file,
-symbol, or diff hunk doesn't get drawn. This behavior showed up during
+elements render dashed by rule and trace to the plan or conversation. Observed elements trace to repository files, symbols, or diff hunks; unsupported observed claims do not get drawn. This behavior showed up during
 pre-landing validation: a probe rendering a 182-file refactor "declined to render
 a claim the commit's own decision doc makes but its diff doesn't back"
 ([decision](../decisions/structure-view.md)). If a box you expected is missing,
@@ -184,3 +177,5 @@ workbench when you want them and skip otherwise; nothing in the workbench flow
 depends on it. In practice `arch-map` shows up during orientation and design:
 before `brainstorming` settles a refactor, or right after, to show what the
 branch actually does.
+
+Use the requested language, otherwise the conversation's language. Observed elements trace to repository sources; proposed elements trace to the plan/conversation and remain visibly marked as proposed. The view-selection, layout, provenance, and rendering checks remain.

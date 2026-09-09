@@ -7,20 +7,9 @@ line sets the frame: "Code review requires technical evaluation, not emotional
 performance." The core principle is three clauses: "Verify before
 implementing. Ask before assuming. Technical correctness over social comfort."
 
-It exists to prevent two opposite failures. One is performative agreement:
-"You're absolutely right!", "Great point!", "Thanks for catching that!": all
-explicitly forbidden, along with any gratitude expression. The other is blind
-implementation: taking a suggestion straight to code without checking whether
-it is correct for this codebase, breaks existing functionality, or contradicts
-a decision the user already made. Between those, it supplies a six-step
-response pattern, source-specific handling for user feedback versus external
-reviewers, an implementation order, and explicit guidance on pushing back.
+Ordinary thanks is fine. Keep the technical claim, verification, and disposition clear; gratitude does not substitute for checking feedback.
 
-The stopping behavior is the part that catches people out. If **any** item in
-a batch of feedback is unclear, the skill stops everything: "STOP - do not
-implement anything yet. ASK for clarification on unclear items." Not the
-unclear ones: everything. It is also not a fetcher: getting the feedback off
-a PR is `get-pr-comments`'s job.
+Check whether review items depend on the unclear point. Ask the needed question and pause dependent changes; continue verified independent corrections within the request.
 
 ## When to reach for it
 
@@ -46,10 +35,7 @@ reasoned pushback; **IMPLEMENT** one item at a time, testing each.
 
 Around that loop sit four rules with teeth:
 
-- **Clarify first, implement nothing.** The worked example: you're told to fix
-  items 1–6, you understand 1, 2, 3, 6 and not 4, 5. Implementing the four you
-  understand is marked wrong. The reason is stated: "Items may be related.
-  Partial understanding = wrong implementation."
+- **Clarify dependent work first.** Ask about unclear items and pause changes that depend on the answer; continue verified independent fixes within the request.
 - **Source-specific handling.** From the user: trusted, implement after
   understanding, still ask if scope is unclear, no performative agreement.
   From external reviewers, apply five checks before implementing: Is it technically
@@ -57,24 +43,16 @@ Around that loop sit four rules with teeth:
   reason for the current implementation, does it work on all
   platforms/versions, does the reviewer understand the full context. Rule of
   thumb: "external feedback: be skeptical, but check carefully."
-- **A YAGNI check on "implement it properly" suggestions.** Grep the codebase
-  for actual usage first. If nothing calls it, the honest answer is to propose
-  removing it, not to build it out.
-- **Implementation order.** Clarify anything unclear first, then blocking
+- **A YAGNI check on "implement it properly" suggestions.** Search local callers and check public APIs, dynamic consumers, and compatibility contracts. No local caller alone does not prove a public contract is unused; propose removal only when the evidence supports it.
+- **Implementation order.** Clarify dependent items first, then blocking
   issues (breaks, security), then simple fixes, then complex ones: testing
   each individually and verifying no regressions.
 
 ## Common questions
 
-**Why can't I thank the reviewer?** Because the skill treats acknowledgment as
-something the code does: "Actions speak. Just fix it. The code itself shows
-you heard the feedback." Approved responses are "Fixed. [brief description of
-what changed]", "Good catch - [specific issue]. Fixed in [location]", or just
-fixing it and showing the code. The instruction is blunt about the reflex: "If
-you catch yourself about to write 'Thanks': DELETE IT. State the fix instead."
+**Can I thank the reviewer?** Yes. Brief, sincere thanks are compatible with technical evaluation. State what was verified or changed; gratitude does not substitute for checking the claim. External replies still require explicit write authority.
 
-**I understand four of the six items. Can I start on those?** No. That case is
-the skill's worked wrong-example. Clarify all items first, then implement.
+**I understand four of the six items. Can I start on those?** Yes, if they are verified, independent of the unclear items, and within the requested scope. Ask about the dependent items before changing them.
 
 **The reviewer is wrong.** Push back. The skill lists six situations that
 warrant it: the suggestion breaks existing functionality, the reviewer lacks
@@ -100,7 +78,7 @@ the Common Mistakes table as a mistake with a named fix.
 **The feedback conflicts with something the user decided earlier.** Stop and
 discuss with the user first, before implementing.
 
-**Where do replies to inline comments go?** In the comment thread: `gh api
+**Where do replies to inline comments go?** When a reply is explicitly authorized, use the comment thread: `gh api
 repos/{owner}/{repo}/pulls/{pr}/comments/{id}/replies`, rather than as a top-level
 PR comment.
 
@@ -120,14 +98,11 @@ its place because it complements the adversarial-review flow. ([decision](../dec
 - The first response to feedback restates the technical requirement, asks a
   specific question, or is simply the work starting instead of an evaluation of the
   feedback's quality.
-- Unclear items are surfaced as a batch before any implementation begins.
+- Unclear items are surfaced before dependent implementation begins.
 - Fixes land one at a time, each tested, with blocking issues first.
 - A wrong suggestion produces reasoning and a question, not silent compliance.
-- **Negative signal:** a reply opening with "You're absolutely right!", "Great
-  point!", or any thanks. The skill names these as forbidden, and the first is
-  flagged as an explicit instruction-file violation.
-- **Negative signal:** code changed while an item in the same batch was still
-  unclear.
+- **Negative signal:** technical agreement or an implemented suggestion without checking the claim. Brief sincere thanks are compatible with that check.
+- **Negative signal:** dependent code changed while its requirement was still unclear.
 
 ## Where it fits
 
@@ -136,3 +111,5 @@ acting on what arrived, and verified fixes re-enter implementation, where the us
 (`test-driven-development`, `systematic-debugging`) and the usual completion
 gates apply again. It is the mirror image of `code-quality-review`: one
 governs giving a hard review, this one governs taking it.
+
+External review replies require explicit existing authorization. Before treating code as unused, check public contracts, external consumers, and compatibility obligations as well as local references.

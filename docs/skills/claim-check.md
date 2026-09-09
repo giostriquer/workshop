@@ -16,11 +16,7 @@ falsifiable code claim, writes and runs a throwaway repro. The design record
 is explicit that "it is not an agent … a single dispatched agent cannot drive
 that fan-out."
 
-It **stops at a verdict**. The skill "**runs the investigation**, including any
-repro needed to prove or break a claim, and stops at a verdict; it does **not**
-implement the fix the premise calls for." Building the harness that proves or
-breaks the claim is in scope; changing the product code is not. Acting on the
-findings is your separate step.
+The investigation ends at its verdict, including any repro needed to prove or break a claim. An audit-only request ends there. Already-authorized in-scope repairs continue as implementation after the findings are recorded.
 
 ## When to reach for it
 
@@ -55,13 +51,13 @@ This is the part users hit first, so it comes before the mechanics.
 Before investigating, the skill confirms it can reach **both** the premise's
 source (the ticket, PR, or doc that *states* it) and the artifact the premise is
 *about* (the repo, file, or reference). If either is unreachable and you cannot
-supply it, the skill **stops**: "If you cannot … then you do **not** have a
+supply it, the skill **stops that affected claim**: "If you cannot … then you do **not** have a
 premise to check. **STOP and say so.**"
 
-Instead of a report, it names the resource it could not access, what it
+For affected claims, it reports the inaccessible resource, what it
 tried, and the one thing that would unblock it: paste the ticket body, grant
 repo access, share the doc. What you explicitly do *not* get is a reconstructed
-premise. The skill forbids rebuilding the claim "from the link's slug, the
+premise. Independent accessible claims continue. The skill forbids rebuilding the claim "from the link's slug, the
 ticket ID, your own memory of it, or inference."
 
 That prohibition exists because of a lived failure, recorded in
@@ -72,7 +68,7 @@ confident verdict "on a resource the session never examined." The skill already
 said to ask for a paste; it did not say *stop*, and a model under momentum read
 that as a suggestion.
 
-**This STOP is not the `inconclusive` verdict.** The skill draws the line
+**This affected-claim STOP is not the `inconclusive` verdict.** The skill draws the line
 itself: "`inconclusive` is *earned* after a genuine investigation hits a wall on
 a load-bearing claim; the access STOP fires *before* you start, because the
 premise's substance never arrived." One partial case still proceeds: if only the
@@ -130,8 +126,7 @@ pass that tries to falsify them, precisely so neither becomes a rubber stamp.
 
 1. **Resolve the premise.** A ticket or doc gives you its claims pre-articulated:
    read them as written. A hunch or bare question has no claims yet, so the
-   skill **articulates them into atomic, checkable claims and confirms them with
-   you before investigating**. Nothing clear to check? It asks rather than
+   skill **articulates atomic, checkable claims and proceeds when the meaning is clear; only material ambiguity needs confirmation**. Nothing clear to check? It asks rather than
    inventing a claim.
 2. **Check each claim against the current repo.** Fan-out is recommended for
    scanning, but briefs must be "**neutral and specific**" and must "return
@@ -171,14 +166,7 @@ blockquote.
    (recommendation marked), one per gotcha, dependency, or open unknown, each
    anchored to code or docs.
 
-The shape is deliberate and hard-won. Each of the three sections was reshaped
-after a real run came back hard to use: readiness arrived as one dense paragraph
-with options inline ([decision](../decisions/claim-check-readiness-shape.md)),
-then the same failure migrated up into the verdict paragraph, and prior-work gave
-no first-glance answer to "is anyone already on this?"
-([decision](../decisions/claim-check-verdict-and-priorwork-shape.md)). An earlier
-round deleted the slots that produced a per-claim table and an echoed `Source`
-line ([decision](../decisions/claim-check.md)).
+Keep the verdict, prior/parallel work, and readiness dossier. A compact per-claim table inside Verdict is useful when independent claims have mixed outcomes; it does not replace the evidence ladder or the overall conclusion.
 
 By default the report lands in chat. Persist it only when durability or a handoff
 is wanted: a repo docs home, or the work scope's folder as
@@ -213,20 +201,13 @@ the one input that would breach it. An `inconclusive` that names neither is the
 skill being misapplied.
 
 **Will it fix what it finds?**
-No. It builds the repro; it does not build the fix. The boundary moved once,
-deliberately: the original rule was "never run anything," and first-run feedback
-moved it to "never implement the fix," so that a falsification test counts as
-search rather than implementation ([decision](../decisions/claim-check.md)).
+The investigation builds the repro and preserves its verdict before any repair. A review-only request ends with that report. If the user already asked for repairs too, continue the authorized implementation as a separate step and verify it; do not erase the original finding. A falsification test remains part of the investigation ([decision](../decisions/claim-check.md)).
 
 **Why is it asking me to approve a list of claims before it starts?**
-Because your input was a hunch or a question rather than a stated premise. The
-articulation step is what "keeps a fuzzy input from producing a fuzzy
-investigation." A ticket that already states its claims skips this step.
+It should ask only when intended meaning or scope remains materially ambiguous. Clear atomic claims can be investigated directly, whether they came from a ticket or a question.
 
-**Why is there no claim-by-claim table in the report?**
-Removed on purpose. Every claim is still investigated atomically, but "the
-rationale and the readiness dossier already carry which parts are real or stale,
-so a claim-by-claim table only repeats them."
+**Can the report include a claim-by-claim table?**
+Yes, when independent claims have mixed outcomes. Keep it inside Verdict and retain the evidence ladder, overall conclusion, prior-work summary, and readiness dossier.
 
 **Does it search the web or survey the ecosystem?**
 No. The design record draws this line: research skills "face outward and forward
@@ -262,8 +243,8 @@ evidence-grounded investigation. For a five-minute suspicion, take `audit`'s
   from.
 - It stopped rather than investigating a premise it could not read.
 - **Not working:** hedged language ("likely", "probably", "it would make sense
-  if") carrying a `confirmed` verdict, a claim-by-claim table, a report wrapped
-  in a blockquote, or the session sliding from verdict into fixing the code.
+  if") carrying a `confirmed` verdict, an unsupported claim-by-claim verdict, a report wrapped
+  in a blockquote, or the session silently replacing the original verdict with a repaired result or fixing without authority.
 
 ## Where it fits
 
@@ -276,3 +257,5 @@ Its closest neighbors are `qa-sweep`: the same "treat it as a hypothesis, go
 verify" spine, applied to a broad running surface at team scale rather than one
 premise, and `empirical-proof`, which proves one finished change at its runtime
 surface instead of testing a claim about the code.
+
+Missing access pauses affected claims only; do not reconstruct their substance from URLs or memory. Continue independent accessible claims. Clear atomic claims can be investigated without a confirmation turn. Seek reachable discriminating evidence, then report any concrete limit when reasonable paths are exhausted.

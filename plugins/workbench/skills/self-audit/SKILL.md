@@ -36,9 +36,9 @@ reports; applying anything is a separate act the user authorizes.
      the session reaching for it, the user typing it, or the user asking for it
      after the fact.
    - Every skill that *should* have fired by its own description and didn't.
-   - For the three user gates (size the workload, pick the route, PR or merge), record
-     which arrived, which were actually asked, and which the session decided on the
-     user's behalf.
+   - For decisions about scope, design, and delivery, record what required a user
+     answer, what existing authorization already settled, and whether the session
+     asked unnecessarily or acted beyond that authorization.
    - Every user correction: redirects, "no", instructions repeated, work
      interrupted, scope pushed back on, visible frustration.
    - Every dead end: work done and then discarded, artifacts nobody read,

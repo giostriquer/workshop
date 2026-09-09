@@ -82,19 +82,11 @@ That last part matters in practice: `file-pr` opens with a MUST that an
 adversarial review has run, and a lane that is not told the gate is satisfied
 will read the MUST and run a second full review on a diff that already had one.
 The exemption being claimed is `file-pr`'s own ("the review already ran on this
-diff"), not a loophole. It stops applying if corrections landed after that
-review, or if the dev merge hit a semantic conflict, which is why a semantic
-conflict stops the lane instead of being resolved into new code.
+diff"), not a loophole. Verify direct corrections without repeating the whole review; materially changed behavior or new risk needs focused independent follow-up. A semantic conflict while syncing the actual integration branch stops the lane for a decision rather than being guessed through.
 
 **Does it trust the reports?**
 
-No, and that is most of the skill. A report is a claim, and the validation
-section is a list of checks that each exist because skipping one let a real
-defect through: run every command with an explicit `cd <worktree>`, red-flip by
-reverting modified sources **and deleting added files**, grep the diff for
-whatever content the epic bans, design-read anything infrastructure-shaped, and
-when validating a gate, test what it **accepts** rather than whether it runs
-cleanly.
+The orchestrator pins the reported commit and creates a disposable validation checkout. Preserve the active lane, tests, and fixtures; revert/remove only changed production code identified from repository conventions. Run focused regression cases, require the intended assertion to fail, restore the fix in isolation, and require those cases to pass. When applicable, scan for banned content, review infrastructure design, and exercise what a gate accepts, including negative cases; do not infer coverage from a successful script alone.
 
 **The lane already had its diff reviewed. Why validate again?**
 
@@ -113,12 +105,7 @@ claim a regression.
 
 **Where do debt and follow-ups go?**
 
-Into the epic, as tickets, before the wave closes. The skill treats anything
-actionable that lives only in context as lost: a paragraph in a report, a line
-in chat, or the session's own reasoning all die when the session does. Five
-surfaces are named (a lane's report, the orchestrator's own validation, a
-ruling, a finding that got scoped out, the blind re-audit), and each entry is
-closed by a ticket id written back into the record that raised it.
+Every item retains durable traceability. Confirmed actionable work gets a deduplicated ticket under existing explicit write authority; unresolved/disproved claims keep their evidence record and disposition. Without publication authority, prepare the ticket content and name the pending action.
 
 The structural half is what makes it hold: `DEBT + FOLLOW-UPS` is a required
 slot in the lane report format, so a lane either fills it in or visibly leaves
@@ -140,7 +127,7 @@ yours, not the session's.
 **Will the PR mention the process?**
 
 No. PR text describes the change and its stakes. No lane names, no "epic", no
-review mechanics; ticket ids live in the branch and the Why section.
+review mechanics; ticket links go in the actual repository template fields.
 
 ## It's working if
 
@@ -148,8 +135,7 @@ review mechanics; ticket ids live in the branch and the Why section.
 - Reports come back validated against the repo, with the checks named and the
   unverified parts stated as unverified.
 - Lanes that touch the same file arrive in the same prompt.
-- Debt, follow-ups, and deferrals become tickets under the epic with ids,
-  rather than living in a report or in the chat.
+- Confirmed actionable debt, follow-ups, and deferrals have deduplicated ticket ids or a named pending publication step; unresolved/disproved claims retain their evidence record and disposition.
 - Negative signal: a lane report accepted because it looked complete. The whole
   pattern exists to stop coverage claims that outrun their evidence.
 
@@ -166,3 +152,5 @@ than the optional `toolkit`, which installs without them.
 Its closest neighbor is [handoff-goal](handoff-goal.md), which packages one
 goal for one fresh session. `epic-orchestration` is the case where one package
 is not enough and verifying what comes back is the job.
+
+Every return ends with a verified acknowledgment and an immediate next action: dispatch ready lanes; name a pending delivery gate and owner; dispatch the blind closing audit; propose closure after corroboration; or identify a concrete blocker. Keep the full lane report and dispatch templates. Lanes and orchestration validation use focused local tests plus mandatory gates; full suites run in PR CI by default. Separate Opus/Sol agents watch CI, never Astra/Fable or the parent. Implementer lanes handle fixes; the orchestrator sends correction handoffs.

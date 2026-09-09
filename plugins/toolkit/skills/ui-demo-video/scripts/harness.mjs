@@ -39,7 +39,7 @@ async function loadChromium() {
     }
   }
   throw new Error(
-    "ui-demo-video harness: neither @playwright/test nor playwright is installed in this project: run: npm i -D @playwright/test && npx playwright install chromium",
+    "ui-demo-video harness: Playwright is unavailable in this project. Use existing browser tooling, or follow the authorized project setup with its package manager.",
   );
 }
 
@@ -54,7 +54,7 @@ export async function recordUiDemo(config, scenario) {
     outDir = "tmp",
     viewport = { width: 1280, height: 720 },
     prewarm = [],
-    hideNextDevOverlay = true,
+    hideNextDevOverlay = false,
     hideSelectors = [],
     defaultTimeoutMs = 60_000,
     scenePauseMs = 1200,

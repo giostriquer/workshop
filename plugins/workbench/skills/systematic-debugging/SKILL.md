@@ -1,45 +1,35 @@
 ---
 name: systematic-debugging
-description: Use when encountering any bug, test failure, or unexpected behavior, before proposing fixes
+description: Use for an unresolved failure requiring sustained investigation, such as intermittent behavior, unclear cross-component causes, or unsuccessful fixes, or when explicitly requested. Skip expected TDD RED, obvious localized fixes, and incidental out-of-scope bugs.
 ---
 
 # Systematic Debugging
 
 ## Overview
 
-**Core principle:** ALWAYS find root cause before attempting fixes. Symptom fixes are failure.
+**Core principle:** Diagnose the cause of an unresolved failure before claiming a repair. An authorized temporary mitigation may precede diagnosis; label it as mitigation and retain the investigation gap.
 
 **Violating the letter of this process is violating the spirit of debugging.**
 
 ## The Iron Law
 
 ```
-NO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST
+NO ROOT-CAUSE CLAIM WITHOUT INVESTIGATION EVIDENCE
 ```
 
-If you haven't completed Phase 1, you cannot propose fixes.
+For failures that meet the trigger below, complete Phase 1 before choosing a causal repair. Ordinary inspection and an obvious supported fix do not need this full protocol.
 
 ## When to Use
 
-Use for ANY technical issue:
-- Test failures
-- Bugs in production
-- Unexpected behavior
-- Performance problems
-- Build failures
-- Integration issues
+Use when basic inspection has not explained the failure, it is intermittent,
+causes span components, or earlier fixes failed without a supported explanation.
+An explicit request also invokes the protocol. Applicable surfaces include tests,
+production behavior, performance, builds, and integrations.
 
-**Use this ESPECIALLY when:**
-- Under time pressure (emergencies make guessing tempting)
-- "Just one quick fix" seems obvious
-- You've already tried multiple fixes
-- Previous fix didn't work
-- You don't fully understand the issue
-
-**Don't skip when:**
-- Issue seems simple (simple bugs have root causes too)
-- You're in a hurry (rushing guarantees rework)
-- Manager wants it fixed NOW (systematic is faster than thrashing)
+Expected TDD RED, an obvious localized defect with a supported fix, or noticing an
+unrelated bug does not activate this skill. Handle those in the ordinary task.
+Escalate into the phases if the cause remains unclear or verification contradicts
+the direct fix. Urgency alone does not force the protocol.
 
 ## The Four Phases
 
@@ -47,7 +37,7 @@ You MUST complete each phase before proceeding to the next.
 
 ### Phase 1: Root Cause Investigation
 
-**BEFORE attempting ANY fix:**
+**Before choosing a causal repair in this investigation** (an explicitly authorized temporary mitigation remains the labeled exception):
 
 1. **Read Error Messages Carefully**
    - Don't skip past errors or warnings
@@ -71,11 +61,11 @@ You MUST complete each phase before proceeding to the next.
 
    **WHEN system has multiple components (CI → build → signing, API → service → database):**
 
-   **BEFORE proposing fixes, add diagnostic instrumentation:**
+   **When existing evidence cannot locate the failure, add targeted instrumentation:**
    ```
-   For EACH component boundary:
-     - Log what data enters component
-     - Log what data exits component
+   For each implicated boundary needed to locate the failure:
+     - Record selected redacted input fields, types, sizes, or presence
+     - Record the relevant output/state transition without secret values
      - Verify environment/config propagation
      - Check state at each layer
 
@@ -84,15 +74,19 @@ You MUST complete each phase before proceeding to the next.
    THEN investigate that specific component
    ```
 
+   Do not dump whole environments, secrets, or request bodies. Remove temporary
+   diagnostics after verification. The commands below illustrate a macOS signing
+   pipeline; use the actual repository tools and redact identifying output.
+
    **Example (multi-layer system):**
    ```bash
    # Layer 1: Workflow
    echo "=== Secrets available in workflow: ==="
-   echo "IDENTITY: ${IDENTITY:+SET}${IDENTITY:-UNSET}"
+   if [ -n "${IDENTITY:-}" ]; then echo 'IDENTITY: SET'; else echo 'IDENTITY: UNSET'; fi
 
    # Layer 2: Build script
    echo "=== Env vars in build script: ==="
-   env | grep IDENTITY || echo "IDENTITY not in environment"
+   if [ -n "${IDENTITY:-}" ]; then echo 'IDENTITY: SET'; else echo 'IDENTITY: UNSET'; fi
 
    # Layer 3: Signing script
    echo "=== Keychain state: ==="
@@ -190,12 +184,12 @@ You MUST complete each phase before proceeding to the next.
 
 4. **If Fix Doesn't Work**
    - STOP
-   - Count: How many fixes have you tried?
-   - If < 3: Return to Phase 1, re-analyze with new information
-   - **If ≥ 3: STOP and question the architecture (step 5 below)**
-   - DON'T attempt Fix #4 without architectural discussion
+   - Compare the new evidence with the hypothesis; return to Phase 1 if it was falsified
+   - Repeated failures require reassessing assumptions, environment, and method
+   - If recurring coupling or invalid boundaries explain the failures, examine step 5
+   - Do not repeat unsupported attempts; continue when a new evidenced hypothesis exists
 
-5. **If 3+ Fixes Failed: Question Architecture**
+5. **If Evidence Implicates Architecture: Question It**
 
    **Pattern indicating architectural problem:**
    - Each fix reveals new shared state/coupling/problem in different place
@@ -207,14 +201,13 @@ You MUST complete each phase before proceeding to the next.
    - Are we "sticking with it through sheer inertia"?
    - Should we refactor architecture vs. continue fixing symptoms?
 
-   **Discuss with your human partner before attempting more fixes**
-
-   This is NOT a failed hypothesis - this is a wrong architecture.
+   Discuss an architectural change when it needs a new scope or product decision.
+   A count of failed attempts alone does not establish a wrong architecture.
 
 ## Red Flags - STOP and Follow Process
 
 If you catch yourself thinking:
-- "Quick fix for now, investigate later"
+- "I will call a temporary mitigation a root-cause fix"
 - "Just try changing X and see if it works"
 - "Add multiple changes, run tests"
 - "Skip the test, I'll manually verify"
@@ -223,14 +216,14 @@ If you catch yourself thinking:
 - "Pattern says X but I'll adapt it differently"
 - "Here are the main problems: [lists fixes without investigation]"
 - Proposing solutions before tracing data flow
-- **"One more fix attempt" (when already tried 2+)**
+- **"One more fix attempt" without new evidence or a testable hypothesis**
 - **Each fix reveals new problem in different place**
 
 **ALL of these mean: STOP. Return to Phase 1.**
 
-**If 3+ fixes failed:** Question the architecture (see Phase 4.5)
+If failures implicate recurring coupling, inspect architecture (Phase 4, step 5); otherwise investigate the supported alternatives.
 
-## your human partner's Signals You're Doing It Wrong
+## User Signals You're Missing Evidence
 
 **Watch for these redirections:**
 - "Is that not happening?" - You assumed without verifying
@@ -245,14 +238,14 @@ If you catch yourself thinking:
 
 | Excuse | Reality |
 |--------|---------|
-| "Issue is simple, don't need process" | Simple issues have root causes too. Process is fast for simple bugs. |
+| "Issue is simple, don't need process" | An obvious supported fix can proceed directly. An unexplained failure still needs investigation. |
 | "Emergency, no time for process" | Systematic debugging is FASTER than guess-and-check thrashing. |
 | "Just try this first, then investigate" | First fix sets the pattern. Do it right from the start. |
 | "I'll write test after confirming fix works" | Untested fixes don't stick. Test first proves it. |
 | "Multiple fixes at once saves time" | Can't isolate what worked. Causes new bugs. |
 | "Reference too long, I'll adapt the pattern" | Partial understanding guarantees bugs. Read it completely. |
 | "I see the problem, let me fix it" | Seeing symptoms ≠ understanding root cause. |
-| "One more fix attempt" (after 2+ failures) | 3+ failures = architectural problem. Question pattern, don't fix again. |
+| "One more fix attempt" | New attempts need evidence and a testable hypothesis. Investigate architecture when the failure pattern implicates it. |
 
 ## Quick Reference
 
@@ -272,7 +265,7 @@ If systematic investigation reveals issue is truly environmental, timing-depende
 3. Implement appropriate handling (retry, timeout, error message)
 4. Add monitoring/logging for future investigation
 
-**But:** 95% of "no root cause" cases are incomplete investigation.
+Distinguish an evidenced external cause from an unresolved cause. Record what was tested, what remains unknown, and the next useful observation.
 
 ## Supporting Techniques
 
@@ -281,7 +274,3 @@ These techniques are part of systematic debugging and available in this director
 - **`root-cause-tracing.md`** - Trace bugs backward through call stack to find original trigger
 - **`defense-in-depth.md`** - Add validation at multiple layers after finding root cause
 - **`condition-based-waiting.md`** - Replace arbitrary timeouts with condition polling
-
----
-
-*Derived from [obra/superpowers](https://github.com/obra/superpowers) (MIT, (c) Jesse Vincent), adapted for the workbench system.*

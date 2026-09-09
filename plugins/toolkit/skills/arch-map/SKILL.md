@@ -20,7 +20,7 @@ to something real (file, symbol, or diff hunk).
 
 ## When to use
 
-Three input shapes, all derived from code rather than from prose:
+Three input shapes, grounded in the repository, diff, or proposed plan:
 
 1. **Existing subsystem**: how a part of the codebase is structured today.
 2. **Refactor in flight**: branch/diff (or planned): what moves, what stays.
@@ -46,7 +46,7 @@ rules in this file are the complete contract; following them is enough.
 
 ## Step 0: house style
 
-1. Glob the **output project's** `tmp/` and `docs/` for a hand-authored
+1. Glob the **output project's** scope/artifact directories and `docs/` for a hand-authored
    standalone `.html` architecture page (inline styles; exclude
    `node_modules/`, `dist/`, etc.). **Genre test:** structural graphics
    dominate (system map, layers, legend, before/after flow), unlike a
@@ -74,9 +74,9 @@ flow).
 - **Proposed design:** extract from plan; verify real references; mark the
   rest proposed (dashed).
 
-**Traceability (load-bearing).** Every box and edge traces to a real file,
-symbol, or diff hunk (path in caption/`title`). Proposed = dashed, never
-silently mixed with observed.
+**Traceability (load-bearing).** Observed boxes and edges trace to a real file, symbol, or diff hunk
+(path in caption/`title`). Proposed elements trace to the plan or conversation
+and use dashed styling; never silently mix them with observed structure.
 
 ### 2: Choose views
 
@@ -96,11 +96,13 @@ not draw a fourth diagram.
 
 ### 3: Render
 
-Single HTML file (CDNs allowed: Inter/JetBrains fonts, Lucide, Mermaid,
-optional Tailwind for layout grids). Default output in the **project**:
-`tmp/<YYYY-MM-DD>-<slug>.html`. **Promote** on request: re-verify traces,
-full checklist, move to `docs/`. **English only** for all UI chrome and
-copy.
+Produce an offline, self-contained HTML file: inline CSS, JavaScript, SVG, and
+any necessary assets; use system fonts. No CDN, remote font, or external script
+requests. Render diagrams as inline SVG or bundle required renderer code locally.
+The reference specimens illustrate style; do not copy their network imports.
+Use the repo's scope folder, otherwise `.workbench/<scope>/`. Promote to a durable
+location only when requested or conventional, after rechecking provenance. Match
+requested language; otherwise use the conversation's language for chrome and copy.
 
 ## Visual language: deep-dark glass (rigid defaults)
 
@@ -140,8 +142,10 @@ code{
 }
 ```
 
-Fonts: **Inter** (UI) + **JetBrains Mono** (paths/chips) via Google Fonts.
-Lucide CDN for icons. Mermaid when needed (theme below).
+Fonts: system sans-serif for UI and system monospace for paths/chips. Inline
+licensed font data only if an explicit visual requirement warrants it.
+Use inline SVG icons. If a diagram renderer is needed, bundle it locally so
+opening the page makes no remote requests.
 
 **Body text is `--ink` / `--soft`.** Use `--muted` for captions/paths only,
 never for mid-grey paragraphs on black.
@@ -245,7 +249,7 @@ dense import/dependency graphs only.
 - **View economy**: mental model + ≤3 supporting views.
 - **Zoom**: ~30 visible boxes per view; group beyond that.
 - **Invariant**: required on refactor pages.
-- **Language**: English only for all generated chrome and copy.
+- **Language**: match the user's requested language or the conversation language.
 - **Fit**: SVG text stays inside its box; long paths/tokens (`code`,
   `.mod .path`, `.chip`) wrap via `overflow-wrap:anywhere`; the page never
   scrolls horizontally at common widths. Enforce by construction (short
@@ -267,7 +271,7 @@ dense import/dependency graphs only.
 9. Views within cap; refactor pages state the invariant.
 10. Sticky TOC (if present) works; stacks at phone width; print stylesheet
     present when the page is long.
-11. No non-English UI chrome.
+11. Requested language is consistent; the page renders with networking disabled.
 12. **Fit holds**: every SVG `.title`/`.sub` sits inside its box (≥ 5u slack);
     `code` / `.mod .path` / `.chip` use `overflow-wrap:anywhere`; no horizontal
     page scroll when the viewport is narrowed to phone width. Spot-check at
@@ -275,40 +279,22 @@ dense import/dependency graphs only.
 
 ## Reference markup (load-bearing scraps)
 
-CDN head:
+Offline document head:
 
 ```html
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-  tailwind.config={darkMode:'class',theme:{extend:{fontFamily:{
-    sans:['Inter','sans-serif'],mono:['JetBrains Mono','monospace']}}}}
-</script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/lucide@0.469.0"></script>
-<script type="module">
-  import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
-  mermaid.initialize({
-    startOnLoad:true, theme:"dark",
-    themeVariables:{
-      darkMode:true, background:"#050811", primaryColor:"#082f49",
-      primaryTextColor:"#e5edf7", primaryBorderColor:"#38bdf8",
-      secondaryColor:"#1e293b", tertiaryColor:"#020408",
-      lineColor:"#38bdf8", secondaryTextColor:"#cbd5e1",
-      tertiaryTextColor:"#94a3b8",
-      fontFamily:"Inter, system-ui, sans-serif", fontSize:"15px"
-    },
-    flowchart:{curve:"basis", padding:18, nodeSpacing:40, rankSpacing:52}
-  });
-</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root { --sans: system-ui, sans-serif; --mono: ui-monospace, monospace; }
+</style>
+<!-- Inline the diagram SVG, styles, and interaction code below. -->
 ```
 
 Glass hero + fact tiles:
 
 ```html
 <header class="hero glass-card">
-  <p class="eyebrow"><i data-lucide="git-branch"></i> Target architecture</p>
+  <p class="eyebrow"><span aria-hidden="true">◇</span> Target architecture</p>
   <h1>One door to the stack</h1>
   <p class="lede">Short orientation. <strong>Key nouns</strong> emphasized.
     Paths as <code>engine.getStackConfig()</code>.</p>
@@ -392,7 +378,7 @@ HTML flow connector:
 ## Suggested invocation
 
 - Map how the plugin system is structured. → subsystem: derive, mental
-  model SVG, layers, project `tmp/` page
+  model SVG, layers, project scope-folder page
 - Show what this refactor branch actually moves. → diff, invariant,
   Today|Target panes
 - Draw the target architecture we just discussed. → proposed (dashed) +

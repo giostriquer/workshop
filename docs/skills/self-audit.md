@@ -32,7 +32,7 @@ decides on its own to stop and grade the process.
 **1: Replay the session into a trace.** Facts only, no verdicts: how work
 entered and through which door; every skill that fired and what made it fire
 (the session reaching for it, you typing it, you asking after the fact); every
-skill that should have fired and didn't; which of the three user gates arrived,
+skill that should have fired and didn't; which genuinely unresolved user decisions arrived,
 which were asked, which the session decided for you; every correction,
 redirect, repeated instruction, and interruption; every dead end. "Skip nothing
 for being unflattering. The trace is where honesty is cheap."

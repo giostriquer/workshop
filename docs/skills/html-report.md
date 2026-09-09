@@ -110,12 +110,7 @@ output → terminal block or appendix); verified links only; styled scrollbars o
 every scroll container; a print media query. Below ~900px the sidebar collapses
 into static flow: "a fixed 288px rail otherwise eats a phone's whole viewport."
 
-**The finding card contract.** For audit, QA, and review output, each card is
-id + severity/evidence chips → a one-line **claim** in a quote box → an
-**Evidence** line that is concrete ("a live result, `file:line`, or an appendix
-cite") → a **Fix** line with a cost pill. "The headline states the finding; the
-body proves it and says what to do. Concise beats extensive, but never a claim
-without its evidence." Findings are ordered by severity descending, always.
+A finding card preserves the source's claim, available evidence, and uncertainty. Severity, evidence tier, action, and cost appear only when established by the source; the card layout must not invent missing judgments.
 
 **Rigid process rules.** These do not bend to taste:
 
@@ -129,7 +124,7 @@ without its evidence." Findings are ordered by severity descending, always.
 | Renumbering procedure | Any insert, move, drop, sort, or re-group renumbers via descending replace-all or a temp placeholder, then updates every cross-reference, TOC entry, element id, and the keyboard-nav order array, and verifies with a grep. |
 
 An 11-item pre-finish checklist runs before the page is handed over: parse
-check, TOC targets resolve, severity order, styled scrollbars, badge alignment,
+check, TOC targets resolve, assessed severity order, styled scrollbars, badge alignment,
 no dropped content, links fetched, print block, phone width, output target
 honored, and (context sources only) hedges and evidence intact with Method and
 coverage gaps present.
@@ -171,8 +166,7 @@ needs editing, edit the document.
 
 **Can it pull in Tailwind or a CDN to look better?** No. External assets were
 rejected because they break the opens-from-disk, print, and archive contract. The
-page is self-contained by design. (`arch-map`, its sibling, does allow CDNs: the
-two skills made different calls here deliberately.)
+page is self-contained by design. `arch-map` also requires offline output.
 
 **A link I asked for didn't ship.** Verified links only: "Don't ship a link you
 didn't fetch." Known trap: "some canonical-looking doc URLs are JS-rendered and
@@ -194,8 +188,7 @@ incremental restyle.
 - The page opens from a double-click with no server, no network, and no build.
 - The TOC highlights the section you're reading, `j`/`k` moves between sections,
   and every TOC entry lands somewhere real.
-- Findings run most-severe-first, and every card carries a concrete Evidence line
-  and a Fix with a cost pill.
+- Assessed findings run most-severe-first; unassessed findings remain distinct or in source order. Cards carry available evidence or its explicit absence, and only action/cost fields established by the source.
 - Printing gives you a white page with dark text and no navigation chrome.
 - At phone width the sidebar has collapsed into normal flow and nothing scrolls
   sideways except things meant to (wide tables, terminal blocks).
@@ -218,3 +211,5 @@ lean. Nothing in the workbench flow requires it. In practice it sits at the end
 of an investigation: workbench's `audit`, `claim-check`, or `qa-sweep` produce
 the findings, and `html-report` turns them into something you can hand to
 somebody else.
+
+Order assessed findings by severity; keep unassessed findings distinct or in source order. Retain the full rendering, link-checking, renumbering, print, and narrow-screen checklists.

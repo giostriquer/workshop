@@ -8,7 +8,10 @@
     "tagPattern": "v*",
     "license": "MIT",
     "author": "Jesse Vincent (obra)",
-    "watchPaths": ["skills", "hooks"],
+    "watchPaths": [
+      "skills",
+      "hooks"
+    ],
     "trackingNote": "Drift is measured against upstream's published releases, never the branch tip. Unreleased commits on `ref` are work in progress: they get reported as a count and excluded from review and from mirroring. Set track to \"branch\" only if upstream stops tagging releases.",
     "lastReviewed": {
       "commit": "b36e0829c6d0140e93cfef2ca599b1b07d4a7797",
@@ -17,7 +20,7 @@
       "note": "First pin landed on a release boundary. Review of v6.2.0+1 → v6.3.0 completed: brainstorming's three-path classifier adopted through the adaptation filter, writing-skills re-mirrored verbatim, the other four adopted pieces unchanged upstream in the range, dropped-piece churn reviewed as FYI with every disposition standing, zero unmapped entries."
     }
   },
-  "adaptationFilter": "docs/decisions/workbench-system.md#2-the-adaptation-filter: defang the description; de-pipeline the body; carry only needed references; provenance footer. Applies to every adoption, initial and future.",
+  "adaptationFilter": "docs/decisions/workbench-system.md#2-the-adaptation-filter: defang the description; de-pipeline the body; carry only needed references; provenance footer. Applies to every adoption, initial and future. Preserve the targeted wording corrections in docs/decisions/skill-wording-hardening.md; do not reintroduce destructive recovery or repeated authorization.",
   "nativePieces": [
     {
       "name": "audit",
@@ -38,37 +41,37 @@
       "localPath": "plugins/workbench/skills/brainstorming/",
       "disposition": "adopted",
       "why": "Socratic requirements/design exploration before creative work: on invitation, not compulsion.",
-      "adaptations": "Description rewritten from 'You MUST use this before any creative work' to an honest conditional trigger; pipeline hand-offs (writing-plans, plan mode coupling) scrubbed. v6.3.0 review: the three-path classifier (spike / bounded / architectural), the one-way ratchet, the red-flags table, and the per-path checklists were adopted; they scale ceremony down, which is the opposite of pressure tuning. Adapted on the way in: every path terminates at the workbench route gate instead of writing-plans (a dropped piece), a spike terminates at a recommendation with no route pick, 'your human partner' rewritten to 'the user', and the After-the-Design section scoped to the architectural path. Ignored: the upstream description's 'You MUST' framing, and visual-companion.md; we carry SKILL.md only."
+      "adaptations": "Description rewritten from 'You MUST use this before any creative work' to an honest conditional trigger; pipeline hand-offs (writing-plans, plan mode coupling) scrubbed. v6.3.0 review: the three-path classifier (spike / bounded / architectural), the one-way ratchet, the red-flags table, and the per-path checklists were adopted; they scale ceremony down, which is the opposite of pressure tuning. Adapted on the way in: every path terminates at the workbench route gate instead of writing-plans (a dropped piece), a spike terminates at a recommendation with no route pick, 'your human partner' rewritten to 'the user', and the After-the-Design section scoped to the architectural path. Ignored: the upstream description's 'You MUST' framing, and visual-companion.md; we carry SKILL.md only. Current wording refinements are recorded in docs/decisions/skill-wording-hardening.md and supersede conflicting historical wording here; preserve the original procedures and supporting examples."
     },
     {
       "upstreamPath": "skills/test-driven-development/",
       "localPath": "plugins/workbench/skills/test-driven-development/",
       "disposition": "adopted",
       "why": "RED→GREEN→REFACTOR discipline when implementing features and bugfixes.",
-      "adaptations": "Description defanged; references to the subagent/plan pipeline scrubbed. Precedence layer added 2026-08-12 (operator Q13): repo/user conventions override conflicting steps, announced; TDD is the default only where the repo is silent: see docs/decisions/tdd-default-not-mandate.md. The anti-rationalization armor is deliberate content; upstream drift must not re-tighten precedence."
+      "adaptations": "Description defanged; references to the subagent/plan pipeline scrubbed. Precedence layer added 2026-08-12 (operator Q13): repo/user conventions override conflicting steps, announced; TDD is the default only where the repo is silent: see docs/decisions/tdd-default-not-mandate.md. The anti-rationalization armor is deliberate content; upstream drift must not re-tighten precedence. Current wording refinements are recorded in docs/decisions/skill-wording-hardening.md and supersede conflicting historical wording here; preserve the original procedures and supporting examples."
     },
     {
       "upstreamPath": "skills/systematic-debugging/",
       "localPath": "plugins/workbench/skills/systematic-debugging/",
       "disposition": "adopted",
       "why": "Root-cause discipline before proposing fixes.",
-      "adaptations": "Description defanged; cross-references to dropped pieces scrubbed."
+      "adaptations": "Description defanged; cross-references to dropped pieces scrubbed. Current wording refinements are recorded in docs/decisions/skill-wording-hardening.md and supersede conflicting historical wording here; preserve the original procedures and supporting examples."
     },
     {
       "upstreamPath": "skills/verification-before-completion/",
       "localPath": "plugins/workbench/skills/verification-before-completion/",
       "disposition": "adopted",
       "why": "Evidence before completion claims: same ethos as toolkit's empirical-proof.",
-      "adaptations": "Description defanged; where the body suggests dispatching reviewers, redirected to code-quality-review / empirical-proof."
+      "adaptations": "Description defanged; where the body suggests dispatching reviewers, redirected to code-quality-review / empirical-proof. Current wording refinements are recorded in docs/decisions/skill-wording-hardening.md and supersede conflicting historical wording here; preserve the original procedures and supporting examples."
     },
     {
       "upstreamPath": "skills/writing-skills/",
       "localPath": ".claude/skills/writing-skills/",
-      "disposition": "mirrored",
+      "disposition": "adopted",
       "why": "The RED→GREEN skill-authoring loop; the operator authors skills constantly. Repo-local, shipped in no plugin.",
-      "adaptations": "Mirrored byte-for-byte from upstream, exempt from the adaptation filter, except for the entries in `localDeltas`. Mirrored at the published release v6.3.0 (b36e0829c6d0140e93cfef2ca599b1b07d4a7797), which added the bundled examples/ directory (fixing a dangling pointer created by the earlier partial port) and a Windows-safe graphviz probe (execFileSync instead of `which dot`). Accepted cost: the mirror carries five `superpowers:`-namespaced skill references and one relative link to `../using-superpowers/`. This dropped piece is dead in an installed environment. Re-porting under the adaptation filter would fix them; the operator chose fidelity over local correctness. Drift handling for this piece is re-mirror, not judge-and-adapt.",
+      "adaptations": "Retains the upstream authoring procedure, examples, discovery guidance, and baseline/change/retest loop. Local adaptations preserve existing code, judge outcomes and misapplication as well as compliance, label sample limits, and allow related changes to be tested together. Review upstream changes through the adaptation filter; do not re-mirror away these corrections. See docs/decisions/skill-wording-hardening.md.",
       "localDeltas": [
-        "SKILL.md frontmatter `description`: adds \"auditing existing skills\" to the trigger list (upstream reads \"Use when creating new skills, editing existing skills, or verifying skills work before deployment\"). Operator call: auditing an existing skill is a distinct trigger from editing one, and the description is the activation surface. Re-apply after every re-mirror."
+        "Description includes auditing existing skills. Outcome-oriented evaluation and safe recovery are local adaptations to retain."
       ]
     },
     {
@@ -76,7 +79,7 @@
       "localPath": "plugins/workbench/skills/receiving-code-review/",
       "disposition": "adopted",
       "why": "Technical rigor on review feedback: verify, never performatively agree. Complements get-pr-comments and the adversarial-review flow. Operator call 2026-08-11.",
-      "adaptations": "Description defanged; cross-references to requesting-code-review redirected to code-quality-review."
+      "adaptations": "Description defanged; cross-references to requesting-code-review redirected to code-quality-review. Current wording refinements are recorded in docs/decisions/skill-wording-hardening.md and supersede conflicting historical wording here; preserve the original procedures and supporting examples."
     },
     {
       "upstreamPath": "skills/using-superpowers/",

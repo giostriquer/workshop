@@ -8,6 +8,18 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.37.0: 2026-09-09
+
+- **Preserve the verification procedures.** Keep evidence formats, design paths, review rubrics, and goal templates while correcting destructive recovery, repeated authorization, stale verification, and uncertainty handling. Expected TDD RED and obvious localized fixes no longer trigger systematic-debugging; persistent or unclear failures retain its four-phase investigation.
+- **Delegate CI watching.** It always runs in a separate read-only agent: Opus on Claude, Sol on Codex, never Astra or Fable. Reports bind checks to the requested revision. The two-attempt fix limit and two-resync PR limit remain.
+- **Use focused local checks for epic lanes.** Run focused local tests and mandatory gates, leaving full suites to PR CI unless specifically required. Every returned wave ends with verified acknowledgment and the next dispatch, delivery gate, closing audit, completion proposal, or concrete blocker. Mutation checks use disposable checkouts that preserve tests.
+- **Keep proof opt-in and preserve evidence.** Retain corroboration protocols, distinguish unresolved findings from disproved ones, and retain valid code while establishing missing test evidence. ([decision](decisions/skill-wording-hardening.md))
+
+## toolkit 0.10.0: 2026-09-09
+
+- **Clarify dogfooding and recording authority.** Use me-human as a dogfooding perspective, make UI recordings opt-in, preserve visible application errors by default, and require existing authority for installs or uploads.
+- **Preserve report and architecture templates.** Allow unsupported report fields to be omitted or marked unknown, require self-contained assets, and verify artifact paths. ([decision](decisions/skill-wording-hardening.md))
+
 ## workbench 0.36.0: 2026-09-04
 
 - **`epic-orchestration` stops letting actionable work die in context.** The
@@ -212,38 +224,3 @@ deletes the oldest (git history keeps everything). Sections from before the
   does once loaded is unchanged and stays in the body.
 - Usage pages follow, including the three that repeated "`file-pr` assumes the
   gates already ran".
-
-## toolkit 0.8.0: 2026-08-20
-
-- **`get-pr-comments` ships here again.** The skill is self-contained (one `gh`
-  pass against the current branch's PR, read-only, no dependency on any
-  workbench piece), which is the placement argument that predates the plugin
-  split; the split had carried it into `workbench` without re-testing it. The
-  text is unchanged, only its plugin is.
-  ([decision](decisions/get-pr-comments-returns-to-toolkit.md))
-
-## workbench 0.26.0: 2026-08-20
-
-- **`get-pr-comments` leaves workbench, and no workbench text names it.** The
-  flow's feedback stage is now `receiving-code-review` alone.
-  `receiving-code-review`'s description drops its "pairs with get-pr-comments"
-  sentence and its body states the stage without pointing outside the plugin;
-  `using-workbench`'s flow diagram and ownership row follow. An installed
-  workbench without toolkit no longer reads a pointer to a skill that is not
-  there. Triage still happens when toolkit is installed; the flow does not
-  depend on it.
-  ([decision](decisions/get-pr-comments-returns-to-toolkit.md))
-- **`audit`'s trigger names the ask, not the protocol.** The description packed
-  the whole division of labor into the frontmatter (sizing, engine dispatch,
-  uncertainty confirmation, exit routing), which is what the skill does after it
-  fires, not what makes it fire. It now reads as the ask itself: use when asked
-  to do an audit or check, with the one exclusion that still matters kept, that
-  an idea to build goes to `brainstorming` instead. The protocol summary moves
-  verbatim into the skill body's opening line, where the session reads it once
-  the skill is already loaded.
-- **`using-workbench`'s trigger names the moments it precedes.** "Use when
-  starting any conversation to orient the session" became the work the
-  orientation comes before: coding, auditing, planning, shipping, filing a PR,
-  debugging, or reaching for any other workbench skill.
-- Usage pages follow all three. Tiers, engines, gates, and exit routes are
-  unchanged.

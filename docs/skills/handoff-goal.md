@@ -6,7 +6,7 @@ This skill packages a goal into a **self-contained goal contract** (a directory 
 
 The skill writes the contract. It does **not** pursue the goal. That boundary is stated three times in the spec and is absolute: the last step is "Report the directory path and tell the operator to point a new session at `goal.md`. Do not begin pursuing the goal here."
 
-It has a second mode. Pointed at an existing goal directory (or simply asked to critique one) it does not write a new contract; it audits the existing one against its own bar and tightens it in place, including migrating older contracts that accumulated history into the status-only shape.
+It has a second mode. Pointed at an existing goal directory (or simply asked to critique one) it does not write a new contract; it audits the existing one against its own bar and reports proposed corrections. It edits or migrates an older contract only when revision is requested.
 
 ## When to reach for it
 
@@ -30,7 +30,7 @@ The exclusion worth internalizing: this is not for exploratory handoffs. The ski
 
 ## The contract
 
-Output lands in `tmp/<YYYY-MM-DD>-<goal-slug>/`: today's date and a short kebab-case goal name. **Two files, nothing else**: "the contract ships no ledger, log, or evidence file, and pursuit never creates one."
+Output lands in the repo scope directory, otherwise `.workbench/<work_scope>/goal-contract/` using the existing work scope. **Two files, nothing else**: "the contract ships no ledger, log, or evidence file, and pursuit never creates one."
 
 | File | Frozen or living | Who writes it after handoff | Contents |
 | --- | --- | --- | --- |
@@ -39,7 +39,7 @@ Output lands in `tmp/<YYYY-MM-DD>-<goal-slug>/`: today's date and a short kebab-
 
 Two rules explain why the contract is shaped this way.
 
-**1. "The contract is the only context that survives."** The pursuing session starts with zero access to the producing session and will compact while it works, so everything it needs lives in the contract, and the contract tells it to keep coming back. Because those files are re-read at every boot and after every compaction, they must stay small, which is enforced mechanically rather than requested politely (see the FAQ on the 450k-character plan).
+The contract stays small and status-only: goal.md is frozen, plan.md carries statuses and checkboxes, and the detailed evidence stays outside the routinely re-read files. Existing evidence must be preserved rather than assumed recoverable from Git or chat.
 
 **2. "The contract is the goal's defense against its own pursuer."** A session pursuing a goal under speed pressure is an optimizer, and an optimizer converges on whatever *looks* done. The contract defines done as checks the pursuer can't fake, forbids the cheap proxies, forces verification the pursuer didn't judge itself, demands evidence before any claim, and names the temptations that mean escalate. The file split makes one defense mechanical: since the pursuer's only writes are statuses in `plan.md`, "the urge to touch `goal.md` *is* the redefinition tripwire firing." And it does not assume the target repo supplies any of this: "many repos mandate no gates, no mutation proofs, no 'don't weaken tests.' The contract carries it."
 
@@ -67,7 +67,7 @@ Everything else scales with stakes: Approval gates when consequential actions ar
 | 5 | Capture baseline and current state **from the repo, not memory** | Baseline frozen in `goal.md`; the state snapshot opens `plan.md` |
 | 6 | Gather operating rules, including quality posture | Concrete values, sourced from repo rule files or from you |
 | 7 | Size the integrity apparatus | The four, plus whatever the stakes warrant |
-| 8 | Assemble the contract | `tmp/<date>-<slug>/goal.md` + `plan.md`, cross-referencing |
+| 8 | Assemble the contract | `.workbench/<work_scope>/goal-contract/goal.md` + `plan.md`, cross-referencing |
 | 9 | Red-team the draft | Fixes applied before delivery |
 | 10 | Deliver | The directory path, and an instruction to point a fresh session at `goal.md` |
 
@@ -79,14 +79,13 @@ Everything else scales with stakes: Approval gates when consequential actions ar
 
 ## Common questions
 
-**Why can't the pursuing session write notes, evidence, or command output into `plan.md`?**
-Because sanctioned evidence files bloat until they eat the sessions they were meant to steer. This failed twice in the field. First, long-running goals produced `plan.md` files around 40,000 lines, and since the contract tells the pursuer to re-read the plan at every boot and after every compaction, every boot paid the cost of the goal's entire history ([decision](../decisions/handoff-goal-bounded-plan.md)). The fix at the time (bound the entries, archive history to a third file) was then observed failing too: an operator report captured a goal session with a **450,388-character `plan.md`** that the pursuer treated as "the authoritative append-only ledger," spending its entire post-compaction budget reading the file in 40k-character chunks and doing no goal work at all, explicitly refusing to skip to the tail because the plan made that ledger authoritative ([decision](../decisions/handoff-goal-status-only-plan.md)). The conclusion was that any sanctioned evidence recording inflates under pressure, so there is now no evidence file at all and pursuit-side writes are status flips only.
+The contract stays small and status-only: goal.md is frozen, plan.md carries statuses and checkboxes, and the detailed evidence stays outside the routinely re-read files. Existing evidence must be preserved rather than assumed recoverable from Git or chat.
 
 **Then where does the history live?**
-Git and session output. "Each verified checkpoint is a commit, and the commit message carries what a note here would have carried." Where a check stands is confirmed by re-running its Verify command, not by consulting a log. The accepted trade-off is explicit: mid-phase, sub-commit state (a failed attempt not worth a commit, a half-decision) no longer survives compaction in files.
+Git and session output when commits are allowed: each verified checkpoint is a commit, whose message carries the checkpoint evidence. If commits are prohibited, the contract names a permitted checkpoint/evidence record outside goal.md and plan.md. Where a check stands is confirmed by re-running its Verify command, not by consulting a log. The accepted trade-off is explicit: mid-phase, sub-commit state (a failed attempt not worth a commit, a half-decision) no longer survives compaction in files.
 
 **Why does every contract carry a commit rule even when I never asked for one?**
-Because a contract silent on commits produced hoarded mega-diffs. Pursuing sessions were accumulating 50,000–70,000-line uncommitted diffs across multi-phase goals: one bad command from losing everything ([decision](../decisions/handoff-goal-commit-discipline.md)). The cause was the contract's own architecture: "never invent a rule" left the Commits slot blank, and inside a gate-heavy document that asks approval before touching anything external, a pursuer reading a blank commit rule concludes git is the operator's decision. So every contract now states that local commits are routine and need no approval, that each green commit is the recovery point a later failure rolls back to, and that uncommitted work is never carried across a phase boundary. Your own stated cadence overrides the default; the default only fills silence.
+Because a contract silent on commits produced hoarded mega-diffs. Pursuing sessions were accumulating 50,000–70,000-line uncommitted diffs across multi-phase goals: one bad command from losing everything ([decision](../decisions/handoff-goal-commit-discipline.md)). The cause was the contract's own architecture: "never invent a rule" left the Commits slot blank, and inside a gate-heavy document that asks approval before touching anything external, a pursuer reading a blank commit rule concludes git is the operator's decision. So each contract states a concrete Commits rule. The default is a commit at each verified checkpoint and phase boundary. An explicit no-commit instruction overrides that default and names a permitted checkpoint/evidence location outside the two contract files; the loop and exit criteria must match that rule.
 
 **Why is `goal.md` off-limits rather than just "don't move the goalposts"?**
 To convert a normative rule into a mechanical one. Routine work never has a reason to write `goal.md`, so any impulse to edit it is a signal rather than a judgment call: the tripwire fires, and the correct response is to escalate to the operator, not to edit.
@@ -98,7 +97,7 @@ The honest answer recorded in this repo is that it is **design-validated, not be
 They did once, and the wording was corrected. Two pursuers treated a legitimate "repoint the test's import at a fixed wrapper" as a forbidden rename-away and escalated instead of applying the fix. The integrity rule now names the actual dodge ("rename/relocate a test so the runner stops collecting it") and states plainly that "pointing the test at the corrected module or a proper new seam is a fix, not a dodge."
 
 **Should the pursuing session dispatch reviewer subagents for every task?**
-No, and the contract now says so where the pursuer will re-read it. The earlier "independent pass" wording read as a per-check choice and live sessions over-chose the heavy branch, burning wall-clock and context on work a Verify re-run already covered, while the review that most deserved adversarial weight, the completed phase's cumulative diff, had no slot at all ([decision](../decisions/handoff-goal-review-cadence.md)). The cadence now scales with the size of the landed work: a small routine task's independent pass is a clean re-run of the Verify command; substantial chunks (a feature, a bug fix, a risky refactor) get reviewers after they land; and each phase carries a standing exit criterion for an **adversarial code-quality review of the phase's cumulative diff**, alongside the committed-work criterion.
+No, and the contract now says so where the pursuer will re-read it. The earlier "independent pass" wording read as a per-check choice and live sessions over-chose the heavy branch, burning wall-clock and context on work a Verify re-run already covered, while the review that most deserved adversarial weight, the completed phase's cumulative diff, had no slot at all ([decision](../decisions/handoff-goal-review-cadence.md)). The cadence now scales with the size of the landed work: a small routine task's independent pass is a clean re-run of the Verify command; substantial chunks (a feature, a bug fix, a risky refactor) get reviewers after they land; and each phase carries a standing exit criterion for an **adversarial code-quality review of the phase's cumulative diff**, alongside the checkpoint criterion required by the contract's Commits rule.
 
 **What if the primary verifier needs something the pursuing session won't have: a browser, credentials, a device?**
 That gap is named in `goal.md` as an explicit blocked item, with the exact manual test and the evidence you must supply: "never silently downgraded to a weaker check." This is why step 4 includes a capability inventory rather than just naming a verifier: unit tests, builds, and inspection are supporting evidence, not substitutes for exercising an interactive outcome on the real surface.
@@ -107,16 +106,16 @@ That gap is named in `goal.md` as an explicit blocked item, with the exact manua
 The pursuer stops and asks you to revise the route. Rewriting the phases is prose editing, which is not a permitted write. Likewise, a failed verification changes no status: the box simply stays unchecked, and repeated failure is a stop condition, not material for a log.
 
 **I have an older contract with a `ledger.md` and an enormous plan. Can it be salvaged?**
-Yes. That is critique mode's migration path. It cuts the accumulated history (git and your session already hold it), re-derives each phase's status and checkboxes from the repo and `git log`, and deletes any evidence file, so what remains is exactly the status-tracked route. Critique mode also re-checks the rest of the bar: every acceptance check verifiable, refutations present, primary verifier on the real surface, operating rules concrete and none invented, commit discipline mechanical, review cadence right-sized both ways, the split honored, and the stakes-scaled sections matching actual stakes.
+Yes. Critique mode reports a proposed migration. When revision is authorized, inventory accumulated history, verify a retained copy outside the routine boot documents, and re-derive each phase's status from the repo and preserved evidence. Remove a legacy file only within that authorized migration after verifying preservation; do not assume git or chat contains untracked evidence. Critique mode also re-checks the rest of the bar: every acceptance check verifiable, refutations present, primary verifier on the real surface, operating rules concrete and none invented, commit discipline mechanical, review cadence right-sized both ways, the split honored, and the stakes-scaled sections matching actual stakes.
 
 **Does the contract work outside this harness?**
-Yes. `goal.md` ends with an Activation note: on a runtime with durable goal support (the skill names Codex `create_goal` as the example) you activate with a compact objective pointing at the two files; elsewhere the pursuing session adopts the contract directly and starts at the `in progress` phase's first unchecked box, or promotes the first `pending` one if none is in progress.
+Yes. `goal.md` ends with an Activation note: on a runtime with durable goal support (the skill names Codex `create_goal` as the example) you activate under that runtime's authorization rules with a compact objective pointing at the two files; elsewhere the pursuing session adopts the contract directly and starts at the `in progress` phase's first unchecked box, or promotes the first `pending` one if none is in progress.
 
 ## It's working if
 
 - A fresh session opened on `goal.md` can state the goal, its operating rules, and its first action without asking you anything.
 - After handoff, `goal.md` has no diff at all, and `plan.md`'s diffs are status lines and ticked checkboxes: nothing else.
-- Each phase closes with a commit whose message names the phase and what was verified, and no phase boundary is crossed with uncommitted work.
+- Each phase closes with a verified checkpoint under its Commits rule: a commit when allowed, or the named external evidence record when commits are prohibited.
 - Every acceptance check has a command next to it, and the behavior-changing ones say how to turn them red again.
 - When something genuinely blocked the goal, you heard about it: the box stayed unchecked and the question came back to you.
 
@@ -130,4 +129,6 @@ Signs of misapplication:
 
 ## Where it fits
 
-`handoff-goal` is the third of the three routes the user picks from at the end of `brainstorming`, and the only one that leaves this session entirely. Everything upstream of it (the audit that found the work, the design dialogue, the state captured from the repo) is compressed into the contract; everything downstream happens in a session you are not in, which is why the contract has to carry the discipline rather than assume it. Inside pursuit, the rest of the workbench flow still applies: the pursuer implements under the repo's conventions, verifies with checks that can fail, commits each checkpoint, and runs an adversarial code-quality review at each phase exit. The producing session's job ends at delivery.
+`handoff-goal` is the third of the three routes the user picks from at the end of `brainstorming`, and the only one that leaves this session entirely. Everything upstream of it (the audit that found the work, the design dialogue, the state captured from the repo) is compressed into the contract; everything downstream happens in a session you are not in, which is why the contract has to carry the discipline rather than assume it. Inside pursuit, the rest of the workbench flow still applies: the pursuer implements under the repo's conventions, verifies with checks that can fail, records each checkpoint under its Commits rule, and runs an adversarial code-quality review at each phase exit. The producing session's job ends at delivery.
+
+Both goal.md and plan.md templates, the producer's ten steps, independent verification, phase exit checks, and recovery protocol remain intact. Explicit no-commit instructions override the normal checkpoint-commit default and name an allowed external evidence record. Refutation tests run in disposable checkouts, preserving the active worktree. Do not reconfirm an explicitly specified goal.

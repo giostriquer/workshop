@@ -4,12 +4,12 @@
 
 When you fix a bug caused by invalid data, adding validation at one place feels sufficient. But that single check can be bypassed by different code paths, refactoring, or mocks.
 
-**Core principle:** Validate at EVERY layer data passes through. Make the bug structurally impossible.
+**Core principle:** Validate independently reachable trust and invariant boundaries. Add a check because a bypass path or distinct contract needs it, not merely because data passes through another layer.
 
 ## Why Multiple Layers
 
 Single validation: "We fixed the bug"
-Multiple layers: "We made the bug impossible"
+Independent boundary checks: "We covered these demonstrated bypass paths"
 
 Different layers catch different cases:
 - Entry validation catches most bugs
@@ -53,13 +53,13 @@ function initializeWorkspace(projectDir: string, sessionId: string) {
 **Purpose:** Prevent dangerous operations in specific contexts
 
 ```typescript
+// Example imports: relative/isAbsolute/sep from node:path, realpathSync from node:fs, tmpdir from node:os.
 async function gitInit(directory: string) {
   // In tests, refuse git init outside temp directories
   if (process.env.NODE_ENV === 'test') {
-    const normalized = normalize(resolve(directory));
-    const tmpDir = normalize(resolve(tmpdir()));
-
-    if (!normalized.startsWith(tmpDir)) {
+    // Resolve real paths and compare path components, not a string prefix.
+    const within = relative(realpathSync(tmpdir()), realpathSync(directory));
+    if (within === '..' || within.startsWith(`..${sep}`) || isAbsolute(within)) {
       throw new Error(
         `Refusing git init outside temp dir during tests: ${directory}`
       );
@@ -90,8 +90,8 @@ When you find a bug:
 
 1. **Trace the data flow** - Where does bad value originate? Where used?
 2. **Map all checkpoints** - List every point data passes through
-3. **Add validation at each layer** - Entry, business, environment, debug
-4. **Test each layer** - Try to bypass layer 1, verify layer 2 catches it
+3. **Select independent safeguards** - Entry, business, and environment checks each need a distinct invariant or reachable bypass; logging provides evidence, not validation
+4. **Test those safeguards** - Exercise the actual bypass path and verify its invariant is enforced
 
 ## Example from Session
 
@@ -113,10 +113,10 @@ Bug: Empty `projectDir` caused `git init` in source code
 
 ## Key Insight
 
-All four layers were necessary. During testing, each layer caught bugs the others missed:
+In this example the safeguards addressed different paths, while instrumentation explained the misuse:
 - Different code paths bypassed entry validation
 - Mocks bypassed business logic checks
 - Edge cases on different platforms needed environment guards
 - Debug logging identified structural misuse
 
-**Don't stop at one validation point.** Add checks at every layer.
+**Inspect the bypass paths before stopping.** Keep checks at boundaries that can actually be reached independently; do not duplicate identical validation through every pass-through layer.

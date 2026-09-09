@@ -10,7 +10,8 @@ trading rigor for parallelism**. The deliverable is a ship / don't-ship verdict
 plus categorized, **corroborated** findings, not a pile of unverified agent
 claims. This skill **runs the sweep**: it fans out a QA team, reproduces the
 findings that matter firsthand, and synthesizes the report. It does **not** fix
-what it finds: acting on the findings is the separate step the operator owns.
+what it finds during the sweep. A standalone sweep ends at its report; an
+already-authorized implementation task can resume afterward with the evidence preserved.
 
 ## When to use
 
@@ -54,7 +55,9 @@ agents: bends to the task; **Phase 0 and Phase 3 do not.**
    substitution is behavior-faithful** (diff it) and say so in the report.
 4. **Smoke before you spend.** Confirm the artifact boots and its top-level
    surfaces respond before committing a team to deep work. Smoke fails → report
-   BLOCKED and stop; a team on a broken build wastes the tokens.
+   the observed failure and do not dispatch the team. Try documented authorized
+   setup/retries first. Attribute a product boot defect to the product; missing
+   verifier prerequisites are BLOCKED. A team on an unusable build wastes tokens.
 
 ## Phase 1: Write the operating contract (rigid scaffold, task-specific content)
 
@@ -93,13 +96,16 @@ Treat every returned finding as a **lead**. Then:
 - **Tier by stakes.** Anything that would move the verdict: blockers,
   regressions, root-cause claims, mediums; you reproduce **firsthand at the
   surface**. A cosmetic / low finding backed by a captured artifact (a screenshot,
-  a response body) can be accepted as-is.
+  a response body) can be accepted as-is with that evidence status stated.
 - **Reproduce, don't trust.** Re-drive the lead. If a root cause is claimed,
   confirm it at the source (read the code; inspect the DOM / the wire). A finding
-  you cannot reproduce is **dropped with a note**, not softened into a hedge.
+  remains **uncorroborated** if it was observed but cannot be reproduced. Mark it
+  **disproved** only with contrary evidence, or **blocked** when prerequisites
+  prevent reproduction. One failed reproduction does not refute the observation.
 - **Regression vs pre-existing.** Establish it by diffing against a baseline: the
   prior build, branch, or main. Never assume: a "bug" that also reproduces on the
-  baseline is pre-existing, not a release blocker.
+  baseline is pre-existing. Record origin separately from severity and release
+  acceptance: pre-existing defects may still block release under the stated criteria.
 - **Close the gaps agents hit.** A subagent "BLOCKED" or "couldn't reach it" is
   *yours* to resolve: find another path (inject data to reach an unreachable
   state, use a second identity) rather than waving the gap through. Do not
@@ -115,7 +121,7 @@ Treat every returned finding as a **lead**. Then:
   with what was done, what was observed, severity, regression-vs-pre-existing, and
   how it was verified. Raw captures go in an **evidence appendix**; the body cites
   them.
-- **State the gaps.** Coverage you didn't reach and claims you dropped go in
+- **State the gaps.** Coverage you didn't reach, unresolved leads, and disproved claims go in
   explicitly: silence reads as "covered", which it wasn't.
 
 ## Agent output schema (keep results mergeable)
@@ -171,9 +177,9 @@ const SLICE_SCHEMA = {
 
 const VERDICT_SCHEMA = {
   type: 'object',
-  required: ['reproduced', 'regression', 'howVerified'],
+  required: ['evidenceStatus', 'regression', 'howVerified'],
   properties: {
-    reproduced: { type: 'boolean' },
+    evidenceStatus: { enum: ['reproduced', 'uncorroborated', 'disproved', 'blocked'] },
     regression: { enum: ['regression', 'pre-existing', 'unknown'] },
     howVerified: { type: 'string' },
     note: { type: 'string' },
@@ -186,7 +192,9 @@ const results = await pipeline(
     { label: `qa:${slice.label}`, phase: 'Fan-out QA', schema: SLICE_SCHEMA }),
   (report, slice) => parallel((report?.findings || []).map(f => () =>
     agent(`Independently corroborate this finding by driving the REAL surface at ${args.surface}.
-Reproduce it firsthand; if it does NOT reproduce, return reproduced:false (default to false when unsure).
+Reproduce it firsthand. Return evidenceStatus: reproduced, uncorroborated, disproved, or blocked.
+An unsuccessful reproduction is uncorroborated unless contrary evidence disproves the claim.
+Unavailable prerequisites are blocked. Preserve uncertainty; do not default it to false.
 Establish regression-vs-pre-existing against a baseline. Do NOT trust the original report's wording.
 Finding: ${JSON.stringify(f)}`,
       { label: `verify:${slice.label}`, phase: 'Corroborate', schema: VERDICT_SCHEMA })
@@ -195,8 +203,9 @@ Finding: ${JSON.stringify(f)}`,
 
 const all = results.flat().filter(Boolean)
 return {
-  confirmed: all.filter(f => f.verified?.reproduced),
-  dropped:   all.filter(f => !f.verified?.reproduced),   // surface these: don't hide them
+  confirmed: all.filter(f => f.verified?.evidenceStatus === 'reproduced'),
+  disproved: all.filter(f => f.verified?.evidenceStatus === 'disproved'),
+  unresolved: all.filter(f => !['reproduced', 'disproved'].includes(f.verified?.evidenceStatus)),
 }
 ```
 
@@ -208,13 +217,13 @@ corroboration covers the bulk; you cover the decision-critical tail.
 
 - **A finding is a hypothesis until you reproduce it.** Every verdict-moving
   finding is re-driven firsthand at the running surface before it counts; one you
-  can't reproduce is dropped with a note, not hedged.
+  cannot reproduce remains uncorroborated or blocked, not automatically disproved.
 - **Gate before you fan out.** No decomposition and no isolation → no sweep; do it
   inline. Fan-out over shared mutable state corrupts what you're testing.
 - **Verify the real artifact.** Test the actual thing under test; a substitute must
   be proven behavior-faithful and declared in the report.
 - **Smoke gates depth.** Boot + top-level response before a team deploys; smoke
-  fails → BLOCKED, stop.
+  fails → classify product failure vs blocked prerequisites; stop team dispatch, not independent authorized work.
 - **One contract, one schema.** Every agent gets the same preamble and returns the
   same structured schema; only the scope line differs. Mergeable results, not
   prose.
@@ -222,6 +231,6 @@ corroboration covers the bulk; you cover the decision-critical tail.
 - **Gaps are yours.** A subagent's BLOCKED is your job to close, not to wave
   through; never substitute a unit test for an unreachable runtime path.
 - **Verdict-first, confidence-tagged.** Lead with ship / no-ship; tag each finding
-  with how it was verified; state dropped claims and coverage gaps explicitly.
-- **Stop at the verdict, not the fix.** The sweep reports; acting on the findings
-  is the operator's separate step.
+  with how it was verified; state unresolved/disproved claims and coverage gaps explicitly.
+- **Finish the sweep before repairing.** Preserve its verdict and evidence.
+  Continue subsequent repairs only under the larger task's existing authority.

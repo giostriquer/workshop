@@ -9,11 +9,19 @@ description: Use when creating new skills, editing existing skills, auditing exi
 
 **Writing skills IS Test-Driven Development applied to process documentation.**
 
-You write test cases (pressure scenarios with subagents), watch them fail (baseline behavior), write the skill (documentation), watch tests pass (agents comply), and refactor (close loopholes).
+You write test cases (pressure scenarios with subagents), watch them fail (baseline behavior), write the skill (documentation), watch tests pass (agents achieve the intended outcome), and refactor (close loopholes).
 
-**Core principle:** If you didn't watch an agent fail without the skill, you don't know if the skill teaches the right thing.
+**Core principle:** Measure task outcomes, not obedience alone. Compare current
+wording, no guidance, and the proposed correction where useful. A control that
+succeeds can demonstrate that existing guidance is harmful. Recorded failures,
+source contradictions, and reproducible effects can justify a correction without
+manufacturing a no-guidance failure. Preserve useful procedures and examples;
+amend the specific defective condition and its repeated counterparts.
 
-**REQUIRED BACKGROUND:** You MUST understand superpowers:test-driven-development before using this skill. That skill defines the fundamental RED-GREEN-REFACTOR cycle. This skill adapts TDD to documentation.
+Score correctness, work preservation, authority, evidence, and useful progress.
+The skill's own rule is not the expected answer merely because it is a rule.
+
+**REQUIRED BACKGROUND:** You MUST understand workbench:test-driven-development before using this skill. That skill defines the fundamental RED-GREEN-REFACTOR cycle. This skill adapts TDD to documentation.
 
 **Official guidance:** For Anthropic's official skill authoring best practices, see anthropic-best-practices.md. This document provides additional patterns and guidelines that complement the TDD-focused approach in this skill.
 
@@ -32,7 +40,7 @@ A **skill** is a reference guide for proven techniques, patterns, or tools. Skil
 | **Test case** | Pressure scenario with subagent |
 | **Production code** | Skill document (SKILL.md) |
 | **Test fails (RED)** | Agent violates rule without skill (baseline) |
-| **Test passes (GREEN)** | Agent complies with skill present |
+| **Test passes (GREEN)** | Correct task outcome with skill present |
 | **Refactor** | Close loopholes while maintaining compliance |
 | **Write test first** | Run baseline scenario BEFORE writing skill |
 | **Watch it fail** | Document exact rationalizations agent uses |
@@ -278,7 +286,7 @@ wc -w skills/path/SKILL.md
 **When writing documentation that references other skills:**
 
 Use skill name only, with explicit requirement markers:
-- ✅ Good: `**REQUIRED SUB-SKILL:** Use superpowers:test-driven-development`
+- ✅ Good: `**REQUIRED SUB-SKILL:** Use workbench:test-driven-development`
 - ✅ Good: `**REQUIRED BACKGROUND:** You MUST understand superpowers:systematic-debugging`
 - ❌ Bad: `See skills/testing/test-driven-development` (unclear if required)
 - ❌ Bad: `@skills/testing/test-driven-development/SKILL.md` (force-loads, burns context)
@@ -369,26 +377,14 @@ pptx/
 ```
 When: Reference material too large for inline
 
-## The Iron Law (Same as TDD)
+## Evidence before shipping skill changes
 
-```
-NO SKILL WITHOUT A FAILING TEST FIRST
-```
-
-This applies to NEW skills AND EDITS to existing skills.
-
-Write skill before testing? Delete it. Start over.
-Edit skill without testing? Same violation.
-
-**No exceptions:**
-- Not for "simple additions"
-- Not for "just adding a section"
-- Not for "documentation updates"
-- Don't keep untested changes as "reference"
-- Don't "adapt" while running tests
-- Delete means delete
-
-**REQUIRED BACKGROUND:** The superpowers:test-driven-development skill explains why this matters. Same principles apply to documentation.
+Behavior changes need a recorded problem and relevant scenario checks. Preserve
+valid drafts while testing them; never delete useful text solely because it was
+written before a test. Mechanical corrections can be made directly. Related
+skills may be revised together when their interaction is the defect, but each
+changed behavior needs coverage. Keep their unaffected checklists, examples,
+templates, and verification contracts intact.
 
 ## Testing All Skill Types
 
@@ -485,19 +481,15 @@ Don't just state the rule - forbid specific workarounds:
 
 <Bad>
 ```markdown
-Write code before test? Delete it.
+Trust a plausible success report.
 ```
 </Bad>
 
 <Good>
 ```markdown
-Write code before test? Delete it. Start over.
-
-**No exceptions:**
-- Don't keep it as "reference"
-- Don't "adapt" it while writing tests
-- Don't look at it
-- Delete means delete
+Before accepting a success report, inspect the reported revision and reproduce
+the acceptance check. A tidy report or green unrelated suite does not establish
+the claimed behavior. Preserve valid work while verifying it.
 ```
 </Good>
 
@@ -509,7 +501,9 @@ Add foundational principle early:
 **Violating the letter of the rules is violating the spirit of the rules.**
 ```
 
-This cuts off entire class of "I'm following the spirit" rationalizations.
+Use this only where letter and intended outcome agree. If a rule causes loss of
+valid work or conflicts with governing instructions, correct the rule instead of
+training compliance with it.
 
 ### Build Rationalization Table
 
@@ -564,21 +558,21 @@ This is "watch the test fail" - you must see what agents naturally do before wri
 
 Write skill that addresses those specific rationalizations. Don't add extra content for hypothetical cases.
 
-Run same scenarios WITH skill. Agent should now comply.
+Run same scenarios WITH skill. Judge the resulting action against the task contract, including preservation and authority.
 
 ### REFACTOR: Close Loopholes
 
-Agent found new rationalization? Add explicit counter. Re-test until bulletproof.
+Agent found a new way to miss the intended outcome? Add a targeted correction and re-test. Correct alternative approaches need no counter; no finite probe set establishes universal reliability.
 
 ### Micro-Test Wording Before Full Scenarios
 
 Full pressure-scenario runs are the final gate, but they are slow and expensive per iteration. Verify the wording itself first with micro-tests:
 
 1. **One fresh-context sample per call**: a raw API call, or a single-shot subagent if you don't have API access. System prompt = the realistic context the guidance will live in (the full skill or prompt template, not the guidance in isolation); user message = a task that tempts the failure.
-2. **Always include a no-guidance control.** If the control doesn't exhibit the failure, there is nothing to fix: stop, don't author the guidance.
-3. **5+ reps per variant.** Single samples lie.
+2. **Include a no-guidance control where useful.** If it succeeds and current wording fails, removal or narrowing may be the fix. Compare against the task outcome, not compliance alone.
+3. **5+ fresh reps per variant for reliability claims.** Smaller or reused-context checks are regression evidence; report their limits, not a cross-model reliability estimate.
 4. **Manually read every flagged match.** Score programmatically if you like, but template echoes and quoted counter-examples masquerade as hits; automated counts alone overstate both failure and success.
-5. **Variance is a metric.** When guidance lands, reps converge on the same shape. Five different interpretations across five reps means the wording isn't binding: tighten the form before adding words.
+5. **Variance is a metric.** Inspect whether different outputs meet the same behavioral contract. Equivalent correct approaches need not have identical form. Tighten wording when variation causes a concrete failure.
 
 Micro-tests verify wording; they do not replace pressure scenarios for discipline skills.
 
@@ -611,11 +605,13 @@ helper1, helper2, step3, pattern4
 
 ## STOP: Before Moving to Next Skill
 
-**After writing ANY skill, you MUST STOP and complete the deployment process.**
+**Verify each changed contract before shipping.** Related skills may be revised
+as one batch when their interaction is the defect. Do not skip any affected
+scenario, but do not publish each skill separately just to enforce sequencing.
 
 **Do NOT:**
 - Create multiple skills in batch without testing each
-- Move to next skill before current one is verified
+- Ship a changed contract before its relevant checks complete
 - Skip testing because "batching is more efficient"
 
 **The deployment checklist below is MANDATORY for EACH skill.**
@@ -624,7 +620,7 @@ Deploying untested skills = deploying untested code. It's a violation of quality
 
 ## Skill Creation Checklist (TDD Adapted)
 
-**IMPORTANT: Create a todo for EACH checklist item below.**
+Use the checklist below to track the checks relevant to this change.
 
 **RED Phase - Write Failing Test:**
 - [ ] Create pressure scenarios (3+ combined pressures for discipline skills)
@@ -640,17 +636,17 @@ Deploying untested skills = deploying untested code. It's a violation of quality
 - [ ] Clear overview with core principle
 - [ ] Address specific baseline failures identified in RED
 - [ ] Guidance form matches the failure type (see Match the Form to the Failure)
-- [ ] For behavior-shaping guidance: wording micro-tested against a no-guidance control (5+ reps, every flagged match read manually): N/A for pure reference skills
+- [ ] For behavior-shaping guidance: wording micro-tested against a no-guidance control (5+ fresh reps for reliability claims; smaller checks labeled as regression evidence, every flagged match read manually): N/A for pure reference skills
 - [ ] Code inline OR link to separate file
 - [ ] One excellent example (not multi-language)
-- [ ] Run scenarios WITH skill - verify agents now comply
+- [ ] Run scenarios WITH skill - verify the intended outcome, preservation, authority, and evidence
 
 **REFACTOR Phase - Close Loopholes:**
 - [ ] Identify NEW rationalizations from testing
 - [ ] Add explicit counters (if discipline skill)
 - [ ] Build rationalization table from all test iterations
 - [ ] Create red flags list
-- [ ] Re-test until bulletproof
+- [ ] Re-test observed failure cases and report remaining coverage limits
 
 **Quality Checks:**
 - [ ] Small flowchart only if decision non-obvious
@@ -660,7 +656,7 @@ Deploying untested skills = deploying untested code. It's a violation of quality
 - [ ] Supporting files only for tools or heavy reference
 
 **Deployment:**
-- [ ] Commit skill to git and push to your fork (if configured)
+- [ ] Commit/push only under existing explicit authority; keep a reviewable local diff otherwise
 - [ ] Consider contributing back via PR (if broadly useful)
 
 ## Discovery Workflow

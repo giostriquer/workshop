@@ -30,7 +30,7 @@ WHEN receiving code review feedback:
 ## Forbidden Responses
 
 **NEVER:**
-- "You're absolutely right!" (explicit instruction-file violation)
+- "You're absolutely right!" before checking the claim (unverified agreement)
 - "Great point!" / "Excellent feedback!" (performative)
 - "Let me implement that now" (before verification)
 
@@ -44,10 +44,11 @@ WHEN receiving code review feedback:
 
 ```
 IF any item is unclear:
-  STOP - do not implement anything yet
-  ASK for clarification on unclear items
+  ASK about the unclear items and check dependencies
+  PAUSE only changes that depend on those answers
+  IMPLEMENT verified independent fixes under the existing request
 
-WHY: Items may be related. Partial understanding = wrong implementation.
+WHY: Establish dependencies rather than assuming every item is coupled.
 ```
 
 **Example:**
@@ -55,8 +56,8 @@ WHY: Items may be related. Partial understanding = wrong implementation.
 The user: "Fix 1-6"
 You understand 1,2,3,6. Unclear on 4,5.
 
-❌ WRONG: Implement 1,2,3,6 now, ask about 4,5 later
-✅ RIGHT: "I understand items 1,2,3,6. Need clarification on 4 and 5 before proceeding."
+❌ WRONG: Guess what 4 and 5 mean, or block unrelated fixes without checking dependencies
+✅ RIGHT: "I will fix independent items 1,2,3,6. Items 4 and 5 need this clarification: ..."
 ```
 
 ## Source-Specific Handling
@@ -92,9 +93,10 @@ IF conflicts with the user's prior decisions:
 
 ```
 IF reviewer suggests "implementing properly":
-  grep codebase for actual usage
+  Search code, public API contracts, consumers, and compatibility obligations
+  A local search alone cannot prove externally exposed behavior is unused
 
-  IF unused: "This endpoint isn't called. Remove it (YAGNI)?"
+  IF confirmed unused: "This endpoint isn't called. Remove it (YAGNI)?"
   IF used: Then implement properly
 ```
 
@@ -104,7 +106,7 @@ You and the reviewer both answer to the user. If the feature isn't needed, don't
 
 ```
 FOR multi-item feedback:
-  1. Clarify anything unclear FIRST
+  1. Ask about unclear items and identify which changes depend on their answers
   2. Then implement in this order:
      - Blocking issues (breaks, security)
      - Simple fixes (typos, imports)
@@ -141,14 +143,10 @@ When feedback IS correct:
 
 ❌ "You're absolutely right!"
 ❌ "Great point!"
-❌ "Thanks for catching that!"
-❌ "Thanks for [anything]"
-❌ ANY gratitude expression
+✅ "Thanks for catching the boundary case; verified and fixed in [location]."
 ```
 
-**Why no thanks:** Actions speak. Just fix it. The code itself shows you heard the feedback.
-
-**If you catch yourself about to write "Thanks":** DELETE IT. State the fix instead.
+Ordinary gratitude is fine. Keep the technical finding, verification, and disposition clear; thanks does not replace those.
 
 ## Gracefully Correcting Your Pushback
 
@@ -173,7 +171,7 @@ State the correction factually and move on.
 | Batch without testing | One at a time, test each |
 | Assuming reviewer is right | Check if breaks things |
 | Avoiding pushback | Technical correctness > comfort |
-| Partial implementation | Clarify all items first |
+| Unclear dependent work | Clarify its prerequisite; continue verified independent items |
 | Can't verify, proceed anyway | State limitation, ask for direction |
 
 ## Real Examples
@@ -200,13 +198,9 @@ Reviewer: "Implement proper metrics tracking with database, date filters, CSV ex
 ```
 The user: "Fix items 1-6"
 You understand 1,2,3,6. Unclear on 4,5.
-✅ "Understand 1,2,3,6. Need clarification on 4 and 5 before implementing."
+✅ "Items 1,2,3,6 are independent and verified; implementing them. Items 4 and 5 need clarification before their changes."
 ```
 
 ## GitHub Thread Replies
 
-When replying to inline review comments on GitHub, reply in the comment thread (`gh api repos/{owner}/{repo}/pulls/{pr}/comments/{id}/replies`), not as a top-level PR comment.
-
----
-
-*Derived from [obra/superpowers](https://github.com/obra/superpowers) (MIT, (c) Jesse Vincent), adapted for the workbench system.*
+Only post replies under explicit existing user/workflow authorization; a request to inspect or fix feedback alone does not authorize an external comment. When replying to inline review comments on GitHub, reply in the comment thread (`gh api repos/{owner}/{repo}/pulls/{pr}/comments/{id}/replies`), not as a top-level PR comment.

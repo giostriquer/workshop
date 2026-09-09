@@ -11,8 +11,7 @@ ask to be rescoped.
 
 It is a reference, not a process. It runs no loop, produces no artifact, and
 reaches no verdict. Its own Boundaries section states the stance:
-"**Orientation, not compulsion, with two standing exceptions.** At session
-start it maps; it never forces, and it never responds to 'how does the flow
+"**Orientation, not compulsion, with two standing exceptions.** When needed it maps; it never forces, and it never responds to 'how does the flow
 work?' by starting the flow." Ask it how the flow works and you get an answer,
 not an audit.
 
@@ -27,19 +26,11 @@ Repo precedence is a general rule on the map, and it runs in both directions.
 Where the repo carries its own process document, the session follows it for
 worktrees, test discipline, and completion gates instead of re-running the
 flow's version of the same ceremony. A repo gate can also *invite* a tier the
-flow would otherwise only offer. What survives regardless are the three user
-gates and the adversarial review before PR-or-merge, and the session names which
-of those it skips and why.
+flow would otherwise only offer. Ask only for unresolved material scope, route, or delivery choices. Existing authorization remains valid; review follows the accepted repository process or the workbench readiness gate.
 
 ## When to reach for it
 
-It fires by itself. Its description triggers before the session codes, audits,
-plans, ships, files a PR, debugs, or reaches for any other workbench skill, so
-the map is loaded before the flow starts. There is no hook behind this because
-workbench "ships no hooks; skill descriptions and the user's own rules are the
-entire activation surface." You can also invoke it on demand, and the two
-questions it is built to answer are "how does the workbench flow work?" and
-"which skill do I use for X?"
+Use it when orientation or skill selection is needed. Its description no longer loads the map before every task. There is no session-start hook; user rules and relevant skill descriptions guide invocation. It answers "how does the workbench flow work?" and "which skill owns this task?"
 
 One carve-out sits at the top of the skill: "If you were dispatched as a
 subagent to execute a specific task, skip this orientation." Dispatched agents
@@ -59,17 +50,14 @@ do not read the map.
 
 **The flow, in five stages.**
 
-- **Entry**: two optional doors. Door A is `audit`: the user sizes the
-  workload, an engine runs it, the user confirms flagged points, and the exit
+- **Entry**: two optional doors. Door A is `audit`: the request supplies scope, an engine runs it, the user supplies missing decisions, evidence gaps remain uncertain, and the exit
   is a report or revealed work. Door B is an idea: ground it against the
   codebase first, then `brainstorming` owns what the code cannot answer.
-- **Scoping**: `brainstorming` always precedes feature and refactor design,
-  and ends at the user's route pick: direct, plan, or handoff-goal.
+- **Scoping**: `brainstorming` resolves open feature and refactor design,
+  carrying the user's route choice: direct, plan, or handoff-goal.
 - **Implementation**: `test-driven-development` where a test harness exists
-  (repo conventions take precedence on conflict), `systematic-debugging` on
-  any bug before fixes. Execution agency is the user's and the harness's call;
-  workbench never dictates in-session versus dispatched, save for the one
-  exception noted under Completion.
+  (repo conventions take precedence on conflict), `systematic-debugging` for persistent or unclear failures requiring investigation. Execution agency is the user's and the harness's call;
+  workbench never dictates in-session versus dispatched, except required independent review and the designated separate CI watcher.
 - **Completion**: entered only when the work-stream's implementation is
   believed complete: test-quality review, then "deemed ready" (verified with
   evidence), then one adversarial review right before the PR-or-merge ask,
@@ -78,11 +66,7 @@ do not read the map.
 - **Feedback**: `receiving-code-review` governs acting on what arrived,
   verified fixes re-enter implementation.
 
-**The three user gates.** This is the system's signature: the user decides at
-exactly three moments: size the workload (`audit`), pick the route (after
-`brainstorming`), PR or merge (after the adversarial review, with the outline
-in hand; standing rules may pre-authorize). "Everything else is the session's
-to drive."
+Sizing, route, and delivery are user decisions when still unresolved. Follow existing authorization and ask only for a material missing choice; the map does not authorize destructive actions or external publication.
 
 **Picking the verification piece.** Several pieces touch verification; the map
 tells you to pick by the work's shape rather than read them all.
@@ -93,7 +77,7 @@ tells you to pick by the work's shape rather than read them all.
 | One just-finished change with a drivable surface | `empirical-proof` |
 | A broad decomposable surface at team scale | `qa-sweep` |
 | One premise, ticket, or hunch | `claim-check` |
-| Landing (assumes the gates already ran, bar the adversarial review) | `file-pr` |
+| Landing (assumes other gates ran and checks that adversarial review covers the current change) | `file-pr` |
 
 Two principles ride with it: "When no frame fits the work's shape, keep the
 standard and drop the frame," and "The protocols are checkpoints, not reading
@@ -157,7 +141,7 @@ dispatching, put the path in the contract.
 No. Scope is the user's to define in the ask and the session's to follow; a
 general guard on it proved too interpretative to state safely and was removed
 ([decision](../decisions/scope-guard-removed.md)). What remains is narrower:
-the adversarial review labels every finding in-scope or out-of-scope, and
+the adversarial review labels findings blocking, advisory, or out-of-scope follow-up, and
 out-of-scope findings become follow-ups rather than diff growth. State the
 boundary in the ask, or in the repo's own rules, when it matters.
 
@@ -173,9 +157,9 @@ user's ([decision](../decisions/expensive-verification-user-optioned.md)).
 
 **Does it decide whether work runs in-session or gets dispatched to agents?**
 
-Once, and nowhere else. The adversarial `code-quality-review` is dispatched to
+Two roles require separate agents. The adversarial `code-quality-review` is dispatched to
 a reviewer context that did not write the code, because a session reviewing its
-own diff is not adversarial. Everywhere else the rule stands: "Workbench never
+own diff is not adversarial. CI polling always uses the designated separate Opus (Claude) or Sol (Codex) watcher, never Astra/Fable or the parent. Outside those assignments, the rule stands: "Workbench never
 dictates execution agency (in-session vs dispatched)." That is the user's and
 the harness's call, and the flow's only job at that moment is handing the
 implementer the plan or goal when one exists
@@ -197,8 +181,7 @@ that quietly commits a brainstorm doc is misbehaving.
 
 - The session names the moment and the skill before acting ("Using audit to
   size this investigation").
-- You are asked exactly three times: size the workload, pick the route, PR or
-  merge.
+- Questions resolve missing material scope, route, or delivery choices without repeating existing authorization.
 - Reports, designs, and evidence from one work-stream all land in one folder
   under `.workbench/<work_scope>/`, including anything dispatched agents
   produced.
@@ -219,3 +202,5 @@ skill owns the moment: `audit` and `brainstorming` at the two entry doors,
 gates, `file-pr` and `fix-ci` at landing. Nothing hands off *to* it; it is
 already loaded when the session starts, and it is the thing you re-read when
 you cannot tell which piece owns what is in front of you.
+
+CI polling always uses a separate Opus agent on Claude or gpt-5.6-sol agent on Codex, never Astra/Fable or parent polling. Epic returns require verified acknowledgment and a concrete next action. Completion retains relevant evidence and independent review; changed relevant state invalidates evidence, not a new message alone.
