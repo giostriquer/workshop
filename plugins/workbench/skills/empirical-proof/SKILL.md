@@ -7,14 +7,16 @@ description: Use when a just-finished change touched a surface a real client can
 Prove finished work **at the running software**, not on paper. The deliverable is
 a verdict (`verified`, `broken`, or `blocked`) where every "verified" traces to
 a recorded exchange with the real running app. This skill **runs the proof**; it
-does **not** fix what it finds, and it does **not** fix the environment it runs
-in: both are the operator's separate step.
+preserves each attempt and its tested revision. A verification-only assignment
+ends at its report. When the larger task already authorizes repairs, return the
+finding to implementation, repair within scope, and rerun affected proof on the
+new revision; do not silently alter the artifact during a proof attempt.
 
 ## When to use
 
 After finishing work that touched a surface the running software can prove: an
 MCP tool, a REST API endpoint, any behavior a client can drive, and before
-reporting it done.
+reporting it done, **when the user requested this proof or a standing gate requires it**. Otherwise offer it without running the protocol.
 
 **A repo's own completion gate is a standing ask.** When the repo's process
 document (`CLAUDE.md`, `AGENTS.md`, `CONTRIBUTING`) requires driving the real
@@ -86,9 +88,9 @@ runnable surface is **the artifact it emits**. The proof: run the generator
 via the documented path, then build and drive the emitted artifact the way
 its real consumer would: compile it, boot it, hit its endpoints. The gate
 above applies to that artifact; reading the emitted source is still reading,
-not proof. One boundary shift: an emitted artifact that fails to build or
-boot is a **`broken` verdict against the generator**, not `blocked`: the
-generator's output is the change under test.
+not proof. A build/boot failure is **`broken`** when evidence attributes it to
+the emitted artifact. Missing credentials, required services, or verifier
+capabilities are **`blocked`**; a boot failure alone does not establish a generator defect.
 
 ## Scenarios: what to prove
 
@@ -147,9 +149,10 @@ Verdict first: one of:
 - **`verified`**: every scenario passed; per-surface results follow, each
   citing its transcript.
 - **`broken`**: the failing scenarios with their evidence, expected vs
-  observed. **Report the break; do not fix it.** A "verified after I fixed it
-  in passing" is unreviewed implementation wearing a verification badge: the
-  finding goes to the operator, the fix is their call.
+  observed. Preserve the failed attempt. For a verification-only ask, report it.
+  For an already-authorized repair, return to implementation, verify/review the
+  changed revision as required, then rerun the affected proof. Do not relabel
+  the original failed attempt as passed.
 - **`blocked`**: what the gate observed (verbatim), and the one input that
   would unblock.
 
@@ -162,7 +165,7 @@ citing the check that proved the stop, and what you left untouched.
 | Excuse | Reality |
 |---|---|
 | "The change doesn't touch the DB, a stub gets us past boot" | You cannot see the blast radius from inside the change; the artifact that ships boots against the real dependency. `blocked` + ask. |
-| "I found the bug and fixed it while I was there: saves a round trip" | Now the report certifies code nobody reviewed. Report `broken`; the fix is the operator's step. |
+| "I found the bug and fixed it while I was there: saves a round trip" | Record the failed attempt; repair only under existing authority, then verify the new revision in a distinct attempt. |
 | "Unit tests already cover this logic" | A repo can hold 4/4 green tests and a live type-coercion hole at the same time: the baseline for this skill did. Tests gate; they don't prove. |
 | "I read the code path; it clearly works" | Reading predicts. The verdict requires a transcript. |
 | "The happy path returned 201, we're good" | Every baseline bug lived outside the happy path. Probes are the proof. |
@@ -170,7 +173,7 @@ citing the check that proved the stop, and what you left untouched.
 
 ## Red flags: STOP, you are about to cheat the proof
 
-- Editing product code while "verifying" it
+- Editing product code during an attempt and reporting that original attempt as passed
 - Setting a fake env var, stub listener, or dummy service to get past a boot
   check
 - Writing "verified" backed by tests, build output, or code reading
@@ -186,7 +189,7 @@ citing the check that proved the stop, and what you left untouched.
 - Gate first: a recorded health-check on the right build before any scenario
   counts; start it yourself via the documented path, retry included.
 - `blocked` is a first-class honest outcome but the last resort, not the first
-  exit: cause verbatim + the one unblock, then stop. One failed launch is not a
+  exit: cause verbatim + the one unblock, then stop the blocked proof. Continue independent authorized work. One failed launch is not a
   blocked verdict. Never fabricate a dependency to proceed.
 - MCP tools and REST endpoints, when touched, are must-cover: driven through a
   real client connection / real HTTP respectively.
@@ -194,7 +197,7 @@ citing the check that proved the stop, and what you left untouched.
   path.
 - Subagents return evidence, not verdicts alone; re-drive every FAIL and one
   PASS per surface before reporting.
-- Report `broken`, don't repair it: the skill stops at the verdict, for setup
-  and for bugs alike.
+- Preserve the verdict of each attempt. Verification-only work ends at its report;
+  already-authorized implementation can resume afterward and produce a new proof.
 - Stop what you started and prove the stop (port closed, process gone); leave
   the workspace and its logs as found.

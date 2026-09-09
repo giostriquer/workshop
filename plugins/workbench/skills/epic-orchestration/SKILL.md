@@ -59,23 +59,27 @@ the code is well built, and you are asking whether the claim is true. Only you h
 ticket's bar, the epic's rules, and the audit's repro material. Every check below exists
 because skipping it let a real defect through.
 
-**Run every command with an explicit `cd <worktree>` in the same invocation.** The shell
-resets between calls; a bare `git checkout` once landed in the operator's main checkout
-and reverted three tracked files there. Restore immediately and say so if it happens.
+**Run every command in an explicit worktree directory** using the tool's working
+directory argument or an explicit shell `cd`. Check the resolved path before
+mutation; do not rely on the previous call's directory.
 
-**Red-flip properly.** Revert the lane's *modified* source files to the base commit **and
-delete the files it added**, then run its suites: they must fail. `git checkout <base> --
-<new-file>` silently no-ops for a file that did not exist at base, so a lane that adds a
-module can appear to pass a red-flip with its new code still loaded. Split source from
-tests on the real extension (`grep -vE '\.test\.ts$'`), not on a substring: a source file
-named `http-tests.ts` is not a test.
+**Red-flip properly, in isolation.** Create a disposable validation checkout of
+the reported commit. Preserve the lane's active/dirty worktree and all relevant
+tests and fixtures. Identify changed production files from the repository's
+actual conventions; do not classify tests using a single filename suffix.
 
-```
-for f in $(git diff --name-only BASE..HEAD | grep -vE '\.test\.ts$'); do
-  if git cat-file -e BASE:$f 2>/dev/null; then git checkout BASE -- $f; else rm -f $f; fi
-done
-# run the lane's changed suites, expect failures, then: git checkout HEAD -- .
-```
+1. Pin the reported base/head and inspect their production/test diff.
+2. In the disposable checkout only, revert modified production files to base and
+   remove newly added production files. Preserve tests, fixtures, and setup.
+3. Run the focused regression cases. Require the intended behavioral assertion
+   to fail; missing imports/tests/dependencies are not a valid RED.
+4. Restore the fix in that isolated checkout and require those cases to pass.
+5. Restore or discard only the isolated fixture after checking its resolved path.
+   Never use a broad restore on the implementer's working tree.
+
+Use focused local tests for validation and correction rounds. Full CI suites run
+in PR CI by default. Broader local verification needs an explicit repo/user gate
+or a specific unresolved integration risk; name it and choose the smallest check.
 
 **Grep the diff for banned content** (comments, TODO/FIXME/HACK, skipped tests) if the
 epic carries such rules. Enforce them on every lane or they erode: one doc-comment sent a
@@ -113,14 +117,14 @@ Every one of these has been used to skip a check above.
 | "The report is complete and in the exact format." | The format is a claim about the work, not evidence of it. A well-formed report is the ordinary shape of a wrong one. |
 | "CHECKS says the suite is green." | Green proves the tests ran, not that they would fail without the fix. That is the entire point of the red-flip. |
 | "This lane's last three reports were clean." | Track record is not evidence about this diff. The lane you stopped checking is the one that lands the defect. |
-| "The red-flip costs a full suite run and the epic is behind." | The cheapest defect is the one that never merged. A wave that ships a phantom fix costs an extra audit round and every lane in it. |
+| "The focused red-flip costs time and the epic is behind." | The cheapest defect is the one that never merged. A wave that ships a phantom fix costs an extra audit round and every lane in it. |
 | "I read the diff and it looks right." | Reading confirms the code says what the lane says it says. It cannot tell you the test would fail without it. |
 | "The anchor moved, but the fix is obviously in the right place." | Chase it anyway. That is how a second live instance of the same defect surfaced after four audits had missed it. |
 | "It is infrastructure, and its tests pass." | Tests written by the author cannot tell you the design is wrong. Design-read it. |
 
 ### Red flags: stop and open the worktree
 
-- You are about to write "authorized" without having run anything in the lane's worktree.
+- You are about to write "authorized" without verifying the reported revision in its isolated validation checkout.
 - You are repeating the lane's own numbers as if they were your findings.
 - You caught yourself thinking "the review already covered that."
 - You are about to describe coverage you did not reproduce.
@@ -144,20 +148,24 @@ The prompt is one self-contained message containing:
 - **Evidence**: read-only paths to the audit's repro material, and the repo's existing
   integration-test pattern to reuse rather than reinvent.
 - **Method**: TDD red-first; assertions on the **emitted artifact and runtime behavior**,
-  not internals; controls that pin prior fixes byte-stable.
+  not internals; controls that pin required prior behavior. Use focused tests and
+  mandatory local gates; full suites normally run in PR CI. Broader local runs
+  require an explicit requirement or named unresolved integration risk.
 - **Rules**: the epic's standing rules verbatim (comments, debt, naming, read-only
   trackers), including that debt and follow-ups noticed in passing get reported rather
-  than fixed or dropped, plus the toolchain specifics (`tsgo` not `tsc`, format before commit,
-  conventional commits).
+  than fixed or dropped, plus the actual repository toolchain, formatting gates,
+  commit conventions, and existing publishing authority.
 - **Advisory coordination, never hard exclusions**: name what other lanes own and say
-  "proceed if your clean fix needs it and record it under FORKS/DEVIATIONS." Hard
+  "coordinate an ownership overlap before concurrent edits, then record the
+  agreed change under FORKS/DEVIATIONS." Hard
   DO-NOT-TOUCH walls caused a lane to halt three tickets over one advisory conflict.
 - **Completion**: before handing back, the lane runs the `code-quality-review` skill over
   its own diff. That skill is dispatched, never self-served: it goes to the
   `code-quality-reviewer` agent, or to a fresh session where the host has no subagent
   mechanism. The lane owns running it; you never dictate what it should look for. Any
-  correction you send back makes those commits unreviewed code, so the lane runs
-  `code-quality-review` again before the next handback.
+  correction is verified against the finding. Material changes to behavior, design,
+  or risk get focused independent review before handback; minor verified corrections
+  do not restart the full review. Record the accepted revision and dispositions.
 - **The exact report format** (below). Ranges, not file lists: you read the diff yourself.
 
 ```
@@ -201,26 +209,33 @@ yourself, and issue it in its own dispatch block when it fires.
 
 ## Authorizing
 
-Authorization is its own paste-ready block: merge dev (never rebase; stop and report on a
-*semantic* conflict), re-run checks, then file the PR with the `file-pr` skill and report
+Authorization is its own paste-ready block under existing operator authority:
+merge the actual integration branch (never rebase; stop and report on a semantic
+conflict), run affected checks and mandatory local gates, then use `file-pr` and report
 back. That skill writes the body from the repo's own template and tends the PR to green
 and mergeable.
 
 **Say in the block that `file-pr`'s review gate is already satisfied.** The gate requires
 an adversarial review that ran on this diff, and the lane's `code-quality-review` is
-exactly that: dispatched, returned, findings acted on. `file-pr` names this as one of its
-two exemptions. Left unsaid, the lane loads `file-pr`, reads the MUST, and burns a second
+exactly that: dispatched, returned, findings acted on. Record the reviewed revision
+and which corrections were verified or independently reviewed. Left unsaid, the lane loads `file-pr`, reads the MUST, and burns a second
 full review pass on a diff that already had one. Two cases where the gate is **not**
-satisfied, and you say so instead: corrections landed after that review, or the dev merge
-hit a semantic conflict. The second is why a semantic conflict stops the lane rather than
+satisfied, and you say so instead: material corrections lack focused follow-up,
+or the integration merge hit a semantic conflict. The second is why a semantic conflict stops the lane rather than
 being resolved into new code.
 
 What stays yours: the exact title, and a terminal CI verdict before you call the wave
 done. Never end a turn on a watcher's promise.
 
 PR text describes the **change and its stakes**, never the process. No lane names, no
-"epic", no "follow-up", no review mechanics. Titles are one conventional-commit subject;
-ticket ids live in the branch and the Why section.
+"epic", no "follow-up", no review mechanics unless they matter to the change;
+follow the repo's title convention and place ticket links in its template fields.
+
+CI watching always runs in a separate **Opus agent on Claude or gpt-5.6-sol
+agent on Codex**, never Astra/Fable or parent polling. The implementer lane uses
+`fix-ci` for repairs and returns evidence bound to the target SHA and required
+checks. The orchestrator validates it and sends correction handoffs, never
+implements the fix. Missing designated dispatch is a stated monitoring gap.
 
 ## Rulings you own
 
@@ -239,18 +254,22 @@ Lanes stop and ask; you decide, with evidence:
 ## Nothing actionable lives only in context
 
 A session ends and its context dies with it. Anything actionable, or anything still
-needing verification, survives only as a ticket under the epic. **If it would be work
-later, it is a ticket now.**
+needing verification must survive in the epic's durable tracker or scope record.
+Confirmed actionable work gets a deduplicated ticket under existing explicit write
+authority. Uncorroborated or disproved claims remain evidence records with their
+disposition, not automatically implementation tickets. If external writes lack
+authority, prepare the ticket content locally and name that pending action.
 
 | Found where | What gets filed |
 | --- | --- |
-| A lane's `DEBT + FOLLOW-UPS` or `FORKS/DEVIATIONS` | one ticket each: what it is, the anchor, why it was not done now |
+| A lane's `DEBT + FOLLOW-UPS` or `FORKS/DEVIATIONS` | deduplicated tickets for confirmed actionable work: what it is, the anchor, why it was not done now; evidence records for unresolved or disproved claims |
 | Your own validation | anything the ticket did not cover: a second live instance, an over-strict fix, a caller the change would break |
 | A ruling you made | the ruling recorded on the ticket, so it is a decision rather than a drift |
-| A finding you scoped out | a ticket saying it was scoped out and why, never silence |
-| The blind re-audit | every finding, including the ones it reports as dropped, with the reason |
+| A finding you scoped out | record the finding and why it was scoped out; link its deduplicated ticket when confirmed actionable, otherwise its evidence disposition |
+| The blind re-audit | confirmed actionable findings as deduplicated tickets; unresolved/disproved claims in the evidence record, with the reason |
 
-Each entry is closed by a ticket id before the wave closes, and that id goes back into
+Each actionable entry carries its ticket id or a named pending publication step
+before the wave closes; evidence-only claims carry their record reference in
 the record that raised it. "I put it in the report" is not filing it. "The operator saw
 it in chat" is not filing it. A follow-up that exists only in a paragraph you wrote is
 work nobody will do.
@@ -263,14 +282,38 @@ created, not in a cleanup pass that never gets scheduled.
 ## Non-negotiables
 
 - **Never modify a ticket the operator does not own.** Create your own under the epic and
-  reference theirs as context; duplicate coverage is fine, absorbing their scope is not.
+  reference theirs as context and check for duplicates first; absorbing their scope is not.
 - **Nothing actionable lives only in context.** Deferrals, debt, follow-ups, forks, and
-  anything you found that the ticket did not cover become tickets under the epic before
-  the wave closes.
+  confirmed actionable work get deduplicated tickets under existing write authority;
+  unresolved/disproved claims retain a durable evidence record and disposition.
 - **Close each ticket with its fixing PR and what the behavior is now**, including
   corrections to the ticket's own anchor when the fix landed elsewhere.
 - **State what you did not verify.** Coverage claims that outrun the evidence are the one
   failure this whole pattern exists to prevent.
+
+## Close every handoff with a next step
+
+Acknowledge only what was actually verified. Say, for example, “This set of work
+is verified complete,” followed by the accepted revision, checks, and remaining
+delivery gates. “Ready for PR” is distinct from merged or epic-complete.
+
+Then evaluate the epic's current state and choose exactly one immediate next step:
+
+1. **More ready work:** name the next lanes and provide their dispatch blocks now.
+2. **Delivery still pending:** name the owner and next action for review, CI, PR,
+   or merge. Keep that gate visible instead of acknowledging the wave as finished.
+3. **Implementation complete, closing audit owed:** state the audit stopping point
+   and provide the blind audit's scope, regression families, evidence contract,
+   and dispatch block. Do not manufacture more implementation to avoid this gate.
+4. **Audit holds and closure criteria are met:** summarize the corroborated result,
+   remaining accepted limits, and propose the epic as done for the operator's
+   close decision. Do not close it silently.
+5. **Blocked:** name the missing decision/capability, owner, and concrete unblock;
+   advance independent ready work if available.
+
+A bare acknowledgment, “waiting for instructions,” or a list of finished tickets
+without this next-step decision is an incomplete orchestration response. Do not
+ask the user to choose a routine next lane when the agreed plan already determines it.
 
 ## Closing the epic
 
@@ -280,7 +323,8 @@ generally, and **attack the fixes the previous audit provoked**, because they ar
 least weathered code and each round has found at least one defect introduced by the last
 round's fixes. Require a regression-check section (per fix family: held or broken, with
 evidence) and per-finding repro plus current-code anchor; findings that cannot be
-reproduced are reported as dropped.
+reproduced remain uncorroborated or blocked; contrary evidence is required to call
+them disproved. Preserve their evidence and limits in the report.
 
 Expect several rounds. Convergence looks like this: earlier fixes hold under attack while
 each audit has to cut deeper to find anything, and the newest finds cluster around policy

@@ -10,7 +10,7 @@ If you were dispatched as a subagent to execute a specific task, skip this orien
 Orientation map for the **workbench** system: how work enters, gets scoped, gets
 implemented, and lands.
 
-## At session start
+## When orienting work
 
 Skim the flow and the ownership table below before diving into the work. When
 the task at hand matches a moment with an owning skill, invoke that skill
@@ -19,8 +19,8 @@ this investigation"). If a skill turns out wrong for the situation, you don't
 have to follow it. Most of these are defaults the user configured rather than
 gates: they fire on relevance, not compulsion.
 
-**Two pieces are the exception. They fire by default, not by relevance.**
-`verification-before-completion` at every done/fixed/passing claim. Run unless **the user explicitly declines it**, or **the repo's
+**Two completion requirements apply by default:** `verification-before-completion`
+at each done/fixed/passing claim, and independent `code-quality-review` before PR-or-merge. Run unless **the user explicitly declines it**, or **the repo's
 own process supersedes it**. Those are the only two outs: a small diff, a
 confident implementation, a tidy-looking change, or time pressure are not
 among them, and neither is the session's own judgment that this one looks
@@ -31,22 +31,22 @@ its own process document (`CLAUDE.md`, `AGENTS.md`, `CONTRIBUTING`), follow it
 for worktrees, test discipline, and completion gates rather than re-running the
 flow's version of the same ceremony. Precedence is not only subtraction: a repo
 gate can also invite a tier the flow would otherwise only offer, such as
-`empirical-proof`. What survives regardless are the three user gates and the
-adversarial review before PR-or-merge.
+`empirical-proof`. Existing scope and delivery authorization carries forward. Independent review
+before PR-or-merge follows the explicit waiver/repository exceptions below.
 
 ## The flow at a glance
 
 ```
 ENTRY (two optional doors)
   door A: verify · hunt · check:
-      USER sizes the workload → audit runs the engine → USER confirms flagged
-      points (only when flags exist) → report·done, or work revealed
+      use requested scope; ask if unresolved → audit runs the engine → resolve flagged
+      decisions; report empirical uncertainty → report·done, or work revealed
   door B: an idea:
       ground it against the codebase → brainstorming owns what the code
       can't answer
 
 SCOPING
-  brainstorming, always before feature/refactor design → USER picks the route:
+  brainstorming for unresolved design → follow the authorized route or resolve a missing choice:
       direct (straight from session) · plan (mechanism from the user's stack:
       plugin skill → repo skill → repo standards → harness plan mode) ·
       handoff-goal (contract dir; fresh session pursues autonomously)
@@ -54,7 +54,7 @@ SCOPING
 IMPLEMENTATION (agency = user/harness call; implementer gets the plan/goal if present)
   test-driven-development: default where a test harness exists;
       repo conventions take precedence on conflict
-  systematic-debugging: on any bug, before fixes
+  systematic-debugging: sustained unresolved investigations; skip expected RED and obvious fixes
 
 COMPLETION (enters only when the work-stream's implementation is believed complete)
   test-quality review → deemed ready = verified with evidence
@@ -64,11 +64,11 @@ COMPLETION (enters only when the work-stream's implementation is believed comple
   write the code, never self-served; skipped only on an explicit user decline
   or a superseding repo process; fires here and nowhere else, right before the
   PR-or-merge ask, never mid-implementation →
-  in-scope findings fixed + re-verified, out-of-scope → follow-ups,
-  proceed (no re-review) →
+  blocking findings fixed + re-verified, advisory findings dispositioned, out-of-scope → follow-ups,
+  material corrections receive focused independent follow-up; minor verified fixes proceed →
   USER gate: session outlines what was done, asks PR or merge
   (explicit repo/user rules may pre-authorize) → land: file-pr · merge · push;
-  fix-ci tends the checks
+  fix-ci delegates watching to Opus on Claude or gpt-5.6-sol on Codex
 
 FEEDBACK
   receiving-code-review governs acting on what arrived →
@@ -83,7 +83,7 @@ FEEDBACK
 | Designing a feature or refactor | `brainstorming` → the user's route pick |
 | A long-running autonomous goal, outliving this session | `handoff-goal` |
 | Implementing with a test harness | `test-driven-development` |
-| A bug, before proposing fixes | `systematic-debugging` |
+| An unresolved failure requiring sustained investigation | `systematic-debugging` |
 | About to claim done / ready | `verification-before-completion` (offer `empirical-proof` if runnable) |
 | The implementation's tests | `test-quality-reviewer` |
 | The one adversarial pass: **required** once the work-stream is complete, right before PR-or-merge, **dispatched** to a reviewer that did not write the code | `code-quality-review`, run by the `code-quality-reviewer` agent |
@@ -127,7 +127,7 @@ didn't order.
 
 ## Artifacts are disposable
 
-Everything the workbench flow produces along the way is disposable. Save such
+Working artifacts are normally temporary. That is a storage convention, not permission to delete existing work or evidence. Save such
 artifacts under **`.workbench/<work_scope>/`** (or `.tmp/workbench/<work_scope>/`
 in repos that centralize scratch under `.tmp/`), typically gitignored. Promotion
 to a durable artifact is **the user's call**: it happens only when they
@@ -154,18 +154,24 @@ worktree exists if not, so a checkout never lands in the index. Never place
 a worktree in the system temp directory or any path outside the repository
 unless the user explicitly asks.
 
-## The three user gates
+## User decisions and existing authority
 
-Workbench's signature: the user decides at exactly three moments: **size the
-workload** (audit), **pick the route** (after brainstorming), **PR or merge**
-(after the adversarial review, with the outline in hand; standing rules may
-pre-authorize). Everything else is the session's to drive.
+Sizing, design/route choices, and delivery are decision points when the user has
+not already settled them. Carry prior authorization forward; do not repeat a
+permission question just to satisfy this map. Skills do not authorize destructive
+actions or external writes. Missing evidence stays visible and does not become a
+question for the user to certify as true.
+
+CI watching always uses a separate Opus agent on Claude or gpt-5.6-sol agent on
+Codex, even when the parent is idle or already uses that model. Never assign
+watching to Astra/Fable or fall back to parent polling when dispatch is unavailable.
+Epic returns require verified acknowledgment and a concrete next action; see
+`epic-orchestration` for lane, delivery, audit, and closure handoffs.
 
 ## Boundaries
 
-- **Orientation, not compulsion, except for two standing gates.** At session
-  start it maps; it never forces, and it never responds to "how does the flow
+- **Orientation, not compulsion, except for two standing gates.** When needed
+  it maps; it never forces, and it never responds to "how does the flow
   work?" by starting the flow. The two default-on completion gates are the
   exceptions: they are the process the user configured, so skipping one is
   the user's call to make, never the session's.
-  

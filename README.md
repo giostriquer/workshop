@@ -49,7 +49,7 @@ npx github:giostriquer/workshop --dry-run   # plan; drop --dry-run to apply
 
 ### `workbench`: use right away
 
-Five read-only review agents, nine everyday skills, and the seven-skill **workbench**
+Five read-only review agents, nine everyday skills, and the eight-skill **workbench**
 process layer: ready immediately after install, nothing to configure.
 
 **Agents**: they inspect and report, never edit your files:
@@ -67,7 +67,7 @@ process layer: ready immediately after install, nothing to configure.
 | Skill | Does |
 | --- | --- |
 | `file-pr` | files the branch's PR, tends it to green-and-mergeable |
-| `fix-ci` | watches CI, fixes red in-session |
+| `fix-ci` | delegates CI watching to Opus (Claude) or Sol (Codex), fixes red in-session |
 | `handoff-goal` | hands a long-running goal to a fresh autonomous session |
 | `claim-check` | deep verdict on a ticket / hunch / premise |
 | `qa-sweep` | team-scale QA over a broad surface, corroborated |
@@ -80,13 +80,13 @@ process layer: ready immediately after install, nothing to configure.
 
 | Skill | Does |
 | --- | --- |
-| `audit` | user-sized investigations, confirm-the-flags gate |
+| `audit` | investigations scoped from the request; ask only for unresolved scope or intent |
 | `brainstorming` | design dialogue ending at your route pick |
 | `test-driven-development` | TDD, default where a test harness exists; repo conventions take precedence |
-| `systematic-debugging` | root cause before fixes |
+| `systematic-debugging` | four-phase investigation for persistent or unclear failures |
 | `verification-before-completion` | evidence before any "done" claim |
 | `receiving-code-review` | rigor on arriving review feedback |
-| `using-workbench` | session-start flow orientation + on-demand map |
+| `using-workbench` | on-demand flow orientation |
 | `self-audit` | retrospective on the process that ran the session (user-invoked only) |
 
 Five workbench skills derive from [obra/superpowers](https://github.com/obra/superpowers)
@@ -109,9 +109,8 @@ installed skill's listing rides in each session's context:
 | `arch-map` | visual architecture map when no doc exists |
 | `ui-demo-video` | Playwright walkthrough video + verification frames |
 | `get-pr-comments` | triages PR feedback into an action list |
-| `writing-skills` | TDD applied to authoring skills (derived from obra/superpowers, MIT) |
 | `adopt-global-rules` | installs the workshop's shipped global CLAUDE.md / AGENTS.md, rules, and Claude output styles onto a machine, additively (user-invoked only) |
-| `me-human` | act as a human user dogfooding a system for real work (user-invoked only) |
+| `me-human` | dogfood a system from a human user's perspective (user-invoked only) |
 
 Details in [`plugins/toolkit/README.md`](plugins/toolkit/README.md).
 

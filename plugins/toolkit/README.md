@@ -37,7 +37,7 @@ codex plugin add toolkit@workshop
 | `ui-demo-video` | provides a Playwright walkthrough of the running app, verification frames for the model, and an MP4 for the PR |
 | `get-pr-comments` | triages the PR's conversation, review, and inline comments into a prioritized action list; read-only |
 | `adopt-global-rules` | installs the workshop's shipped global CLAUDE.md / AGENTS.md, rules, and Claude output styles onto this machine additively; user-invoked only |
-| `me-human` | acts as a human user putting a system to real work by trying before asking, escalating on bugs, and stopping at the scope edge; user-invoked only |
+| `me-human` | dogfoods a system from a human user's perspective by trying before asking, escalating on bugs, and stopping at the scope edge; user-invoked only |
 
 `adopt-global-rules` also runs without any plugin installed, for bootstrapping a
 bare machine:

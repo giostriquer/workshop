@@ -76,8 +76,14 @@ Use these only when Step 0 finds no house style. They reproduce a rich, card-and
 
 For reports that carry findings (audit, QA, review):
 
-- **Order by severity, descending.** Most severe first, always (critical → high → medium → low). The ids are then reassigned top-down, so a deck whose findings arrive in mixed order ships as `F-1` critical, `F-2` high, …. After sorting, run the **Renumbering procedure**. **Exception:** when the source already carries a stable, cross-referenced id scheme of its own, preserve those ids and skip reassignment: the Renumbering procedure governs ids this skill assigns, not ids the source owns.
-- **Every finding card carries evidence and an action.** Required shape: id + chip header (severity + evidence tier) → one-line **claim** (quote box) → an **Evidence** line that is concrete (a live result, `file:line`, or an appendix cite) → a **Fix** line with a cost pill. The headline states the finding; the body proves it and says what to do. Concise beats extensive, but never a claim without its evidence.
+- **Order assessed findings by severity, descending; keep unassessed findings in
+  a clearly labeled group or the source's order.** For assessed findings, most severe first (critical → high → medium → low). The ids are then reassigned top-down, so a deck whose findings arrive in mixed order ships as `F-1` critical, `F-2` high, …. After sorting, run the **Renumbering procedure**. **Exception:** when the source already carries a stable, cross-referenced id scheme of its own, preserve those ids and skip reassignment: the Renumbering procedure governs ids this skill assigns, not ids the source owns.
+- **Finding cards preserve established fields.** Render the id, claim, and its
+  available evidence/provenance. Include severity, evidence tier, proposed action,
+  and cost only when the source establishes them. Omit missing fields or mark
+  them “not assessed” when that helps the reader; a layout never requires inventing
+  a judgment. Carry source uncertainty visibly. New assessment belongs to a
+  separately requested analysis and is labeled as such.
 - **Group when items partition.** When findings naturally split (by product, area, severity, owner), group them into sub-sections with prefixed ids (`AUTH-1`, `API-1`, …), each its own TOC group, then run the Renumbering procedure.
 - **Method section.** A short "how this was produced" section (a few numbered practices + a one-line phase chain) helps the reader trust the claims. Optional for a document source; **mandatory when the source is context**, along with the coverage gaps.
 
@@ -94,9 +100,9 @@ For reports that carry findings (audit, QA, review):
 
 1. Parse-check the HTML (balanced tags, sequential heading levels); no garbage/stray CSS tokens.
 2. Every TOC target id exists; the keyboard-nav order array matches document order.
-3. Findings are ordered most-severe-first; skill-assigned ids run top-down (source-owned id schemes are preserved as-is).
+3. Assessed findings are ordered most-severe-first; unassessed findings stay distinct or in source order. Skill-assigned ids run top-down; preserve source-owned id schemes.
 4. Every scroll container has a styled scrollbar (no raw OS bars).
-5. Section-number badges align with their headings; cost pills sit in one consistent place across all cards.
+5. Section-number badges align with their headings. Include cost pills only when the source establishes cost, and place those consistently.
 6. No content dropped: spot-check section count and headline statements; derived totals/counts match the rendered items, any divergence from the source's stated numbers is flagged in the completion summary, and no number was invented to fill a layout slot.
 7. Every shipped external link was fetched and annotated; every relative link's target file exists.
 8. Print media query present: white background, dark text, nav and keyboard hints hidden, cards avoid page breaks.
@@ -159,7 +165,9 @@ Section / card header row: the number badge and its heading must share a centerl
 .sec-head h2{font-size:24px;line-height:1.2;letter-spacing:-.01em}
 ```
 
-Finding card: id/chip header → claim quote box → Evidence → Fix with a cost pill. The cost pill lives in the **Fix header**, the same place on every card (don't let it float at the end of whichever sentence happens to be last):
+Finding card example when the source establishes all these fields: id/chip
+header → claim → Evidence → Fix with a cost pill. Omit unestablished fields.
+When supplied, the cost pill lives consistently in the **Fix header**:
 
 ```html
 <section class="card" id="f01">

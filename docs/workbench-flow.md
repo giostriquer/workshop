@@ -2,14 +2,13 @@
 
 Canonical mental model of the **workbench** system's workflow: how work enters,
 gets scoped, gets implemented, and lands. Filled teal boxes are **user gates**
-(the user decides); everything else the session drives. Decisions and rationale:
+(the user decides when a choice is still open); existing choices and authorization carry forward. The session drives authorized work. Decisions and rationale:
 [`decisions/workbench-system.md`](decisions/workbench-system.md). Designed
 interactively on a whiteboard artifact (v7, 2026-08-11).
 
 **Canonical pair:** this file (mermaid, diffable) and
 [`workbench-flow.html`](workbench-flow.html) (arch-map rendering) are maintained
-together: a flow change updates both or neither. Workbench skills are identifiable
-in code by their frontmatter tag: `metadata.system: workbench`.
+together: a flow change updates both or neither. Canonical skill definitions live in `plugins/workbench/skills/`.
 
 ## Entry & scoping: two optional doors
 
@@ -20,16 +19,16 @@ flowchart TD
     classDef term fill:none,stroke:#8a948f,color:#5d6763
 
     A0([something to verify, hunt, or check]):::term --> A1
-    A1[["USER: size the workload:<br/>quick look (inline) · deep (claim-check) · team sweep (qa-sweep)"]]:::gate
+    A1[["SCOPE: use the request; ask if ambiguous:<br/>quick · static review · deep · team sweep"]]:::gate
     A1 --> A2["AUDIT: the audit skill dispatches the engine"]:::stage
-    A2 --> A3[["USER: confirm flagged points<br/>(pause only when flags exist)"]]:::gate
+    A2 --> A3[["REPORT: preserve evidence and uncertainty<br/>ask only for missing intent or access"]]:::gate
     A3 -->|audit was the ask| A4([report · done]):::term
     A3 -->|"work revealed: feature / refactor shape"| B2
     A3 -->|"work revealed: confirmed fix"| RG
 
     B0([an idea]):::term --> B1["GROUND: a couple of questions;<br/>the codebase answers most"]:::stage
-    B1 -->|what the code can't answer| B2["BRAINSTORM, always for feature / refactor;<br/>design approved in sections"]:::stage
-    B2 --> RG[["USER: pick the route"]]:::gate
+    B1 -->|what the code can't answer| B2["BRAINSTORM for unresolved design;<br/>review the design at meaningful checkpoints"]:::stage
+    B2 --> RG[["ROUTE: carry the user's choice;<br/>ask only if unsettled"]]:::gate
 
     RG --> R1["DIRECT<br/>straight from session context"]:::stage
     RG --> R2["PLAN<br/>mechanism discovered from the user's stack:<br/>plugin skill → repo skill → repo standards → harness plan mode"]:::stage
@@ -45,17 +44,17 @@ flowchart LR
     classDef sat fill:none,stroke:#8a948f,color:#5d6763
 
     TDD["test-driven-development<br/>default where a harness exists;<br/>repo conventions take precedence"]:::sat -.- I
-    SD["systematic-debugging<br/>on any bug, before fixes"]:::sat -.- I
+    SD["systematic-debugging<br/>persistent or unclear failures"]:::sat -.- I
 
     I["IMPLEMENT<br/>direct or agentic: user / harness call;<br/>handed the plan / goal if present"]:::stage
     TQ["TEST QUALITY<br/>review of the implementation's tests"]:::stage
-    AR["ADVERSARIAL REVIEW ×1<br/>code quality + comment trim,<br/>per repo rules"]:::stage
+    AR["ADVERSARIAL REVIEW AT READINESS<br/>code quality + comment trim,<br/>per repo rules"]:::stage
     OG[["USER: PR or merge?<br/>session outlines what was done first;<br/>repo / user rules may pre-authorize"]]:::gate
-    L["LAND<br/>file-pr · merge · push;<br/>fix-ci tends the checks"]:::stage
+    L["LAND<br/>file-pr · merge · push;<br/>fix-ci: separate Opus / Sol watcher"]:::stage
 
     I --> TQ
     TQ -->|"deemed ready = verified<br/>(verification-before-completion;<br/>empirical-proof offered if runnable)"| AR
-    AR -->|"findings → fixed + re-verified<br/>(no re-review)"| OG
+    AR -->|"findings → fixed + re-verified<br/>(review material new risk only)"| OG
     OG --> L
     L -.->|"feedback: receiving-code-review;<br/>verified fixes re-enter"| I
 ```
@@ -72,6 +71,8 @@ tooling). The removal is of *forced process*: execution agency itself stays
 the user's call.
 
 ## Decisions ledger (operator, 2026-08-11 unless noted)
+
+Historical decisions below are refined by the current flow and the [wording-hardening decision](decisions/skill-wording-hardening.md): no repeated authorization, material follow-up review, and explicit proof opt-in. In delegated epics, use focused local checks plus required gates; each verified wave ends with the next dispatch, delivery gate, closing audit, completion proposal, or concrete blocker.
 
 | # | Decision |
 |---|---|

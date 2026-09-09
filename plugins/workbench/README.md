@@ -1,9 +1,9 @@
 # workbench
 
 A direct-use plugin from [Workshop](https://github.com/giostriquer/workshop):
-five read-only review agents, nine everyday skills, and the seven-skill **workbench**
+five read-only review agents, nine everyday skills, and the eight-skill **workbench**
 process layer. No setup: works in any repo. Optional artifact-making utilities
-(doc pages, demo videos, architecture maps, skill authoring) live in the sibling
+(doc pages, demo videos, architecture maps) live in the sibling
 [`toolkit`](../toolkit/README.md) plugin: install it only if you want them.
 
 ## Install
@@ -33,8 +33,8 @@ Plugins → Team Marketplaces → Add Marketplace → Import from Repo**
 **OpenCode:** No marketplace file exists on this surface; opencode loads skills by scanning directories. Point your global config's `"skills": { "paths": [...] }` at this folder's `skills/` directory in a clone of the repo, or copy individual skill folders into `~/.config/opencode/skill/`. The review agents are not carried on this surface.
 
 After install: agents resolve as `workbench:<agent>`; skills are invoked by name.
-Codex exposes all sixteen skills; the agent files ride inertly (Codex custom
-agents need repo-local `.codex/agents/` wrappers). Antigravity discovers and progressively loads the skills from `skills/`. OpenCode loads the same sixteen from its `skills.paths` scan roots.
+Codex exposes all seventeen skills; the agent files ride inertly (Codex custom
+agents need repo-local `.codex/agents/` wrappers). Antigravity discovers and progressively loads the skills from `skills/`. OpenCode loads the same seventeen from its `skills.paths` scan roots.
 
 ## Agents: read-only reviewers
 
@@ -47,7 +47,7 @@ They inspect and report; none can edit your files (reviewers use
 | `code-quality-reviewer` | a diff's maintainability and structure; loads the `code-quality-review` rubric |
 | `test-quality-reviewer` | test code for trustworthiness and risk coverage |
 | `pattern-reviewer` | a diff's conformance to the project's implementation patterns |
-| `ci-watcher` | the branch's PR CI: watch and report; `fix-ci`'s background wait-absorber |
+| `ci-watcher` | the branch's PR CI: watch and report; separate Opus (Claude) or Sol (Codex) watcher, never Astra or Fable |
 
 ## Everyday skills
 
@@ -56,7 +56,7 @@ They inspect and report; none can edit your files (reviewers use
 | `file-pr` | files the branch's PR from the repo's own template, then tends it to green-and-mergeable; never merges |
 | `fix-ci` | watch-and-fix loop on the branch's CI: diagnose the failing log, minimal fix, push, re-watch; two attempts max |
 | `handoff-goal` | emits a goal contract a fresh session pursues autonomously; long-running work only, never pursues it itself |
-| `claim-check` | evidence-graded investigation of a ticket / hunch / question: verdict + readiness dossier; never implements |
+| `claim-check` | evidence-graded investigation of a ticket / hunch / question: verdict + readiness dossier; preserves the result before any separately authorized repair |
 | `qa-sweep` | fans a QA team over independent slices, corroborates every verdict-moving finding firsthand |
 | `empirical-proof` | proves a finished change at the running app: real calls, raw evidence; verified / broken / blocked |
 | `code-quality-review` | strict, structure-first maintainability review of a diff |
@@ -67,20 +67,18 @@ They inspect and report; none can edit your files (reviewers use
 
 How work starts, gets designed, and gets finished: implementing
 [the workbench flow](https://github.com/giostriquer/workshop/blob/main/docs/workbench-flow.md).
-Its signature: **three user gates**
-(size the workload · pick the route · PR or merge); everything else the session
-drives. No hooks, no dispatcher: skill descriptions are the entire activation
+The user controls scope, route, and landing. Carry existing choices and authority forward; ask only when a material decision is missing. The session drives the authorized work. No hooks, no dispatcher: skill descriptions are the entire activation
 surface, and `using-workbench` answers "how does this flow work?" on demand.
 
 | Skill | Does |
 | --- | --- |
-| `audit` | sizes an investigation with you (quick · deep · sweep), runs the engine, confirms flagged uncertainty, routes the exit |
+| `audit` | uses the requested scope (quick · static review · deep · sweep), runs the engine, reports uncertainty, and asks only for unresolved decisions |
 | `brainstorming` | design dialogue for features and refactors, ending at your route pick: direct / plan / handoff-goal |
 | `test-driven-development` | RED-GREEN-REFACTOR, default where a test harness exists; repo conventions take precedence |
-| `systematic-debugging` | four-phase root-cause discipline before any fix |
+| `systematic-debugging` | four-phase root-cause discipline for persistent or unclear failures |
 | `verification-before-completion` | the "deemed ready" gate: fresh evidence before any done / fixed / passing claim |
 | `receiving-code-review` | verify feedback against the codebase before implementing; reasoned pushback, no performative agreement |
-| `using-workbench` | session-start + on-demand orientation map of the flow; orients, never coerces |
+| `using-workbench` | on-demand orientation map of the flow; orients, never coerces |
 | `self-audit` | retrospective on the process that ran the session: trace, classify, propose; reports, never edits a skill |
 
 

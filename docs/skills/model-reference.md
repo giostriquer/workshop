@@ -14,7 +14,7 @@ no process pattern to select, and no dispatch mechanics. It does not decide for
 you; it gives you the numbers and the invariants and leaves the call where it
 was.
 
-It also does not ship a fleet policy. The rows are a worked example for
+Outside the explicit CI watcher assignment below, it does not ship a general fleet policy. The rows are a worked example for
 adopters to swap and re-grade, and the invariants carry the *shape* of each
 rule rather than its content: "the concrete policy, which models are in, which
 are out, where the floor sits" belongs to the operator's always-injected rules
@@ -39,6 +39,8 @@ in its trigger and again in its opening.
 | Handing a defined goal to a fresh autonomous session | `handoff-goal` |
 
 ## The table
+
+The numeric table is retained as a legacy illustration without dated calibration; it must not drive current dispatch. Do not transfer fable-5 scores to Fable 5.1. New grades require operator-supplied date, task set, effort, and observed results. Otherwise use available host capabilities and the current session model within standing rules.
 
 Scores are 1-10, higher is better.
 
@@ -69,7 +71,7 @@ The axes are defined precisely, and two of them are easy to misread:
 - **Code** is coding craft: how correct and well-built the implementation comes
   out when the work is code.
 
-**Reading notes**, straight from the skill:
+**Historical reading examples:** apply model-specific choices only after current operator calibration; these undated rows do not establish current capability.
 
 - Routine, well-specified work goes to the cheap end: "luna only for truly
   mechanical bulk, sol for routine work that still needs judgment."
@@ -101,7 +103,7 @@ exceptions**," naming specific models from one operator's subscription mix.
 That was replaced by a portable "set a model floor" invariant
 ([decision](../decisions/route-work-model-floor-portable.md)), and the floor
 invariant has since been dropped as well: a floor is fleet policy, and this
-skill carries none. Where the floor sits, and which models are banned, belong
+skill carries no general model floor. The dedicated CI watcher is an explicit exception: separate Opus on Claude or gpt-5.6-sol on Codex, never Astra/Fable or parent polling. Where the floor sits, and which models are banned, belong
 in your own always-injected rules file. `adopt-global-rules` ships one such
 file (`model-floor.md`) if you want a worked example.
 

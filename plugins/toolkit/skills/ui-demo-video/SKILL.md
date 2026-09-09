@@ -14,7 +14,9 @@ human-shareable artifact (GitHub PR descriptions accept mp4 drag-drop).
 ## When to use
 
 After UI work that a video can verify: a new element, layout change, or flow.
-Use the frames as the visual feedback loop even when nobody asked for a video.
+Use proportionate visual feedback with existing tooling. Record a video when
+requested, required by the repo, or useful within the authorized UI task; a small
+visual check does not require installing a recording toolchain.
 Not for API-only or non-visual changes, and not as a test suite: scenes
 demonstrate and verify visually, they do not assert.
 
@@ -23,8 +25,11 @@ demonstrate and verify visually, they do not assert.
 - The app runs locally. Find the project's documented run path: a project run
   skill, README, package scripts, and use that; do not invent a launch command.
 - Playwright is installed **in the project** (`@playwright/test` or
-  `playwright`) with a chromium browser downloaded. If it is missing, run this
-  one-time setup: `npm i -D @playwright/test && npx playwright install chromium`.
+  `playwright`) with a Chromium browser available. If absent, use an available
+  browser tool for visual checks and report the video prerequisite. Install a new
+  persistent dependency/browser only when that setup is in the authorized scope,
+  using the repository's package manager and documented setup. Do not silently
+  modify package or lockfiles just to record a demo.
 - `ffmpeg` on PATH for mp4 conversion (optional: the webm is always produced).
 
 ## Workflow
@@ -48,15 +53,17 @@ demonstrate and verify visually, they do not assert.
    evidence, not garbage.
 4. **Feedback loop (mandatory):** Read every `scene-*.png` with the Read tool
    and check the UI is actually correct: the element present, states right, no
-   dev-overlay badges or half-loaded skeletons. Wrong → fix and re-record. Only
+   hidden runtime errors or half-loaded skeletons. Inspect unfiltered UI/error
+   evidence first; overlay suppression is presentation-only and must not conceal
+   a verification failure. Wrong → fix in scope and re-record. Only
    a frame-verified recording counts as evidence.
 5. **Cleanup:** delete the demo entities you seeded (through the same real
    surface you created them with), stop any dev server you started, and confirm
    the port is closed.
-6. **Delivery:** GitHub only accepts video attachments via the browser editor.
-   Drag the mp4 into the PR description manually (the API cannot
-   attach it). Do not upload local artifacts to other trackers unless the
-   project's own rules say to.
+6. **Delivery:** provide the local recording and frames. Attach them to a PR or
+   tracker only when existing authorization explicitly covers that external write.
+   When authorized, use the host's supported attachment mechanism; do not turn
+   local verification into an implicit publication step.
 
 ## Scenario example
 
@@ -86,9 +93,10 @@ await recordUiDemo(
 
 ## Notes
 
-- The harness hides the Next.js dev overlay (`nextjs-portal`) by default so
-  dev-mode badges don't photobomb recordings: a no-op in non-Next apps. Pass
-  `hideSelectors: ["..."]` to hide other frameworks' overlays or badges.
+- The harness leaves overlays visible by default. After inspecting and preserving
+  unfiltered failure evidence, an optional presentation recording may set
+  `hideNextDevOverlay: true` or explicit `hideSelectors`. Those frames alone do
+  not establish that no runtime error occurred.
 - Realistic demo data reads better than test slugs: name seeded entities like
   a user would ("Sprint review"), not "TEST-1234 probe".
 - Viewport defaults to 1280×720; override via `viewport` if the surface needs it.

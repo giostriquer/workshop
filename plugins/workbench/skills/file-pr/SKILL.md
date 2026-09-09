@@ -15,14 +15,17 @@ write the code. If it has not run, run it now and act on its findings first.
 review exists to be run by someone who did not write the code; a session that
 reasons its way past it has produced the exact outcome the gate prevents.
 
-Two exemptions, and only these two:
+Honor an explicit user waiver or superseding repository process. Otherwise the
+following cases do not require a new review:
 
 - **The branch changes no code.** Documentation, comments, and config-only
   edits with no behavior change. Measured on the diff, not on how routine the
   work felt.
 - **The review already ran on this diff.** It was dispatched, it came back,
   and its findings were acted on. Loading this skill is not a reason to run it
-  a second time.
+  a second time. Record its revision and dispositions; verify direct corrections.
+  Material changes to behavior, design, or risk need focused independent follow-up.
+  Repeat a full review only if subsequent work broadly invalidated it.
 
 Nothing else is an exemption. Not a deadline, not a reviewer waiting, not a
 branch that has been open a long time, not the user asking for the PR
@@ -38,7 +41,7 @@ mention it afterward.
 | "It's config / a version bump / generated output." | Config that changes behavior is code. If the diff changes what runs, the gate applies. |
 | "I reviewed it carefully as I wrote it." | The author is the one context that cannot run this review. That is stated in `code-quality-review`, not implied. |
 | "I ran the rubric over my own diff and found nothing." | A self-served pass is not this gate. It is reported as an author's pass or not at all. |
-| "The review ran earlier in this work-stream." | Earlier on *this diff*, or it did not run. Commits added since the review are unreviewed code. |
+| "The review ran earlier in this work-stream." | Check its revision and later changes. Verified corrections need no full repeat; material changes need focused follow-up. |
 | "The user asked for a PR now, so they've accepted the trade." | Asking for a PR is not waiving the gate. If time is the constraint, surface it and let them waive it explicitly. |
 | "CI is green and the tests pass." | Passing tests say the code works. This review asks whether it should be built this way. |
 | "I'll open it as a draft and get the review after." | A draft PR is a filed PR. The gate is before filing. |
@@ -47,7 +50,7 @@ mention it afterward.
 
 - Reaching for a synonym of "trivial" to describe a diff that changes code.
 - Counting your own pass over your own diff as the review.
-- Counting a review that predates commits now in the diff.
+- Counting an earlier review without checking whether later changes invalidate it.
 - Treating urgency, a waiting reviewer, or a direct "open the PR" as a waiver.
 - Filing as a draft to defer the gate.
 
@@ -61,9 +64,9 @@ stopped.
 ## When to use
 
 The work on the current branch is ready for a PR and this session is authorized to
-push and open one. If that authorization is missing (`gh` unauthenticated, no PR
-write access), say so plainly and stop; this skill does not fall back to producing
-artifacts.
+push and open one. Missing authorization and missing access are different gaps.
+Finish local reviewable preparation, then report the exact delivery step needing
+permission or access; do not ask again for authority already given.
 
 ## The two rules that make the body right
 
@@ -73,7 +76,8 @@ artifacts.
 2. **The PR body belongs to the repo, not to this skill: follow its template, never
    replace it.** If the repo ships a PR template, the body **is** that template
    filled in: its exact headings, order, checkboxes, and hidden `<!-- markers -->`,
-   nothing added or dropped. The built-in skeleton below is a **last resort for
+   with additions only when governing instructions require them, such as a host
+   attribution footer. The built-in skeleton below is a **last resort for
    repos that have no template**; never emit it, or its `Summary` / `Ticket` /
    `Caveats` headings, when a template exists.
 
@@ -90,13 +94,16 @@ artifacts.
    **semantic collision**, where both sides changed the same logic with different intent,
    stops the skill. Report it as a decision; do not guess. Never rebase published
    commits and never force-push.
-3. **Run the repo's own gates locally.** *Discover* what this repo gates a PR on
+3. **Run focused local checks and required local gates.** *Discover* what this repo gates a PR on
    rather than assuming a toolchain: read its CI workflow definitions, hook config,
    build/package script targets, and contributor docs. Run the **fast static
    checks** (format, lint, type-check) separately from the tests; they are usually
-   the required CI gates and the cheapest to fail: against the freshly-synced base.
+   the cheapest to fail: against the freshly-synced base. Run affected tests; full
+   suites normally run in PR CI. A wider local run needs an explicit local gate or
+   a specific unresolved integration risk, not merely the existence of a CI job.
    If any commit bypassed hooks (`--no-verify`), the formatter and linter never ran
-   on it, run them manually now. **Fix what fails before filing.** A PR opened on a
+   on it, establish their result manually unless unchanged relevant evidence already
+   covers them. **Fix in-scope failures before filing** and disclose baseline issues. A PR opened on a
    known-red baseline wastes the tend loop's bounded attempts. Record the exact
    commands and results for the report.
 4. **Identify the ticket.** Scan the branch name, commit messages, and any existing
@@ -116,7 +123,8 @@ artifacts.
    has; tick `[x]` only what was actually verified; leave unfillable fields blank
    rather than fabricating. Before finalizing, check your headings against the
    template's: same set, same order, none added or renamed; if they differ, you
-   replaced the template, redo the body. If there is no template, use the minimal fallback:
+   replaced the template, redo the body. Required host attribution may follow the
+   template without a new section. If there is no template, use the minimal fallback:
 
    > ## Summary
    > `<what changed and why, grounded in the diff>`
@@ -142,7 +150,9 @@ artifacts.
 
 9. **Watch to a verdict.** Checks run through the **`fix-ci` skill's loop**; it
    owns the failing-log diagnosis, flake-vs-fault triage, minimal in-session fixes,
-   the two-attempt cap, and the never-weaken-a-check rule. Mergeability comes from
+   the two-attempt cap, and the never-weaken-a-check rule. Watching always runs in a
+   separate Opus agent on Claude or gpt-5.6-sol agent on Codex, never Astra/Fable or
+   the parent; accept only results for the target SHA and required checks. Mergeability comes from
    `gh pr view --json mergeable,mergeStateStatus`.
 10. **If the base moves and conflicts appear**, merge the base in again, resolve,
     and push: at most **two** re-syncs; a base that keeps moving is reported, not
@@ -170,8 +180,8 @@ Verdict-first report:
   resolution is merge-based.
 - Never deletes, skips, or weakens a failing check to get to green; a red check that
   encodes an intended-behavior question is reported as a decision for the user.
-- Keep the PR body tooling-agnostic: no named editors, bots, or AI assistants, and
-  no "generated by" footers. Describe the change, not how it was produced.
+- Keep substantive PR text focused on the change. Include attribution required
+  by governing host/user/repository instructions; do not invent extra footers.
 - Hard caps: `fix-ci`'s two fix attempts for CI, two base re-syncs for conflicts;
   after that, report rather than thrash.
 - Semantic merge collisions and product decisions are never resolved by guessing.

@@ -1,26 +1,26 @@
 ---
 name: audit
-description: Use when asked to do an audit or check. Not for work that starts from an idea to build (that path grounds against the codebase and goes to brainstorming).
+description: Use for a requested investigation or audit; routine checks and known fixes stay in their ordinary workflow. Not for work that starts from an idea to build (that path grounds against the codebase and goes to brainstorming).
 ---
 
 # Audit
 
-Asks the user to size the workload first, dispatches the right engine, brings flagged uncertainties back for confirmation, then routes the exit by shape. This is pure protocol and never investigates by itself.
+Establishes the requested coverage, selects the engine, preserves uncertainty, then routes the exit by shape. Quick looks and cross-cutting static reviews can run inline.
 
 The workbench flow's door A: turn "something to check" into a sized, engine-run,
-user-confirmed investigation. This skill is **protocol, not investigation**.
-The division of labor is strict: the user sizes it, an engine runs it, the user
-confirms what it flagged, and this skill routes what comes out.
+evidence-grounded investigation. The user supplies scope and authority; use the
+applicable engine and ask only for missing decisions that change the investigation.
 
 ## Steps
 
 1. **Ask the user to size the workload**: skip the question only when they
-   already stated a size. The three tiers:
+   already stated or clearly implied the coverage (such as "full audit"). The tiers:
 
    | Tier | Engine | Fits |
    | --- | --- | --- |
    | **quick look** | inline, this session: a few reads/greps, minutes | "is this config even used?", a suspicion worth five minutes |
    | **deep audit** | the `claim-check` skill | one premise investigated to evidence-graded verdict: a bug to pin down, a ticket to validate, "is the refactor complete?" |
+   | **static review** | inline or independent readers where delegation is authorized | cross-cutting instruction, configuration, or document review |
    | **team sweep** | the `qa-sweep` skill | a broad, decomposable surface: a release, a feature area, corroborated findings at team scale |
 
    Ask with a structured question tool (`AskUserQuestion` or the host's
@@ -39,7 +39,7 @@ confirms what it flagged, and this skill routes what comes out.
    pass the confirmation along so the evidence comes from the running
    surface, not reading alone).
 
-2. **Run the engine.** Quick look: investigate inline and keep it genuinely
+2. **Run the engine.** Static review: inventory the requested surface, inspect its contracts and interactions, and report coverage and source evidence. Quick look: investigate inline and keep it genuinely
    quick, if it starts growing past its size, stop and say so; growing the
    workload is the user's call, not drift. Deep audit / team sweep: invoke the
    engine skill and let it run per its own rules (they own their rigor;
@@ -50,10 +50,11 @@ confirms what it flagged, and this skill routes what comes out.
    assumptions, results that surprised you, anything where two readings
    survive. Those are the **flags**.
 
-4. **Confirm the flags, only when there are flags.** Bring each flagged point
-   to the user as a concrete question (what was found, why it's uncertain,
-   what reading you lean toward) and wait for their answers. A clean audit with
-   findings but no flags skips this pause entirely and goes straight on.
+4. **Resolve flags according to what is missing.** Investigate reachable evidence.
+   Ask the user when an unresolved preference or intended behavior changes the
+   verdict or next action. An ambiguous reproduction remains an evidence gap in
+   the report; do not ask the user to certify it as true. Continue independent
+   findings while a needed answer is pending.
 
 5. **Route the exit:**
    - **The audit was the ask** → deliver the report (verdict-first, per the
@@ -61,7 +62,8 @@ confirms what it flagged, and this skill routes what comes out.
    - **Work was revealed, feature/refactor-shaped** → hand into
      `brainstorming` with the findings and confirmed flags as its context; it
      must not re-derive them.
-   - **Work was revealed, a confirmed fix** → skip the design debate; present
+   - **Repairs already authorized** → continue confirmed in-scope fixes; use brainstorming only for unsettled design.
+   - **Work was revealed without implementation authority, a confirmed fix** → skip the design debate; present
      the route pick (direct / plan / handoff-goal) directly: asked like the
      sizing question: structured question tool when available, with
      user-facing labels (**Direct**, **Plan**, **Long-running goal**) and the
@@ -77,11 +79,9 @@ confirms what it flagged, and this skill routes what comes out.
 
 ## Boundaries
 
-- **Never investigates by itself** beyond the quick-look tier: deep and sweep
+- **Inline investigation is limited to quick look and static review**: deep and sweep
   work belongs to the engines.
 - **Never grows the workload silently.** A quick look that wants to become a
   deep audit is a question for the user, not a decision.
-- **Never skips the flag confirmation when flags exist**, and never invents the
-  pause when they don't.
-- **Never starts the revealed work.** Its last act is a hand-off to the
-  report, to brainstorming, or to the route gate.
+- Preserve unresolved evidence in the report; ask only for decisions the user can supply and pause dependent work.
+- An audit-only assignment ends in its report or recommendation. Existing implementation authority carries into the supported repair afterward.

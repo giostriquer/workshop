@@ -14,6 +14,13 @@ anything.
 
 ## The table
 
+**Legacy illustrative scores, not a current fleet calibration.** These entries
+lack dated evaluation provenance and are retained only to explain the axes. Do
+not route current work from these numbers or transfer fable-5's grade to Fable
+5.1. A new model/effort needs its own operator-supplied calibration: date, task
+set, method, and observed trade-offs. Otherwise use available host capabilities
+and the session's current model under standing routing instructions.
+
 Scores are 1–10, higher is better.
 
 - **Cost** is subscription-limit burn, not dollars. The fleet runs on
@@ -56,7 +63,10 @@ operator's fleet ships a policy its adopters never chose.
   buys a drop on the first two.
 - Repo-local model policies override this table where they conflict.
 
-## Reading the table
+## Reading a currently calibrated table
+
+The examples below apply only after the named models and grades have been
+verified for the current fleet; the legacy rows above do not establish that.
 
 - Routine, well-specified work → the cheap end: luna only for truly
   mechanical bulk, sol for routine work that still needs judgment.
@@ -67,3 +77,12 @@ operator's fleet ships a policy its adopters never chose.
 - Speed breaks ties, never quality. When two rows are level on the axis the
   work actually loads, take the faster one. It does not buy a drop on
   intelligence, taste, or code.
+
+## CI monitoring exception
+
+Every CI watch uses a separate **Opus (`opus`) agent on Claude** or
+**`gpt-5.6-sol` agent on Codex**. Never use Astra or Fable to watch CI. Select the
+model explicitly; do not inherit a more capable parent. Parents already using
+Opus/Sol still delegate to a separate designated agent. Missing dispatch is a
+reported monitoring gap, not permission for parent polling or a prohibited
+fallback. Haiku and Sonnet remain prohibited. See `fix-ci` for the workflow.

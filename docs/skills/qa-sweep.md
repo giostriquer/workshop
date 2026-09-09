@@ -17,10 +17,7 @@ dispatch all do. The design record is explicit that it is not an agent: "the mai
 session orchestrates and fans out to subagents and performs the corroboration; a
 single dispatched agent cannot drive that."
 
-It **stops at the verdict**. "It does **not** fix what it finds: acting on the
-findings is the separate step the operator owns." It also does not read code as a
-substitute for driving the app: "QA here is *runtime observation*, not code
-reading."
+The sweep preserves its verdict before any implementation. A review-only request ends there; already-authorized repairs continue afterward and receive their own verification.
 
 ## When to reach for it
 
@@ -78,8 +75,7 @@ loop is the half worth institutionalizing.
 3. Get the **real** artifact running. A substitute build or image must be proven
    behavior-faithful (diff it) and declared in the report.
 4. **Smoke before you spend.** Confirm it boots and its top-level surfaces
-   respond. "Smoke fails → report BLOCKED and stop; a team on a broken build
-   wastes the tokens."
+   respond. A product-caused smoke failure is FAIL/no-ship; a missing prerequisite is BLOCKED. Record the evidence before ending an impossible sweep. Complete authorized setup, and after recording the verdict continue separately authorized repair work; do not fan a team onto an unusable artifact.
 
 **Phase 1: the operating contract.** One shared preamble every agent receives
 verbatim; only the scope line differs per agent. It carries:
@@ -106,10 +102,10 @@ a **lead**:
   surface. A cosmetic or low finding backed by a captured artifact can be
   accepted as-is.
 - **Reproduce, don't trust.** Re-drive the lead. "A finding you cannot reproduce
-  is **dropped with a note**, not softened into a hedge."
+  remains uncorroborated or blocked; mark disproved only with contrary evidence."
 - **Regression vs pre-existing.** Settle it against a baseline: the prior build,
   branch, or main. "A 'bug' that also reproduces on the baseline is pre-existing,
-  not a release blocker."
+  assessed separately for severity and release acceptance; a pre-existing defect may still block release."
 - **Close the gaps agents hit.** A subagent's BLOCKED is yours to resolve: find
   another path (inject data to reach an unreachable state, use a second identity).
   Never substitute a unit test for an unreachable runtime path.
@@ -133,12 +129,7 @@ plus a one-line slice summary and the list of evidence artifacts it saved.
 Severity runs `blocker` / `high` / `medium` / `low` / `cosmetic`; confidence runs
 `high` / `medium` / `low`.
 
-The skill also carries an **optional** appendix that encodes Phases 2–4 as a
-deterministic pipeline with inline JSON schemas, so that on a repeatable sweep
-"the verify-loop can't be forgotten": each slice's findings are corroborated by
-an *independent* agent with no finder context, and findings that don't reproduce
-are surfaced in a `dropped` bucket rather than hidden. Even with the pipeline:
-"**you still personally reproduce anything that would move the verdict**."
+The optional workflow retains both result schemas and independent corroboration. Evidence status is reproduced, uncorroborated, disproved, or blocked. It partitions results into confirmed, disproved, and unresolved; missing verification also remains unresolved. The coordinator still personally reproduces verdict-changing findings.
 
 ## Common questions
 
@@ -151,16 +142,9 @@ the team and do the pass inline; that is one of the skill's stated acceptance
 checks ([decision](../decisions/qa-sweep.md)).
 
 **It reported BLOCKED before dispatching anyone.**
-Smoke failed. The artifact didn't boot or its top-level surfaces didn't respond,
-and the skill stops there rather than paying for a team to explore a broken
-build.
+A missing prerequisite prevented the smoke test. A product-caused boot or response failure is FAIL/no-ship, not merely BLOCKED. Either way, record the evidence and avoid paying for an impossible team sweep; authorized repair remains a separate next step.
 
-**An agent found a bug and the final report doesn't mention it.**
-Two possibilities, and the report distinguishes them. Either it didn't reproduce
-firsthand and was **dropped with a note**: the skill refuses to soften an
-unreproducible claim into a hedge, or it reproduced on the baseline too and was
-classified pre-existing rather than a release blocker. Both outcomes are stated
-explicitly; neither is silently dropped.
+A claim that fails to reproduce is not automatically false. Preserve the observation and identify it as uncorroborated or blocked; contrary evidence is needed to disprove it. The final report includes those leads and coverage gaps.
 
 **A subagent came back BLOCKED. Doesn't that just become a coverage gap?**
 No. "Gaps are yours." The lead is expected to find another path: inject data to
@@ -185,8 +169,7 @@ system-temp directories that all belonged to one work scope
 ([decision](../decisions/evidence-one-home-per-scope.md)). One sweep, one folder.
 
 **Will it fix the bugs it finds?**
-No. "Stop at the verdict, not the fix." The sweep reports; acting on the findings
-is your separate step.
+The sweep records the verdict and evidence first. A review-only request ends there; separately authorized repairs continue afterward, followed by verification. Do not silently fix inside a proof run and replace its original verdict.
 
 **Will a session run this on its own after finishing some work?**
 It should not. This is an offered tier, not a default one; it runs on your
@@ -205,7 +188,7 @@ firsthand-corroboration loop, which no generic fan-out encodes.
   agent-artifact, or baseline-diff.
 - Regressions are separated from pre-existing bugs by an actual baseline
   comparison you can point at.
-- Claims that didn't reproduce appear in the report as dropped, with a note.
+- Unreproduced claims remain uncorroborated or blocked; disproved claims include contrary evidence.
 - Coverage gaps are named, so silence never reads as coverage.
 - All evidence is in one scope folder, referenced by an appendix.
 - **Not working:** a polished report that merges the agents' summaries with no
@@ -224,3 +207,5 @@ verify" spine, but aimed at one premise investigated against the repo rather tha
 a broad running surface. On the completion side, `empirical-proof` is the
 single-change version of the same runtime discipline, and
 `verification-before-completion` is the always-on gate both of them deepen.
+
+Smoke still gates team dispatch. Try documented authorized setup/retries before concluding a prerequisite is unavailable. A product boot defect and unavailable verifier prerequisites receive distinct reports. The full operating contract, coverage log, source corroboration, baseline comparison, deduplication, and evidence appendix remain required.

@@ -25,6 +25,7 @@ If the change set is not supplied, gather it yourself: `git diff <base>...HEAD` 
 ## Work
 
 - Findings target the change under review; trace callers, callees, and cross-file impact wherever that is needed to judge it.
+- Distinguish demonstrated correctness or maintainability risks from advisory opportunities; file size alone is not a blocker. State the concrete consequence and respect the accepted scope.
 - Output findings in the **priority order** the rubric specifies. Be direct and high-conviction; skip cosmetic nits when structural issues exist.
 - Do **not** spawn nested subagents unless the parent explicitly asks.
 - Review-only: do not edit, commit, or push.

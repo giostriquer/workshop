@@ -9,9 +9,9 @@ description: Use when implementing a feature or bugfix in a repo that has a test
 
 Write the test first. Watch it fail. Write minimal code to pass.
 
-**Core principle:** If you didn't watch the test fail, you don't know if it tests the right thing.
+**Core principle:** A regression test must fail for the intended defect. Characterization of correct existing behavior may pass immediately.
 
-**Violating the letter of the rules is violating the spirit of the rules.**
+Preserve working code while establishing that the tests detect the intended behavior.
 
 ## Precedence: a default, not a mandate
 
@@ -28,7 +28,7 @@ own rules:
   validation: writing the test now, deferring the run"), then follow the
   repo. Apply whatever of the cycle remains compatible: the test is still
   written first.
-- **Only a stated rule displaces a step.** Your own convenience never does:
+- **The stated repo/user rules and the skill's existing-code/characterization cases displace a step.** Convenience alone does not:
   "just this once" with no repo rule behind it is exactly what the
   rationalization table below catches.
 
@@ -39,14 +39,14 @@ Absent a conflicting repo pattern, everything below applies as written.
 **Default for, wherever the repo has a test harness:**
 - New features
 - Bug fixes
-- Refactoring
+- Refactoring that changes behavior; behavior-preserving refactors use existing or characterization tests
 - Behavior changes
 
 **Where the repo has no test harness, skip silently.** This discipline
 conditions on infrastructure that exists; scaffolding a harness is its own
 decision for the user, not a TDD side effect.
 
-**Exceptions (ask the user):**
+**Use proportionate verification under existing repo/user instructions for:**
 - Throwaway prototypes
 - Generated code
 - Configuration files
@@ -54,21 +54,15 @@ decision for the user, not a TDD side effect.
 Harness exists and you're thinking "skip TDD just this once"? Stop. That's
 rationalization. (A stated repo rule is not "just this once": see Precedence.)
 
-## The Iron Law
+## Test order and existing work
 
-```
-NO PRODUCTION CODE WITHOUT A FAILING TEST FIRST
-```
-
-Write code before the test? Delete it. Start over.
-
-**No exceptions:**
-- Don't keep it as "reference"
-- Don't "adapt" it while writing tests
-- Don't look at it
-- Delete means delete
-
-Implement fresh from tests. Period.
+Prefer a failing test before new implementation. If valid implementation already
+exists, preserve it, including code written in this session. Derive expectations
+from the requirement. For a regression claim, demonstrate sensitivity against the old
+implementation or a controlled mutation in a disposable checkout. Correct existing
+behavior may instead be covered by passing characterization tests. Preserve tests
+and fixtures; the intended assertion must fail, not imports or setup. Never delete
+or rewrite valid code merely because it preceded its test.
 
 ## Red-Green-Refactor
 
@@ -128,20 +122,20 @@ test('retry works', async () => {
   expect(mock).toHaveBeenCalledTimes(3);
 });
 ```
-Vague name, tests mock not code
+Vague name; call count alone misses the returned result. An interaction assertion is valid when the interaction is itself part of the contract.
 </Bad>
 
 **Requirements:**
 - One behavior
 - Clear name
-- Real code (no mocks unless unavoidable)
+- Real code under test; use doubles at appropriate external or slow boundaries
 
 ### Verify RED - Watch It Fail
 
 **MANDATORY. Never skip.**
 
 ```bash
-npm test path/to/test.test.ts
+npm test path/to/test.test.ts  # example; use the repo's focused-test command
 ```
 
 Confirm:
@@ -149,7 +143,7 @@ Confirm:
 - Failure message is expected
 - Fails because feature missing (not typos)
 
-**Test passes?** You're testing existing behavior. Fix test.
+**Test passes?** For a regression, check whether it reaches the intended defect and establish RED against old code or a mutation. For characterization, confirm it captures the requested existing contract; a passing result is valid.
 
 **Test errors?** Fix error, re-run until it fails correctly.
 
@@ -196,17 +190,17 @@ Don't add features, refactor other code, or "improve" beyond the test.
 **MANDATORY.**
 
 ```bash
-npm test path/to/test.test.ts
+npm test path/to/test.test.ts  # example; use the repo's focused-test command
 ```
 
 Confirm:
 - Test passes
-- Other tests still pass
-- Output pristine (no errors, warnings)
+- Affected tests and required local gates pass
+- New errors or warnings are resolved; unrelated baseline issues are recorded
 
 **Test fails?** Fix code, not test.
 
-**Other tests fail?** Fix now.
+**Other tests fail?** Compare to baseline and fix in-scope regressions. Report unrelated failures without silently expanding the task. Use focused local checks; full suites normally run in PR CI. Expand locally for an explicit repo/user gate or a specific unresolved integration risk.
 
 ### REFACTOR - Clean Up
 
@@ -231,7 +225,7 @@ Next failing test for next feature.
 
 When writing or changing any test, read [writing-good-tests.md](writing-good-tests.md) for the rules that keep tests honest:
 - Name the production change that would make the test fail: before writing it
-- Assert on real behavior, never on mock behavior
+- Assert real behavior, including boundary interactions when they are part of the contract
 - Keep test-only code in test utilities, out of production classes
 - Understand a dependency's side effects before mocking it
 
@@ -240,22 +234,22 @@ When writing or changing any test, read [writing-good-tests.md](writing-good-tes
 | Excuse | Reality |
 |--------|---------|
 | "Too simple to test" | Simple code breaks. Test takes 30 seconds. |
-| "I'll test after" | Tests written after pass immediately, which proves nothing. They may test the wrong thing, test the implementation instead of the behavior, or miss the edge case you forgot. You never watched it fail, so you never proved it can catch the bug. Test-first forces that failure. |
-| "Tests after achieve same goals (spirit not ritual)" | Tests-after answer "what does this do?"; tests-first answer "what should this do?" Tests written after are biased by the code you already wrote; you verify the cases you remembered, not the ones you'd have discovered. Coverage without proof the tests work. |
+| "I'll test after" | Test-first exposes missing behavior early. If code exists, preserve it and prove the test detects the intended defect independently. |
+| "Tests after achieve same goals (spirit not ritual)" | Derive expectations from the requirement, not from the implementation; demonstrate defect sensitivity even when the test came later. |
 | "Already manually tested" | Manual testing is ad-hoc: no record of what you covered, no way to re-run it when the code changes, easy to forget cases under pressure. "Worked when I tried it" ≠ comprehensive. Automated tests run the same way every time. |
-| "Deleting X hours is wasteful" | Sunk cost fallacy. That time is already spent either way. The real choice is to rewrite with TDD (high confidence) or keep it and bolt tests on after (low confidence, likely bugs). Keeping code you can't trust is the waste. |
-| "Keep as reference, write tests first" | You'll adapt it. That's testing after. Delete means delete. |
-| "Need to explore first" | Fine. Throw away exploration, start with TDD. |
+| "The implementation already works" | Preserve it, but support that claim with independent expectations and relevant tests. |
+| "The code tells me what to assert" | Use the behavior contract to avoid copying a defect into the expected value. |
+| "Need to explore first" | Keep useful exploration and valid code; derive independent tests and demonstrate defect sensitivity before relying on it. |
 | "Test hard = design unclear" | Listen to test. Hard to test = hard to use. |
 | "TDD will slow me down" | TDD IS the pragmatic path: catches bugs before commit, prevents regressions, lets you refactor without fear. "Pragmatic" shortcuts mean debugging in production: slower, not faster. |
 | "Manual test faster" | Manual doesn't prove edge cases. You'll re-test every change. |
-| "Existing code has no tests" | You're improving it. Add tests for existing code. |
+| "Existing code has no tests" | Add coverage for the behavior this task changes or depends on; an untested codebase is not authority for a repository-wide test project. |
 
-## Red Flags - STOP and Start Over
+## Red Flags - Check the Evidence
 
 - Code before test
 - Test after implementation
-- Test passes immediately
+- A claimed regression test passes even when the intended defect is present
 - Can't explain why test failed
 - Tests added "later"
 - Rationalizing "just this once"
@@ -267,7 +261,7 @@ When writing or changing any test, read [writing-good-tests.md](writing-good-tes
 - "TDD is dogmatic, I'm being pragmatic"
 - "This is different because..."
 
-**All of these mean: Delete code. Start over with TDD.**
+These are prompts to inspect test independence and defect sensitivity. Preserve the implementation; correct the missing evidence or defective test instead of restarting valid work.
 
 ## Example: Bug Fix
 
@@ -310,16 +304,16 @@ Extract validation for multiple fields if needed.
 
 Before marking work complete:
 
-- [ ] Every new function/method has a test
-- [ ] Watched each test fail before implementing
-- [ ] Each test failed for expected reason (feature missing, not typo)
+- [ ] Changed observable behavior has meaningful coverage
+- [ ] Each regression test was demonstrated failing on the defect, before implementation or in isolation
+- [ ] Failure was the intended assertion, not a typo/import/setup error; characterization exceptions are identified
 - [ ] Wrote minimal code to pass each test
-- [ ] All tests pass
-- [ ] Output pristine (no errors, warnings)
-- [ ] Tests use real code (mocks only if unavoidable)
+- [ ] Focused tests and required local gates pass
+- [ ] New errors/warnings are resolved; baseline failures and unrun checks are disclosed
+- [ ] Tests exercise real code with appropriate boundary doubles
 - [ ] Edge cases and errors covered
 
-Can't check all boxes? You skipped TDD. Start over.
+An unchecked item is a concrete verification gap: resolve it or report its limit. Do not delete valid work to satisfy the checklist.
 
 ## When Stuck
 
@@ -332,20 +326,16 @@ Can't check all boxes? You skipped TDD. Start over.
 
 ## Debugging Integration
 
-Bug found? Write failing test reproducing it. Follow TDD cycle. Test proves fix and prevents regression.
+In-scope bug found? Write failing test reproducing it. Follow TDD cycle. Test proves fix and prevents regression.
 
-Never fix bugs without a test (where a harness exists).
+Protect testable changed behavior with regression coverage where a harness exists. Expected RED stays in this cycle; it does not activate systematic-debugging by itself.
 
 ## Final Rule
 
 ```
-Production code → test exists and failed first
-Otherwise → not TDD
+Changed behavior → relevant test and evidence
+Regression → intended failure demonstrated
+Existing valid behavior → characterization may remain green
 ```
 
-No exceptions without the user's permission: a stated repo or user
-convention is that permission in standing form (see Precedence).
-
----
-
-*Derived from [obra/superpowers](https://github.com/obra/superpowers) (MIT, (c) Jesse Vincent), adapted for the workbench system.*
+Apply existing repo/user conventions and the explicit cases above without reopening settled permission (see Precedence).

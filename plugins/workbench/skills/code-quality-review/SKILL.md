@@ -44,11 +44,14 @@ All the strictness below applies **within the accepted work's boundary**:
 the ticket, plan, or agreed change under review. Findings outside it are
 classified, not chased:
 
-- **In scope (blocking):** defects and structural problems in what this
-  change did. Fix them before approval, per the standards below.
+- **In scope (blocking):** demonstrated defects and material structural problems
+  in this change. Explain the consequence and fix before approval.
+- **In scope (advisory):** supported improvements without a blocking consequence.
+  File length or an alternative design alone does not establish a blocker.
 - **Out of scope (follow-up):** adjacent defects, pre-existing mess this
   diff did not worsen, improvements beyond the accepted work: record them
-  as follow-up work (a ticket, a tracked note); do **not** fold them into
+  in the existing scope record; external tickets require explicit existing
+  authorization and deduplication. Do **not** fold them into
   this change. One exception: a finding that proves this change **unsafe or
   incorrect as shipped** blocks regardless of where it lives.
 - The review is a **gate, not an implementation-discovery engine**, and a
@@ -57,10 +60,11 @@ classified, not chased:
   **the user explicitly declining**, or **the repo's own process superseding
   it**. A small diff, a confident implementation, a clean-looking change, time
   pressure, or the session's own sense that this one doesn't need it are not
-  among them. It fires **once, only when the implementation is believed
-  complete**, immediately before the PR-or-merge question, never
-  mid-implementation. Fixed findings re-verify and proceed; feeding each
-  round's discoveries back into implementation grows the diff without bound.
+  among them. Run the initial review when implementation is believed complete,
+  before filing a PR or merging directly. Record the reviewed revision and
+  dispositions. Verify direct corrections without restarting the whole review.
+  Material changes to behavior, design, or risk get focused independent follow-up;
+  repeat a full review only if changes broadly invalidate the earlier review.
 
 ## Non-Negotiable Additional Standards
 
@@ -73,7 +77,7 @@ Apply the baseline prompt above, plus these explicit review rules:
    - Assume there is often a "code judo" move available: a re-organization that uses the existing architecture more effectively and makes the change dramatically simpler and more elegant.
    - If you see a path to delete complexity rather than rearrange it, push hard for that path.
 
-1. **Do not let a PR push a file from under 1k lines to over 1k lines without a very strong reason.**
+1. **Inspect a PR that pushes a file from under 1k lines to over 1k lines for a concrete decomposition problem.**
    - Treat this as a strong code-quality smell by default.
    - Prefer extracting helpers, subcomponents, modules, or local abstractions instead of letting a file sprawl past 1000 lines.
    - If the diff crosses that threshold, explicitly ask whether the code should be decomposed first.
@@ -207,8 +211,8 @@ Prioritize findings in this order:
 
 Do not flood the review with low-value nits if there are larger structural issues.
 Prefer a smaller number of high-conviction comments over a long list of cosmetic notes.
-Label every finding **in-scope (blocking)** or **out-of-scope (follow-up)** per the
-scope boundary: an unlabeled finding reads as blocking.
+Label every finding **in-scope (blocking)**, **in-scope (advisory)**, or
+**out-of-scope (follow-up)** per the scope boundary: an unlabeled finding reads as blocking.
 
 ## Approval Bar
 
@@ -216,7 +220,7 @@ Do not approve merely because behavior seems correct.
 The bar for approval is:
 
 - no clear structural regression
-- no obvious missed opportunity to make the implementation dramatically simpler when such a path is visible
+- no unaddressed material structural problem where a demonstrated simplification resolves the consequence
 - no unjustified file-size explosion
 - no obvious spaghetti-growth from special-case branching
 - no obviously hacky or magical abstraction that makes the code harder to reason about
@@ -224,7 +228,9 @@ The bar for approval is:
 - no clear architecture-boundary leak or avoidable canonical-helper duplication
 - no missed opportunity for an obvious decomposition that would materially improve maintainability
 
-Treat these as presumptive blockers unless the author can justify them clearly:
+Investigate these aggressively and require a clear structural justification.
+They block when the review demonstrates a correctness or material maintainability
+consequence; file length or an alternative design alone is not sufficient:
 
 - the PR preserves a lot of incidental complexity when there is a plausible code-judo move that would delete it
 - the PR pushes a file from below 1000 lines to above 1000 lines

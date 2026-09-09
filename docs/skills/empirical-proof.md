@@ -6,7 +6,7 @@ This skill proves a just-finished change **at the running software**, not on pap
 
 It is an **expensive tier that is offered, never run uninvited**. It fans out subagents, boots applications, and re-drives results firsthand for corroboration. The rule across the flow is that `verification-before-completion` is the always-on gate and this skill is a user option: the session offers it when a change qualifies and runs it only on your explicit ask, in the moment or by standing rule ([decision](../decisions/expensive-verification-user-optioned.md)). A repo process document that requires driving the real artifact for a change of this kind *is* that standing ask, so the session runs it, names the gate that invited it, and reports the run as part of satisfying the gate.
 
-It stops at the verdict. The skill says so twice over: it **"does not fix what it finds, and it does not fix the environment it runs in; both are the operator's separate step."** A bug found during the run is reported `broken` with its evidence, not patched. A "verified after I fixed it in passing" is, in the skill's words, **"unreviewed implementation wearing a verification badge."** One thing it *does* do that it used to refuse is launch the app. Installing dependencies, copying the example env, building, and starting the dev server are all in scope now, along with a clean retry.
+Each proof attempt keeps its revision, transcript, verdict, and cleanup evidence. A verification-only request ends at the report. When the larger task already authorizes repair, return to implementation, repair the affected change, review as required, then rerun the affected proof as a new attempt. Evidence-gathering subagents remain read-only.
 
 ## When to reach for it
 
@@ -44,7 +44,7 @@ Running underneath all of that, unchanged and absolute: **"Do not conjure the en
 | Verdict | Means | Carries |
 | --- | --- | --- |
 | `verified` | Every scenario passed | Per-surface results, each citing its transcript |
-| `broken` | Scenarios failed | The failing evidence, expected versus observed. Report it; do not fix it |
+| `broken` | Scenarios failed | The failing evidence, expected versus observed. Preserve this proof attempt; an already-authorized repair can follow separately |
 | `blocked` | The app could not honestly be brought up | The gate's observation verbatim, plus the one input that would unblock |
 
 The report is verdict-first, then scenarios run per surface so coverage is visible, then gaps left unrun (silence reads as covered), then a cleanup line naming what you started and stopped and citing the check that proved the stop.
@@ -67,13 +67,12 @@ No, deliberately. A new hunting skill and a solo-scale `qa-sweep` were both weig
 Because that fix separated two things the old text conflated: *don't fabricate dependencies* (kept, absolute) from *don't try twice to start the app* (removed, wrong). Stubbing a listener, faking an env var, and editing a boot check remain forbidden. The reasoning that leads there is named in the skill's rationalization table: "The change doesn't touch the DB, a stub gets us past boot." The answer is that you cannot see the blast radius from inside the change, and the artifact that ships boots against the real dependency. During the skill's authoring validation, both agents run against a boot-blocked variant without the skill fabricated the missing dependency (one improvised a throwaway TCP listener to fool the boot probe) each reasoning that the change never touched the DB.
 
 **It found a real bug. Why didn't it just fix it?**
-Because a report that certifies code nobody reviewed is worth less than the round trip it saves. The same validation runs found three of four agents fixing the planted bug during verification and reporting PASS-after-fix. The finding goes to the operator; the fix is a separate, reviewable step.
+The proof attempt must preserve the observed failure instead of silently repairing it and reporting PASS-after-fix. Record the verdict first. If repairs are already authorized, continue them as a separate reviewable step, then run a new proof attempt; a review-only request ends with the finding.
 
 **My unit tests are green. Isn't that the same evidence?**
 No. The bait harness used to develop this skill held four of four green unit tests over code with a live runtime-only type-coercion hole. Tests gate; they do not prove.
 
-**My project generates code, and there is no app to boot.**
-The emitted artifact is the runnable surface. Run the generator via the documented path, then build and drive its output the way a real consumer would: compile it, boot it, hit its endpoints. Reading the emitted source is still reading. One boundary shift applies here: an emitted artifact that fails to build or boot is a **`broken` verdict against the generator**, not `blocked`, because the generator's output is the change under test. This case was added after a real project whose deliverable was emitted source code found the skill assumed a bootable app ([decision](../decisions/verification-shape-feedback.md)).
+Run the generator, build and boot its emitted artifact, and drive its real surface. Attribute product-caused build/boot failures as broken. Missing credentials, required services, or verifier capabilities are blocked; failure to boot alone does not identify a generator defect.
 
 **My repo's `AGENTS.md` already says to boot the app before calling a change done. Does the session still stop and offer?**
 
@@ -93,7 +92,7 @@ No. Stop the processes you started and prove the stop (port closed, process gone
 - The report leads with a verdict, and every passing surface cites a transcript of a real exchange with the running app.
 - Probes appear alongside happy paths (invalid input, coercion cases, error paths), not just the one ideal call.
 - A `blocked` verdict quotes the observed failure verbatim and names the single thing that would unblock it, after the documented path was actually exhausted.
-- Product code is untouched by the run, and any bug found appears as a finding rather than a commit.
+- Product code is untouched during each proof attempt; authorized repairs occur between separately recorded attempts, and any bug found appears as a finding rather than a commit.
 
 Negative signals: the skill is being misapplied if:
 
@@ -106,3 +105,5 @@ Negative signals: the skill is being misapplied if:
 ## Where it fits
 
 This is the deep form of the flow's completion gate. `verification-before-completion` is the always-on floor that demands fresh evidence for any done-claim; when the change touched something a real client can drive and you decide the spend is warranted, this skill supplies that evidence from the running software instead of from a command's exit code. Its output feeds the same place: once the work is honestly `verified`, the required adversarial `code-quality-review` fires, and then the landing gate asks PR or merge.
+
+Invocation remains explicit: run this protocol on the user's request or a standing real-artifact completion gate. Otherwise offer it. The detailed health-check gate, scenario matrix, exact transcript schema, every-FAIL plus one-PASS-per-surface corroboration, and proven cleanup requirements still apply.

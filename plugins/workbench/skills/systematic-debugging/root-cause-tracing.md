@@ -136,28 +136,30 @@ digraph principle {
     "Trace backwards" [shape=box];
     "Is this the source?" [shape=diamond];
     "Fix at source" [shape=box];
-    "Add validation at each layer" [shape=box];
-    "Bug impossible" [shape=doublecircle];
-    "NEVER fix just the symptom" [shape=octagon, style=filled, fillcolor=red, fontcolor=white];
+    "Validate independent boundaries" [shape=box];
+    "Demonstrated paths covered" [shape=doublecircle];
+    "Label mitigation; keep investigating" [shape=octagon, style=filled, fillcolor=red, fontcolor=white];
 
     "Found immediate cause" -> "Can trace one level up?";
     "Can trace one level up?" -> "Trace backwards" [label="yes"];
-    "Can trace one level up?" -> "NEVER fix just the symptom" [label="no"];
+    "Can trace one level up?" -> "Label mitigation; keep investigating" [label="no"];
     "Trace backwards" -> "Is this the source?";
     "Is this the source?" -> "Trace backwards" [label="no - keeps going"];
     "Is this the source?" -> "Fix at source" [label="yes"];
-    "Fix at source" -> "Add validation at each layer";
-    "Add validation at each layer" -> "Bug impossible";
+    "Fix at source" -> "Validate independent boundaries";
+    "Validate independent boundaries" -> "Demonstrated paths covered";
 }
 ```
 
-**NEVER fix just where the error appears.** Trace back to find the original trigger.
+**Trace back to find the original trigger before claiming a causal repair.** A
+needed, authorized symptom mitigation can proceed, explicitly labeled with the
+remaining investigation; it is not proof of a root-cause fix.
 
 ## Stack Trace Tips
 
 **In tests:** Use `console.error()` not logger - logger may be suppressed
 **Before operation:** Log before the dangerous operation, not after it fails
-**Include context:** Directory, cwd, environment variables, timestamps
+**Include context:** Relevant paths, timestamps, selected non-secret configuration, and redacted values; never dump the environment
 **Capture stack:** `new Error().stack` shows complete call chain
 
 ## Real-World Impact

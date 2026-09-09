@@ -4,10 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>workbench: the flow, canonical</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/lucide@0.469.0"></script>
 <style>
 :root{
   --bg-gradient:radial-gradient(circle at 50% 0%,rgba(56,189,248,.08),transparent 35rem),
@@ -127,16 +123,15 @@ h2{font:700 24px/1.2 var(--sans);letter-spacing:-.02em;margin:0;color:#f8fafc}
 </nav>
 
 <header class="hero glass-card">
-  <p class="eyebrow"><i data-lucide="compass"></i> canonical · workbench system</p>
+  <p class="eyebrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m16.2 7.8-2.8 5.6-5.6 2.8 2.8-5.6z"/></svg> canonical · workbench system</p>
   <h1>The workbench flow</h1>
-  <p class="lede">How work enters, gets scoped, gets implemented, and lands under the <strong>method</strong> system,
-    the curated replacement for the superpowers pipeline. Filled sky boxes are <strong>user gates</strong>: every one is a
-    moment where the user, not the system, decides. Execution agency inside implementation belongs to the user and the
-    harness; method only hands the implementer the <code>plan</code> or <code>goal</code> when one exists.</p>
+  <p class="lede">How work enters, gets scoped, gets implemented, and lands under the <strong>workbench</strong> system,
+    the curated replacement for the superpowers pipeline. Filled sky boxes are <strong>user gates</strong>: the user decides when a choice remains open. Existing choices and authorization carry forward. Execution agency inside implementation belongs to the user and the
+    harness; workbench only hands the implementer the <code>plan</code> or <code>goal</code> when one exists.</p>
   <dl class="facts">
-    <div class="fact"><dt>Skills</dt><dd>6 ported + <code>audit</code> + <code>workbench-drift</code></dd></div>
-    <div class="fact"><dt>Decisions</dt><dd>Q1–Q11, operator-settled</dd></div>
-    <div class="fact"><dt>Upstream pin</dt><dd><code>44c9b2d</code> (obra/superpowers)</dd></div>
+    <div class="fact"><dt>Skills</dt><dd>17 shipped skills + 5 review agents</dd></div>
+    <div class="fact"><dt>Decisions</dt><dd>Historical ledger + current refinements</dd></div>
+    <div class="fact"><dt>Upstream pin</dt><dd><code>b36e0829</code> (obra/superpowers)</dd></div>
     <div class="fact"><dt>Derived at</dt><dd><code>8e9a2e8</code> + workbench landing</dd></div>
   </dl>
 </header>
@@ -158,8 +153,8 @@ h2{font:700 24px/1.2 var(--sans);letter-spacing:-.02em;margin:0;color:#f8fafc}
     <text class="door" x="40" y="100">door A</text>
     <g>
       <rect class="box-emph" x="100" y="72" width="210" height="46" rx="9"/>
-      <text class="title" text-anchor="middle" x="205" y="92">Size the workload</text>
-      <text class="sub" text-anchor="middle" x="205" y="108">quick · deep · sweep</text>
+      <text class="title" text-anchor="middle" x="205" y="92">Use requested scope</text>
+      <text class="sub" text-anchor="middle" x="205" y="108">quick · static · deep · sweep</text>
     </g>
     <path class="wire" d="M310 95 L365 95" marker-end="url(#mN)"/>
     <g>
@@ -170,8 +165,8 @@ h2{font:700 24px/1.2 var(--sans);letter-spacing:-.02em;margin:0;color:#f8fafc}
     <path class="wire" d="M560 95 L615 95" marker-end="url(#mN)"/>
     <g>
       <rect class="box-emph" x="620" y="72" width="210" height="46" rx="9"/>
-      <text class="title" text-anchor="middle" x="725" y="92">Confirm the flags</text>
-      <text class="sub" text-anchor="middle" x="725" y="108">only when flags exist</text>
+      <text class="title" text-anchor="middle" x="725" y="92">Report evidence</text>
+      <text class="sub" text-anchor="middle" x="725" y="108">ask for missing intent / access</text>
     </g>
     <path class="wire" d="M830 95 L885 95" marker-end="url(#mN)"/>
     <g>
@@ -194,12 +189,12 @@ h2{font:700 24px/1.2 var(--sans);letter-spacing:-.02em;margin:0;color:#f8fafc}
     <g>
       <rect class="box" x="100" y="256" width="230" height="50" rx="9"/>
       <text class="title" text-anchor="middle" x="215" y="277">Brainstorm</text>
-      <text class="sub" text-anchor="middle" x="215" y="293">always: feature · refactor</text>
+      <text class="sub" text-anchor="middle" x="215" y="293">resolve open design choices</text>
     </g>
     <g>
       <rect class="box-emph" x="430" y="256" width="210" height="50" rx="9"/>
-      <text class="title" text-anchor="middle" x="535" y="277">Pick the route</text>
-      <text class="sub" text-anchor="middle" x="535" y="293">the user's call</text>
+      <text class="title" text-anchor="middle" x="535" y="277">Use agreed route</text>
+      <text class="sub" text-anchor="middle" x="535" y="293">ask if still unsettled</text>
     </g>
     <g>
       <rect class="box" x="100" y="330" width="180" height="50" rx="9"/>
@@ -246,7 +241,7 @@ h2{font:700 24px/1.2 var(--sans);letter-spacing:-.02em;margin:0;color:#f8fafc}
     <g>
       <rect class="box-ext" x="300" y="530" width="230" height="42" rx="9"/>
       <text class="title" text-anchor="middle" x="415" y="548">Systematic debugging</text>
-      <text class="sub" text-anchor="middle" x="415" y="563">on bugs, before fixes</text>
+      <text class="sub" text-anchor="middle" x="415" y="563">persistent / unclear failures</text>
     </g>
     <path class="wire-dash" d="M160 530 L185 508" marker-end="url(#mN)"/>
     <path class="wire-dash" d="M390 530 L320 508" marker-end="url(#mN)"/>
@@ -257,7 +252,7 @@ h2{font:700 24px/1.2 var(--sans);letter-spacing:-.02em;margin:0;color:#f8fafc}
     </g>
     <g>
       <rect class="box" x="740" y="450" width="250" height="56" rx="9"/>
-      <text class="title" text-anchor="middle" x="865" y="472">Adversarial review ×1</text>
+      <text class="title" text-anchor="middle" x="865" y="472">Adversarial review</text>
       <text class="sub" text-anchor="middle" x="865" y="490">code-quality-review + trim</text>
     </g>
 
@@ -289,12 +284,12 @@ h2{font:700 24px/1.2 var(--sans);letter-spacing:-.02em;margin:0;color:#f8fafc}
       <rect class="box" x="740" y="652" width="250" height="56" rx="9"/>
       <text class="title" text-anchor="middle" x="865" y="672">Land</text>
       <text class="sub" text-anchor="middle" x="865" y="687">file-pr · merge · push</text>
-      <text class="sub" text-anchor="middle" x="865" y="700">fix-ci tends the checks</text>
+      <text class="sub" text-anchor="middle" x="865" y="700">CI watcher: Opus / Sol</text>
     </g>
 
     <path class="wire" d="M865 506 C 865 570, 620 606, 565 648" marker-end="url(#mN)"/>
     <text class="wire-label" x="740" y="576">findings → fixed + re-verified</text>
-    <text class="wire-label" x="740" y="590">no re-review</text>
+    <text class="wire-label" x="740" y="590">review material new risk</text>
     <path class="wire-accent" d="M670 680 L735 680" marker-end="url(#mA)"/>
     <path class="wire-dash" d="M865 708 C 865 744, 420 748, 235 712" marker-end="url(#mN)"/>
     <text class="wire-label" x="520" y="744">on feedback</text>
@@ -317,34 +312,34 @@ h2{font:700 24px/1.2 var(--sans);letter-spacing:-.02em;margin:0;color:#f8fafc}
   <p class="sec-q">Which skill backs each box on the map?</p>
 
   <div class="layer">
-    <div class="layer-head"><h3>method · ported from obra/superpowers (MIT, Jesse Vincent)</h3><span class="hint">adapted per workbench-system.md</span></div>
+    <div class="layer-head"><h3>workbench · ported from obra/superpowers (MIT, Jesse Vincent)</h3><span class="hint">adapted per workbench-system.md</span></div>
     <div class="mods">
       <div class="mod" title="plugins/workbench/skills/brainstorming/SKILL.md"><h4>brainstorming</h4><div class="path">plugins/workbench/skills/brainstorming/</div><p class="cap">Design dialogue; ends at the route gate.</p></div>
       <div class="mod" title="plugins/workbench/skills/test-driven-development/SKILL.md"><h4>test-driven-development</h4><div class="path">plugins/workbench/skills/test-driven-development/</div><p class="cap">RED-GREEN-REFACTOR, default where a harness exists; repo conventions take precedence.</p></div>
-      <div class="mod" title="plugins/workbench/skills/systematic-debugging/SKILL.md"><h4>systematic-debugging</h4><div class="path">plugins/workbench/skills/systematic-debugging/</div><p class="cap">Root cause before fixes; 3-failures escalation.</p></div>
+      <div class="mod" title="plugins/workbench/skills/systematic-debugging/SKILL.md"><h4>systematic-debugging</h4><div class="path">plugins/workbench/skills/systematic-debugging/</div><p class="cap">Four-phase investigation for persistent or unclear failures; reassess failed hypotheses.</p></div>
       <div class="mod" title="plugins/workbench/skills/verification-before-completion/SKILL.md"><h4>verification-before-completion</h4><div class="path">plugins/workbench/skills/verification-before-completion/</div><p class="cap">The "deemed ready" gate: evidence before claims.</p></div>
       <div class="mod" title="plugins/workbench/skills/receiving-code-review/SKILL.md"><h4>receiving-code-review</h4><div class="path">plugins/workbench/skills/receiving-code-review/</div><p class="cap">Rigor on feedback; no performative agreement.</p></div>
-      <div class="mod" title="plugins/toolkit/skills/writing-skills/SKILL.md"><h4>writing-skills</h4><div class="path">plugins/toolkit/skills/writing-skills/ (workbench)</div><p class="cap">TDD for skill authoring: reclassified a workbench utility; drift-tracked, outside the flow.</p></div>
+      <div class="mod" title=".claude/skills/writing-skills/SKILL.md"><h4>writing-skills</h4><div class="path">.claude/skills/writing-skills/ (repo-local)</div><p class="cap">TDD for skill authoring; drift-tracked, shipped in no plugin.</p></div>
     </div>
   </div>
 
   <div class="layer">
-    <div class="layer-head"><h3>method · native</h3><span class="hint">no upstream lineage</span></div>
+    <div class="layer-head"><h3>workbench · native</h3><span class="hint">no upstream lineage</span></div>
     <div class="mods">
-      <div class="mod" title="plugins/workbench/skills/audit/SKILL.md"><h4>audit</h4><div class="path">plugins/workbench/skills/audit/</div><p class="cap">Door A protocol: size → engine → confirm flags → route by shape. Unproven: expect tuning.</p></div>
+      <div class="mod" title="plugins/workbench/skills/audit/SKILL.md"><h4>audit</h4><div class="path">plugins/workbench/skills/audit/</div><p class="cap">Door A: requested scope → engine → evidence and open decisions → authorized next step.</p></div>
       <div class="mod" title="plugins/workbench/skills/using-workbench/SKILL.md"><h4>using-workbench</h4><div class="path">plugins/workbench/skills/using-workbench/</div><p class="cap">On-demand orientation map; reference, never a dispatcher.</p></div>
       <div class="mod" title=".claude/skills/workbench-drift/SKILL.md"><h4>workbench-drift</h4><div class="path">.claude/skills/workbench-drift/ (repo-local)</div><p class="cap">Upstream watchdog: manifest + drift-check.mjs; fork tooling, not shipped in the plugin.</p></div>
     </div>
   </div>
 
   <div class="layer">
-    <div class="layer-head"><h3>toolkit natives the flow composes</h3><span class="hint">pre-existing, unchanged by method</span></div>
+    <div class="layer-head"><h3>workbench natives the flow composes</h3><span class="hint">canonical specifications in the plugin</span></div>
     <div class="mods">
       <div class="mod" title="plugins/workbench/skills/claim-check/SKILL.md"><h4>claim-check</h4><div class="path">skills/claim-check/</div><p class="cap">Deep-audit engine.</p></div>
       <div class="mod" title="plugins/workbench/skills/qa-sweep/SKILL.md"><h4>qa-sweep</h4><div class="path">skills/qa-sweep/</div><p class="cap">Team-sweep engine.</p></div>
-      <div class="mod" title="plugins/toolkit/agents/test-quality-reviewer.md"><h4>test-quality-reviewer</h4><div class="path">agents/test-quality-reviewer.md</div><p class="cap">The test-quality stage.</p></div>
+      <div class="mod" title="plugins/workbench/agents/test-quality-reviewer.md"><h4>test-quality-reviewer</h4><div class="path">agents/test-quality-reviewer.md</div><p class="cap">The test-quality stage.</p></div>
       <div class="mod" title="plugins/workbench/skills/code-quality-review/SKILL.md"><h4>code-quality-review</h4><div class="path">skills/code-quality-review/</div><p class="cap">The adversarial pass.</p></div>
-      <div class="mod" title="plugins/workbench/skills/empirical-proof/SKILL.md"><h4>empirical-proof</h4><div class="path">skills/empirical-proof/</div><p class="cap">Readiness for runnable surfaces.</p></div>
+      <div class="mod" title="plugins/workbench/skills/empirical-proof/SKILL.md"><h4>empirical-proof</h4><div class="path">skills/empirical-proof/</div><p class="cap">Real-client proof on request or under a standing gate.</p></div>
       <div class="mod" title="plugins/workbench/skills/handoff-goal/SKILL.md"><h4>handoff-goal</h4><div class="path">skills/handoff-goal/</div><p class="cap">The autonomous route.</p></div>
       <div class="mod" title="plugins/workbench/skills/file-pr/SKILL.md"><h4>file-pr · fix-ci</h4><div class="path">skills/file-pr/ · skills/fix-ci/</div><p class="cap">Landing: file-and-tend, CI watch-and-fix.</p></div>
     </div>
@@ -353,7 +348,7 @@ h2{font:700 24px/1.2 var(--sans);letter-spacing:-.02em;margin:0;color:#f8fafc}
 
 <section id="removed">
   <div class="sec-head"><span class="sec-num">03</span><h2>Removed deliberately</h2></div>
-  <p class="sec-q">What did method drop from superpowers, and why? (Per-piece record: <code>.claude/skills/workbench-drift/manifest.json</code>, repo-local. The removal is of forced process: agency itself stays the user's call.)</p>
+  <p class="sec-q">What did method drop from superpowers, and why? (Per-piece record: <code>.claude/skills/workbench-drift/manifest.json</code>, repo-local. The removal is of forced process: agency itself stays ask if still unsettled.)</p>
   <div class="rules">
     <div class="rule no"><span class="mark">✕</span><div class="body"><strong><code>using-superpowers</code> + SessionStart hook</strong><p>The enforcement dispatcher ("1% chance → MUST") and its delivery mechanism. Nothing replaces them; defanged descriptions are the entire activation surface.</p></div></div>
     <div class="rule no"><span class="mark">✕</span><div class="body"><strong><code>subagent-driven-development</code></strong><p>Per-task subagent dispatch. The operator's process is direct implementation with one adversarial review at readiness.</p></div></div>
@@ -365,6 +360,7 @@ h2{font:700 24px/1.2 var(--sans);letter-spacing:-.02em;margin:0;color:#f8fafc}
 </section>
 
 <section id="ledger">
+  <p class="sec-q">Historical decisions are refined by the current flow and <a href="decisions/skill-wording-hardening.md">wording-hardening decision</a>: carry existing authority, review material new risk, and run expensive proof only when authorized. Epic lanes use focused local tests plus required gates. Every verified wave ends with a next dispatch, delivery gate, closing audit, completion proposal, or concrete blocker.</p>
   <div class="sec-head"><span class="sec-num">04</span><h2>Decisions ledger</h2></div>
   <p class="sec-q">The eleven operator calls (2026-08-11) the flow encodes.</p>
   <div class="ledger-wrap glass-card">
@@ -373,7 +369,7 @@ h2{font:700 24px/1.2 var(--sans);letter-spacing:-.02em;margin:0;color:#f8fafc}
       <tr><td class="q">Q2</td><td>TDD is the default where a test harness exists; silent skip where none.</td></tr>
       <tr><td class="q">Q3</td><td>Adversarial review fires once: at model-deemed readiness.</td></tr>
       <tr><td class="q">Q4</td><td>Comment trimming rides that review, per repo rules.</td></tr>
-      <tr><td class="q">Q5</td><td>Fixed findings re-verify and proceed straight to the outline gate: no re-review.</td></tr>
+      <tr><td class="q">Q5</td><td>Fixed findings re-verify and proceed straight to the outline gate: review material new risk.</td></tr>
       <tr><td class="q">Q6</td><td>Review precedes landing; landing is outline-then-ask, with a rules bypass.</td></tr>
       <tr><td class="q">Q7</td><td>The confirm gate pauses only when the audit flagged uncertainty.</td></tr>
       <tr><td class="q">Q8</td><td>Audit sizes: quick look (inline) · deep (claim-check) · team sweep (qa-sweep).</td></tr>
@@ -384,7 +380,7 @@ h2{font:700 24px/1.2 var(--sans);letter-spacing:-.02em;margin:0;color:#f8fafc}
       <tr><td class="q">Q13</td><td>Implementation inherits repo patterns first: a stated repo/user convention that conflicts with a discipline step wins: announced, not absorbed silently; TDD is the default only where the repo is silent. (2026-08-12)</td></tr>
       <tr><td class="q">Q14</td><td>Expensive verification (empirical-proof, qa-sweep) is user-optioned: offered when it fits, run only on explicit ask or standing authorization, never automatic. verification-before-completion is the only always-on gate. (2026-08-12)</td></tr>
       <tr><td class="q">Q15</td><td>The adversarial review fires only when the work-stream's implementation is believed complete, right before the PR-or-merge gate, never mid-implementation (refines Q3). Findings outside the accepted scope become follow-ups unless they prove the change unsafe or incorrect. (2026-08-12)</td></tr>
-      <tr><td class="q">Q16</td><td>Stop and rescope when a change crosses owner areas the ask never named or grows well past the sized expectation: splitting is the user's call; scope never grows silently. Adjacent defects found along the way are recorded as follow-up work, not folded in. (2026-08-12)</td></tr>
+      <tr><td class="q">Q16</td><td>Stop and rescope when a change crosses owner areas the ask never named or grows well past the sized expectation: splitting is ask if still unsettled; scope never grows silently. Adjacent defects found along the way are recorded as follow-up work, not folded in. (2026-08-12)</td></tr>
       <tr><td class="q">Q17</td><td>One evidence home per work scope (refines Q12): everything a work-stream produces (dispatched agents' evidence included) lands in the same <code>.workbench/&lt;work_scope&gt;/</code> folder, with the path handed to agents in their contract; never per-agent temp dirs, never the system temp. (2026-08-12)</td></tr>
     </table>
   </div>
@@ -393,13 +389,13 @@ h2{font:700 24px/1.2 var(--sans);letter-spacing:-.02em;margin:0;color:#f8fafc}
 <footer class="prov">
   Derived from <code>docs/workbench-flow.md</code> · <code>docs/decisions/workbench-system.md</code> ·
   <code>plugins/workbench/skills/*</code>: generated 2026-08-11 at <code>8e9a2e8</code> (workbench landing
-  in the uncommitted working tree at generation time). Upstream pin <code>44c9b2d</code>
+  in the uncommitted working tree at generation time). Upstream pin <code>b36e0829</code>
   (obra/superpowers, MIT, Jesse Vincent).<br>
   <strong>Canonical pair:</strong> this page and <code>docs/workbench-flow.md</code> are maintained together;
   a flow change updates both or neither. Design-session record: the "method: flow whiteboard" artifact (v7).
 </footer>
 
 </div>
-<script>lucide.createIcons();</script>
+
 </body>
 </html>

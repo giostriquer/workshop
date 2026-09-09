@@ -2,22 +2,13 @@
 
 ## What it does
 
-`audit` turns "something to check" into a sized, engine-run, user-confirmed
+`audit` turns "something to check" into a sized, engine-run, evidence-grounded
 investigation. You bring a bug to identify, a refactor to confirm complete, a
 premise to test. It asks you how big the job is, dispatches the engine that
 matches your answer, brings back anything the evidence left uncertain, and
 routes what comes out.
 
-It is protocol, not investigation. The skill states the division of labor
-directly: "the user sizes it, an engine runs it, the user confirms what it
-flagged, and this skill routes what comes out." The only work `audit` does with
-its own hands is the smallest tier: a quick look, a few reads and greps. Deep
-and broad work belongs to `claim-check` and `qa-sweep`, and `audit` "adds none"
-of its own rigor on top of theirs.
-
-It does not fix anything. Its last act is a hand-off: "**Never starts the
-revealed work.**" If the investigation surfaces a bug, you end up either with a
-report, or in `brainstorming`, or at the route gate, never mid-repair.
+It routes the requested scope to the right method. Quick looks and static cross-cutting reviews can run inline; premise investigations use `claim-check`, and broad runtime sweeps use `qa-sweep`. Record empirical uncertainty as evidence limits, ask only for missing user decisions, and continue already-authorized repairs after preserving the audit result. An audit-only request ends with the report.
 
 ## When to reach for it
 
@@ -41,16 +32,16 @@ grounds the idea against the codebase and goes to `brainstorming`.
 
 ## The protocol
 
-**Step 1: the user sizes the workload.** The question is skipped only when you
-already stated a size. Three tiers:
+**Step 1: use the requested scope.** An explicit full audit already supplies breadth. Ask only when a material scope choice is missing. Four tiers:
 
 | Tier | Engine | Fits |
 | --- | --- | --- |
 | **quick look** | inline, this session: a few reads/greps, minutes | "is this config even used?", a suspicion worth five minutes |
+| **static review** | inline or delegated review of an explicit cross-cutting scope | skill wording, architecture, policy, or configuration review |
 | **deep audit** | the `claim-check` skill | one premise investigated to evidence-graded verdict: a bug to pin down, a ticket to validate, "is the refactor complete?" |
 | **team sweep** | the `qa-sweep` skill | a broad, decomposable surface: a release, a feature area, corroborated findings at team scale |
 
-The ask has mechanics: a structured question tool (`AskUserQuestion` or the
+When a sizing question is needed, it has mechanics: a structured question tool (`AskUserQuestion` or the
 host's equivalent) when one is available, one option per tier, the recommended
 tier first and marked; a numbered list otherwise. The session recommends with
 one line of reasoning, "but the pick is the user's."
@@ -58,8 +49,7 @@ one line of reasoning, "but the pick is the user's."
 **The runtime modality flag.** Riding on the same question is a second axis:
 where the evidence must come from. "When the thing to check is behavior a real
 client can drive (an endpoint, a flow in the running app, a CLI) code reading
-alone cannot settle it." The recommendation says so, and the same sizing
-question confirms whether the check should drive the booted app. A confirmed
+alone cannot settle it." The recommendation says so, and the request or standing gate can already authorize runtime verification; otherwise the sizing question resolves that choice. A confirmed
 runtime check travels to the engine as part of the workload. A team sweep is
 runtime by construction.
 
@@ -72,27 +62,21 @@ own rules.
 settles from what it doesn't. Ambiguous reproductions, contested assumptions,
 surprising results, anything where two readings survive; those are the flags.
 
-**Step 4: confirm the flags, only when there are flags.** Each flagged point
-comes back as a concrete question: what was found, why it's uncertain, which
-reading the session leans toward. "A clean audit (findings but no flags)
-skips this pause entirely and goes straight on."
+**Step 4: resolve missing decisions and preserve evidence gaps.** Ask for intent, access, or scope choices the user can supply. Empirical ambiguity stays an evidence limitation in the report; do not ask the user to certify an unproven fact.
 
 **Step 5: route the exit.** Three shapes:
 
 | What came out | Where it goes |
 | --- | --- |
 | The audit was the ask | Deliver the report, verdict-first, and stop |
-| Work revealed, feature- or refactor-shaped | Hand into `brainstorming` with findings and confirmed flags as context: "it must not re-derive them" |
-| Work revealed, a confirmed fix | Skip the design debate; present the route pick directly: **Direct**, **Plan**, **Long-running goal** |
+| Work revealed with unresolved design | Hand into `brainstorming` with the findings and remaining decisions; do not re-derive settled evidence |
+| Work revealed, a confirmed in-scope fix | Continue already-authorized implementation after recording the findings; ask only for a missing material route decision |
 
 ## Common questions
 
 **Why is it asking me to size something before it even looks?**
 
-Because the size determines which engine runs, and the engines differ by an
-order of magnitude in cost. The sizing question is one of the three user gates
-in the workbench flow: the one `audit` owns. If you already said "just take a
-quick look," the question is skipped.
+A sizing question is appropriate only when a material scope choice is missing, because engines differ in cost and coverage. An explicit full audit or clearly scoped request already supplies the breadth and proceeds without that question.
 
 **I asked it to check whether a feature works and it only read code.**
 
@@ -114,10 +98,7 @@ that wants to become a deep audit is a question for the user, not a decision."
 
 **It didn't pause to confirm anything. Did it skip a step?**
 
-Probably not. The confirmation pause exists only for flags. A clean audit with
-findings settled by the evidence and nothing ambiguous goes straight to the exit.
-The rule cuts both ways: it "never skips the flag confirmation when flags
-exist, and never invents the pause when they don't."
+A pause is needed only for a missing decision the user can supply. Empirical uncertainty stays in the report; the user is not asked to certify an ambiguous reproduction as true.
 
 **Does `audit` make `claim-check` or `qa-sweep` stricter?**
 
@@ -128,9 +109,7 @@ reaches `claim-check` as investigation context, not as new skill text.
 
 **It found the bug. Will it fix it?**
 
-No. A confirmed fix goes to the route gate and waits for your pick; anything
-feature- or refactor-shaped goes to `brainstorming` carrying the findings. Both
-exits are hand-offs.
+An audit-only request ends in its report or recommendation. If repairs are already authorized, the session continues confirmed in-scope fixes and asks only for unresolved design choices.
 
 **Where does the evidence end up?**
 
@@ -153,17 +132,12 @@ its engines as the proven part.
 
 ## It's working if
 
-- You got an explicit sizing question with three tiers, a marked
-  recommendation, and no investigation started before you answered.
-- When the target was running-app behavior, the same question asked whether to
-  drive the booted app.
-- Uncertain findings came back as concrete questions, each naming what was
-  found and which reading the session leans toward.
+- The investigation used the requested breadth; only unresolved material sizing choices needed a question.
+- Runtime claims have runtime evidence or a stated gap, with requested or standing verification authority respected.
+- Evidence gaps are reported as uncertainty; questions concern missing intent, access, or other decisions the user can supply.
 - The report leads with the verdict.
-- The session's last move was a hand-off: report, `brainstorming`, or the
-  route pick.
-- Negative signal: it starts a deep investigation without asking, or it starts
-  fixing what it found. Either means the protocol was skipped, not applied.
+- The verdict was preserved, then the session reported it or continued the authorized next step.
+- Negative signal: it exceeds the requested scope or starts repairs without authority; already-authorized repairs are valid after recording the findings.
 
 ## Where it fits
 
@@ -174,3 +148,5 @@ build. It sits before scoping and dispatches sideways into `claim-check` or
 `brainstorming` when the revealed work needs design, the route gate when the
 fix is already confirmed, or nothing at all when the report was the deliverable.
 Nothing hands off to `audit`; it is where the session begins.
+
+A full audit request already supplies breadth. Routine checks and known fixes do not activate this protocol. A cross-cutting static review can inventory and inspect instructions/configuration inline or with authorized independent readers; runtime claims retain the real-surface evidence requirement.

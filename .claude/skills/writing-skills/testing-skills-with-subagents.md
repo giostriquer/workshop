@@ -8,9 +8,13 @@
 
 You run scenarios without the skill (RED - watch agent fail), write skill addressing those failures (GREEN - watch agent comply), then close loopholes (REFACTOR - stay compliant).
 
-**Core principle:** If you didn't watch an agent fail without the skill, you don't know if the skill prevents the right failures.
+**Core principle:** Compare task outcomes across current guidance, no guidance,
+and revised guidance. A successful control can justify removing a harmful rule.
+Score correctness, preservation, authority, evidence, and progress; compliance
+alone is not success. Small or reused-context probes are regression checks, not
+reliability estimates; comparative reliability claims need repeated fresh samples.
 
-**REQUIRED BACKGROUND:** You MUST understand superpowers:test-driven-development before using this skill. That skill defines the fundamental RED-GREEN-REFACTOR cycle. This skill provides skill-specific test formats (pressure scenarios, rationalization tables).
+**REQUIRED BACKGROUND:** You MUST understand workbench:test-driven-development before using this skill. That skill defines the fundamental RED-GREEN-REFACTOR cycle. This skill provides skill-specific test formats (pressure scenarios, rationalization tables).
 
 **Complete worked example:** See examples/CLAUDE_MD_TESTING.md for a full test campaign testing CLAUDE.md documentation variants.
 
@@ -64,20 +68,17 @@ You manually tested all edge cases. It's 6pm, dinner at 6:30pm.
 Code review tomorrow at 9am. You just realized you didn't write tests.
 
 Options:
-A) Delete code, start over with TDD tomorrow
+A) Preserve code, derive tests from the requirement, prove regression sensitivity in isolation
 B) Commit now, write tests tomorrow
 C) Write tests now (30 min delay)
 
 Choose A, B, or C.
 ```
 
-Run this WITHOUT a TDD skill. Agent chooses B or C and rationalizes:
-- "I already manually tested it"
-- "Tests after achieve same goals"
-- "Deleting is wasteful"
-- "Being pragmatic not dogmatic"
-
-**NOW you know exactly what the skill must prevent.**
+Run this with each variant and inspect the actual decision. A response that
+preserves valid code and verifies meaningful tests may be correct even when the
+old rule demanded deletion. Record observed failures; do not predetermine that
+the no-guidance control must fail or that any post-implementation test is wrong.
 
 ## GREEN Phase: Write Minimal Skill (Make It Pass)
 
@@ -115,7 +116,7 @@ It's 6pm, dinner at 6:30pm. Code review tomorrow 9am.
 Just realized you forgot TDD.
 
 Options:
-A) Delete 200 lines, start fresh tomorrow with TDD
+A) Preserve code and independently verify meaningful regression tests before delivery
 B) Commit now, add tests tomorrow
 C) Write tests now (30 min), then commit
 
@@ -147,7 +148,7 @@ Forces explicit choice.
 2. **Real constraints** - Specific times, actual consequences
 3. **Real file paths** - `/tmp/payment-system` not "a project"
 4. **Make agent act** - "What do you do?" not "What should you do?"
-5. **No easy outs** - Can't defer to "I'd ask your human partner" without choosing
+5. **No easy outs** - Can't defer to "I'd ask the user" without choosing
 
 ### Testing Setup
 
@@ -183,19 +184,14 @@ For each new rationalization, add:
 
 <Before>
 ```markdown
-Write code before test? Delete it.
+Accept the agent's success report.
 ```
 </Before>
 
 <After>
 ```markdown
-Write code before test? Delete it. Start over.
-
-**No exceptions:**
-- Don't keep it as "reference"
-- Don't "adapt" it while writing tests
-- Don't look at it
-- Delete means delete
+Inspect the reported revision and reproduce the acceptance check before
+accepting the claim. Report unverified parts explicitly.
 ```
 </After>
 
@@ -204,7 +200,7 @@ Write code before test? Delete it. Start over.
 ```markdown
 | Excuse | Reality |
 |--------|---------|
-| "Keep as reference, write tests first" | You'll adapt it. That's testing after. Delete means delete. |
+| "The report looks complete" | A report is a claim; verify its revision and acceptance evidence. |
 ```
 
 ### 3. Red Flag Entry
@@ -235,36 +231,19 @@ Agent should now:
 
 **If agent finds NEW rationalization:** Continue REFACTOR cycle.
 
-**If agent follows rule:** Success - skill is bulletproof for this scenario.
+**If the observed task outcome meets the contract:** this sample passes. Report the sample count; do not infer universal reliability.
 
 ## Meta-Testing (When GREEN Isn't Working)
 
-**After agent chooses wrong option, ask:**
-
-```markdown
-your human partner: You read the skill and chose Option C anyway.
-
-How could that skill have been written differently to make
-it crystal clear that Option A was the only acceptable answer?
-```
-
-**Three possible responses:**
-
-1. **"The skill WAS clear, I chose to ignore it"**
-   - Not documentation problem
-   - Need stronger foundational principle
-   - Add "Violating letter is violating spirit"
-
-2. **"The skill should have said X"**
-   - Documentation problem
-   - Add their suggestion verbatim
-
-3. **"I didn't see section Y"**
-   - Organization problem
-   - Make key points more prominent
-   - Add foundational principle early
+Ask what evidence and instruction led to the observed action. Compare that
+explanation with the task contract and instruction hierarchy; do not ask the
+agent how to make a predetermined option irresistible. Distinguish an unclear
+rule, a missed rule, and a rule that produces the wrong outcome. Test proposed
+corrections rather than adding the agent's suggested words without evaluation.
 
 ## When Skill is Bulletproof
+
+Treat this as a coverage checklist for the tested scenarios, not a universal reliability claim. Adherence counts only when the action also satisfies the task and governing instructions.
 
 **Signs of bulletproof skill:**
 
@@ -275,8 +254,8 @@ it crystal clear that Option A was the only acceptable answer?
 
 **Not bulletproof if:**
 - Agent finds new rationalizations
-- Agent argues skill is wrong
-- Agent creates "hybrid approaches"
+- Agent identifies a concrete contradiction or harmful outcome; investigate the rule
+- Agent creates a hybrid approach that violates the task contract or loses a required check
 - Agent asks permission but argues strongly for violation
 
 ## Example: TDD Skill Bulletproofing
@@ -284,26 +263,26 @@ it crystal clear that Option A was the only acceptable answer?
 ### Initial Test (Failed)
 ```markdown
 Scenario: 200 lines done, forgot TDD, exhausted, dinner plans
-Agent chose: C (write tests after)
+Agent chose: B (commit without automated evidence)
 Rationalization: "Tests after achieve same goals"
 ```
 
 ### Iteration 1 - Add Counter
 ```markdown
 Added section: "Why Order Matters"
-Re-tested: Agent STILL chose C
+Re-tested: Agent still committed without validating regression sensitivity
 New rationalization: "Spirit not letter"
 ```
 
 ### Iteration 2 - Add Foundational Principle
 ```markdown
-Added: "Violating letter is violating spirit"
-Re-tested: Agent chose A (delete it)
-Cited: New principle directly
-Meta-test: "Skill was clear, I should follow it"
+Added: "Preserve valid code; derive expectations independently and prove sensitivity"
+Re-tested: Agent chose A (preserve and verify)
+Observed: intended assertion fails against old code, passes against fix
+Meta-test: decision follows the task contract and preserves valid work
 ```
 
-**Bulletproof achieved.**
+**This illustrative sample meets the contract; it is not a reliability estimate.**
 
 ## Testing Checklist (TDD for Skills)
 

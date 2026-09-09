@@ -14,7 +14,7 @@ It activates when you are implementing a feature or bugfix in a repo that has a 
 
 **Default for, wherever the repo has a test harness:** new features, bug fixes, refactoring, behavior changes.
 
-**Exceptions the skill says to ask the user about:** throwaway prototypes, generated code, configuration files.
+**Exceptions:** honor existing user/repo conventions for prototypes, generated code, and configuration files; ask only when a material choice remains unresolved.
 
 **Where the repo has no test harness:** skip, and skip quietly. Don't announce the skip as a ceremony, and don't add a harness to satisfy the skill.
 
@@ -48,18 +48,18 @@ Absent a conflicting repo pattern, everything in the cycle applies as written.
 | **RED** | One minimal test showing what should happen. One behavior, clear name, real code (no mocks unless unavoidable). | The test is written and names a single behavior. |
 | **Verify RED** | Run it. Marked MANDATORY. | The test **fails** (not errors), the failure message is the one you expected, and it fails because the feature is missing rather than because of a typo. |
 | **GREEN** | The simplest code that passes. No extra options, no YAGNI parameters, no "improving" neighboring code. | Not applicable. |
-| **Verify GREEN** | Run it. Marked MANDATORY. | The test passes, other tests still pass, and output is pristine: no errors, no warnings. |
+| **Verify GREEN** | Run it. Marked MANDATORY. | The test passes, affected tests and mandatory local gates pass; new warnings are resolved and baseline failures are recorded. |
 | **REFACTOR** | After green only: remove duplication, improve names, extract helpers. | Tests stay green. No behavior added. |
 
-Two failure branches are named explicitly. If the test **passes** at Verify RED, "You're testing existing behavior. Fix test." If it **errors**, fix the error and re-run until it fails correctly. At Verify GREEN, if the test fails you "Fix code, not test."
+Two branches need different treatment. If a test for missing behavior **passes** at Verify RED, check whether it targets the intended change; do not claim RED was observed. A passing characterization test for correct existing behavior is valid. If it **errors**, fix setup and re-run until the intended assertion fails. At Verify GREEN, fix the implementation rather than weakening a correct expectation.
 
 The Iron Law is the cycle's non-negotiable half:
 
-> NO PRODUCTION CODE WITHOUT A FAILING TEST FIRST
+> PREFER A FAILING TEST BEFORE NEW IMPLEMENTATION; PRESERVE VALID EXISTING WORK
 
-Wrote code before the test? Delete it and start over, and the skill closes the usual escape hatches by name: don't keep it as "reference," don't "adapt" it while writing tests, don't look at it. "Delete means delete."
+If code already exists, preserve it. Derive expectations independently, then demonstrate the intended regression failure against old code or a controlled mutation in a disposable checkout. Keep tests and setup intact; an import error is not valid RED.
 
-The skill also ships a verification checklist to run before marking work complete (every new function has a test; you watched each fail; each failed for the expected reason; minimal code to pass; all tests pass; pristine output; real code over mocks; edge cases covered) and a **When Stuck** table that reads test pain as design feedback: "Must mock everything" means the code is too coupled, "Test too complicated" means the design is.
+The completion checklist remains concrete: changed behavior has meaningful coverage; regression tests fail for the intended reason; characterization cases are identified; the implementation passes focused tests and required gates; new errors are resolved; baseline failures and unrun checks are disclosed. The When Stuck table still uses testing difficulty as design feedback.
 
 ## The bundled test-writing reference
 
@@ -70,12 +70,12 @@ What it will change about your tests:
 | Habit | The rule |
 | --- | --- |
 | Building the expected value with the code under test | Derive it by hand. A mirror assertion "passes no matter what that code does." |
-| Asserting a constant's value or exact message wording | Change detector: "it fires on redesign and sleeps through bugs." Test the behavior that depends on the decision. |
+| Asserting a constant's value or exact message wording | For incidental implementation details, test the behavior that depends on the decision. Exact value or wording assertions remain valid when they protect a public contract. |
 | Grepping a script or skill's source text | Run the artifact and assert outputs, side effects, or exit codes. |
 | Testing the framework's mechanics | Test the contract your code makes at its boundaries. |
-| Asserting on a mock | "The mock earns no assertions." Test the real component or unmock it. |
+| Asserting on a mock | Assert observable behavior; boundary-call assertions are useful when the call is the production contract, not a claim that the mock itself works. |
 | Mocking a method wholesale | Learn its side effects first; mock the slow or external level below them. |
-| A `destroy()` only tests call | Test utility, not the production class. |
+| A `destroy()` only tests call | Put test-only helpers in test utilities; a real resource owner can require disposal even when tests are its current caller. |
 
 Before finishing a test file it prescribes a **mutation check**: mentally mutate the production code (wrong constant, wrong branch, missing side effect, empty return, missing validation) and confirm at least one test fails for each. "A mutation nothing catches marks the behavior as unprotected, or the test as tautological."
 
@@ -87,11 +87,10 @@ No. Announce the conflict in one line, write the test first anyway, and defer th
 **There's no test harness in this repo. Should I add one?**
 No. Skip TDD silently. A harness is infrastructure the user decides on, not something this discipline drags in.
 
-**I already wrote the implementation. Can I keep it as reference while I write the tests?**
-No. That is the escape hatch the skill closes hardest. Delete it, then implement fresh from the tests. Keeping it means you will adapt it, which is testing after.
+Keep valid implementation as a reference and verify it independently. Rewriting is justified by a defect, not by test order. Passing characterization tests are valid for correct existing behavior.
 
 **My new test passed on its first run. Is that fine?**
-No, and it is a specific diagnosis rather than a nuisance: you are testing behavior that already exists. Fix the test until it fails for the right reason.
+It can be valid characterization of correct existing behavior. For a regression or missing feature, check that the test targets the intended behavior and establish sensitivity against old code or a controlled isolated mutation. Do not break valid code just to manufacture RED.
 
 **Aren't tests-after equivalent if the coverage ends up the same?**
 The skill answers this head-on: "Tests-after answer 'what does this do?'; tests-first answer 'what should this do?'" Tests written after are biased by the code you already wrote (you verify the cases you remembered, not the ones you'd have discovered) and you never watched them fail, so you never proved they can catch the bug.
@@ -108,17 +107,19 @@ It is derived from [obra/superpowers](https://github.com/obra/superpowers) (MIT,
 ## It's working if
 
 - You can name, for every test you wrote, the production change that would make it fail, and that change is a bug, not a decision.
-- You saw a red before every green, and each red failed for the reason you predicted.
+- Changed behavior has an intended RED → GREEN check; characterization cases are identified, with independently derived expectations and appropriate sensitivity evidence.
 - The diff stays inside the accepted work. Defects found in the neighborhood show up as follow-up items, not as new tests and fixes.
 - When the repo's rules collided with a step, there is a one-line announcement in the session output and the repo's rule won.
 
 Signs of misapplication:
 
-- Tests that passed the first time they ran, kept anyway.
+- A regression test claimed as proof without checking that it detects the intended defect; a passing characterization case is not that failure.
 - A test harness appearing in a repo that had none, because "TDD needs one."
 - The session citing "MANDATORY. Never skip." to override a repo convention it just read. That is the exact failure the precedence section exists to prevent.
 - Test files accumulating for subsystems the ticket never named.
 
 ## Where it fits
 
-`test-driven-development` occupies the implementation moment of the workbench flow, next to `systematic-debugging` (which owns bugs before fixes). It receives whatever the scoping stage produced (a plan, a goal contract, or nothing at all) and hands its output forward to completion: test-quality review, then `verification-before-completion` as the deemed-ready gate, then the single adversarial `code-quality-review` right before the PR-or-merge ask. It never claims done itself; it only makes the claim provable.
+`test-driven-development` occupies the implementation moment of the workbench flow, next to `systematic-debugging` (which investigates persistent or unclear failures). It receives whatever the scoping stage produced (a plan, a goal contract, or nothing at all) and hands its output forward to completion: test-quality review, then `verification-before-completion` as the deemed-ready gate, then the single adversarial `code-quality-review` right before the PR-or-merge ask. It never claims done itself; it only makes the claim provable.
+
+Focused local tests and mandatory local gates are the default. Full suites normally run in PR CI; expand locally only for an explicit requirement or a specific unresolved integration risk. Expected RED does not activate systematic-debugging by itself.

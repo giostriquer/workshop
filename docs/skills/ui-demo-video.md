@@ -12,13 +12,10 @@ the point *for the model*. A model cannot watch a video mid-session, but it can
 directly: "**The frames are the point for the model**: Read them after
 recording to visually verify the UI state, and iterate (fix code or scenario,
 re-record) until the frames show the expected result. The video is the
-human-shareable artifact." Which is why the skill says to "use the frames as the
-visual feedback loop even when nobody asked for a video."
+human-shareable artifact." Use proportionate visual checks after UI work; record when requested, required by a standing gate, or included in authorized verification.
 
 It is **not a test suite**. Scenes demonstrate and verify visually; they do not
-assert. Assertions belong to your project's test suite. It also does not install
-Playwright or provision your app: "missing prerequisites are reported with the
-one-line install hint, not fixed silently"
+assert. Assertions belong to your project's test suite. Use existing tools; install missing dependencies only within authorized setup, otherwise report the prerequisite and install hint
 ([decision](../decisions/ui-demo-video.md)).
 
 ## When to reach for it
@@ -30,8 +27,7 @@ API-only or non-visual changes.
 Reach for it when you've just changed something you'd otherwise verify by
 squinting at code: a new dialog, a layout that could break at the wrong
 breakpoint, a multi-step flow whose middle state you never actually looked at.
-And reach for it when nobody asked for a video: the frames alone pay for the
-run.
+Offer a recording when useful; do not turn every visual check into an unrequested recording.
 
 | The problem | The skill |
 | --- | --- |
@@ -43,14 +39,7 @@ run.
 
 ## Prerequisites
 
-- **The app runs locally.** Find the project's documented run path: a project
-  run skill, the README, package scripts: "and use that; do not invent a launch
-  command."
-- **Playwright installed in the project** (`@playwright/test` or `playwright`)
-  with chromium downloaded. The one-time setup, if missing:
-  `npm i -D @playwright/test && npx playwright install chromium`.
-- **`ffmpeg` on PATH** for mp4 conversion. Optional: the webm is always
-  produced.
+Use the project's existing browser and recording tools. Missing Playwright/browser dependencies are a setup gap; install only under authorized setup, using the repository package manager. The harness, named scenes, screenshots, manifest, frame inspection, and cleanup still apply.
 
 ## The run
 
@@ -74,9 +63,7 @@ run.
 5. **Cleanup.** Delete the demo entities you seeded, through the same real
    surface you created them with; stop any dev server you started; confirm the
    port is closed.
-6. **Delivery.** GitHub only accepts video attachments through the browser
-   editor, so the mp4 is drag-dropped into the PR description by hand: the API
-   cannot attach it.
+6. **Delivery.** Report local artifact paths. Upload only under explicit publication authority, using an available host/browser capability; otherwise give the user the file for attachment.
 
 ### What lands in `tmp/<name>/`
 
@@ -96,8 +83,8 @@ run.
 | `prewarm` | `[]` | Routes visited off-camera first, so nothing compiles on film. |
 | `viewport` | 1280×720 | Override when the surface needs it. |
 | `outDir` | `"tmp"` | Parent of the run folder. |
-| `hideNextDevOverlay` | `true` | Hides `nextjs-portal`; a no-op in non-Next apps. |
-| `hideSelectors` | `[]` | Hide other frameworks' overlays or badges. |
+| `hideNextDevOverlay` | `false` | Explicit presentation-only suppression of `nextjs-portal`; preserve unfiltered diagnostic evidence first. |
+| `hideSelectors` | `[]` | Explicit presentation-only suppression; inspect errors and preserve unsuppressed evidence first. |
 | `defaultTimeoutMs` | 60000 | Per-action Playwright timeout. |
 | `scenePauseMs` | 1200 | Settle time before each frame is captured. |
 
@@ -113,10 +100,7 @@ resolves.
 saves the video and a `scene-FAIL.png`; those are debugging evidence, not
 garbage." The frame shows you the page state at the moment it broke.
 
-**The frames show a dev badge or a half-loaded skeleton.** Two fixes. Add the
-offending element to `hideSelectors` (the Next.js overlay is hidden by default).
-And list every route the scenario touches in `prewarm`, so the dev server has
-already compiled them before the camera rolls.
+**The frames show a dev badge or a half-loaded skeleton.** Inspect error overlays and preserve unfiltered evidence. Prewarm the scenario routes so they have compiled before recording. Hide an overlay only for an explicitly requested presentation, after investigating any error; the default preserves it.
 
 **Can I just insert rows into the dev database to set up the scene?** No. Seed
 through the app's real surface, so "seeded state must pass the same validation
@@ -127,9 +111,7 @@ never actually reach.
 tree you changed: the dev server compiles from source, so a stale server proves
 old code; restart when in doubt."
 
-**Can it attach the mp4 to the PR for me?** No. GitHub accepts video attachments
-only through the browser editor. And local artifacts don't get pushed to other
-trackers "unless the project's own rules say to."
+**Can it attach the mp4 to the PR for me?** Only when upload is explicitly authorized and an available host/browser capability supports it. Otherwise deliver the local artifact and attachment instructions.
 
 **No `ffmpeg` on this machine.** The webm is still produced, and the frames,
 which are the part that matters for verification, are unaffected.
@@ -140,7 +122,7 @@ review'), not 'TEST-1234 probe'."
 
 **Does it work outside Next.js?** Yes. The one framework-specific behavior, the
 Next dev-overlay hack, was generalized to a `hideSelectors` option; the Next
-default stays on and is a no-op elsewhere. The harness was validated end-to-end
+default is off; explicit suppression is a no-op elsewhere. The harness was validated end-to-end
 against a plain static page with no framework and no project fixtures.
 
 ## It's working if
@@ -168,3 +150,5 @@ was the first toolkit skill to ship a supporting script, and `scripts/harness.mj
 travels with it. Where it lands in practice is just before a done-claim: the
 frames are the visual evidence that `verification-before-completion` asks for,
 and the mp4 is what the PR reviewer sees.
+
+Keep development error overlays visible by default. Explicit presentation-only suppression does not replace unfiltered diagnostic evidence. Keep the recording local unless upload/publication is explicitly authorized. Use proportionate visual feedback; recording is requested, required, or useful within already-authorized UI verification.

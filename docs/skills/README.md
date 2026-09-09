@@ -33,7 +33,7 @@ you want them, and skip to keep sessions lean.
 | Designing a feature or a refactor | [brainstorming](brainstorming.md) |
 | A long-running goal a fresh session should pursue alone | [handoff-goal](handoff-goal.md) |
 | Implementing where a test harness exists | [test-driven-development](test-driven-development.md) |
-| A bug, before proposing any fix | [systematic-debugging](systematic-debugging.md) |
+| An unresolved failure requiring sustained investigation | [systematic-debugging](systematic-debugging.md) |
 | About to claim something is done | [verification-before-completion](verification-before-completion.md) |
 | Proving one finished change at the running app | [empirical-proof](empirical-proof.md) |
 | The adversarial pass before PR-or-merge | [code-quality-review](code-quality-review.md) |
@@ -69,7 +69,7 @@ standing rule, not because a session decided the work deserved them.
 
 ## Not documented here
 
-Three skills run only inside this repository and ship in no plugin:
-`change-log`, `push`, and `workbench-drift`. They live in `.claude/skills/` and
+Four skills run only inside this repository and ship in no plugin:
+`change-log`, `push`, `workbench-drift`, and `writing-skills`. They live in `.claude/skills/` and
 are maintenance tooling for the scaffold itself, not part of what adopters
 install.

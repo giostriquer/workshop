@@ -2,23 +2,15 @@
 
 ## What it does
 
-`systematic-debugging` is the discipline that stands between a bug and a fix. Its
-core principle: "ALWAYS find root cause before attempting fixes. Symptom fixes
-are failure." It runs a four-phase loop: root-cause investigation, pattern
-analysis, hypothesis and testing, implementation, and each phase must complete
-before the next begins.
+`systematic-debugging` investigates an unresolved failure through four phases: root-cause investigation, pattern analysis, hypothesis testing, and implementation. It keeps the concrete reproduction, comparison, instrumentation, and verification procedures. A temporary authorized mitigation is labeled as such; it is not a claimed causal repair.
 
 Unlike the flow's other investigation engines, this one **carries through to the
-fix**. `claim-check` and `qa-sweep` stop at a verdict; `systematic-debugging`
+fix**. `claim-check` and `qa-sweep` record a verdict before any separately authorized repair; `systematic-debugging`
 ends with Phase 4: a failing test case, a single fix at the root cause, and
 verification that the bug is actually resolved. What it refuses to do is fix
-first and understand later. The Iron Law is stated as a hard gate: "NO FIXES
-WITHOUT ROOT CAUSE INVESTIGATION FIRST … If you haven't completed Phase 1, you
-cannot propose fixes."
+first and claim understanding later. The Iron Law is **NO ROOT-CAUSE CLAIM WITHOUT INVESTIGATION EVIDENCE**. An authorized temporary mitigation may precede diagnosis when labeled as such and followed by investigation.
 
-It also knows when to stop fixing. After three failed fixes, the skill escalates
-out of debugging entirely and into an architecture conversation with you: "This
-is NOT a failed hypothesis - this is a wrong architecture."
+Repeated failed attempts require reassessing the hypothesis, environment, and method. Their count does not establish an architectural defect. The architecture questions apply when evidence shows recurring coupling or invalid boundaries.
 
 The skill is derived from [obra/superpowers](https://github.com/obra/superpowers)
 (MIT, © Jesse Vincent) and adapted for the workbench system; the repo's own
@@ -28,13 +20,9 @@ scrubbing cross-references to pieces workbench dropped
 
 ## When to reach for it
 
-The session reaches for it on any bug, before proposing fixes; that is its slot
-in the flow. You can also invoke it by name (`/systematic-debugging`; on hosts
-that namespace plugin skills, `/workbench:systematic-debugging`).
+Invoke it for unresolved failures after basic inspection, intermittent behavior, unclear cross-component causes, or unsuccessful fixes without explanation. Explicit invocation also applies. Expected TDD RED, obvious localized fixes, and incidental out-of-scope bugs stay in the ordinary task.
 
-Its own list of what counts: test failures, bugs in production, unexpected
-behavior, performance problems, build failures, integration issues. It names the
-moments it is *most* needed, which are exactly the moments it feels skippable:
+The protocol applies across tests, production, performance, builds, and integrations when the problem meets those investigation triggers. Surface type or urgency alone does not activate it.
 
 - Under time pressure: "emergencies make guessing tempting"
 - When "just one quick fix" seems obvious
@@ -42,14 +30,12 @@ moments it is *most* needed, which are exactly the moments it feels skippable:
 - When the previous fix didn't work
 - When you don't fully understand the issue
 
-And the non-exemptions: "Issue seems simple (simple bugs have root causes too)",
-"You're in a hurry (rushing guarantees rework)", "Manager wants it fixed NOW
-(systematic is faster than thrashing)."
+A direct supported fix can proceed without loading the full protocol. If verification contradicts it or the cause remains unclear, enter the phases.
 
 | The problem | The skill |
 | --- | --- |
-| A bug, test failure, or unexpected behavior in front of you | `systematic-debugging` |
-| A premise about the code you want graded before anyone acts | `claim-check` stops at a verdict and never implements |
+| An unresolved failure needing sustained investigation | `systematic-debugging` |
+| A premise about the code you want graded before anyone acts | `claim-check` investigates first; an authorized repair can follow |
 | Something to check that hasn't been sized yet | `audit` |
 | A broad QA pass over a release or feature area | `qa-sweep` |
 | Proving one just-finished change at its runtime surface | `empirical-proof` |
@@ -68,9 +54,7 @@ Two techniques get named here:
 
 - **Evidence in multi-component systems.** When the system has multiple
   components (CI → build → signing, API → service → database), add diagnostic
-  instrumentation *before* proposing fixes. For each component boundary, log what
-  data enters, what exits, whether environment and config propagated, and the
-  state at each layer. Run once to gather evidence showing **where** it breaks,
+  instrumentation *before* proposing fixes. At implicated boundaries, record selected redacted fields, types, sizes, and presence, plus relevant config propagation and state. Never dump whole environments or secret values. Run once to gather evidence showing **where** it breaks,
   then investigate that component. The skill carries a worked shell example that
   walks four layers.
 - **Trace data flow.** When the error is deep in the call stack, trace backward:
@@ -96,12 +80,12 @@ the root cause: "ONE change at a time. No 'while I'm here' improvements. No
 bundled refactoring." Verify with `verification-before-completion` before
 claiming success.
 
-If the fix doesn't work, the skill counts attempts:
+If the fix does not work, the next step depends on evidence:
 
 | Failed fixes | What happens |
 | --- | --- |
-| Fewer than 3 | Return to Phase 1 and re-analyze with the new information |
-| 3 or more | **STOP and question the architecture.** Do not attempt fix #4 without an architectural discussion with your human partner. |
+| Hypothesis falsified | Return to Phase 1 and reassess using the new evidence |
+| Repeated failures | Reassess assumptions and environment; examine architecture when recurring coupling or broken invariants explain the failures |
 
 The pattern that indicates an architectural problem, rather than a bad
 hypothesis: each fix reveals new shared state or coupling somewhere else, fixes
@@ -119,7 +103,7 @@ relative to what it covers: the depth is one hop away, paid for only when needed
 | Reference | Use it when | What it gives you |
 | --- | --- | --- |
 | `root-cause-tracing.md` | The bug appears deep in the stack and you can't see where the bad value came from | The backward-tracing process, how to add stack-trace instrumentation (`new Error().stack`, `console.error` in tests because loggers may be suppressed), and a worked five-level trace |
-| `defense-in-depth.md` | You've found the root cause and want the bug to be structurally impossible | Four validation layers (entry point, business logic, environment guards, and debug instrumentation), plus why one check is not enough (different code paths, mocks, and platform edge cases each bypass a different layer) |
+| `defense-in-depth.md` | You've found the root cause and want the bug to be structurally impossible | Entry, business, and environment safeguards for independently reachable boundaries, plus diagnostic instrumentation; each retained check needs a distinct invariant or bypass path |
 | `condition-based-waiting.md` | Tests are flaky, use `setTimeout`/`sleep`, or fail under load and in CI | The `waitFor` polling pattern, a table of scenario-to-pattern mappings, and the narrow case where an arbitrary timeout **is** correct (wait for the triggering condition first, base the delay on known timing, comment why) |
 | `find-polluter.sh` | Something appears during a test run and you don't know which test does it | A bisection script that runs tests one by one and stops at the first polluter |
 | `condition-based-waiting-example.ts` | You're implementing the polling helpers | A complete implementation with domain-specific helpers |
@@ -154,27 +138,15 @@ when the bug calls for them.
 **Does it just diagnose, or does it fix the bug?**
 It fixes. Phase 4 is implementation: failing test, single fix at the root cause,
 verification. This is the main structural difference from `claim-check`, which
-investigates a premise and deliberately stops before touching product code.
+investigates a premise and records its verdict before any separately authorized implementation.
 
 **My bug is a one-line typo. Do I really need four phases?**
-The skill grants no size exemption: "Simple issues have root causes too. Process
-is fast for simple bugs." Note the contrast with `claim-check`, which explicitly
-right-sizes depth to blast radius; this skill does not, by design, because the
-"it's simple" judgment is exactly what it treats as a rationalization. For most
-trivial bugs the four phases collapse into a few minutes: read the error,
-reproduce, hypothesis, test, fix.
+An obvious localized fix supported by inspection can proceed directly with focused verification. Enter the four phases if the cause remains unclear or verification contradicts the explanation.
 
 **Three fixes have failed. What does it do?**
-It stops fixing and brings the architecture question to you. Attempting fix #4
-without that discussion is explicitly prohibited. The signal it's watching for is
-"each fix reveals new shared state/coupling/problem in different place."
+Repeated failures require reassessing assumptions, environment, and method before another patch. Examine architecture when evidence identifies recurring coupling or broken boundaries; a count alone does not establish that diagnosis.
 
-**What if the investigation genuinely finds no root cause?**
-There's a defined exit: if the issue is truly environmental, timing-dependent, or
-external, you've completed the process: document what you investigated,
-implement appropriate handling (retry, timeout, error message), and add
-monitoring for future investigation. The skill immediately qualifies it: "95% of
-'no root cause' cases are incomplete investigation."
+A claimed external cause needs evidence. If the cause remains unresolved, report the tested hypotheses, missing evidence, and next useful observation; no unsupported percentage determines the diagnosis.
 
 **Does it write the test itself?**
 Phase 4 requires a failing test case before the fix and points at
@@ -200,16 +172,15 @@ and it is the only thing that catches you when you aren't.
 
 ## It's working if
 
-- A stated root cause exists, in words, before any fix is proposed.
+- Evidence supports the stated root cause before choosing a causal repair in this investigation; a temporary authorized mitigation is labeled separately.
 - The bug reproduces consistently, or the session says it can't and gathers more
   data instead of guessing.
 - In a multi-component system, instrumentation was added at boundaries and run
-  once to show **where** it breaks before anything was changed.
+  to show **where** it breaks before choosing a causal repair; instrument only implicated boundaries.
 - A failing test exists before the fix, and it fails for the right reason.
 - The fix is one change at the root cause: no bundled refactoring, no "while I'm
   here" improvements.
-- After three failures, the conversation turns to architecture instead of a
-  fourth patch.
+- Repeated failures prompt reassessment of the hypothesis, environment, and method. Architecture is examined when recurring coupling or broken boundaries are evidenced.
 - **Not working:** a message that opens "Here are the main problems:" followed by
   a list of fixes with no traced data flow; several changes applied at once and
   the test suite run to see what happens; a fix at the line where the error
@@ -220,7 +191,7 @@ and it is the only thing that catches you when you aren't.
 
 `systematic-debugging` lives in the workbench flow's **implementation** stage,
 sitting alongside `test-driven-development`: TDD is the default discipline where
-a test harness exists, and this skill fires on any bug before fixes are proposed.
+a test harness exists, and this skill handles persistent or unclear failures requiring investigation, not expected RED or obvious localized fixes.
 It hands off in both directions, to `test-driven-development` for writing the
 Phase 4 failing test, and to `verification-before-completion` before any "fixed"
 claim leaves the session. Upstream of it, `audit` and its engines (`claim-check`,
