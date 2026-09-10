@@ -76,10 +76,36 @@ permission or access; do not ask again for authority already given.
 2. **The PR body belongs to the repo, not to this skill: follow its template, never
    replace it.** If the repo ships a PR template, the body **is** that template
    filled in: its exact headings, order, checkboxes, and hidden `<!-- markers -->`,
-   with additions only when governing instructions require them, such as a host
-   attribution footer. The built-in skeleton below is a **last resort for
-   repos that have no template**; never emit it, or its `Summary` / `Ticket` /
-   `Caveats` headings, when a template exists.
+   plus the conditional `Architecture` section below and additions required by
+   governing instructions, such as a host attribution footer. The built-in skeleton
+   below is a **last resort for repos that have no template**; never emit it, or its
+   `Summary` / `Ticket` / `Caveats` headings, when a template exists.
+
+## Architecture in the PR body
+
+Include a Mermaid diagram when it materially clarifies relevant calls,
+dependencies, responsibilities or data/control flow between modules or services.
+This applies when those relationships change, or when existing interactions are
+needed to understand the change's behavior or risk. Identify the relationship the
+reviewer needs to see; touching several files alone does not establish the need.
+Localized fixes, wording edits and mechanical changes with no such interaction
+need no added section or diagram.
+
+Use the exact heading `## Architecture`, a short explanation of the relevant
+interaction or change, and a fenced `mermaid` graph. Reuse that section if the
+template already contains it; otherwise append it after the filled template and
+before any required footer, even when the template does not request it. When the
+trigger does not hold, add neither a section nor a placeholder; preserve any
+template-provided field according to the repo's convention.
+
+Show the smallest useful interaction, with real module names and labelled edges
+derived from the final code and diff. Use a flowchart for dependencies or flow;
+use a sequence diagram when call order matters. Include surrounding modules only
+to explain the changed path. Distinguish before/after relationships when needed to
+make the change clear; avoid an unrelated system map or invented calls. Check each
+relationship against source and check Mermaid syntax, using an available parser
+or renderer when present. Report unverified rendering in the handback if no such
+tool is available; do not treat the diagram as validation evidence.
 
 ## Steps
 
@@ -122,9 +148,12 @@ permission or access; do not ask again for authority already given.
    every checkbox, comment markers preserved; map content into the fields it already
    has; tick `[x]` only what was actually verified; leave unfillable fields blank
    rather than fabricating. Before finalizing, check your headings against the
-   template's: same set, same order, none added or renamed; if they differ, you
-   replaced the template, redo the body. Required host attribution may follow the
-   template without a new section. If there is no template, use the minimal fallback:
+   template's: every original heading remains in order and is not renamed. The
+   conditional `## Architecture` section is the only extra section this skill
+   requires; apply the rule above to both template and fallback bodies. Preserve
+   other additions required by governing instructions. Required host attribution
+   may follow the body without a new section. If there is no template, use the
+   minimal fallback:
 
    > ## Summary
    > `<what changed and why, grounded in the diff>`

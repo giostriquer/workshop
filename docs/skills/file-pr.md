@@ -14,8 +14,10 @@ arrive with no access to this session, so the summary and every field are
 derived from the **branch diff and the ticket**." Rule two: "The PR body
 belongs to the repo, not to this skill: follow its template, never replace
 it." If your repo ships a pull request template, the body *is* that template
-filled in, with its exact headings, order, checkboxes and hidden
-`<!-- markers -->`.
+filled in, with its original headings, order, checkboxes and hidden
+`<!-- markers -->`. A conditional `## Architecture` section adds a Mermaid diagram
+when relevant module interactions need to be shown, even if the template does
+not request one.
 
 It never merges, enables auto-merge, closes or re-targets the PR, force-pushes, or rewrites published history.
 
@@ -59,7 +61,8 @@ case-insensitively in `.github/`, `.github/PULL_REQUEST_TEMPLATE/`, the repo
 root, and `docs/`, and **record the search outcome**: found (path) or
 none-found-after-search: before building anything. Fill the template
 verbatim, or use the minimal Summary / Ticket / Caveats fallback only after a
-recorded empty search. Finally, conform to any enforced PR-title or
+recorded empty search. Apply the conditional Architecture rule to either body.
+Finally, conform to any enforced PR-title or
 branch-name pattern, discovered from the linter or CI config rather than
 guessed.
 
@@ -79,16 +82,34 @@ and reports either way.
 ## Common questions
 
 **My PR came out with `Summary` / `Ticket` / `Caveats` headings, but my repo
-has a template. What went wrong?** That is the exact failure this skill was
-hardened against, and it is a bug, not a style choice. A field observation
-recorded real PRs going out carrying the built-in fallback headings even
-though the repo shipped a template: the model replaced the template with the
-skill's outline, because the skeleton was the concrete structure in front of
-it. Three guards exist now: the search outcome must be recorded before a body
-is built, the fallback is labelled a last resort, and the emitted headings are
-checked against the template's before finalizing: "same set, same order, none
-added or renamed; if they differ, you replaced the template: redo."
-([decision](../decisions/handoff-pr-follow-not-replace-template.md))
+has a template. What went wrong?** The fallback replaced your template. Search
+for the template first, preserve each original heading in order, and fill its
+fields, checkboxes and hidden markers. The only additional section this skill
+requires is the conditional `## Architecture` section below. Other additions
+must come from governing instructions; they do not authorize replacing the
+template with the fallback.
+
+**When does the body get an Architecture section?**
+
+When a Mermaid diagram materially clarifies relevant calls, dependencies,
+responsibilities or data/control flow between modules or services. This includes
+relationships changed by the diff and existing interactions needed to understand
+the change's behavior or risk. Several changed files alone are not a reason for
+a graph. Localized fixes, wording edits and mechanical changes without such an
+interaction get no added section or placeholder.
+
+Use the exact heading `## Architecture`, a short explanation and a fenced
+`mermaid` graph. Reuse the template's exact Architecture section if present;
+otherwise append it after the filled template and before any required footer.
+Preserve an existing template field according to the repo's convention when no
+diagram is needed. The same relevance rule applies to the no-template fallback.
+
+Show the smallest useful interaction with real module names and labelled edges
+grounded in the final code and diff. Use a flowchart for dependency or data flow,
+or a sequence diagram when call order matters. Check relationships against source
+and Mermaid syntax with an available parser or renderer. If rendering could not
+be verified, say so in the handback. The graph explains the change; it is not proof
+that the behavior works.
 
 **Why does it run my formatter before opening the PR?** Because a formatter
 check is usually a required CI gate, is the cheapest thing to fail, and is
@@ -140,9 +161,9 @@ are gone, and there is no flag to bring them back.
 
 ## It's working if
 
-- The PR body's headings match your template's exactly: same set, same
-  order, and the report names the template path it used, or says "none
-  (fallback)" after an actual search.
+- The PR body preserves every original template heading in order, adding
+  `## Architecture` only when the interaction warrants a graph. The report names
+  the template path it used, or says "none (fallback)" after an actual search.
 - You get the PR URL as soon as the PR exists, and the tending report arrives
   after it.
 - The report leads with the verdict and end state: green and mergeable, still
