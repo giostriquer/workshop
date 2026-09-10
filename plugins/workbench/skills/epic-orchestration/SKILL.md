@@ -253,33 +253,58 @@ Lanes stop and ask; you decide, with evidence:
 - **Over-strictness from your own fixes**: every wave produced at least one. A fix that
   refuses legitimate work is a defect of the same severity as the one it replaced.
 - **Product forks**: when a lane surfaces a real choice (fail closed vs. widen a type vs.
-  document a limit), recommend one and let the operator rule; record the ruling on the
-  ticket so it is a decision, not a drift.
+  document a limit), recommend one and let the operator rule. Record the operative
+  decision and its source in the local epic ledger. Update the shared task when
+  its scope or acceptance changes, under existing write authority.
 
-## Nothing actionable lives only in context
+## Keep a local epic ledger
 
-A session ends and its context dies with it. Anything actionable, or anything still
-needing verification must survive in the epic's durable tracker or scope record.
-Confirmed actionable work gets a deduplicated ticket under existing explicit write
-authority. Uncorroborated or disproved claims remain evidence records with their
-disposition, not automatically implementation tickets. If external writes lack
-authority, prepare the ticket content locally and name that pending action.
+A session ends and its context dies with it. Use one local ledger for this epic's
+recovery state in its existing scope folder. Reuse its current README or CURRENT
+entry point; otherwise create `LEDGER.md`. Other startup indexes point there.
+The ledger is disposable working material under `using-workbench`'s **Artifacts
+are disposable** guidance, not a second tracker or a committed documentation layer.
 
-| Found where | What gets filed |
-| --- | --- |
-| A lane's `DEBT + FOLLOW-UPS` or `FORKS/DEVIATIONS` | deduplicated tickets for confirmed actionable work: what it is, the anchor, why it was not done now; evidence records for unresolved or disproved claims |
-| Your own validation | anything the ticket did not cover: a second live instance, an over-strict fix, a caller the change would break |
-| A ruling you made | the ruling recorded on the ticket, so it is a decision rather than a drift |
-| A finding you scoped out | record the finding and why it was scoped out; link its deduplicated ticket when confirmed actionable, otherwise its evidence disposition |
-| The blind re-audit | confirmed actionable findings as deduplicated tickets; unresolved/disproved claims in the evidence record, with the reason |
+**Contents:** goal and full closure bar; active or pending lanes with owner,
+contract/revision and worktree references, dependencies, holds and next action;
+operative decisions with sources; unresolved questions with their consequence and
+next verification or disposition; pointers to briefs, evidence, recovery material
+and the authoritative backlog. Distinguish reported claims from verified outcomes;
+bind verification to its revision and source. Refresh volatile facts before a
+decision relies on them. An entry belongs here when it changes the next action,
+preserves a consequential constraint, or locates information needed to verify it.
 
-Before wave closeout, each actionable entry has its deduplicated ticket or named
-pending publication action; each evidence-only claim has a linked disposition.
-Write these references into the record that raised the item. Include debt created
-by the wave, such as widened types, shims or pinned versions.
+**Update loop:** start from the ledger, then load the brief and sources needed for
+the next action. After a meaningful handback, ruling, validation or delivery
+transition, replace the affected entry in place. Before compaction or coordinator
+handoff, check that a successor can recover the next action, its authority,
+constraints and evidence without the conversation. Resolved entries become a brief
+outcome/reference or leave the view once their remaining obligations have a home.
 
-Apply `using-workbench`'s **Artifacts are disposable** guidance when a lane changes
-state, before coordinator handoff, and at wave or epic closeout:
+**Keep useful detail locally:** create and retain dispatches, reports, investigation
+notes and repro material when they support actual work. The ledger indexes them;
+required validation still reads and exercises the relevant evidence. Avoid copying
+those records into the ledger, prepending session histories, repeating standing
+instructions or retaining completed lanes merely to recount progress. Size follows
+current coordination needs; a word target never removes obligations or evidence.
+
+**Shared tracker updates:** publish the task, decision or outcome that other readers
+need: defect/objective, behavioral bar, owner, dependencies, delivery state and
+relevant evidence summary. Detailed working records stay local by default; a need
+for compaction recovery alone does not request publication. References in shared
+updates must be usable by their intended readers; keep local retrieval paths in
+the ledger rather than exporting its evidence inventory.
+
+Confirmed work requiring separate assignment gets a deduplicated ticket under
+existing write authority. Corrections within an active lane stay in that lane's
+contract, amended explicitly when necessary. Without needed publication authority,
+retain the work locally with its owner and named pending action. Uncorroborated,
+disproved or scoped-out claims retain evidence and their disposition, not automatic
+implementation tickets. Link each originating finding to its current destination
+or disposition before wave closeout, including debt created by the wave.
+
+Apply the document lifecycle at lane state changes, coordinator handoffs, and wave
+or epic closeout:
 
 - **Active:** preserve the dispatched contract and its revision. Contract changes
   require an explicit amendment communicated to affected lanes.
@@ -290,13 +315,6 @@ state, before coordinator handoff, and at wave or epic closeout:
 - **Retired:** temporary instructions leave default reading after their consumers
   no longer need them. Retained evidence remains addressable.
 
-Maintain one current coordinator view in the existing scope entry point: goal and
-closure bar; active or pending lanes with contract/revision links; dependencies,
-holds and unresolved decisions; owners and next actions; evidence and recovery
-links. Replace changed entries in place. Resolved entries become an
-outcome/reference or leave the view. Ticket details and decision history remain
-in their designated records; other startup indexes point here.
-
 Before retirement, preserve unresolved work, lasting decisions, final evidence
 and its limits, frozen audit inputs, and recovery material in their established
 homes. In-flight contracts, dependent consumers, held delivery and explicit
@@ -305,14 +323,17 @@ stable references; archive superseded material outside default reading. Delete
 redundant or reproducible scratch only under existing cleanup authority after
 checking references and recovery needs. Document retirement changes no ticket
 status, worktree, publication hold, validation requirement or audit scope.
+After the operator accepts epic closure and remaining obligations have durable
+homes, retire the ledger from startup and archive or delete it under the applicable
+retention and cleanup authority.
 
 ## Non-negotiables
 
 - **Never modify a ticket the operator does not own.** Create your own under the epic and
   reference theirs as context and check for duplicates first; absorbing their scope is not.
-- **Nothing actionable lives only in context.** Deferrals, debt, follow-ups, forks, and
-  confirmed actionable work get deduplicated tickets under existing write authority;
-  unresolved/disproved claims retain a durable evidence record and disposition.
+- **Nothing actionable lives only in context.** The local ledger preserves unresolved
+  work, owners, next actions and evidence references. Shared tasks use deduplicated
+  tickets under existing write authority; uncertain claims retain their disposition.
 - **Close each ticket with its fixing PR and what the behavior is now**, including
   corrections to the ticket's own anchor when the fix landed elsewhere.
 - **State what you did not verify.** Coverage claims that outrun the evidence are the one
@@ -356,9 +377,12 @@ them disproved. Preserve their evidence and limits in the report.
 Expect several rounds. Convergence looks like this: earlier fixes hold under attack while
 each audit has to cut deeper to find anything, and the newest finds cluster around policy
 that was never implemented rather than artifacts that contradict each other. When a round
-returns HOLDS, corroborate its verdict-movers yourself, attach the report to the epic as
-closure evidence, refresh the epic description with final measurements, and hand the close
-decision to the operator.
+returns HOLDS, corroborate its verdict-movers yourself. Preserve the detailed report
+locally; under existing write authority, update the epic's shared record with the
+concise verdict, coverage, accepted limits and evidence references usable by its
+readers. Publishing supporting material follows existing publication authority and
+the needs of that closure decision. Hand the close decision to the operator, then
+apply the ledger's retirement conditions.
 
 One caution learned the hard way: a corpus of *preserved successful runs* contains no
 failure signal. Silence there is selection bias, not evidence of health.

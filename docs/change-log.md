@@ -8,6 +8,11 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.37.2: 2026-09-10
+
+- **Use a local epic ledger for coordinator recovery.** Keep current actions, constraints and evidence pointers in one local entry point, with useful detailed records retained locally. Shared tracker updates carry concise tasks, decisions and outcomes; ledger retirement preserves outstanding work, holds and retained evidence. ([decision](decisions/epic-orchestration-artifact-lifecycle.md))
+- **Show relevant module interactions in PR bodies.** Add a Mermaid graph under `## Architecture` when it clarifies architectural calls or interactions, even if the repository template omits that section. Preserve the original template, reuse an existing Architecture section, and omit unnecessary diagrams. ([decision](decisions/file-pr-architecture-section.md))
+
 ## workbench 0.37.1: 2026-09-10
 
 - **Bound epic coordination reading and retire temporary instructions.** Dispatches name complete required reading sets and load supporting material for specific questions or checks. One current coordinator view replaces changed entries in place; lane closeout preserves contracts, dependencies, holds and audit evidence while retiring obsolete instructions from default reading. Validation and blind closing-audit requirements remain unchanged. ([decision](decisions/epic-orchestration-artifact-lifecycle.md))
@@ -198,15 +203,3 @@ deletes the oldest (git history keeps everything). Sections from before the
   row reads "a long-running autonomous goal, outliving this session". Critique
   mode is unaffected: auditing an existing contract has no duration test.
   ([decision](decisions/handoff-goal-long-running-only.md))
-
-## toolkit 0.8.1: 2026-08-20
-
-- **`ui-demo-video`'s trigger drops its protocol.** The description explained
-  what the skill records and emits, and carried an instruction ("use the frames
-  even when nobody asked for a video") that is not a firing condition at all.
-  Both already live in the body. What is left is when it fires and what it is
-  not: UI work verifiable visually in an app a browser can drive, never
-  API-only changes and never a test suite.
-- **`arch-map` drops "Formerly structure-view."** The rename note has done its
-  work in the trigger; `docs/skills/arch-map.md` still records it for anyone
-  searching the old name.

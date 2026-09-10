@@ -108,27 +108,49 @@ No, and it is required to say so plainly rather than imply otherwise. What it
 must reproduce is anything that would alter scope, reverse a prior fix, or
 claim a regression.
 
-**Where do debt and follow-ups go?**
+**Where do debt, follow-ups and validation details go?**
 
-Every item retains durable traceability. Confirmed actionable work gets a deduplicated ticket under existing explicit write authority; unresolved/disproved claims keep their evidence record and disposition. Without publication authority, prepare the ticket content and name the pending action.
+The local epic ledger keeps unresolved work, its owner, next action and references
+to useful evidence. Detailed handbacks, investigation notes and repro material stay
+local by default. Create them when they support actual work; the ledger points to
+them instead of copying them into startup context.
+
+Confirmed work requiring separate assignment gets a deduplicated ticket under
+existing write authority. Corrections within a lane remain in its contract, with
+an explicit amendment when needed. Shared updates contain the task, decision or
+outcome their readers need: the defect/objective, behavioral bar, owner,
+dependencies, delivery state and relevant evidence summary. A compaction-recovery
+need alone does not request publication. Keep local evidence inventories in the
+ledger; shared references must be usable by their intended readers.
+
+Uncorroborated, disproved or scoped-out claims keep their evidence and disposition.
+Without needed publication authority, retain the work locally with its owner and
+pending action. Before wave closeout, link each finding to its current destination
+or disposition, including debt created by the wave.
 
 The structural half is what makes it hold: `DEBT + FOLLOW-UPS` is a required
 slot in the lane report format, so a lane either fills it in or visibly leaves
 it empty. It cannot be silently skipped.
 
-This includes debt the epic itself creates. A fix that widened a type, left a
-shim in place, or pinned a version to get CI green is debt the moment it merges,
-and it gets filed in the wave that created it rather than a cleanup pass nobody
-schedules.
-
 **What should a new coordinator read?**
 
-Start with one current view in the existing scope entry point: goal and closure
-bar, active or pending lanes and contract links, dependencies, holds, unresolved
-decisions, owners, next actions, and evidence/recovery links. Update changed
-entries in place. Replace resolved items with an outcome/reference or remove them
-from the view. Ticket details and decision history stay in their designated
-records; other startup indexes point to this view.
+Start with one local ledger for the epic in its existing scope folder. Reuse the
+current README or CURRENT entry point; create `LEDGER.md` only if none exists.
+Other startup indexes point there. It contains the goal and full closure bar,
+active or pending lanes and contract/revision links, dependencies, holds,
+operative decisions with sources, owners, next actions and retrieval pointers.
+The authoritative backlog can remain in the tracker without being copied here.
+
+Read the ledger, then the brief and sources for the next action. Distinguish
+reported claims from verified outcomes and refresh volatile facts before relying
+on them. After a meaningful return, ruling or delivery transition, replace the
+affected entry in place. Keep consequential constraints and uncertainties; retire
+resolved entries once their remaining obligations have a home. Avoid session
+narration, appended histories, repeated standing instructions and copied reports.
+
+Before compaction, check that a successor can recover the next action, its
+authority, constraints and evidence without rereading the conversation. Size
+follows current coordination needs; a word target does not remove obligations.
 
 **When do lane documents leave default reading?**
 
@@ -150,6 +172,9 @@ authority and reference/recovery checks. In-flight work, dependent consumers,
 held delivery and explicit retention requirements protect material still needed.
 Document retirement does not remove worktrees, close tickets, authorize
 publication or reduce validation and audit scope.
+After the operator accepts epic closure and remaining obligations have durable
+homes, retire the ledger from startup and archive or delete it under the applicable
+retention and cleanup authority.
 
 **When is the epic done?**
 
@@ -158,6 +183,11 @@ the artifact and never from the PR list, and its mandate has two halves: probe
 the surfaces, and attack the fixes the previous audit provoked, because those
 are the least weathered code. Expect several rounds; the close decision is
 yours, not the session's.
+
+Keep the detailed closing report locally. Under existing write authority, the
+shared epic record gets a concise corroborated verdict, coverage, accepted limits
+and evidence references its readers can use. Publishing supporting material
+follows existing publication authority and the needs of the closure decision.
 
 **Will the PR mention the process?**
 
@@ -172,7 +202,9 @@ review mechanics; ticket links go in the actual repository template fields.
 - Lanes that touch the same file arrive in the same prompt.
 - Startup points to current coordination and the named task reading; completed
   instructions leave that path without losing outstanding work or evidence.
-- Confirmed actionable debt, follow-ups, and deferrals have deduplicated ticket ids or a named pending publication step; unresolved/disproved claims retain their evidence record and disposition.
+- Separately assignable work has a deduplicated ticket or an owned pending action;
+  lane corrections remain traceable in the active contract, and uncertain claims
+  retain their evidence and disposition.
 - Negative signal: a lane report accepted because it looked complete. The whole
   pattern exists to stop coverage claims that outrun their evidence.
 
