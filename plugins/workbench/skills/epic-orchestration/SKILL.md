@@ -141,12 +141,17 @@ hot file in one lane even if the tickets look unrelated.
 The prompt is one self-contained message containing:
 
 - **Setup**: fetch, worktree path, branch name carrying the ticket ids, install.
-- **Tickets**: one paragraph each, giving the defect, the anchor (`file:line`), and the
-  **bar** (what "done" means behaviorally). Say "fetch full bodies read-only if the
-  tracker is available; otherwise these summaries plus the anchors ARE the contract" so a
-  missing integration never blocks the lane.
+- **Tickets and required reading**: give each ticket's defect, source anchor
+  (`file:line`) and behavioral completion bar. Use this dispatch as the lane's
+  brief. Name the smallest complete required reading set, including exact sections
+  of any necessary design contract. Identify the governing decisions and contract
+  revision; resolve conflicts before dispatch. The brief and named contract
+  sections suffice without tracker access. Full ticket bodies and historical
+  reports are loaded read-only to resolve a specific question.
 - **Evidence**: read-only paths to the audit's repro material, and the repo's existing
-  integration-test pattern to reuse rather than reinvent.
+  integration-test pattern to reuse rather than reinvent. List supporting material
+  separately from startup reading, with when it must be consulted. Evidence needed
+  for a required validation check must be inspected.
 - **Method**: TDD red-first; assertions on the **emitted artifact and runtime behavior**,
   not internals; controls that pin required prior behavior. Use focused tests and
   mandatory local gates; full suites normally run in PR CI. Broader local runs
@@ -268,16 +273,38 @@ authority, prepare the ticket content locally and name that pending action.
 | A finding you scoped out | record the finding and why it was scoped out; link its deduplicated ticket when confirmed actionable, otherwise its evidence disposition |
 | The blind re-audit | confirmed actionable findings as deduplicated tickets; unresolved/disproved claims in the evidence record, with the reason |
 
-Each actionable entry carries its ticket id or a named pending publication step
-before the wave closes; evidence-only claims carry their record reference in
-the record that raised it. "I put it in the report" is not filing it. "The operator saw
-it in chat" is not filing it. A follow-up that exists only in a paragraph you wrote is
-work nobody will do.
+Before wave closeout, each actionable entry has its deduplicated ticket or named
+pending publication action; each evidence-only claim has a linked disposition.
+Write these references into the record that raised the item. Include debt created
+by the wave, such as widened types, shims or pinned versions.
 
-**Debt the epic creates is yours to file too.** A fix that widened a type, left a shim
-in place, or pinned a version to get green is debt the moment it merges, and the lane
-that wrote it is the only context that knows why. It goes in the same wave it was
-created, not in a cleanup pass that never gets scheduled.
+Apply `using-workbench`'s **Artifacts are disposable** guidance when a lane changes
+state, before coordinator handoff, and at wave or epic closeout:
+
+- **Active:** preserve the dispatched contract and its revision. Contract changes
+  require an explicit amendment communicated to affected lanes.
+- **Accepted / pending delivery:** retain the accepted revision, validation and
+  review evidence, remaining gates, holds, owner and next action.
+- **Closed:** required delivery is verified or the operator explicitly accepts
+  another disposition; unresolved work has a durable owner and destination.
+- **Retired:** temporary instructions leave default reading after their consumers
+  no longer need them. Retained evidence remains addressable.
+
+Maintain one current coordinator view in the existing scope entry point: goal and
+closure bar; active or pending lanes with contract/revision links; dependencies,
+holds and unresolved decisions; owners and next actions; evidence and recovery
+links. Replace changed entries in place. Resolved entries become an
+outcome/reference or leave the view. Ticket details and decision history remain
+in their designated records; other startup indexes point here.
+
+Before retirement, preserve unresolved work, lasting decisions, final evidence
+and its limits, frozen audit inputs, and recovery material in their established
+homes. In-flight contracts, dependent consumers, held delivery and explicit
+retention requirements prevent retirement of material they still need. Preserve
+stable references; archive superseded material outside default reading. Delete
+redundant or reproducible scratch only under existing cleanup authority after
+checking references and recovery needs. Document retirement changes no ticket
+status, worktree, publication hold, validation requirement or audit scope.
 
 ## Non-negotiables
 
