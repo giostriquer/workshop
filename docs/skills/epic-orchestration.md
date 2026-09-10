@@ -48,6 +48,11 @@ tickets with anchors and the behavioral bar, evidence paths, method, the epic's
 standing rules verbatim, advisory coordination, and the exact report format).
 Authorization is its own block.
 
+The dispatch is the lane's brief. It names the complete required reading set,
+including exact design sections and governing revisions. Supporting sources and
+evidence are loaded for specific questions and required checks. A connected
+tracker does not make full ticket histories mandatory reading.
+
 Each one arrives inside a named envelope, `Paste this into <LANE>:` followed by
 the prompt, repeated once per destination. Several lanes in one message is the
 desirable case rather than the exception: that is what grouping by file
@@ -116,6 +121,36 @@ shim in place, or pinned a version to get CI green is debt the moment it merges,
 and it gets filed in the wave that created it rather than a cleanup pass nobody
 schedules.
 
+**What should a new coordinator read?**
+
+Start with one current view in the existing scope entry point: goal and closure
+bar, active or pending lanes and contract links, dependencies, holds, unresolved
+decisions, owners, next actions, and evidence/recovery links. Update changed
+entries in place. Replace resolved items with an outcome/reference or remove them
+from the view. Ticket details and decision history stay in their designated
+records; other startup indexes point to this view.
+
+**When do lane documents leave default reading?**
+
+Apply [using-workbench's artifact guidance](using-workbench.md) at lane state
+changes, coordinator handoffs and wave or epic closeout. These describe document
+handling, not new tracker statuses:
+
+| Lane or material | What remains current |
+| --- | --- |
+| Active lane | Its dispatched contract and revision. Send explicit amendments to affected lanes. |
+| Accepted work awaiting delivery, including a held PR | Accepted revision, validation/review evidence, gates, hold, owner and next action. Green checks do not release a hold. |
+| Closed lane | Verified delivery or explicit operator disposition, with unresolved work assigned a durable owner and destination. A dependent lane still gets the contract or evidence it needs. |
+| Retired instructions | Leave default reading after consumers no longer need them. Evidence remains addressable. |
+
+Preserve lasting decisions, unresolved work, final evidence and limits, frozen
+audit inputs and recovery material. Archive superseded instructions with stable
+references. Deleting redundant or reproducible scratch requires existing cleanup
+authority and reference/recovery checks. In-flight work, dependent consumers,
+held delivery and explicit retention requirements protect material still needed.
+Document retirement does not remove worktrees, close tickets, authorize
+publication or reduce validation and audit scope.
+
 **When is the epic done?**
 
 On a **blind re-audit**, not on an empty ticket list. The auditor starts from
@@ -135,6 +170,8 @@ review mechanics; ticket links go in the actual repository template fields.
 - Reports come back validated against the repo, with the checks named and the
   unverified parts stated as unverified.
 - Lanes that touch the same file arrive in the same prompt.
+- Startup points to current coordination and the named task reading; completed
+  instructions leave that path without losing outstanding work or evidence.
 - Confirmed actionable debt, follow-ups, and deferrals have deduplicated ticket ids or a named pending publication step; unresolved/disproved claims retain their evidence record and disposition.
 - Negative signal: a lane report accepted because it looked complete. The whole
   pattern exists to stop coverage claims that outrun their evidence.

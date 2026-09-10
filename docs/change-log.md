@@ -8,6 +8,10 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.37.1: 2026-09-10
+
+- **Bound epic coordination reading and retire temporary instructions.** Dispatches name complete required reading sets and load supporting material for specific questions or checks. One current coordinator view replaces changed entries in place; lane closeout preserves contracts, dependencies, holds and audit evidence while retiring obsolete instructions from default reading. Validation and blind closing-audit requirements remain unchanged. ([decision](decisions/epic-orchestration-artifact-lifecycle.md))
+
 ## workbench 0.37.0: 2026-09-09
 
 - **Preserve the verification procedures.** Keep evidence formats, design paths, review rubrics, and goal templates while correcting destructive recovery, repeated authorization, stale verification, and uncertainty handling. Expected TDD RED and obvious localized fixes no longer trigger systematic-debugging; persistent or unclear failures retain its four-phase investigation.
@@ -206,21 +210,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 - **`arch-map` drops "Formerly structure-view."** The rename note has done its
   work in the trigger; `docs/skills/arch-map.md` still records it for anyone
   searching the old name.
-
-## workbench 0.27.0: 2026-08-20
-
-- **`file-pr` now backstops the adversarial review instead of assuming it.**
-  The skill described itself as landing rather than verification and assumed
-  every completion gate had run, so a branch that reached it un-reviewed got
-  filed. It now opens with a MUST: before filing, the branch diff has had the
-  `code-quality-review` pass, dispatched to a reviewer that did not write the
-  code; if it has not run, `file-pr` runs it and acts on the findings first.
-  Two exemptions and only two: a trivial, non-code, or documentation-only
-  branch, and a review that already ran for this work-stream. Every other gate
-  is still assumed, and `using-workbench`'s landing line says so.
-- **`file-pr` and `receiving-code-review` triggers name the ask.** "Always use
-  before or to file/open a PR" and "always use when receiving any sort of code
-  review feedback" replace the paragraph-long descriptions; what each skill
-  does once loaded is unchanged and stays in the body.
-- Usage pages follow, including the three that repeated "`file-pr` assumes the
-  gates already ran".
