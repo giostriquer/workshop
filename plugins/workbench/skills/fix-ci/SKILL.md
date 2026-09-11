@@ -33,8 +33,14 @@ The parent owns diagnosis and repairs; the watcher only gathers CI evidence.
 2. **Have the designated watcher read and watch the state.** PR: `gh pr checks --json name,bucket,state,workflow,link`.
    Runs: `gh run list` / `gh run view <run-id>`.
    - All required checks green for the target SHA → report green; done.
-   - Pending → the watcher runs `gh pr checks --watch --fail-fast` or
-     `gh run watch <run-id>`, within its bounded watch window.
+   - Pending → the watcher runs `gh pr checks --watch --fail-fast` (PR) or
+     polls `gh run view <run-id> --json jobs` (branch-only CI, since `gh run
+     watch` has no fail-fast), within its bounded watch window. **The watcher
+     returns at the first failed required check**, naming it and listing the
+     checks still pending. Neither the watcher nor the parent waits for the
+     remaining checks: any check still running when the fix is pushed reruns
+     on the new head anyway, so waiting buys nothing and a failure visible in
+     the first minute is acted on in the first minute.
    - Old-head, missing, cancelled, or superseded checks → report that state,
      not green. A new push requires a newly pinned target SHA.
 3. **Red → collect evidence first.** GitHub Actions: `gh run view <run-id>
@@ -53,12 +59,19 @@ The parent owns diagnosis and repairs; the watcher only gathers CI evidence.
 7. **Fix in-session.** Address the cause of the red check; do not bundle
    unrelated changes into the fix.
 8. **Commit and push per the repo's conventions**: pull first, use the repo's own
-   push skill if it ships one, and stage only the files the fix touched. Carry
+   push skill if it ships one, and stage only the files the fix touched. Right
+   before pushing, take one `gh pr checks` snapshot of the old head: a further
+   check that failed while the fix was being written is diagnosed from its log
+   and folded into the same push when its cause is in scope; otherwise it is
+   named in the report. Carry
    existing authority forward and honor no-commit/no-push instructions. If delivery
    is unavailable, finish the authorized local repair and name the remaining step.
-9. **Re-watch** (step 2). Hard cap: **two fix attempts** (plus the single flake
-   rerun). Still red after that → stop and report the diagnosis and recommended next
-   step instead of thrashing.
+9. **Re-watch** (step 2). Hard cap: **two fix attempts per failing cause** (plus
+   the single flake rerun). Acting at the first failure means a later check on
+   the new head can surface a different cause; that is a new cause with its own
+   two attempts, not a third attempt on the first. The same check failing after
+   its second fix ends the loop: stop and report the diagnosis and recommended
+   next step instead of thrashing.
 
 ## Output
 
@@ -77,7 +90,7 @@ The parent owns diagnosis and repairs; the watcher only gathers CI evidence.
 - Never delete, skip, or weaken a failing test or check to get to green: a red check
   that encodes an intended-behavior question is reported as a decision for the user,
   not worked around.
-- Two fix attempts maximum; a repeating failure is a finding, not an invitation to
-  iterate blindly.
+- Two fix attempts per cause maximum; a repeating failure is a finding, not an
+  invitation to iterate blindly.
 - The fix stays in the implementing session. The designated `ci-watcher` agent
   always owns watching; it never fixes, reruns workflows, commits, or pushes.

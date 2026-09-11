@@ -35,3 +35,23 @@ One fresh-context probe met the four cases: add, omit, reuse and fallback. Origi
 template structure and grounded diagram relationships were checked. Mermaid syntax
 was reviewed manually; rendering remains unverified because no local parser or
 renderer was available.
+
+## Amendment: placement (2026-09-11, workbench 0.37.3)
+
+The 0.37.2 rule said to append the section after the filled template and before
+any required footer. On a template ordered `What` / `Why` / `Beta release note`
+/ `Verification`, that placed the diagram after the verification evidence, where
+a reader has already finished learning what changed. The rule was the cause, not
+a misreading of it.
+
+The section now sits with the change description: immediately after the
+template's change-description sections (`Summary`, `What`, `Why`, `Description`
+and similar) and before the first verification, testing, checklist, release-note
+or footer section. An existing template `Architecture` section is still reused in
+place. Inserting between sections keeps every original heading in order, so the
+template-preservation check is unchanged. The fallback body places it after
+`Summary`.
+
+One fresh-context probe on a `What` / `Why` / `Beta release note` /
+`Verification` template checked that the section lands after `Why` and before
+`Beta release note` with all template headings intact.
