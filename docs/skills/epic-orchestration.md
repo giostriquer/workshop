@@ -43,10 +43,11 @@ Not for implementing a change yourself, and not for a single ticket.
 
 **What does it actually produce?**
 
-Paste-ready blocks. A lane prompt is one self-contained message (setup, the
-tickets with anchors and the behavioral bar, evidence paths, method, the epic's
-standing rules verbatim, advisory coordination, and the exact report format).
-Authorization is its own block.
+Dispatch files and paste-ready pointer blocks. A lane prompt is one
+self-contained document (setup, the tickets with anchors and the behavioral bar,
+evidence paths, method, the epic's standing rules verbatim, advisory
+coordination, and the exact report format), written to a file under the epic's
+scope folder next to the ledger. Authorization is its own file.
 
 The dispatch is the lane's brief. It names the complete required reading set,
 including exact design sections and governing revisions. Supporting sources and
@@ -54,7 +55,10 @@ evidence are loaded for specific questions and required checks. A connected
 tracker does not make full ticket histories mandatory reading.
 
 Each one arrives inside a named envelope, `Paste this into <LANE>:` followed by
-the prompt, repeated once per destination. Several lanes in one message is the
+a pointer: one or two lines naming the role and authority, "Read and execute
+this dispatch:", the absolute path of the file, and any lines your governing
+instructions require verbatim. The block never restates the file. This is
+repeated once per destination. Several lanes in one message is the
 desirable case rather than the exception: that is what grouping by file
 ownership buys, and a message with four live blocks costs you four pastes and no
 decisions.
@@ -66,6 +70,11 @@ are routing prompts to workers rather than holding a queue, and a prompt you
 have to sit on gets pasted at the wrong moment or not at all. A prompt whose
 trigger has not fired is not written yet: the session holds it, watches for the
 trigger itself, and issues it in its own block when it fires.
+
+**The session wrote a huge prompt inline instead of a file. Why?** An earlier
+revision defined the envelope as the lane's full prompt inline. Since workbench
+0.37.4 the prompt is a file and the block is a pointer, so the paste is a few
+lines a session reads exactly.
 
 **How does it group work into lanes?**
 

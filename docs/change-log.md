@@ -8,6 +8,10 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.37.4: 2026-09-11
+
+- **Epic dispatches are files; paste blocks are pointers.** `epic-orchestration` writes each lane prompt, audit brief and authorization to a file under the epic's scope folder and hands the operator a few-line block: role and authority, "Read and execute this dispatch:", the path, and any verbatim-required lines. Long inline briefs are gone. ([decision](decisions/epic-orchestration-dispatch-files.md))
+
 ## workbench 0.37.3: 2026-09-11
 
 - **Place the PR Architecture section with the change description.** The conditional `## Architecture` section now sits immediately after the template's `Summary` / `What` / `Why` style sections and before verification, testing, checklist, release-note or footer sections, instead of being appended after the whole template. Existing template Architecture sections are still reused in place. ([decision](decisions/file-pr-architecture-section.md))
@@ -166,28 +170,3 @@ deletes the oldest (git history keeps everything). Sections from before the
   linked `../using-superpowers/references/codex-tools.md` and its Gemini
   sibling, neither of which exists in this package, so an installed copy
   pointed at nothing.
-
-## workbench 0.29.0: 2026-08-20
-
-- **`route-work` is now `model-reference`.** The old name named a verb the
-  skill does not perform: it routes nothing and dispatches nothing, and three
-  earlier trims exist because sessions kept reading it as a dispatch procedure
-  to run before every fan-out. Those trims removed the rubric, the process
-  patterns, and the output contract, but the name kept re-teaching what the
-  body had stopped saying. Invoke it as `/model-reference`.
-- **The model-floor invariant leaves.** It shipped the *shape* of a floor after
-  an earlier note replaced a hard "never Haiku or Sonnet" with that portable
-  form. A floor is still fleet policy, one abstraction up, and this skill
-  carries none; `adopt-global-rules` ships a `model-floor.md` rules file, which
-  is where a floor belongs. The operator-calibration paragraph and the
-  cross-ladder caveat go with it, both restating a boundary the opening states
-  once.
-- **The table gets clearer and re-graded.** Axis definitions become a list
-  rather than a paragraph, `taste` extends from "docs voice" to docs, research,
-  and audits, and `gpt-5.6-luna` re-grades to 4 on taste and code. The
-  orchestration invariant names the operator's rules file as the alternative to
-  the session's own model.
-- `adopt-global-rules`'s shipped `model-floor.md` pointed at
-  `workbench:route-work` and now points at `workbench:model-reference`; a
-  machine that already adopted it carries the stale pointer until the skill is
-  re-run. ([decision](decisions/route-work-renamed-model-reference.md))
