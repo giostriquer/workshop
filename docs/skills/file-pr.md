@@ -73,7 +73,9 @@ continues after."
 
 **See it through.** Checks run through the `fix-ci` skill's loop, which owns
 the failing-log diagnosis, flake-vs-fault triage, minimal in-session fixes,
-the two-attempt cap, and the never-weaken-a-check rule. Mergeability comes
+the per-cause two-attempt cap, and the never-weaken-a-check rule. The watcher
+returns at the first failed required check, so the fix starts before the rest
+of CI finishes. Mergeability comes
 from `gh pr view --json mergeable,mergeStateStatus`. If the base moves and
 conflicts appear, it merges the base in again and pushes: at most **two**
 re-syncs. It stops when the PR is green and mergeable, or when a cap is hit,
@@ -99,10 +101,19 @@ a graph. Localized fixes, wording edits and mechanical changes without such an
 interaction get no added section or placeholder.
 
 Use the exact heading `## Architecture`, a short explanation and a fenced
-`mermaid` graph. Reuse the template's exact Architecture section if present;
-otherwise append it after the filled template and before any required footer.
-Preserve an existing template field according to the repo's convention when no
-diagram is needed. The same relevance rule applies to the no-template fallback.
+`mermaid` graph. Reuse the template's exact Architecture section, in place, if
+present. Otherwise the section sits with the change description: immediately
+after the `Summary` / `What` / `Why` style sections and before verification,
+testing, checklist, release-note or footer sections. It is never appended after
+the last section. Preserve an existing template field according to the repo's
+convention when no diagram is needed. The same relevance and placement rules
+apply to the no-template fallback, where it follows `Summary`.
+
+**The Architecture section landed after the Verification section. Why?** An
+earlier revision of the skill said to append it after the filled template. That
+put the diagram after the validation evidence, where it read as an afterthought.
+Since workbench 0.37.3 the section is inserted right after the change-description
+sections instead.
 
 Show the smallest useful interaction with real module names and labelled edges
 grounded in the final code and diff. Use a flowchart for dependency or data flow,

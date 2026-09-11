@@ -92,10 +92,18 @@ Localized fixes, wording edits and mechanical changes with no such interaction
 need no added section or diagram.
 
 Use the exact heading `## Architecture`, a short explanation of the relevant
-interaction or change, and a fenced `mermaid` graph. Reuse that section if the
-template already contains it; otherwise append it after the filled template and
-before any required footer, even when the template does not request it. When the
-trigger does not hold, add neither a section nor a placeholder; preserve any
+interaction or change, and a fenced `mermaid` graph. Reuse that section, in
+place, if the template already contains it. Otherwise insert it where a reader
+meets it while learning what changed: **immediately after the template's
+change-description sections** (headings such as `Summary`, `What`, `Why`,
+`Description`, `Overview`, `Motivation`, `Context`) and **before the first
+verification, testing, QA, checklist, release-note or footer section**. If the
+template has no change-description section, insert it first, after any leading
+comment block. In the fallback body it follows `Summary`. Inserting a section
+between existing ones keeps every original heading in order; appending it after
+the last section is the one placement to avoid, since a diagram that arrives
+after the verification evidence reads as an afterthought. When the trigger does
+not hold, add neither a section nor a placeholder; preserve any
 template-provided field according to the repo's convention.
 
 Show the smallest useful interaction, with real module names and labelled edges
@@ -179,7 +187,9 @@ tool is available; do not treat the diagram as validation evidence.
 
 9. **Watch to a verdict.** Checks run through the **`fix-ci` skill's loop**; it
    owns the failing-log diagnosis, flake-vs-fault triage, minimal in-session fixes,
-   the two-attempt cap, and the never-weaken-a-check rule. Watching always runs in a
+   the per-cause two-attempt cap, and the never-weaken-a-check rule. The watcher
+   returns at the first failed required check; the fix starts then, not after
+   the remaining checks finish. Watching always runs in a
    separate Opus agent on Claude or gpt-5.6-sol agent on Codex, never Astra/Fable or
    the parent; accept only results for the target SHA and required checks. Mergeability comes from
    `gh pr view --json mergeable,mergeStateStatus`.

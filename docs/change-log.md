@@ -8,6 +8,11 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.37.3: 2026-09-11
+
+- **Place the PR Architecture section with the change description.** The conditional `## Architecture` section now sits immediately after the template's `Summary` / `What` / `Why` style sections and before verification, testing, checklist, release-note or footer sections, instead of being appended after the whole template. Existing template Architecture sections are still reused in place. ([decision](decisions/file-pr-architecture-section.md))
+- **Act on the first failed check.** The `ci-watcher` returns at the first failed required check with the still-pending checks listed, and `fix-ci` starts the fix then instead of after the whole run finishes. Branch-only CI polls run jobs since `gh run watch` cannot fail fast. One snapshot right before pushing folds in further in-scope failures that appeared meanwhile. The two-attempt cap is now counted per failing cause. ([decision](decisions/fix-ci-act-on-first-failure.md))
+
 ## workbench 0.37.2: 2026-09-10
 
 - **Use a local epic ledger for coordinator recovery.** Keep current actions, constraints and evidence pointers in one local entry point, with useful detailed records retained locally. Shared tracker updates carry concise tasks, decisions and outcomes; ledger retirement preserves outstanding work, holds and retained evidence. ([decision](decisions/epic-orchestration-artifact-lifecycle.md))
@@ -186,20 +191,3 @@ deletes the oldest (git history keeps everything). Sections from before the
   `workbench:route-work` and now points at `workbench:model-reference`; a
   machine that already adopted it carries the stale pointer until the skill is
   re-run. ([decision](decisions/route-work-renamed-model-reference.md))
-
-## workbench 0.28.0: 2026-08-20
-
-- **`handoff-goal` is for long-running work only.** The description asked that
-  a goal be *defined* (stateable up front, verifiable by checks that can fail)
-  and never asked how long pursuit would take, so a small well-specified task
-  passed the trigger and got a contract directory the session could have
-  finished without. Definedness and duration are independent, and only the
-  first was being tested. The trigger now leads with the constraint: a goal
-  that must outlive this session, pursued over many turns, and not work this
-  session can finish. The body says the same at the top of *When to use*, and
-  the fit check's disqualifiers gain "work that fits in one session".
-- **Both places that offer the route follow.** `brainstorming`'s route gate
-  marks the handoff long-running-work-only, and `using-workbench`'s ownership
-  row reads "a long-running autonomous goal, outliving this session". Critique
-  mode is unaffected: auditing an existing contract has no duration test.
-  ([decision](decisions/handoff-goal-long-running-only.md))

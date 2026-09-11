@@ -43,7 +43,7 @@ phrasings like "CI is failing, take a look," and can be invoked directly.
    branch with no PR but CI on push → work the branch's runs via `gh run list
    --branch <branch> --commit <target-sha> --limit 5`. No branch, no CI, or unauthenticated `gh` →
    report plainly and stop.
-2. **Read the state through a separate watcher.** Always dispatch `ci-watcher`: Opus on Claude, `gpt-5.6-sol` on Codex, never Astra or Fable. This holds even when the parent is idle or already uses Opus/Sol. Give it the target SHA and expected checks. Green requires complete required-check coverage for that revision; missing, pending, or superseded checks are not success.
+2. **Read the state through a separate watcher.** Always dispatch `ci-watcher`: Opus on Claude, `gpt-5.6-sol` on Codex, never Astra or Fable. This holds even when the parent is idle or already uses Opus/Sol. Give it the target SHA and expected checks. It returns at the **first failed required check** (via `gh pr checks --watch --fail-fast`, or job polling for branch-only runs) with the still-pending checks listed; the fix starts then, not after the rest of CI finishes. Green requires complete required-check coverage for that revision; missing, pending, or superseded checks are not success.
 3. **Red → collect evidence first.** `gh run view <run-id> --log-failed` and
    read the failing step's actual output. External checks: surface the link;
    if the cause isn't reachable from the repo, report rather than guess.
@@ -57,8 +57,10 @@ phrasings like "CI is failing, take a look," and can be invoked directly.
 7. **Fix in-session.** The cause of the red check; unrelated changes are not
    bundled into the fix.
 8. **Deliver under existing authority and repo conventions**: pull first when committing/pushing, use the repo's own push skill if it ships one, and stage only files the fix touched. Explicit no-commit/no-push instructions override these defaults; complete the local fix and report the remaining delivery step.
-9. **Re-watch.** Hard cap: two fix attempts, plus the single flake rerun.
-   Still red → stop and report the diagnosis and recommended next step.
+9. **Re-watch.** Hard cap: two fix attempts per failing cause, plus the single
+   flake rerun. A different check failing on the new head is a new cause with
+   its own attempts; the same check failing after its second fix → stop and
+   report the diagnosis and recommended next step.
 
 ## Common questions
 
@@ -94,6 +96,15 @@ said a tool that retries or pushes is "a different, higher-authority tool."
 
 **Can I keep working while it waits?** Yes. All polling runs through a separate Opus (Claude) or Sol (Codex) watcher, regardless of whether the parent has other work. The parent picks up its report and owns any fixes. If designated dispatch is unavailable, report that capability gap instead of polling in the parent.
 
+**A check failed in the first minute but nothing happened until the whole
+workflow finished. Why?** An earlier revision described the watch step as
+"watch, then report a verdict", so the watcher came back only when the watch
+command exited, and `gh run watch` never exits early. Since workbench 0.37.3
+the watcher returns at the first failed required check and the parent acts on
+it immediately. Checks still running when the fix is pushed rerun on the new
+head anyway. Right before pushing, the loop takes one snapshot of the old head
+so a second failure that appeared meanwhile can be folded into the same push.
+
 **My working tree had unrelated changes and they didn't get committed.**
 Correct. It stages only the files the fix touched, and reports the rest rather
 than folding them in.
@@ -116,6 +127,9 @@ re-watch shape is host-agnostic, but the commands are not.
   test, or a third fix attempt. Any of those means the loop's guardrails were
   not followed.
 - With complete green required-check coverage for the pinned target SHA, it reports green and stops, without inventing work.
+- The first fix commit lands while other checks from the same run are still
+  running. Waiting for a full run to finish before touching a check that failed
+  early is the **negative signal**.
 
 ## Where it fits
 

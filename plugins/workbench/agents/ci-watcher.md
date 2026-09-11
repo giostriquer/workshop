@@ -37,11 +37,17 @@ branch CI.
 2. Resolve the PR: `gh pr view --json number,url,headRefName`.
 3. Pin the caller's target SHA and expected checks; confirm run/PR head matches.
    Without a PR, use branch runs filtered to that SHA. Inspect attached checks: `gh pr checks --json name,bucket,state,workflow,link`.
-4. If checks are pending, watch them: `gh pr checks --watch --fail-fast`, or
-   `gh run watch <run-id>` for branch-only CI. Use the caller's bounded window,
-   otherwise ten minutes. At its end report pending and the next action. If the
-   head changes, report superseded; never certify the new head using an old run.
-5. If a GitHub Actions check failed, fetch logs with `gh run view <run-id> --log-failed`;
+4. If checks are pending, watch them: `gh pr checks --watch --fail-fast` for a
+   PR, or for branch-only CI poll `gh run view <run-id> --json jobs` every
+   thirty seconds (`gh run watch` has no fail-fast). Use the caller's bounded
+   window, otherwise ten minutes. **Return at the first failed required check.**
+   Do not wait for the remaining checks to finish: report the failed check, the
+   checks still pending, and the ones already passed, and let the caller act.
+   At the window's end with nothing failed, report pending and the next action.
+   If the head changes, report superseded; never certify the new head using an
+   old run.
+5. If a GitHub Actions check failed, fetch its logs with `gh run view <run-id>
+   --log-failed` (or `--job <job-id>` while the run is still in progress);
    otherwise return the check link and a concise next step.
 
 ## Output
@@ -49,8 +55,8 @@ branch CI.
 - CI status (passed / failed / pending / superseded / blocked), target SHA,
   observed run SHA, and required-check coverage. Missing/cancelled checks are not passed.
 - PR and check metadata (number, URL, check names).
-- If failed: a concise failure excerpt or the external check link, plus the likely
-  next step.
+- If failed: a concise failure excerpt or the external check link, the checks
+  still pending at the moment of return, plus the likely next step.
 
 ## Boundaries
 
