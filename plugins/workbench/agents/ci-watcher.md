@@ -1,6 +1,6 @@
 ---
 name: ci-watcher
-description: Watch PR CI for the current branch and report pass/fail with relevant failure links. Use when waiting for CI results or CI has failed. Use proactively to monitor branch CI.
+description: Watch PR CI for the current branch and report pass/fail with relevant failure links. Use when waiting for CI results or CI has failed, dispatched by fix-ci or file-pr, one watcher per pinned head.
 tools: Bash, Read
 model: opus
 ---
@@ -28,8 +28,9 @@ The parent owns diagnosis and repairs; the watcher only gathers CI evidence.
 
 ## Trigger
 
-Use when waiting for CI results, when CI has failed, or when proactively monitoring
-branch CI.
+Use when waiting for CI results or when CI has failed. One watcher per pinned
+head: reading and watching are the same dispatch, and a head whose watcher has
+returned red gets no second watcher for its remaining checks.
 
 ## Workflow
 

@@ -8,6 +8,10 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.37.5: 2026-09-11
+
+- **One CI watcher per pinned head.** `fix-ci` and `ci-watcher` state that reading and watching are one dispatch, that a head whose watcher returned red gets no second watcher for its pending checks, that the pre-push snapshot is a single read the parent runs itself, and that a re-watch is a new head with a new watcher. The watcher's description no longer asks hosts to dispatch it proactively. ([decision](decisions/fix-ci-act-on-first-failure.md))
+
 ## workbench 0.37.4: 2026-09-11
 
 - **Epic dispatches are files; paste blocks are pointers.** `epic-orchestration` writes each lane prompt, audit brief and authorization to a file under the epic's scope folder and hands the operator a few-line block: role and authority, "Read and execute this dispatch:", the path, and any verbatim-required lines. Long inline briefs are gone. ([decision](decisions/epic-orchestration-dispatch-files.md))
@@ -163,10 +167,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 - `empirical-proof` and `qa-sweep` were left long on purpose: their bulk is
   routing between near neighbours, which is trigger work.
   ([decision](decisions/skill-descriptions-state-when-not-what.md))
-
-## toolkit 0.8.2: 2026-08-20
-
-- **`writing-skills` drops a paragraph of dangling pointers.** Its opening
-  linked `../using-superpowers/references/codex-tools.md` and its Gemini
-  sibling, neither of which exists in this package, so an installed copy
-  pointed at nothing.

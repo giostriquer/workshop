@@ -39,3 +39,25 @@ polling substitute. No fresh-context scenario was run: the failure was a
 recorded wait on a real PR, the correction removes the wait condition rather
 than adding a judgment, and the read-only and never-weaken boundaries of both
 pieces are untouched.
+
+## Amendment: one watcher per head (2026-09-11, workbench 0.37.5)
+
+After 0.37.3 a session dispatched two watchers. Two wordings caused it. The
+routing rule sent every CI command to the watcher, so the new pre-push snapshot
+became a second dispatch on the same head. And the first-failure report listed
+the still-pending checks without saying they are not watched further, so a
+second watcher went out on them while the first failure was being fixed. A
+third, older contributor: the agent description said "Use proactively to
+monitor branch CI", which invites host auto-delegation on top of the skill's
+own dispatch.
+
+The rule is now explicit: one watcher per pinned head; reading and watching are
+one dispatch; a head whose watcher returned red gets no second watcher for its
+pending checks; a re-watch is a new head and a new watcher; the pre-push
+snapshot is a single read the parent runs itself, and the routing rule covers
+polling and watching rather than every `gh` read. The description drops the
+proactive clause.
+
+One fresh-context probe on a scenario with an early failure and pending checks
+counted the watcher dispatches the session planned: one for the original head
+and one for the re-watch after the push, with the pre-push read in the parent.
