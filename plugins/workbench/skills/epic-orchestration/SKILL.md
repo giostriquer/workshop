@@ -138,7 +138,8 @@ Group lanes **by file ownership, not by topic**. Every semantic merge conflict i
 came from two lanes touching one contract from different directions. Put all changes to a
 hot file in one lane even if the tickets look unrelated.
 
-The prompt is one self-contained message containing:
+The prompt is one self-contained document, written to a file under the epic's scope
+folder (see Dispatching), containing:
 
 - **Setup**: fetch, worktree path, branch name carrying the ticket ids, install.
 - **Tickets and required reading**: give each ticket's defect, source anchor
@@ -191,17 +192,29 @@ Everything you hand over is dispatchable the moment you write it. The operator i
 not a queue: they are pasting into worker sessions, and a prompt they have to hold until
 some later trigger is one that gets pasted at the wrong moment or not at all.
 
-Every handoff takes this form, one block per destination:
+Write each lane prompt, audit brief or authorization to its own file under the epic's
+scope folder, next to the ledger (for example `dispatches/<lane>-<date>.md`), and
+index it there. What the operator pastes is a pointer, never the document: a session
+reads a file exactly; a long inline block gets copied imprecisely. Every handoff takes
+this form, one block per destination:
 
 ```
 Paste this into <LANE>:
 
-<that lane's full prompt>
+<one or two lines: role, what is authorized, and whether this is a fresh or an
+existing session>. Read and execute this dispatch:
+
+<absolute path to the dispatch file>
+
+<lines governing instructions require verbatim in every dispatch, if any>
 
 Paste this into <ANOTHER LANE>:
 
-<that lane's full prompt>
+...
 ```
+
+The block carries nothing else: no summary of the file, no rules restated from it.
+Decisions and questions for the operator go outside the blocks, after them.
 
 Dispatch together every lane that shares no files with another lane in flight. That is the
 observable test, and it is what grouping by file ownership buys you: if two lanes cannot
@@ -214,7 +227,8 @@ yourself, and issue it in its own dispatch block when it fires.
 
 ## Authorizing
 
-Authorization is its own paste-ready block under existing operator authority:
+Authorization is its own file and paste-ready pointer block under existing operator
+authority:
 merge the actual integration branch (never rebase; stop and report on a semantic
 conflict), run affected checks and mandatory local gates, then use `file-pr` and report
 back. That skill writes the body from the repo's own template and tends the PR to green
@@ -351,8 +365,8 @@ Then evaluate the epic's current state and choose exactly one immediate next ste
 2. **Delivery still pending:** name the owner and next action for review, CI, PR,
    or merge. Keep that gate visible instead of acknowledging the wave as finished.
 3. **Implementation complete, closing audit owed:** state the audit stopping point
-   and provide the blind audit's scope, regression families, evidence contract,
-   and dispatch block. Do not manufacture more implementation to avoid this gate.
+   and write the blind audit's scope, regression families and evidence contract to
+   its dispatch file, with its pointer block. Do not manufacture more implementation to avoid this gate.
 4. **Audit holds and closure criteria are met:** summarize the corroborated result,
    remaining accepted limits, and propose the epic as done for the operator's
    close decision. Do not close it silently.
