@@ -21,6 +21,14 @@ host cannot dispatch it, report the monitoring gap rather than polling in the
 parent or choosing a prohibited fallback. Haiku and Sonnet remain prohibited.
 The parent owns diagnosis and repairs; the watcher only gathers CI evidence.
 
+**One watcher per pinned head.** Reading the state and watching it are one
+dispatch, not two. Never dispatch a second watcher on a head whose watcher is
+still running or has returned red; the checks it listed as pending are not
+watched further, since they rerun on the next head. A re-watch after a push is
+a new head and therefore a new watcher. The routing rule covers polling and
+watching; a single `gh pr checks` read, such as the pre-push snapshot in step
+8, is not polling and the parent runs it itself.
+
 ## Workflow
 
 1. **Resolve the target.** `git branch --show-current`, then `gh pr view --json
@@ -30,7 +38,7 @@ The parent owns diagnosis and repairs; the watcher only gathers CI evidence.
    target SHA with `git rev-parse HEAD`, compare it with the remote PR/run head,
    and identify the required checks. No branch, no CI, or unavailable access
    gets a precise report; missing checks are not green.
-2. **Have the designated watcher read and watch the state.** PR: `gh pr checks --json name,bucket,state,workflow,link`.
+2. **Dispatch one designated watcher to read and then watch the state.** PR: `gh pr checks --json name,bucket,state,workflow,link`.
    Runs: `gh run list` / `gh run view <run-id>`.
    - All required checks green for the target SHA → report green; done.
    - Pending → the watcher runs `gh pr checks --watch --fail-fast` (PR) or
@@ -60,13 +68,14 @@ The parent owns diagnosis and repairs; the watcher only gathers CI evidence.
    unrelated changes into the fix.
 8. **Commit and push per the repo's conventions**: pull first, use the repo's own
    push skill if it ships one, and stage only the files the fix touched. Right
-   before pushing, take one `gh pr checks` snapshot of the old head: a further
+   before pushing, the parent runs one `gh pr checks` read of the old head (a
+   single read, not a watcher dispatch): a further
    check that failed while the fix was being written is diagnosed from its log
    and folded into the same push when its cause is in scope; otherwise it is
    named in the report. Carry
    existing authority forward and honor no-commit/no-push instructions. If delivery
    is unavailable, finish the authorized local repair and name the remaining step.
-9. **Re-watch** (step 2). Hard cap: **two fix attempts per failing cause** (plus
+9. **Re-watch** (step 2, a new watcher for the new head). Hard cap: **two fix attempts per failing cause** (plus
    the single flake rerun). Acting at the first failure means a later check on
    the new head can surface a different cause; that is a new cause with its own
    two attempts, not a third attempt on the first. The same check failing after

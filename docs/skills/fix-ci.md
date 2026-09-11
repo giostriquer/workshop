@@ -43,7 +43,7 @@ phrasings like "CI is failing, take a look," and can be invoked directly.
    branch with no PR but CI on push → work the branch's runs via `gh run list
    --branch <branch> --commit <target-sha> --limit 5`. No branch, no CI, or unauthenticated `gh` →
    report plainly and stop.
-2. **Read the state through a separate watcher.** Always dispatch `ci-watcher`: Opus on Claude, `gpt-5.6-sol` on Codex, never Astra or Fable. This holds even when the parent is idle or already uses Opus/Sol. Give it the target SHA and expected checks. It returns at the **first failed required check** (via `gh pr checks --watch --fail-fast`, or job polling for branch-only runs) with the still-pending checks listed; the fix starts then, not after the rest of CI finishes. Green requires complete required-check coverage for that revision; missing, pending, or superseded checks are not success.
+2. **Read and watch the state through one separate watcher.** Always dispatch `ci-watcher`, one per pinned head: Opus on Claude, `gpt-5.6-sol` on Codex, never Astra or Fable. This holds even when the parent is idle or already uses Opus/Sol. Give it the target SHA and expected checks. It returns at the **first failed required check** (via `gh pr checks --watch --fail-fast`, or job polling for branch-only runs) with the still-pending checks listed; the fix starts then, not after the rest of CI finishes, and no second watcher is dispatched for those pending checks. Green requires complete required-check coverage for that revision; missing, pending, or superseded checks are not success.
 3. **Red → collect evidence first.** `gh run view <run-id> --log-failed` and
    read the failing step's actual output. External checks: surface the link;
    if the cause isn't reachable from the repo, report rather than guess.
@@ -94,6 +94,14 @@ zero and can collide with in-flight work; and the watcher's own design already
 said a tool that retries or pushes is "a different, higher-authority tool."
 `fix-ci` is that tool. ([decision](../decisions/fix-ci.md))
 
+**Why did the session spawn two watchers?** Two earlier wordings invited it:
+the routing rule sent every `gh` call to the watcher, so the pre-push snapshot
+became a second dispatch, and the first-failure report listed pending checks
+without saying they are not watched further. Since workbench 0.37.5 the rule is
+one watcher per pinned head; reading and watching are one dispatch; the
+pre-push snapshot is a single read the parent runs itself; and the watcher's
+description no longer asks hosts to dispatch it proactively.
+
 **Can I keep working while it waits?** Yes. All polling runs through a separate Opus (Claude) or Sol (Codex) watcher, regardless of whether the parent has other work. The parent picks up its report and owns any fixes. If designated dispatch is unavailable, report that capability gap instead of polling in the parent.
 
 **A check failed in the first minute but nothing happened until the whole
@@ -127,6 +135,7 @@ re-watch shape is host-agnostic, but the commands are not.
   test, or a third fix attempt. Any of those means the loop's guardrails were
   not followed.
 - With complete green required-check coverage for the pinned target SHA, it reports green and stops, without inventing work.
+- Exactly one watcher exists per pinned head. A second watcher on the same head is the **negative signal**.
 - The first fix commit lands while other checks from the same run are still
   running. Waiting for a full run to finish before touching a check that failed
   early is the **negative signal**.
