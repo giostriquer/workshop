@@ -8,8 +8,8 @@ what comes back against the repository itself, and decides whether a PR may be
 opened. It never implements, commits, pushes, or merges.
 
 It exists for the case where the work is too large for one session and the
-runner is you. There is no dispatcher and no automation: the operator is the
-only wire between sessions, pasting prompts out and reports back.
+runner is you. The operator connects the independent lanes, pasting prompts out
+and reports back. The owner may also use local subagents for bounded support.
 
 Four roles, and the skill refuses to let them blur:
 
@@ -85,8 +85,13 @@ touch the same hot file belong in one lane.
 
 **How does it connect to the rest of the workbench?**
 
-At two points, both named in the skill rather than left to the session. A lane
-runs [code-quality-review](code-quality-review.md) over its own diff before
+Dispatches name the required skill, task inputs, outcome and handback evidence.
+The lane reads and applies the skill's procedure and model routing. The owner
+keeps lane instructions provider agnostic and does not restate or expand those
+procedures.
+
+The review and publication gates stay connected. A lane runs
+[code-quality-review](code-quality-review.md) over its own diff before
 handing back, dispatched to a reviewer that did not write the code. And
 authorization files the PR through [file-pr](file-pr.md), with the block saying
 outright that `file-pr`'s review gate is already satisfied, because that review
@@ -97,6 +102,20 @@ adversarial review has run, and a lane that is not told the gate is satisfied
 will read the MUST and run a second full review on a diff that already had one.
 The exemption being claimed is `file-pr`'s own ("the review already ran on this
 diff"), not a loophole. Verify direct corrections without repeating the whole review; materially changed behavior or new risk needs focused independent follow-up. A semantic conflict while syncing the actual integration branch stops the lane for a decision rather than being guessed through.
+
+**Can it use subagents when several reports arrive?**
+
+Yes. Helpers can inspect independent evidence while the owner synthesizes the
+returns. Use them when the saved context or time covers dispatch and verification
+overhead; handle quick checks directly and reuse helpers for related work.
+Implementation lanes still pass through the operator. Helpers share the owner's
+role boundaries; the owner retains synthesis, rulings and authorization.
+
+Helpers use `model: inherit` or the host equivalent. A smaller model in the same
+provider/harness may handle trivial work: explicit inputs, mechanical steps and
+an objective result the owner can cheaply verify, such as extracting revisions
+and check counts. Evidence assessment, policy conflicts and lane acceptance are
+not trivial. Work owned by another skill follows that skill's routing.
 
 **Does it trust the reports?**
 
@@ -231,4 +250,4 @@ Its closest neighbor is [handoff-goal](handoff-goal.md), which packages one
 goal for one fresh session. `epic-orchestration` is the case where one package
 is not enough and verifying what comes back is the job.
 
-Every return ends with a verified acknowledgment and an immediate next action: dispatch ready lanes; name a pending delivery gate and owner; dispatch the blind closing audit; propose closure after corroboration; or identify a concrete blocker. Keep the full lane report and dispatch templates. Lanes and orchestration validation use focused local tests plus mandatory gates; full suites run in PR CI by default. Separate Opus/Sol agents watch CI, never Astra/Fable or the parent. Implementer lanes handle fixes; the orchestrator sends correction handoffs.
+Every return ends with a verified acknowledgment and an immediate next action: dispatch ready lanes; name a pending delivery gate and owner; dispatch the blind closing audit; propose closure after corroboration; or identify a concrete blocker. Keep the full lane report and dispatch templates. Lanes and orchestration validation use focused local tests plus mandatory gates; full suites run in PR CI by default.

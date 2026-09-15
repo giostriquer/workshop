@@ -8,6 +8,10 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.37.6: 2026-09-14
+
+- **Keep epic delegation provider agnostic.** Lane prompts name required skills, inputs, outcomes and evidence without restating their procedures or model routing. Optional local helpers inherit the owner's model; smaller models in the same provider/harness may handle mechanical work with cheaply verifiable results. The owner retains synthesis, rulings and authorization. ([decision](decisions/epic-orchestration-delegation.md))
+
 ## workbench 0.37.5: 2026-09-11
 
 - **One CI watcher per pinned head.** `fix-ci` and `ci-watcher` state that reading and watching are one dispatch, that a head whose watcher returned red gets no second watcher for its pending checks, that the pre-push snapshot is a single read the parent runs itself, and that a re-watch is a new head with a new watcher. The watcher's description no longer asks hosts to dispatch it proactively. ([decision](decisions/fix-ci-act-on-first-failure.md))
@@ -144,26 +148,3 @@ deletes the oldest (git history keeps everything). Sections from before the
   notice moves to the repository's root `LICENSE`, since the obligation
   follows the code.
   ([decision](decisions/writing-skills-moves-repo-local.md))
-
-## workbench 0.30.0: 2026-08-20
-
-- **Six descriptions stop summarizing what the skill does.** `writing-skills`
-  carries a tested rule: a description that summarizes the workflow creates a
-  shortcut the agent takes instead of reading the body. An audit of all sixteen
-  workbench skills found six carrying post-fire protocol in the trigger, and
-  `test-driven-development` was almost word for word the worked bad example
-  that skill ships ("write test first, watch it fail, write minimal code,
-  refactor").
-- **`test-driven-development`, `fix-ci`, `self-audit`, `brainstorming`,
-  `claim-check`, and `model-reference`** now state only when they fire.
-  `fix-ci` and `self-audit` also stop opening with an imperative or a noun
-  phrase. Nothing was deleted: every clause already lived in its skill's body,
-  bar `model-reference`'s "a lookup, not a step before every dispatch", which
-  moved into its opening. Exclusions stayed in the triggers, since they route
-  between near-neighbour skills.
-- **`verification-before-completion`'s trigger narrows** to the moment it
-  fires, and its per-file attribution footer is dropped; the plugin `LICENSE`
-  already names it among the superpowers-derived portions.
-- `empirical-proof` and `qa-sweep` were left long on purpose: their bulk is
-  routing between near neighbours, which is trigger work.
-  ([decision](decisions/skill-descriptions-state-when-not-what.md))
