@@ -8,6 +8,10 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.38.0: 2026-09-15
+
+- **Keep epic lane handbacks consistent.** Add `epic-implementation` for implementation lanes dispatched through `epic-orchestration`, including amendments, recovery and delivery rounds. Both skills share one report reference, and each final handback contains a complete copyable report. Blocked, follow-up and guidance states include a `NEXT STEP` with the action or decision, owner and recommendation. ([decision](decisions/epic-implementation.md))
+
 ## workbench 0.37.6: 2026-09-14
 
 - **Keep epic delegation provider agnostic.** Lane prompts name required skills, inputs, outcomes and evidence without restating their procedures or model routing. Optional local helpers inherit the owner's model; smaller models in the same provider/harness may handle mechanical work with cheaply verifiable results. The owner retains synthesis, rulings and authorization. ([decision](decisions/epic-orchestration-delegation.md))
@@ -138,13 +142,3 @@ deletes the oldest (git history keeps everything). Sections from before the
   pattern separating the halves.
 - `using-workbench` and `self-audit` no longer name `writing-skills`, which
   has left the plugins; an installed workbench cannot reach a repo-local skill.
-
-## toolkit 0.9.0: 2026-08-20
-
-- **`writing-skills` leaves the plugin** and becomes repo-local tooling
-  alongside `change-log`, `push`, and `workbench-drift`. Toolkit ships no
-  superpowers-derived piece any more, so its `LICENSE` loses the
-  derived-portions clause and its README loses the attribution block; the MIT
-  notice moves to the repository's root `LICENSE`, since the obligation
-  follows the code.
-  ([decision](decisions/writing-skills-moves-repo-local.md))

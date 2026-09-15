@@ -42,6 +42,7 @@ you want them, and skip to keep sessions lean.
 | CI is red | [fix-ci](fix-ci.md) |
 | Review feedback arrived | [receiving-code-review](receiving-code-review.md) |
 | A multi-ticket epic whose lanes other sessions implement | [epic-orchestration](epic-orchestration.md) |
+| Implementing a lane dispatched through epic-orchestration | [epic-implementation](epic-implementation.md) |
 | Looking back at how the process itself ran | [self-audit](self-audit.md) |
 
 ## The optional toolkit

@@ -1,7 +1,7 @@
 # workbench
 
 A direct-use plugin from [Workshop](https://github.com/giostriquer/workshop):
-five read-only review agents, nine everyday skills, and the eight-skill **workbench**
+five read-only review agents, ten everyday skills, and the eight-skill **workbench**
 process layer. No setup: works in any repo. Optional artifact-making utilities
 (doc pages, demo videos, architecture maps) live in the sibling
 [`toolkit`](../toolkit/README.md) plugin: install it only if you want them.
@@ -28,13 +28,13 @@ codex plugin add workbench@workshop
 Plugins → Team Marketplaces → Add Marketplace → Import from Repo**
 (`giostriquer/workshop`), then install `workbench` from **Customize**.
 
-**Google Antigravity:** Copy or link this folder into your workspace's `.agents/plugins/workbench/` (that workspace only) or into `~/.gemini/config/plugins/workbench/` (every workspace). Antigravity scans both; there is no registry file to edit. All seventeen skills are discovered and loaded on demand; the review agents are not: Antigravity's plugin format covers skills, rules, MCP servers, and hooks.
+**Google Antigravity:** Copy or link this folder into your workspace's `.agents/plugins/workbench/` (that workspace only) or into `~/.gemini/config/plugins/workbench/` (every workspace). Antigravity scans both; there is no registry file to edit. All eighteen skills are discovered and loaded on demand; the review agents are not: Antigravity's plugin format covers skills, rules, MCP servers, and hooks.
 
 **OpenCode:** No marketplace file exists on this surface; opencode loads skills by scanning directories. Point your global config's `"skills": { "paths": [...] }` at this folder's `skills/` directory in a clone of the repo, or copy individual skill folders into `~/.config/opencode/skill/`. The review agents are not carried on this surface.
 
 After install: agents resolve as `workbench:<agent>`; skills are invoked by name.
-Codex exposes all seventeen skills; the agent files ride inertly (Codex custom
-agents need repo-local `.codex/agents/` wrappers). Antigravity discovers and progressively loads the skills from `skills/`. OpenCode loads the same seventeen from its `skills.paths` scan roots.
+Codex exposes all eighteen skills; the agent files ride inertly (Codex custom
+agents need repo-local `.codex/agents/` wrappers). Antigravity discovers and progressively loads the skills from `skills/`. OpenCode loads the same eighteen from its `skills.paths` scan roots.
 
 ## Agents: read-only reviewers
 
@@ -61,6 +61,7 @@ They inspect and report; none can edit your files (reviewers use
 | `empirical-proof` | proves a finished change at the running app: real calls, raw evidence; verified / broken / blocked |
 | `code-quality-review` | strict, structure-first maintainability review of a diff |
 | `epic-orchestration` | owns a multi-ticket epic: writes the lane prompts the operator dispatches by hand, validates each report against the repo, authorizes the PR; never implements; user-invoked only |
+| `epic-implementation` | uses the shared [lane report template](skills/epic-orchestration/references/lane-report.md) across amendments, recovery and delivery; only for lanes dispatched through epic-orchestration |
 | `model-reference` | reference table for the model fleet across cost, intelligence, taste, code, and speed, plus the hard routing invariants; a lookup, not a dispatch step |
 
 ## Workbench: the process layer

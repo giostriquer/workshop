@@ -159,6 +159,10 @@ skill, task-specific inputs, required outcome and handback evidence; the lane
 reads and applies it. Do not restate, extend or generalize the skill's procedure
 or model routing in the dispatch.
 
+Name `workbench:epic-implementation` in every implementation dispatch file,
+including amendments and delivery authorizations. It keeps each final lane
+handback in the shared report format across rounds.
+
 The prompt is one self-contained document, written to a file under the epic's scope
 folder (see Dispatching), containing:
 
@@ -189,19 +193,9 @@ folder (see Dispatching), containing:
 - **Completion**: before handing back, the lane uses `code-quality-review` over
   its own diff, including any required follow-up. Record the reviewed revision,
   correction evidence and finding dispositions.
-- **The exact report format** (below). Ranges, not file lists: you read the diff yourself.
-
-```
-## <LANE> REPORT
-STATUS: ready-for-validation | blocked
-WORKTREE + BRANCH + RANGE: <path> · <branch> · <base>..<head>
-PER TICKET: <ID> · <fix in one sentence> · red: <n + test names> · green: <counts>
-CHECKS: <suite> <n>/<n> · typecheck · lint · format
-REVIEW: <n blocking / n advisory, one-line disposition each>
-FORKS/DEVIATIONS: <numbered, or "none">
-DEBT + FOLLOW-UPS: <numbered: what, anchor, why not now, or "none">
-BLOCKED ON (only if blocked): <what, why, your recommendation>
-```
+- **The exact report format**: read the shared
+  [lane report template](references/lane-report.md) and include its block in the
+  dispatch. Ranges, not file lists: you read the diff yourself.
 
 ## Dispatching
 

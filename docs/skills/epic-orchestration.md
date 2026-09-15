@@ -85,6 +85,14 @@ touch the same hot file belong in one lane.
 
 **How does it connect to the rest of the workbench?**
 
+Every implementation dispatch names
+[epic-implementation](epic-implementation.md), including amendments and delivery
+authorizations. That small lane skill keeps final handbacks in the exact report
+format across rounds, with the populated report in the reply and local evidence
+references supporting it. Both skills link to the shared
+[lane report template](../../plugins/workbench/skills/epic-orchestration/references/lane-report.md),
+whose block the coordinator includes in the dispatch.
+
 Dispatches name the required skill, task inputs, outcome and handback evidence.
 The lane reads and applies the skill's procedure and model routing. The owner
 keeps lane instructions provider agnostic and does not restate or expand those
