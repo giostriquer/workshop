@@ -16,7 +16,7 @@ Four roles, and the skill refuses to let them blur:
 | Role | Owns |
 | --- | --- |
 | Orchestrator (the session running this skill) | tickets, lane prompts, independent validation, rulings, authorization |
-| Implementer lane | one worktree, one report, and a dispatched `code-quality-review` before handing back |
+| Implementer lane | one worktree, one report, and a dispatched completion review over the implementation range |
 | Auditor | a blind empirical audit of the artifact, with repro and anchor per finding |
 | Operator (you) | dispatch, merges, product rulings |
 
@@ -58,10 +58,8 @@ Each one arrives inside a named envelope, `Paste this into <LANE>:` followed by
 a pointer: one or two lines naming the role and authority, "Read and execute
 this dispatch:", the absolute path of the file, and any lines your governing
 instructions require verbatim. The block never restates the file. This is
-repeated once per destination. Several lanes in one message is the
-desirable case rather than the exception: that is what grouping by file
-ownership buys, and a message with four live blocks costs you four pastes and no
-decisions.
+repeated once per destination. Send independent ready lanes together: file
+ownership and producer/consumer dependencies both determine readiness.
 
 **Will it queue up prompts for me to send later?**
 
@@ -83,6 +81,12 @@ prevents: every semantic merge conflict in practice came from two lanes
 touching one contract from different directions. Unrelated-looking tickets that
 touch the same hot file belong in one lane.
 
+Shared-contract version or required-field changes also name their affected
+producers, shared fixture builders and consumer checks. Split work when its
+pieces can be implemented and validated independently. Disjoint files alone do
+not permit concurrent dispatch when a consumer still needs another lane's output;
+the ledger records that dependency's readiness condition.
+
 **How does it connect to the rest of the workbench?**
 
 Every implementation dispatch names
@@ -98,9 +102,10 @@ The lane reads and applies the skill's procedure and model routing. The owner
 keeps lane instructions provider agnostic and does not restate or expand those
 procedures.
 
-The review and publication gates stay connected. A lane runs
-[code-quality-review](code-quality-review.md) over its own diff before
-handing back, dispatched to a reviewer that did not write the code. And
+The review and publication gates stay connected. Once implementation is complete,
+a lane runs [code-quality-review](code-quality-review.md) over its implementation
+range before reporting `ready-for-validation`, dispatched to a reviewer that did
+not write the code. Earlier blocked or guidance reports do not trigger that review. And
 authorization files the PR through [file-pr](file-pr.md), with the block saying
 outright that `file-pr`'s review gate is already satisfied, because that review
 ran on this diff.
@@ -128,6 +133,21 @@ not trivial. Work owned by another skill follows that skill's routing.
 **Does it trust the reports?**
 
 The orchestrator pins the reported commit and creates a disposable validation checkout. Preserve the active lane, tests, and fixtures; revert/remove only changed production code identified from repository conventions. Run focused regression cases, require the intended assertion to fail, restore the fix in isolation, and require those cases to pass. When applicable, scan for banned content, review infrastructure design, and exercise what a gate accepts, including negative cases; do not infer coverage from a successful script alone.
+
+Artifact-acceptance and authority-derivation changes, including owner rulings,
+also use representative actual producer output and saved versions covered by
+compatibility requirements. Probe disposable copies, confirm required inputs
+are produced, and check that refusals offer recovery available in the product.
+Missing producer evidence remains an explicit proof gap.
+
+**Which local checks belong in a dispatch?**
+
+Name required local gates and applicable locally runnable static/build checks
+separately from focused tests. Name filters are for iteration; completion checks
+run affected test files in full plus the identified shared-consumer checks.
+State unavailable coverage.
+Full suites run in PR CI by default; broader local runs need an explicit
+requirement or a named unresolved integration risk.
 
 **The lane already had its diff reviewed. Why validate again?**
 

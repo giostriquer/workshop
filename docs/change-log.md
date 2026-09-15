@@ -8,6 +8,11 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.38.1: 2026-09-15
+
+- **Clarify epic lane readiness.** Dispatches identify shared-contract producers, fixture builders and consumer checks, respect producer/consumer dependencies, and separate local static/build gates from focused tests. Validation uses actual producer output and supported saved artifacts. Completion review runs over the finished implementation; earlier blocked reports do not trigger it. ([decision](decisions/epic-lane-readiness.md))
+- **Preserve delivery state and report formats.** `file-pr` checks for merged PRs before pushing and routes authorized remaining work to a new branch and PR. Its delivery details fit the session's required handback format, with verdict-first output only when no format is required. ([decision](decisions/epic-lane-readiness.md))
+
 ## workbench 0.38.0: 2026-09-15
 
 - **Keep epic lane handbacks consistent.** Add `epic-implementation` for implementation lanes dispatched through `epic-orchestration`, including amendments, recovery and delivery rounds. Both skills share one report reference, and each final handback contains a complete copyable report. Blocked, follow-up and guidance states include a `NEXT STEP` with the action or decision, owner and recommendation. ([decision](decisions/epic-implementation.md))
@@ -119,26 +124,3 @@ deletes the oldest (git history keeps everything). Sections from before the
   the section is gone. The adversarial review's in-scope / out-of-scope
   finding labels are unchanged.
   ([decision](decisions/scope-guard-removed.md))
-
-## workbench 0.31.0: 2026-08-20
-
-- **`file-pr`'s review gate stops being negotiable.** The MUST gate shipped
-  with two exemptions and nothing defending them, which `writing-skills`
-  classifies as the wrong form for a discipline failure: a prohibition needs a
-  rationalization table and red flags beside it. "Trivial, non-code, or
-  documentation-only" becomes **the branch changes no code**, measured on the
-  diff rather than on how routine the work felt, and "already ran for this
-  work-stream" becomes **already ran on this diff**, since commits added since
-  the review are unreviewed code.
-- **Nine rationalizations and five red flags are named**, including the two
-  `code-quality-review` already forbids that a session under pressure still
-  reaches for: an author's own careful reading, and a self-served pass over
-  its own diff. A closing sentence forbids everything else, deadlines and
-  waiting reviewers and a direct "open the PR" included, and a
-  spirit-versus-letter line at the top cuts off the rest as a class.
-  ([decision](decisions/file-pr-gate-bulletproofed.md))
-- **`metadata: system: workbench` is gone from all eight skills that had it.**
-  No host or script read the field, and it sat on exactly half the set with no
-  pattern separating the halves.
-- `using-workbench` and `self-audit` no longer name `writing-skills`, which
-  has left the plugins; an installed workbench cannot reach a repo-local skill.

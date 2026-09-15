@@ -47,6 +47,13 @@ change is half-finished.
 
 ## The three phases
 
+At entry and before each push, refresh the associated PR's state and head branch,
+including merged PRs. A merged PR ends its tending loop; report the merge revision.
+Preserve local work and carry authorized remaining changes onto a new branch from
+the current base for a new PR. If no changes remain, delivery is finished. Work
+awaiting delivery authority retains an owner and pending action. Reusing the
+merged head branch requires an explicit instruction.
+
 **Prepare.** Detect the branch and base (`git branch --show-current`; base
 defaults to `main` unless the repo says otherwise) and summarize the change
 from `git diff <base>...HEAD` and the commit list. Fetch the latest base and,
@@ -67,9 +74,9 @@ branch-name pattern, discovered from the linter or CI config rather than
 guessed.
 
 **File.** Push the branch per the repo's conventions (pull first; use the
-repo's own push skill if it ships one), then `gh pr create --base <base>
---head <branch>`. The PR URL is reported "as soon as it exists: the tending
-continues after."
+repo's own push skill if it ships one). Update an associated open PR in place;
+otherwise use `gh pr create --base <base> --head <branch>`. The PR URL is reported
+"as soon as it exists: the tending continues after."
 
 **See it through.** Checks run through the `fix-ci` skill's loop, which owns
 the failing-log diagnosis, flake-vs-fault triage, minimal in-session fixes,
@@ -149,6 +156,11 @@ template has a required ticket field.
 **My template has checkboxes.** It ticks `[x]` "only what was actually
 verified," and leaves unfillable fields blank rather than fabricating them.
 
+**Does it replace my lane report format?** No. Use the session's required
+handback format and include all delivery information in its existing fields.
+If no format is required, use a verdict-first report. The PR body still follows
+the repository's template.
+
 **Where does the validation evidence go?** Into the session report: the
 discovered gate commands and each result, by kind (format / lint / type-check
 / tests). It lands in the PR body only where the template has a testing or QA
@@ -177,14 +189,16 @@ are gone, and there is no flag to bring them back.
   the template path it used, or says "none (fallback)" after an actual search.
 - You get the PR URL as soon as the PR exists, and the tending report arrives
   after it.
-- The report leads with the verdict and end state: green and mergeable, still
-  red, conflicted, or blocked; then the gate commands and results, ticket
-  link, fixes applied, and attempts used.
+- The report preserves the session's required handback format, or uses a
+  verdict-first report when none is required. It includes the end state (green
+  and mergeable, merged, still red, conflicted, or blocked), gate commands and
+  results, ticket link, template used, fixes applied, attempts and re-syncs, and
+  any stop diagnosis and next step.
 - Fixes land as ordinary commits. **Negative signal:** a force-push, a rebased
   published commit, or a deleted or skipped check on the branch means
   something outside this skill's rules happened.
-- **Negative signal:** the PR is merged, or auto-merge is enabled, at the end
-  of the run. That is never this skill.
+- **Negative signal:** the skill merges the PR or enables auto-merge. It may
+  observe and report a merge performed by someone else.
 
 ## Where it fits
 

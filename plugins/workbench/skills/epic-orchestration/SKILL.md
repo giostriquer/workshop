@@ -16,7 +16,7 @@ Four roles, and they do not blur:
 | Role | Owns | Never |
 | --- | --- | --- |
 | **Orchestrator** (you) | tickets, lane prompts, independent validation, rulings, authorization | implements, commits, pushes, opens PRs, merges |
-| **Implementer lane** | one worktree, one report; runs its OWN adversarial review before handing back | pushes or opens a PR before authorization |
+| **Implementer lane** | one worktree, one report; owns the completion review over its implementation range | pushes or opens a PR before authorization |
 | **Auditor** | blind empirical audit of the artifact; findings with repro + anchor | reads the PR list or fixes anything |
 | **Operator** | lane dispatch, merges, product rulings | (is the link between independent lanes) |
 
@@ -112,6 +112,14 @@ while its acceptance criterion was `fetch()` resolving, at any status. A server 
 404 to every route passed every repair, validation, and finalization path for days. Ask
 what the gate lets through, not whether it runs cleanly.
 
+For artifact-acceptance or authority-derivation changes, including your own rulings,
+exercise representative output from the actual producer through the changed path.
+Include saved versions covered by compatibility requirements, using disposable
+copies. Confirm required inputs are produced; distinguish expected refusals from
+crashes and verify the proposed recovery is available in the product. If actual
+producer output is unavailable, report the specific proof gap; a handwritten
+fixture does not establish that the product can supply the input.
+
 **Chase anchor mismatches.** If a ticket's cited file is not in the diff yet the lane
 claims the fix, find out why. Once, the auditor's anchor was imprecise and the lane fixed
 the right place, and the cited line turned out to be a *second*, still-live instance of
@@ -154,6 +162,11 @@ Group lanes **by file ownership, not by topic**. Every semantic merge conflict i
 came from two lanes touching one contract from different directions. Put all changes to a
 hot file in one lane even if the tickets look unrelated.
 
+For shared-contract version or required-field changes, name affected producers,
+shared fixture builders and consumer checks in the dispatch. Split work when the
+pieces can be implemented and validated independently; a contract change alone
+does not require its own lane.
+
 Keep lane instructions provider agnostic. For each required skill, name the
 skill, task-specific inputs, required outcome and handback evidence; the lane
 reads and applies it. Do not restate, extend or generalize the skill's procedure
@@ -179,9 +192,13 @@ folder (see Dispatching), containing:
   separately from startup reading, with when it must be consulted. Evidence needed
   for a required validation check must be inspected.
 - **Method**: TDD red-first; assertions on the **emitted artifact and runtime behavior**,
-  not internals; controls that pin required prior behavior. Use focused tests and
-  mandatory local gates; full suites normally run in PR CI. Broader local runs
-  require an explicit requirement or named unresolved integration risk.
+  not internals; controls that pin required prior behavior. Name required local
+  gates and applicable locally runnable static/build checks separately from focused
+  tests. Name filters serve iteration; completion checks run affected test files
+  in full and the identified shared-consumer checks. State unavailable coverage.
+  Full suites normally run in
+  PR CI; broader local runs require an explicit requirement or named unresolved
+  integration risk.
 - **Rules**: the epic's standing rules verbatim (comments, debt, naming, read-only
   trackers), including that debt and follow-ups noticed in passing get reported rather
   than fixed or dropped, plus the actual repository toolchain, formatting gates,
@@ -190,9 +207,11 @@ folder (see Dispatching), containing:
   "coordinate an ownership overlap before concurrent edits, then record the
   agreed change under FORKS/DEVIATIONS." Hard
   DO-NOT-TOUCH walls caused a lane to halt three tickets over one advisory conflict.
-- **Completion**: before handing back, the lane uses `code-quality-review` over
-  its own diff, including any required follow-up. Record the reviewed revision,
-  correction evidence and finding dispositions.
+- **Completion**: once implementation is complete, use `code-quality-review` over
+  the implementation range before reporting `ready-for-validation`. Earlier
+  blocked reports or requests for a ruling do not trigger the completion review.
+  Record the reviewed revision, correction evidence and finding dispositions;
+  later material changes follow that skill's focused independent follow-up rules.
 - **The exact report format**: read the shared
   [lane report template](references/lane-report.md) and include its block in the
   dispatch. Ranges, not file lists: you read the diff yourself.
@@ -227,11 +246,10 @@ Paste this into <ANOTHER LANE>:
 The block carries nothing else: no summary of the file, no rules restated from it.
 Decisions and questions for the operator go outside the blocks, after them.
 
-Dispatch together every lane that shares no files with another lane in flight. That is the
-observable test, and it is what grouping by file ownership buys you: if two lanes cannot
-touch the same file, their order does not matter and they go out in one message. Four live
-blocks cost the operator four pastes and no decisions. Authorization blocks carry the same
-envelope and name their destination the same way.
+Dispatch together lanes with no file-ownership overlap and no unmet producer/consumer
+dependency on another lane in flight. Disjoint files alone do not establish
+independence. Record each dependency's readiness condition in the ledger.
+Authorization blocks carry the same envelope and name their destination the same way.
 
 A prompt whose trigger has not fired is not written yet. Hold it, watch for the trigger
 yourself, and issue it in its own dispatch block when it fires.

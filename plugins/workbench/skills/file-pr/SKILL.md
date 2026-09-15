@@ -119,6 +119,13 @@ tool is available; do not treat the diagram as validation evidence.
 
 ### Prepare
 
+At entry and before each push, refresh the associated PR's state and head branch,
+including merged PRs. If it merged, end that PR's tending loop and report its
+merge revision. Preserve local work; carry any authorized remaining changes onto
+a new branch from the current base for a new PR. If none remain, delivery is
+finished. Changes awaiting delivery authority retain an owner and pending action.
+Reusing the merged head branch requires an explicit instruction.
+
 1. **Detect branch and base.** `git branch --show-current`; base defaults to `main`
    unless the repo says otherwise. Summarize the change from `git diff
    <base>...HEAD` and the commit list rather than session memory.
@@ -178,10 +185,10 @@ tool is available; do not treat the diagram as validation evidence.
 
 ### File
 
-8. **Push and open.** Push the branch per the repo's conventions (pull first; use
-   its push skill if it ships one), then `gh pr create --base <base> --head
-   <branch>` with the title and body. Report the PR URL as soon as it exists: the
-   tending continues after.
+8. **Push and open or update.** Push the branch per the repo's conventions (pull
+   first; use its push skill if it ships one). Update an associated open PR in
+   place; otherwise use `gh pr create --base <base> --head <branch>` with the title
+   and body. Report the PR URL as soon as it exists: the tending continues after.
 
 ### See it through
 
@@ -201,9 +208,10 @@ tool is available; do not treat the diagram as validation evidence.
 
 ## Output
 
-Verdict-first report:
+Use the session's required handback format and include all information below
+in its existing fields. If no format is required, use a verdict-first report.
 
-- PR URL and end state: **green and mergeable** / still red / conflicted / blocked.
+- PR URL and end state: **green and mergeable** / merged / still red / conflicted / blocked.
 - Validation provenance: the discovered gate commands and each result, by kind
   (format / lint / type-check / tests); this lives in the report, and lands in the
   PR body only where the template has a testing/QA field for it.
