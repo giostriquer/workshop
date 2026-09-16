@@ -8,6 +8,10 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.38.2: 2026-09-16
+
+- **Attach screenshots of UI changes to the PR body.** `file-pr` adds a conditional `## Screenshots` section when the diff changes rendered UI, captured from the running branch head and uploaded with `gh`'s native `--attach`. It reuses a template's screenshots-style section in place, otherwise sits right after `## Architecture`, and otherwise takes the Architecture position. The body references each file so `gh` rewrites it in place rather than appending it. Non-visual diffs get no section. ([decision](decisions/file-pr-screenshots-section.md))
+
 ## workbench 0.38.1: 2026-09-15
 
 - **Clarify epic lane readiness.** Dispatches identify shared-contract producers, fixture builders and consumer checks, respect producer/consumer dependencies, and separate local static/build gates from focused tests. Validation uses actual producer output and supported saved artifacts. Completion review runs over the finished implementation; earlier blocked reports do not trigger it. ([decision](decisions/epic-lane-readiness.md))
@@ -112,15 +116,3 @@ deletes the oldest (git history keeps everything). Sections from before the
   drops "fix minimally ... nothing broader", and `handoff-goal`'s contract
   placeholder asks for actions to escalate, not "boundaries".
   ([decision](decisions/scope-language-sweep.md))
-
-## workbench 0.32.0: 2026-08-25
-
-- **`using-workbench` drops the scope guard.** Field sessions read "the
-  accepted work defines the boundary" as a limit on reading, refused to trace
-  causes into subsystems the ticket never named, and never reached the root
-  cause. A rewrite that pinned the boundary to the diff tested clean but only
-  added interpretation. Scope is the user's to define in the ask; a general
-  guard cannot be stated precisely enough to avoid downgrading behavior, so
-  the section is gone. The adversarial review's in-scope / out-of-scope
-  finding labels are unchanged.
-  ([decision](decisions/scope-guard-removed.md))

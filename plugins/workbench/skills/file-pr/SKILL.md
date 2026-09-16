@@ -76,8 +76,9 @@ permission or access; do not ask again for authority already given.
 2. **The PR body belongs to the repo, not to this skill: follow its template, never
    replace it.** If the repo ships a PR template, the body **is** that template
    filled in: its exact headings, order, checkboxes, and hidden `<!-- markers -->`,
-   plus the conditional `Architecture` section below and additions required by
-   governing instructions, such as a host attribution footer. The built-in skeleton
+   plus the conditional `Architecture` and `Screenshots` sections below and
+   additions required by governing instructions, such as a host attribution
+   footer. The built-in skeleton
    below is a **last resort for repos that have no template**; never emit it, or its
    `Summary` / `Ticket` / `Caveats` headings, when a template exists.
 
@@ -114,6 +115,51 @@ make the change clear; avoid an unrelated system map or invented calls. Check ea
 relationship against source and check Mermaid syntax, using an available parser
 or renderer when present. Report unverified rendering in the handback if no such
 tool is available; do not treat the diagram as validation evidence.
+
+## Screenshots in the PR body
+
+Include screenshots when the diff changes what a user sees rendered: a new or
+altered component, page, layout, style, template, or user-facing flow. Measured
+on the diff, not on the work's label: a frontend-directory diff that only
+touches tests, types, data fetching or build config changes no pixels and gets
+no screenshots. API-only, backend, CLI-text and non-visual changes never do.
+
+Capture the screenshots from the **real running change**, on this branch's
+head, using the repo's documented run path (a project run skill, the
+`ui-demo-video` skill's frames, or an available browser tool). One screenshot
+per distinct visual state the reviewer needs; when the diff alters existing UI,
+pair a before capture from the base with the after capture. Write the files to
+the session's scratch location, never into the repository. Reuse no stale,
+mocked, or unrelated image. If the app cannot be run in this session, add no
+section and no placeholder, and report the gap in the handback.
+
+Use the exact heading `## Screenshots`, one line naming what each image shows,
+and a Markdown image reference per file. Reuse that section, in place, if the
+template already contains it (`Screenshots`, `Visuals`, `UI changes` or the
+like). Otherwise it takes the position immediately after `## Architecture` when
+that section is present; when it is not, apply the Architecture placement rule
+verbatim: after the template's change-description sections and before the first
+verification, testing, QA, checklist, release-note or footer section, first
+after any leading comment block if there is no change-description section, and
+after `Summary` in the fallback body.
+
+Upload with the native `gh` attachment flag, one `--attach` per file, and keep
+the section's position by referencing each file in the body **before** the
+command runs, with the same path string given to `--attach`: `gh` rewrites a
+body reference such as `![alt](./after.png)` to the uploaded asset in place, and
+appends the attachment after the body only when no reference matches. Alt text goes after `#` in the flag or in the reference; make
+it describe the state, not the filename.
+
+```bash
+gh pr create --base <base> --head <branch> --title "<title>" --body-file body.md \
+  --attach './before.png#Settings page before the change' \
+  --attach './after.png#Settings page with the new export button'
+# updating an open PR: gh pr edit <n> --body-file body.md --attach ...
+```
+
+A partial upload leaves the PR created with the files that succeeded and a
+non-zero exit; re-attach the missing files with `gh pr edit --attach` rather
+than refiling.
 
 ## Steps
 
@@ -164,8 +210,9 @@ Reusing the merged head branch requires an explicit instruction.
    has; tick `[x]` only what was actually verified; leave unfillable fields blank
    rather than fabricating. Before finalizing, check your headings against the
    template's: every original heading remains in order and is not renamed. The
-   conditional `## Architecture` section is the only extra section this skill
-   requires; apply the rule above to both template and fallback bodies. Preserve
+   conditional `## Architecture` and `## Screenshots` sections are the only
+   extra sections this skill requires; apply the rules above to both template
+   and fallback bodies. Preserve
    other additions required by governing instructions. Required host attribution
    may follow the body without a new section. If there is no template, use the
    minimal fallback:
@@ -188,7 +235,8 @@ Reusing the merged head branch requires an explicit instruction.
 8. **Push and open or update.** Push the branch per the repo's conventions (pull
    first; use its push skill if it ships one). Update an associated open PR in
    place; otherwise use `gh pr create --base <base> --head <branch>` with the title
-   and body. Report the PR URL as soon as it exists: the tending continues after.
+   and body, adding one `--attach` per screenshot when the Screenshots rule holds.
+   Report the PR URL as soon as it exists: the tending continues after.
 
 ### See it through
 
@@ -217,6 +265,8 @@ in its existing fields. If no format is required, use a verdict-first report.
   PR body only where the template has a testing/QA field for it.
 - Ticket link, template used (path, or "none: fallback"), fixes applied (files +
   commits), attempts and re-syncs used.
+- Screenshots: attached (how they were captured), not applicable (no rendered
+  change in the diff), or skipped because the app could not be run.
 - If stopped early: the diagnosis and the recommended next step.
 
 ## Boundaries

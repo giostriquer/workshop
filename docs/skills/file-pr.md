@@ -17,7 +17,8 @@ it." If your repo ships a pull request template, the body *is* that template
 filled in, with its original headings, order, checkboxes and hidden
 `<!-- markers -->`. A conditional `## Architecture` section adds a Mermaid diagram
 when relevant module interactions need to be shown, even if the template does
-not request one.
+not request one, and a conditional `## Screenshots` section attaches captures of
+the running change when the diff alters rendered UI.
 
 It never merges, enables auto-merge, closes or re-targets the PR, force-pushes, or rewrites published history.
 
@@ -68,14 +69,16 @@ case-insensitively in `.github/`, `.github/PULL_REQUEST_TEMPLATE/`, the repo
 root, and `docs/`, and **record the search outcome**: found (path) or
 none-found-after-search: before building anything. Fill the template
 verbatim, or use the minimal Summary / Ticket / Caveats fallback only after a
-recorded empty search. Apply the conditional Architecture rule to either body.
+recorded empty search. Apply the conditional Architecture and Screenshots rules
+to either body.
 Finally, conform to any enforced PR-title or
 branch-name pattern, discovered from the linter or CI config rather than
 guessed.
 
 **File.** Push the branch per the repo's conventions (pull first; use the
 repo's own push skill if it ships one). Update an associated open PR in place;
-otherwise use `gh pr create --base <base> --head <branch>`. The PR URL is reported
+otherwise use `gh pr create --base <base> --head <branch>`, with one `--attach`
+per screenshot when the diff changed rendered UI. The PR URL is reported
 "as soon as it exists: the tending continues after."
 
 **See it through.** Checks run through the `fix-ci` skill's loop, which owns
@@ -128,6 +131,34 @@ or a sequence diagram when call order matters. Check relationships against sourc
 and Mermaid syntax with an available parser or renderer. If rendering could not
 be verified, say so in the handback. The graph explains the change; it is not proof
 that the behavior works.
+
+**When does the body get a Screenshots section?**
+
+When the diff changes what a user sees rendered: a new or altered component,
+page, layout, style, template or user-facing flow. It is measured on the diff,
+so a frontend change that only touches tests, types, data fetching or build
+config gets none, and API-only, backend or CLI-text changes never do. The
+captures come from the real running change on the branch head, via the repo's
+run path, the `ui-demo-video` skill's frames or a browser tool, paired
+before/after when existing UI changed. They live in the session's scratch
+location, never in the repo. If the app cannot be run, no section and no
+placeholder are added and the handback says so.
+
+The section uses the exact heading `## Screenshots`, reused in place if the
+template already has a screenshots-style section. Otherwise it sits immediately
+after `## Architecture` when that section is present, and otherwise in the
+Architecture position: after the change-description sections, before
+verification, checklist, release-note or footer sections, and after `Summary`
+in the fallback body.
+
+**Why does the body reference the image files before `gh` uploads them?**
+Upload uses `gh`'s native `--attach` flag on `pr create` and `pr edit` (gh
+2.100 or later). `gh` appends an attachment after the body unless the body
+already references the file as `![alt](./after.png)`, in which case it rewrites
+that reference to the uploaded asset in place. The reference is what keeps the
+section where the placement rule put it. If some files fail to upload, `gh`
+still creates the PR and exits non-zero; the fix is `gh pr edit --attach` for
+the missing files, not a second PR.
 
 **Why does it run my formatter before opening the PR?** Because a formatter
 check is usually a required CI gate, is the cheapest thing to fail, and is
@@ -185,8 +216,12 @@ are gone, and there is no flag to bring them back.
 ## It's working if
 
 - The PR body preserves every original template heading in order, adding
-  `## Architecture` only when the interaction warrants a graph. The report names
+  `## Architecture` only when the interaction warrants a graph and
+  `## Screenshots` only when the diff changed rendered UI. The report names
   the template path it used, or says "none (fallback)" after an actual search.
+- Every attached screenshot is referenced in the body where the section sits,
+  not dangling after the last section. **Negative signal:** a screenshot on an
+  API-only PR, or a UI PR whose report says nothing about screenshots.
 - You get the PR URL as soon as the PR exists, and the tending report arrives
   after it.
 - The report preserves the session's required handback format, or uses a
