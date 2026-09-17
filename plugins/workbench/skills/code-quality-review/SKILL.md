@@ -203,6 +203,18 @@ Good phrases:
 
 ## Output Expectations
 
+Open the report with the verdict, on its own line and before anything else:
+
+```
+## Verdict: PASS | ISSUES_FOUND
+```
+
+- `PASS` - no in-scope (blocking) finding. Advisory and out-of-scope findings may follow it.
+- `ISSUES_FOUND` - at least one in-scope (blocking) finding, judged against the approval bar below.
+
+This is the line `test-quality-review` emits, so one rule reads every review stage. A report
+that omits it reads as `ISSUES_FOUND`.
+
 Prioritize findings in this order:
 
 1. Structural code-quality regressions

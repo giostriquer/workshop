@@ -79,6 +79,7 @@ The agent cannot do that. It is review-only, does not edit, commit, or push, and
 ## It's working if
 
 - The review fired at completion without anyone requesting it, and the session said so.
+- Every report opens with `## Verdict: PASS` or `## Verdict: ISSUES_FOUND`, so a clean pass is told from a blocked one without reading the prose.
 - Every finding carries a blocking, advisory, or out-of-scope follow-up label, and the out-of-scope ones left the diff alone and became follow-up work.
 - The top findings are structural (a reframing that deletes a layer, a file that should be decomposed) rather than a list of naming suggestions.
 - Approval was withheld on a change that worked and passed its tests, because it left the local architecture messier.

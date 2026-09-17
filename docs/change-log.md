@@ -8,6 +8,10 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.40.0: 2026-09-17
+
+- **A code-quality review opens with its verdict.** `code-quality-review` requires the report to start with `## Verdict: PASS | ISSUES_FOUND`, the line `test-quality-review` already emits, where `PASS` is no in-scope (blocking) finding and a report that omits the line reads as `ISSUES_FOUND`. One rule now reads the outcome of either review stage, by a session or by a tool counting reviews off a transcript. ([decision](decisions/a-code-quality-review-states-its-verdict.md))
+
 ## workbench 0.39.0: 2026-09-17
 
 - **Run the test-quality review with the adversarial review.** `file-pr`, `code-quality-review`, `using-workbench` and `epic-orchestration` require `test-quality-reviewer` (`mode: diff`, given the base branch, in its own prompt) next to `code-quality-review` whenever the diff changes production logic or tests; the two can run in parallel. The epic lane report records both verdicts. ([decision](decisions/test-shape-and-mutation-review.md))
