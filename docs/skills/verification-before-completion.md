@@ -4,7 +4,7 @@
 
 This skill requires evidence before completion claims. Identify the relevant check or observation, run it or reuse a still-valid result, read the complete result and exit status where applicable, and state the claim within that scope. Freshness depends on the relevant revision, inputs, dependencies, configuration, and runtime state.
 
-It is an **always-on gate**, not a tool you pick up when it seems relevant. In the workbench flow it is one of only two pieces that fire by default rather than on relevance (the other is `code-quality-review`). It runs unless the user explicitly declines it or the repo's own process supersedes it. A small diff, a confident implementation, or time pressure are not exits, and neither is the session's own judgment that this particular claim is safe. The skill anticipates the argument and closes it: **"Violating the letter of this rule is violating the spirit of this rule."**
+It is an **always-on gate**, not a tool you pick up when it seems relevant. In the workbench flow it is one of only two pieces that fire by default rather than on relevance (the other is the adversarial review: `code-quality-review`, plus `test-quality-review` when production logic or tests changed). It runs unless the user explicitly declines it or the repo's own process supersedes it. A small diff, a confident implementation, or time pressure are not exits, and neither is the session's own judgment that this particular claim is safe. The skill anticipates the argument and closes it: **"Violating the letter of this rule is violating the spirit of this rule."**
 
 The gate requires an honest result when verification fails. Preserve that evidence, then continue an already-authorized in-scope repair and recheck the affected result. Focused checks support focused claims; runtime proof is offered unless requested or required by a standing gate.
 
@@ -88,4 +88,4 @@ Negative signals: the skill is being misapplied if:
 
 ## Where it fits
 
-This is the entry point to the flow's COMPLETION block. Once a work-stream's implementation is believed complete, the test-quality review runs, then this gate establishes "deemed ready": verified, with evidence. Only then does the required adversarial `code-quality-review` fire, once, right before the PR-or-merge question. If the change has a drivable surface and you want proof at the running software, `empirical-proof` deepens this gate, but you have to ask for it.
+This is the entry point to the flow's COMPLETION block. Once a work-stream's implementation is believed complete, this gate establishes "deemed ready": verified, with evidence. Only then does the required adversarial review fire, once, right before the PR-or-merge question: `code-quality-review`, plus `test-quality-review` when the diff changes production logic or tests. If the change has a drivable surface and you want proof at the running software, `empirical-proof` deepens this gate, but you have to ask for it.

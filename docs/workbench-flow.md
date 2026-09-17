@@ -47,13 +47,11 @@ flowchart LR
     SD["systematic-debugging<br/>persistent or unclear failures"]:::sat -.- I
 
     I["IMPLEMENT<br/>direct or agentic: user / harness call;<br/>handed the plan / goal if present"]:::stage
-    TQ["TEST QUALITY<br/>review of the implementation's tests"]:::stage
-    AR["ADVERSARIAL REVIEW AT READINESS<br/>code quality + comment trim,<br/>per repo rules"]:::stage
+    AR["ADVERSARIAL REVIEW AT READINESS<br/>code quality + comment trim,<br/>per repo rules; test quality in parallel<br/>when logic or tests changed"]:::stage
     OG[["USER: PR or merge?<br/>session outlines what was done first;<br/>repo / user rules may pre-authorize"]]:::gate
     L["LAND<br/>file-pr · merge · push;<br/>fix-ci: separate Opus / Sol watcher"]:::stage
 
-    I --> TQ
-    TQ -->|"deemed ready = verified<br/>(verification-before-completion;<br/>empirical-proof offered if runnable)"| AR
+    I -->|"deemed ready = verified<br/>(verification-before-completion;<br/>empirical-proof offered if runnable)"| AR
     AR -->|"findings → fixed + re-verified<br/>(review material new risk only)"| OG
     OG --> L
     L -.->|"feedback: receiving-code-review;<br/>verified fixes re-enter"| I

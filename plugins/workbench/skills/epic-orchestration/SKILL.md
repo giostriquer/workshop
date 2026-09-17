@@ -208,10 +208,12 @@ folder (see Dispatching), containing:
   agreed change under FORKS/DEVIATIONS." Hard
   DO-NOT-TOUCH walls caused a lane to halt three tickets over one advisory conflict.
 - **Completion**: once implementation is complete, use `code-quality-review` over
-  the implementation range before reporting `ready-for-validation`. Earlier
-  blocked reports or requests for a ruling do not trigger the completion review.
+  the implementation range before reporting `ready-for-validation`, plus
+  `test-quality-review` (`mode: diff`, given the range's base, routed as
+  `code-quality-review` describes) when the range changes production logic or tests.
+  Earlier blocked reports or requests for a ruling do not trigger the completion review.
   Record the reviewed revision, correction evidence and finding dispositions;
-  later material changes follow that skill's focused independent follow-up rules.
+  later material changes follow those reviews' focused independent follow-up rules.
 - **The exact report format**: read the shared
   [lane report template](references/lane-report.md) and include its block in the
   dispatch. Ranges, not file lists: you read the diff yourself.
@@ -264,8 +266,9 @@ back. That skill writes the body from the repo's own template and tends the PR t
 and mergeable.
 
 **Say in the block that `file-pr`'s review gate is already satisfied.** The gate requires
-an adversarial review that ran on this diff, and the lane's `code-quality-review` is
-exactly that: dispatched, returned, findings acted on. Record the reviewed revision
+an adversarial review that ran on this diff, and the lane's completion review
+(`code-quality-review`, plus `test-quality-review` when required) is exactly that:
+dispatched, returned, findings acted on. Record the reviewed revision
 and which corrections were verified or independently reviewed. Left unsaid, the lane loads `file-pr`, reads the MUST, and burns a second
 full review pass on a diff that already had one. Two cases where the gate is **not**
 satisfied, and you say so instead: material corrections lack focused follow-up,

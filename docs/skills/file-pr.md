@@ -29,9 +29,10 @@ If access or publishing authority is missing, complete the local reviewable prep
 Reach for it when the work on the current branch is done and someone should
 file the PR and see it through. It assumes the completion gates already ran,
 with one exception it backstops itself: it will not file a code PR whose diff
-has not had the adversarial `code-quality-review`, dispatched to a reviewer
-that did not write the code. If that review has not run, `file-pr` runs it and
-acts on the findings first. Nonbehavioral documentation/formatting changes, explicit user waivers, and superseding repository processes can change that gate. A prior review must cover the current revision and risk: verify direct corrections; obtain focused independent follow-up for material new behavior or risk.
+has not had its adversarial review, dispatched to reviewers that did not write
+the code: `code-quality-review`, plus `test-quality-review` when the diff
+changes production logic or tests. If a required dispatch has not run,
+`file-pr` runs it and acts on the findings first. Nonbehavioral documentation/formatting changes, explicit user waivers, and superseding repository processes can change that gate. A prior review must cover the current revision and risk: verify direct corrections; obtain focused independent follow-up for material new behavior or risk.
 
 Everything else it still assumes. `using-workbench` puts the rest plainly:
 "`file-pr`: landing, not verification." It is not the place to discover your
@@ -239,9 +240,10 @@ are gone, and there is no flag to bring them back.
 
 `file-pr` is one of the three landing options in the workbench flow, after the
 landing decision where the session outlines what was done and carries existing PR/merge authority forward, asking only if the choice remains open (the other two options being a direct merge and a plain push). Everything before it:
-test-quality review, `verification-before-completion`, the one adversarial
-`code-quality-review`, is assumed done, and the adversarial review is the one
-`file-pr` checks rather than assumes. Everything after it is the feedback
+`verification-before-completion` and the one adversarial review
+(`code-quality-review`, plus the test-quality review when production logic or
+tests changed) are assumed done, and the adversarial review is the one `file-pr`
+checks rather than assumes. Everything after it is the feedback
 loop: `receiving-code-review` governs acting on what reviewers say.
 
 Review still precedes filing, including draft PRs. Respect explicit user waivers and superseding repository processes. Verify direct corrections; material changes receive focused independent follow-up. Discover local gates from workflows, hooks, package/build targets, and contributor docs, including bypassed hooks; run focused local tests rather than copying every CI suite. Watching always uses a separate Opus/Sol agent and evidence for the target SHA; check mergeability separately.

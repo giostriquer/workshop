@@ -19,7 +19,7 @@ It also keeps an on-request entry point, because asking for a harsh review out o
 | A work-stream's implementation is complete and needs its one strict structural pass before landing | `code-quality-review` (fires by default) |
 | You want a harsh maintainability audit right now, outside the flow | `code-quality-review`, invoked directly |
 | Does the change conform to the project's documented implementation patterns? | `pattern-reviewer` agent: a complementary strict reviewer with a different target |
-| Are the tests trustworthy and do they cover the risk? | `test-quality-reviewer` agent |
+| Are the tests trustworthy and do they cover the risk? | [test-quality-review](test-quality-review.md) |
 | Does the change actually work? | `verification-before-completion`, and `empirical-proof` if you want proof at the running app |
 | A design spec or plan needs review before anyone implements it | `spec-reviewer` agent |
 
@@ -93,6 +93,6 @@ Negative signals: the skill is being misapplied if:
 
 ## Where it fits
 
-This is the last gate before landing. Once a work-stream's implementation is complete and verified with evidence (the test-quality review done, `verification-before-completion` satisfied, and `empirical-proof` run if you asked for it) this single adversarial pass runs. In-scope blocking findings are fixed and re-verified, advisory findings receive a disposition, and out-of-scope findings become follow-ups, and the session proceeds after any required focused follow-up on material changes. Then outline what was done and carry existing landing authorization forward; ask PR or merge only if that choice is still open.
+This is the last gate before landing. Once a work-stream's implementation is complete and verified with evidence (`verification-before-completion` satisfied, and `empirical-proof` run if you asked for it) this single adversarial pass runs. When the diff changes production logic or tests, [test-quality-review](test-quality-review.md) is dispatched in parallel with it, in its own test-scoped prompt. In-scope blocking findings are fixed and re-verified, advisory findings receive a disposition, and out-of-scope findings become follow-ups, and the session proceeds after any required focused follow-up on material changes. Then outline what was done and carry existing landing authorization forward; ask PR or merge only if that choice is still open.
 
 The full structural rubric, review questions, examples, remedies, and approval bar remain. File length and alternative designs prompt inspection; a blocker needs a demonstrated correctness or material maintainability consequence. A broadly invalidated prior review requires a full pass. Create external follow-up tickets only under existing explicit authority.

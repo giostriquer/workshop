@@ -23,6 +23,10 @@ blindest to. A self-served pass reliably returns "nothing blocking" on a diff a
 fresh reviewer takes apart. Dispatching also keeps the full diff and file
 contents out of the implementing session's window.
 
+When the diff changes production logic or tests, the dispatching session also
+dispatches `test-quality-review` (`mode: diff`, given the base branch) in a
+separate, test-scoped prompt; the two run in parallel.
+
 Where the host offers no subagent mechanism, the review still does not run
 inside the implementing context: hand the diff to a fresh session and name that
 route in the report. An author's pass over their own work is reported as what it

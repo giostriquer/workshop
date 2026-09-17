@@ -35,11 +35,12 @@ Scores are 1–10, higher is better.
 
 | model | cost | intelligence | taste | code | speed |
 |---|---|---|---|---|---|
-| gpt-5.6-sol | 6 | 9 | 8.5 | 9 | 6 |
-| gpt-5.6-luna | 10 | 5 | 4 | 4 | 8 |
-| opus-5 | 5 | 8 | 8 | 8 | 8 |
+| gpt-6-astra | 3 | 10 | 9 | 8.5 | 6 |
+| gpt-5.6-sol | 6 | 8 | 8 | 7.5 | 6 |
+| gpt-5.6-luna | 10 | 3 | 3 | 3 | 8 |
+| opus-5 | 5 | 8 | 8 | 7.5 | 7.5 |
 | fable-5 | 1 | 10 | 9.5 | 9 | 5 |
-| grok-4.6 | 5 | 8 | 8 | 8 | 7 |
+| grok-4.6 | 5 | 7 | 7 | 7 | 7 |
 
 **One row per model, graded at the effort that model is actually run at.**
 Effort is not a separate axis here, if you change the effort you habitually
@@ -61,6 +62,12 @@ operator's fleet ships a policy its adopters never chose.
 - **Cost and speed are tie-breakers only.** When axes conflict for anything
   that ships, intelligence > taste > cost > speed. Neither of the last two
   buys a drop on the first two.
+- **Route inside the harness you are running in.** Pick from the models your host
+  exposes for dispatch. A row here says how a model performs, never that it is
+  reachable from this session, and starting another provider's CLI or harness to
+  reach one is not a routing move: it leaves the user's session, permissions, and
+  budget behind. When the fitting row is not reachable, take the best reachable one
+  and name the row you could not reach. Crossing harnesses is the operator's move.
 - Repo-local model policies override this table where they conflict.
 
 ## Reading a currently calibrated table
@@ -86,3 +93,10 @@ model explicitly; do not inherit a more capable parent. Parents already using
 Opus/Sol still delegate to a separate designated agent. Missing dispatch is a
 reported monitoring gap, not permission for parent polling or a prohibited
 fallback. Haiku and Sonnet remain prohibited. See `fix-ci` for the workflow.
+
+## Test-quality review exception
+
+Every `test-quality-review` dispatch uses a separate **Opus (`opus`) agent on Claude
+Code** or **`gpt-5.6-sol` agent on Codex**, and the host's default model on any other
+host. Select the model explicitly; do not inherit the parent's model. See
+`test-quality-review` for when it runs.

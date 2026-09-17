@@ -7,9 +7,18 @@ description: Always use before or to file/open a PR.
 
 ## MUST: the adversarial review runs before the PR is filed
 
-Before filing, the branch diff has had an adversarial code quality review: the
-`code-quality-review` skill, dispatched to a reviewer context that did not
-write the code. If it has not run, run it now and act on its findings first.
+Before filing, the branch diff has had its adversarial review, dispatched to
+reviewer contexts that did not write the code:
+
+1. The `code-quality-review` skill, dispatched as that skill describes.
+2. When the diff changes production logic or tests: the `test-quality-review` skill
+   in `mode: diff`, given the PR's base branch in a separate, test-scoped prompt, run
+   by the `test-quality-reviewer` agent as a separate Opus (`opus`) agent on Claude
+   Code or `gpt-5.6-sol` agent on Codex (the host's default model elsewhere). On a
+   host without that agent type, dispatch a reviewer that loads the skill. It can run
+   in parallel with the first.
+
+If either has not run, run it now and act on its findings first.
 
 **Violating the letter of this gate is violating the spirit of it.** The
 review exists to be run by someone who did not write the code; a session that
@@ -21,9 +30,10 @@ following cases do not require a new review:
 - **The branch changes no code.** Documentation, comments, and config-only
   edits with no behavior change. Measured on the diff, not on how routine the
   work felt.
-- **The review already ran on this diff.** It was dispatched, it came back,
+- **The review already ran on this diff.** Each required dispatch came back,
   and its findings were acted on. Loading this skill is not a reason to run it
-  a second time. Record its revision and dispositions; verify direct corrections.
+  a second time. Record its revision and dispositions; verify direct corrections
+  (for a mutation finding, re-run the recorded `Mutation run` command on that file).
   Material changes to behavior, design, or risk need focused independent follow-up.
   Repeat a full review only if subsequent work broadly invalidated it.
 

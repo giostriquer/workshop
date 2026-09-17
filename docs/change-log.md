@@ -8,6 +8,15 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.39.0: 2026-09-17
+
+- **Run the test-quality review with the adversarial review.** `file-pr`, `code-quality-review`, `using-workbench` and `epic-orchestration` require `test-quality-reviewer` (`mode: diff`, given the base branch, in its own prompt) next to `code-quality-review` whenever the diff changes production logic or tests; the two can run in parallel. The epic lane report records both verdicts. ([decision](decisions/test-shape-and-mutation-review.md))
+- **Back test review with a mutation run.** `test-quality-reviewer` runs the project's mutation command, or StrykerJS for JavaScript and TypeScript when the project has a config or runner plugin, over the changed code and reports it on a required `Mutation run` line. Survivors that change consumer-visible behavior and unexplained suppression comments are Issues; the score is not a threshold, the `command` runner is never used, and a missing tool is reported rather than installed. ([decision](decisions/test-shape-and-mutation-review.md))
+- **Pin the test-quality reviewer's model.** `test-quality-reviewer` runs as a separate Opus agent on Claude Code or a `gpt-5.6-sol` agent on Codex, and on the host's default model elsewhere; `model-reference` records the exception. ([decision](decisions/test-shape-and-mutation-review.md))
+- **Add the `test-quality-review` skill.** The test-quality rubric moves from the `test-quality-reviewer` agent into a skill the agent loads, like `code-quality-review`, so hosts that expose skills but not agent files (Codex) can run the review. ([decision](decisions/test-shape-and-mutation-review.md))
+- **Route inside your own harness.** `model-reference` gains a hard invariant: pick from the models the host exposes, treat a table row as performance data rather than reachability, and leave crossing to another provider's CLI or harness to the operator. ([decision](decisions/model-routing-stays-in-harness.md))
+- **Choose the test shape before writing the test.** `writing-good-tests.md` maps behavior to shape: integration tests with real in-process collaborators for cross-module behavior, table-driven unit tests for pure logic, property-based and model-based tests with `fast-check` for invariants and operation sequences, and E2E only for release-blocking journeys. ([decision](decisions/test-shape-and-mutation-review.md))
+
 ## workbench 0.38.2: 2026-09-16
 
 - **Attach screenshots of UI changes to the PR body.** `file-pr` adds a conditional `## Screenshots` section when the diff changes rendered UI, captured from the running branch head and uploaded with `gh`'s native `--attach`. It reuses a template's screenshots-style section in place, otherwise sits right after `## Architecture`, and otherwise takes the Architecture position. The body references each file so `gh` rewrites it in place rather than appending it. Non-visual diffs get no section. ([decision](decisions/file-pr-screenshots-section.md))
@@ -101,18 +110,3 @@ deletes the oldest (git history keeps everything). Sections from before the
   goal contract on its own judgment. The route pick still offers the option;
   choosing it is the user invoking the skill.
   ([decision](decisions/handoff-goal-user-invoked-only.md))
-
-## workbench 0.33.0: 2026-08-25
-
-- **The scope-language sweep.** A cross-cutting audit of all workbench
-  skills and agents for text that bounds reading or root-causing.
-  `test-driven-development` loses its "Scope boundary" section: "adjacent
-  code → follow-up, not a fix here" sent a session that had traced a bug to
-  its source elsewhere back to a symptom fix, against `systematic-debugging`.
-  `code-quality-reviewer` no longer reviews "only what they show": the
-  supplied sections define what is under review, and it reads whatever
-  surrounding code it needs; cross-file tracing is unconditional.
-  `pattern-reviewer` drops its one-reference-file reading cap, `fix-ci`
-  drops "fix minimally ... nothing broader", and `handoff-goal`'s contract
-  placeholder asks for actions to escalate, not "boundaries".
-  ([decision](decisions/scope-language-sweep.md))

@@ -1,7 +1,7 @@
 # workbench
 
 A direct-use plugin from [Workshop](https://github.com/giostriquer/workshop):
-five read-only review agents, ten everyday skills, and the eight-skill **workbench**
+five read-only review agents, eleven everyday skills, and the eight-skill **workbench**
 process layer. No setup: works in any repo. Optional artifact-making utilities
 (doc pages, demo videos, architecture maps) live in the sibling
 [`toolkit`](../toolkit/README.md) plugin: install it only if you want them.
@@ -45,7 +45,7 @@ They inspect and report; none can edit your files (reviewers use
 | --- | --- |
 | `spec-reviewer` | a design spec or implementation plan, before you build |
 | `code-quality-reviewer` | a diff's maintainability and structure; loads the `code-quality-review` rubric |
-| `test-quality-reviewer` | test code for trustworthiness and risk coverage |
+| `test-quality-reviewer` | test code for trustworthiness and risk coverage; loads the `test-quality-review` rubric; separate Opus (Claude) or Sol (Codex) reviewer |
 | `pattern-reviewer` | a diff's conformance to the project's implementation patterns |
 | `ci-watcher` | the branch's PR CI: watch and report; separate Opus (Claude) or Sol (Codex) watcher, never Astra or Fable |
 
@@ -60,6 +60,7 @@ They inspect and report; none can edit your files (reviewers use
 | `qa-sweep` | fans a QA team over independent slices, corroborates every verdict-moving finding firsthand |
 | `empirical-proof` | proves a finished change at the running app: real calls, raw evidence; verified / broken / blocked |
 | `code-quality-review` | strict, structure-first maintainability review of a diff |
+| `test-quality-review` | test trustworthiness review: whether tests protect the behavior they claim, backed by a mutation run over the changed code; runs with the adversarial review when logic or tests changed |
 | `epic-orchestration` | owns a multi-ticket epic: writes the lane prompts the operator dispatches by hand, validates each report against the repo, authorizes the PR; never implements; user-invoked only |
 | `epic-implementation` | uses the shared [lane report template](skills/epic-orchestration/references/lane-report.md) across amendments, recovery and delivery; only for lanes dispatched through epic-orchestration |
 | `model-reference` | reference table for the model fleet across cost, intelligence, taste, code, and speed, plus the hard routing invariants; a lookup, not a dispatch step |

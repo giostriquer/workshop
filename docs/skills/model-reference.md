@@ -103,7 +103,7 @@ exceptions**," naming specific models from one operator's subscription mix.
 That was replaced by a portable "set a model floor" invariant
 ([decision](../decisions/route-work-model-floor-portable.md)), and the floor
 invariant has since been dropped as well: a floor is fleet policy, and this
-skill carries no general model floor. The dedicated CI watcher is an explicit exception: separate Opus on Claude or gpt-5.6-sol on Codex, never Astra/Fable or parent polling. Where the floor sits, and which models are banned, belong
+skill carries no general model floor. Routing also stays inside the harness you run in: a row describes a model's performance, not its reachability from this session, and starting another provider's CLI to reach one is the operator's move, not a routing step. The dedicated CI watcher is an explicit exception: separate Opus on Claude or gpt-5.6-sol on Codex, never Astra/Fable or parent polling. The test-quality reviewer is another: separate Opus on Claude Code or gpt-5.6-sol on Codex, and the host's default model elsewhere. Where the floor sits, and which models are banned, belong
 in your own always-injected rules file. `adopt-global-rules` ships one such
 file (`model-floor.md`) if you want a worked example.
 

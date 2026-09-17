@@ -22,9 +22,9 @@ It activates when you are implementing a feature or bugfix in a repo that has a 
 | --- | --- |
 | Implementing a feature or bugfix, harness exists | `test-driven-development` |
 | A bug, test failure, or unexpected behavior you don't yet understand | `systematic-debugging`, before proposing fixes |
-| Tests already written; are they any good? | `test-quality-reviewer` (agent) |
+| Tests already written; are they any good? | [test-quality-review](test-quality-review.md) |
 | About to claim done / fixed / passing | `verification-before-completion` |
-| The one adversarial pass at work-stream completion | `code-quality-review` |
+| The one adversarial pass at work-stream completion | `code-quality-review`, plus `test-quality-review` when production logic or tests changed |
 | Repo has no test harness | none: skip without ceremony |
 
 ## Precedence: a default, not a mandate
@@ -77,7 +77,19 @@ What it will change about your tests:
 | Mocking a method wholesale | Learn its side effects first; mock the slow or external level below them. |
 | A `destroy()` only tests call | Put test-only helpers in test utilities; a real resource owner can require disposal even when tests are its current caller. |
 
-Before finishing a test file it prescribes a **mutation check**: mentally mutate the production code (wrong constant, wrong branch, missing side effect, empty return, missing validation) and confirm at least one test fails for each. "A mutation nothing catches marks the behavior as unprotected, or the test as tautological."
+Before writing the first test it has you **choose the test shape** from the behavior:
+
+| The behavior | Test shape |
+| --- | --- |
+| Crosses your own modules | Integration test through the public entry point with the real collaborators in process; double only what cannot run locally or what the test must control |
+| Pure logic with many cases | Table-driven unit test |
+| True for every input in a domain (round trips, idempotence, balancing totals) | Property-based test, next to one literal example |
+| Stateful, driven by operation sequences | Model-based test against a simple model |
+| A release-blocking user journey | E2E test, for those few journeys only, in a slower pipeline stage |
+
+Most application behavior crosses modules, so most of a suite ends up as integration tests. In TypeScript the property and model-based tool is `fast-check`; codebases on Effect 3.10 or a later 3.x release use its re-export (`FastCheck`, with `Arbitrary.make(schema)` for schema-derived inputs). Adding a property-testing library to a project that has none is proposed, not installed silently.
+
+Before finishing a test file it prescribes a **mutation check**: mentally mutate the production code (wrong constant, wrong branch, missing side effect, empty return, missing validation) and confirm at least one test fails for each. "A mutation nothing catches marks the behavior as unprotected, or the test as tautological." When the project supports a mutation tool (StrykerJS for JavaScript and TypeScript), the test-quality review later runs it over the changed code to check the same thing for real.
 
 ## Common questions
 
@@ -120,6 +132,6 @@ Signs of misapplication:
 
 ## Where it fits
 
-`test-driven-development` occupies the implementation moment of the workbench flow, next to `systematic-debugging` (which investigates persistent or unclear failures). It receives whatever the scoping stage produced (a plan, a goal contract, or nothing at all) and hands its output forward to completion: test-quality review, then `verification-before-completion` as the deemed-ready gate, then the single adversarial `code-quality-review` right before the PR-or-merge ask. It never claims done itself; it only makes the claim provable.
+`test-driven-development` occupies the implementation moment of the workbench flow, next to `systematic-debugging` (which investigates persistent or unclear failures). It receives whatever the scoping stage produced (a plan, a goal contract, or nothing at all) and hands its output forward to completion: `verification-before-completion` as the deemed-ready gate, then the single adversarial review right before the PR-or-merge ask (`code-quality-review`, plus `test-quality-review` when production logic or tests changed). It never claims done itself; it only makes the claim provable.
 
 Focused local tests and mandatory local gates are the default. Full suites normally run in PR CI; expand locally only for an explicit requirement or a specific unresolved integration risk. Expected RED does not activate systematic-debugging by itself.

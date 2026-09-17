@@ -192,6 +192,7 @@ receiving-code-review
 self-audit
 systematic-debugging
 test-driven-development
+test-quality-review
 using-workbench
 verification-before-completion"
 

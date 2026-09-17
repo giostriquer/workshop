@@ -18,11 +18,11 @@ My environments follow the **workbench** flow (workbench plugin):
   and refactor design goes through `brainstorming`, carrying my route choice:
   direct / plan / handoff-goal. Implementation agency (in-session vs dispatched)
   is mine and the harness's; hand the implementer the plan or goal if one exists.
-- **Finish:** when you consider the implementation ready: test-quality review,
-  verify with evidence (`verification-before-completion`; offer
+- **Finish:** when you consider the implementation ready: verify with evidence (`verification-before-completion`; offer
   `empirical-proof` for runnable surfaces: run it only if I ask or a standing
   rule authorizes), an adversarial review at readiness (`code-quality-review` + comment
-  trim per repo rules), then outline what was done and ask me: PR or merge?
+  trim per repo rules, plus `test-quality-review` when production logic or
+  tests changed), then outline what was done and ask me: PR or merge?
   Existing repo/user authority carries forward. Re-review only material new risk; do not repeat unchanged checks or decisions.
 - **Flow artifacts are disposable**: plans, audit reports, design docs live
   under `.workbench/<work_scope>/` (or `.tmp/workbench/<work_scope>/`) and last

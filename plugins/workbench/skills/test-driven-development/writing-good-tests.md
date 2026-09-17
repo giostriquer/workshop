@@ -146,6 +146,43 @@ BEFORE adding a mock or test helper:
     If it checks mere mock presence, unmock it or remove it; retain contractual interaction assertions.
 ```
 
+## Choose the Test Shape
+
+Before writing the failing test, pick its shape from the behavior:
+
+| The behavior | Test shape |
+|---|---|
+| Crosses your own modules: a service and its store, a handler and its validator, a reducer and its selectors | **Integration test** through the public entry point, with the real collaborators in process: in-memory or local implementations, a temp directory, the real schema. Double only what cannot run locally (third-party network APIs, paid services) or what the test must control (clock, randomness). |
+| Pure logic with many cases: parsing, arithmetic, rule tables | **Unit test**, table-driven with literal expectations. |
+| True for every input in a domain: round trips (`parse(format(x))` returns `x`), idempotence, ordering, totals that must balance, "never throws on valid input" | **Property-based test** over generated inputs, next to one literal example. |
+| Stateful and driven by sequences of operations: caches, queues, stores, state machines | **Model-based test**: generated command sequences run against the real component and a simple model, compared after each command. |
+| A critical user journey whose failure blocks a release | **E2E test**, for those few journeys only; it runs in a slower pipeline stage, not the per-change loop. |
+
+Most application behavior crosses modules, so most of a suite is integration
+tests. A unit test proves one piece works, not that the pieces work together;
+it does not replace the integration test for a behavior.
+
+```typescript
+// ❌ Doubles the store the rule depends on: passes even if the real store lets duplicates in
+const members = { findByHandle: vi.fn().mockResolvedValue(undefined), insert: vi.fn() };
+await joinTeam(members, { handle: 'ada' });
+expect(members.insert).toHaveBeenCalled();
+
+// ✅ Real in-memory store: lookup, insert, and the duplicate rule run together
+const members = createInMemoryMemberStore();
+await joinTeam(members, { handle: 'ada' });
+await expect(joinTeam(members, { handle: 'ada' })).rejects.toThrow(DuplicateHandle);
+```
+
+In TypeScript, property-based and model-based tests use `fast-check`:
+`fc.assert(fc.property(...))` for properties, and `fc.commands` with
+`fc.modelRun` or `fc.asyncModelRun` for models. Effect 3.10 and later 3.x
+releases re-export it (`import { FastCheck, Arbitrary } from "effect"`) and
+derive generators from schemas with `Arbitrary.make(schema)`; in those
+codebases, use the re-export. Other ecosystems have their own (Hypothesis, proptest, jqwik). If the
+project has no property-testing library, adding one is a dependency decision:
+propose it instead of installing it.
+
 ## Tests Ship With the Implementation
 
 The TDD cycle (failing test, minimal implementation, refactor) is what
@@ -165,13 +202,17 @@ should fail for each realistic mutation:
 - Missing validation for zero, empty, nil, unauthorized, or malformed input
 
 A mutation nothing catches marks the behavior as unprotected, or the
-test as tautological.
+test as tautological. When the project supports a mutation-testing tool
+(StrykerJS for JavaScript and TypeScript), the test-quality review runs this
+check for real over the changed code; do not install one to satisfy it.
 
 ## Quick Reference
 
 | When you... | Do |
 |-------------|-----|
 | Write any test | Name the break it catches: a bug, not a decision |
+| Test a behavior that crosses your modules | Integration test with the real collaborators in process |
+| Find an invariant or an operation sequence | Property-based or model-based test |
 | Build an expected value | Derive it by hand; never with the code under test |
 | Test a script or document | Run it / pressure-test its consumer; never grep its text |
 | Reach for a dependency test | Test your boundary contract, not their documented mechanics |
@@ -195,3 +236,4 @@ test as tautological.
 - A method is called only from test files
 - Mock setup is more than half the test, or you can't explain why the mock is needed
 - Mocking "just to be safe"
+- A behavior that spans modules is tested only with its collaborators doubled

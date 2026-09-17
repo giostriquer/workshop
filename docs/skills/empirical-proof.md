@@ -104,6 +104,6 @@ Negative signals: the skill is being misapplied if:
 
 ## Where it fits
 
-This is the deep form of the flow's completion gate. `verification-before-completion` is the always-on floor that demands fresh evidence for any done-claim; when the change touched something a real client can drive and you decide the spend is warranted, this skill supplies that evidence from the running software instead of from a command's exit code. Its output feeds the same place: once the work is honestly `verified`, the required adversarial `code-quality-review` fires, and then the landing gate asks PR or merge.
+This is the deep form of the flow's completion gate. `verification-before-completion` is the always-on floor that demands fresh evidence for any done-claim; when the change touched something a real client can drive and you decide the spend is warranted, this skill supplies that evidence from the running software instead of from a command's exit code. Its output feeds the same place: once the work is honestly `verified`, the required adversarial review (`code-quality-review`, plus `test-quality-review` when production logic or tests changed) fires, and then the landing gate asks PR or merge.
 
 Invocation remains explicit: run this protocol on the user's request or a standing real-artifact completion gate. Otherwise offer it. The detailed health-check gate, scenario matrix, exact transcript schema, every-FAIL plus one-PASS-per-surface corroboration, and proven cleanup requirements still apply.

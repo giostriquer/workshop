@@ -20,7 +20,9 @@ have to follow it. Most of these are defaults the user configured rather than
 gates: they fire on relevance, not compulsion.
 
 **Two completion requirements apply by default:** `verification-before-completion`
-at each done/fixed/passing claim, and independent `code-quality-review` before PR-or-merge. Run unless **the user explicitly declines it**, or **the repo's
+at each done/fixed/passing claim, and independent review before PR-or-merge:
+`code-quality-review`, plus `test-quality-review` (a separate Opus agent on Claude,
+`gpt-5.6-sol` on Codex) when the diff changes production logic or tests. Run unless **the user explicitly declines it**, or **the repo's
 own process supersedes it**. Those are the only two outs: a small diff, a
 confident implementation, a tidy-looking change, or time pressure are not
 among them, and neither is the session's own judgment that this one looks
@@ -57,11 +59,12 @@ IMPLEMENTATION (agency = user/harness call; implementer gets the plan/goal if pr
   systematic-debugging: sustained unresolved investigations; skip expected RED and obvious fixes
 
 COMPLETION (enters only when the work-stream's implementation is believed complete)
-  test-quality review → deemed ready = verified with evidence
+  deemed ready = verified with evidence
   (verification-before-completion; empirical-proof offered if runnable) →
   ONE adversarial review: REQUIRED, not offered (code-quality-review +
-  comment trim, per repo rules); dispatched to a reviewer context that did not
-  write the code, never self-served; skipped only on an explicit user decline
+  comment trim, per repo rules; plus test-quality-review in parallel when the
+  diff changes production logic or tests); dispatched to reviewer contexts that
+  did not write the code, never self-served; skipped only on an explicit user decline
   or a superseding repo process; fires here and nowhere else, right before the
   PR-or-merge ask, never mid-implementation →
   blocking findings fixed + re-verified, advisory findings dispositioned, out-of-scope → follow-ups,
@@ -85,8 +88,8 @@ FEEDBACK
 | Implementing with a test harness | `test-driven-development` |
 | An unresolved failure requiring sustained investigation | `systematic-debugging` |
 | About to claim done / ready | `verification-before-completion` (offer `empirical-proof` if runnable) |
-| The implementation's tests | `test-quality-reviewer` |
-| The one adversarial pass: **required** once the work-stream is complete, right before PR-or-merge, **dispatched** to a reviewer that did not write the code | `code-quality-review`, run by the `code-quality-reviewer` agent |
+| The one adversarial pass: **required** once the work-stream is complete, right before PR-or-merge, **dispatched** to reviewers that did not write the code | `code-quality-review`, run by the `code-quality-reviewer` agent; plus `test-quality-review` (`mode: diff`), run by the `test-quality-reviewer` agent, when the diff changes production logic or tests |
+| Auditing an existing test suite or test strategy | `test-quality-review` (`mode: audit` or `mode: strategy`), run by the `test-quality-reviewer` agent |
 | Landing | outline gate → `file-pr` / merge / push; `fix-ci` |
 | Review feedback arrives | `receiving-code-review` |
 
@@ -114,7 +117,8 @@ assignments: load one when its moment arrives, not preemptively.
 
 **Cost and authority:** two pieces are always-on:
 `verification-before-completion` at every done-claim, and the adversarial
-`code-quality-review` once the implementation is complete. Both are default-on
+review (`code-quality-review`, plus `test-quality-review` when production
+logic or tests changed) once the implementation is complete. Both are default-on
 and stop only for an explicit user decline or a superseding repo process.
 `empirical-proof` and `qa-sweep` are the expensive tiers.
 **Offer them; never default to them.** They run on the user's explicit ask

@@ -36,7 +36,8 @@ you want them, and skip to keep sessions lean.
 | An unresolved failure requiring sustained investigation | [systematic-debugging](systematic-debugging.md) |
 | About to claim something is done | [verification-before-completion](verification-before-completion.md) |
 | Proving one finished change at the running app | [empirical-proof](empirical-proof.md) |
-| The adversarial pass before PR-or-merge | [code-quality-review](code-quality-review.md) |
+| The adversarial pass before PR-or-merge | [code-quality-review](code-quality-review.md), plus [test-quality-review](test-quality-review.md) when production logic or tests changed |
+| Checking whether existing tests protect the behavior they claim to | [test-quality-review](test-quality-review.md) |
 | Picking a model | [model-reference](model-reference.md) |
 | Turning a branch into a PR and seeing it green | [file-pr](file-pr.md) |
 | CI is red | [fix-ci](fix-ci.md) |
@@ -60,8 +61,9 @@ you want them, and skip to keep sessions lean.
 
 **Almost nothing here is compulsory.** Skills fire on relevance, not on
 obligation. The exceptions are the two default-on completion gates:
-`verification-before-completion` at every done-claim, and `code-quality-review`
-once an implementation is complete. Each stops only for an explicit decline or
+`verification-before-completion` at every done-claim, and the adversarial review
+once an implementation is complete (`code-quality-review`, plus
+`test-quality-review` when production logic or tests changed). Each stops only for an explicit decline or
 a repo process that supersedes it.
 
 **The expensive tiers are offered, never assumed.** `empirical-proof` and

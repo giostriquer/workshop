@@ -17,8 +17,9 @@ not an audit.
 
 The two standing exceptions matter, because they are the only parts of the map
 that bind. `verification-before-completion` fires at every done/fixed/passing
-claim, and the adversarial `code-quality-review` fires once the work-stream's
-implementation is complete. Each "runs unless **the user explicitly declines
+claim, and the adversarial review (`code-quality-review`, plus `test-quality-review`
+when production logic or tests changed) fires once the work-stream's implementation is
+complete. Each "runs unless **the user explicitly declines
 it**, or **the repo's own process supersedes it**." Everything else on the map
 is a default the user configured; it fires on relevance.
 
@@ -43,7 +44,7 @@ do not read the map.
 | Designing a feature or a refactor | `brainstorming` |
 | One premise, ticket, or hunch to investigate | `claim-check` |
 | About to claim done, fixed, or passing | `verification-before-completion` |
-| A work-stream's implementation is complete | `code-quality-review` |
+| A work-stream's implementation is complete | `code-quality-review`, plus `test-quality-review` when production logic or tests changed |
 | Picking a model | `model-reference` |
 
 ## The map
@@ -59,10 +60,11 @@ do not read the map.
   (repo conventions take precedence on conflict), `systematic-debugging` for persistent or unclear failures requiring investigation. Execution agency is the user's and the harness's call;
   workbench never dictates in-session versus dispatched, except required independent review and the designated separate CI watcher.
 - **Completion**: entered only when the work-stream's implementation is
-  believed complete: test-quality review, then "deemed ready" (verified with
-  evidence), then one adversarial review right before the PR-or-merge ask,
-  dispatched to a reviewer context that did not write the code, then the user
-  gate.
+  believed complete: "deemed ready" (verified with evidence), then one
+  adversarial review right before the PR-or-merge ask (`code-quality-review`,
+  plus `test-quality-review` in parallel when the diff changes production
+  logic or tests), dispatched to reviewer contexts that did not write the code,
+  then the user gate.
 - **Feedback**: `receiving-code-review` governs acting on what arrived,
   verified fixes re-enter implementation.
 
@@ -115,8 +117,9 @@ matching a moment on the map should invoke the owning skill and say so briefly
 
 **Which parts are actually mandatory?**
 
-Two, and only two: `verification-before-completion` and the adversarial
-`code-quality-review`. This used to be one. The file said outright that
+Two, and only two: `verification-before-completion` and the adversarial review
+(`code-quality-review`, plus `test-quality-review` when production logic or tests
+changed). This used to be one. The file said outright that
 "`verification-before-completion` is the only always-on piece," and three other
 passages generalized the no-compulsion framing over everything, so sessions
 finished implementations, verified them, and went straight to the landing gate,
@@ -157,8 +160,9 @@ user's ([decision](../decisions/expensive-verification-user-optioned.md)).
 
 **Does it decide whether work runs in-session or gets dispatched to agents?**
 
-Two roles require separate agents. The adversarial `code-quality-review` is dispatched to
-a reviewer context that did not write the code, because a session reviewing its
+Two roles require separate agents. The adversarial review (`code-quality-review`, plus
+`test-quality-reviewer` when production logic or tests changed) is dispatched to
+reviewer contexts that did not write the code, because a session reviewing its
 own diff is not adversarial. CI polling always uses the designated separate Opus (Claude) or Sol (Codex) watcher, never Astra/Fable or the parent. Outside those assignments, the rule stands: "Workbench never
 dictates execution agency (in-session vs dispatched)." That is the user's and
 the harness's call, and the flow's only job at that moment is handing the

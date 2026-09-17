@@ -104,7 +104,8 @@ procedures.
 
 The review and publication gates stay connected. Once implementation is complete,
 a lane runs [code-quality-review](code-quality-review.md) over its implementation
-range before reporting `ready-for-validation`, dispatched to a reviewer that did
+range before reporting `ready-for-validation`, plus `test-quality-review` when
+the range changes production logic or tests, dispatched to reviewers that did
 not write the code. Earlier blocked or guidance reports do not trigger that review. And
 authorization files the PR through [file-pr](file-pr.md), with the block saying
 outright that `file-pr`'s review gate is already satisfied, because that review

@@ -224,6 +224,7 @@ Next failing test for next feature.
 | **Shows intent** | Demonstrates desired API | Obscures what code should do |
 
 When writing or changing any test, read [writing-good-tests.md](writing-good-tests.md) for the rules that keep tests honest:
+- Choose the test shape from the behavior: integration, unit, property-based, model-based, or E2E
 - Name the production change that would make the test fail: before writing it
 - Assert real behavior, including boundary interactions when they are part of the contract
 - Keep test-only code in test utilities, out of production classes

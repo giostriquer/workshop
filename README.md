@@ -49,7 +49,7 @@ npx github:giostriquer/workshop --dry-run   # plan; drop --dry-run to apply
 
 ### `workbench`: use right away
 
-Five read-only review agents, ten everyday skills, and the eight-skill **workbench**
+Five read-only review agents, eleven everyday skills, and the eight-skill **workbench**
 process layer: ready immediately after install, nothing to configure.
 
 **Agents**: they inspect and report, never edit your files:
@@ -58,7 +58,7 @@ process layer: ready immediately after install, nothing to configure.
 | --- | --- |
 | `spec-reviewer` | design specs and plans |
 | `code-quality-reviewer` | a diff's maintainability and structure |
-| `test-quality-reviewer` | test code |
+| `test-quality-reviewer` | test code; loads the `test-quality-review` rubric |
 | `pattern-reviewer` | code-pattern conformance |
 | `ci-watcher` | the branch's PR CI |
 
@@ -73,6 +73,7 @@ process layer: ready immediately after install, nothing to configure.
 | `qa-sweep` | team-scale QA over a broad surface, corroborated |
 | `empirical-proof` | proves a finished change at the running app |
 | `code-quality-review` | strict structure-first review of a diff |
+| `test-quality-review` | whether a diff's tests protect behavior, backed by a mutation run |
 | `model-reference` | the model fleet reference table + hard routing invariants |
 | `epic-orchestration` | owns a multi-ticket epic whose lanes other sessions implement (user-invoked only) |
 | `epic-implementation` | uses the shared [lane report template](plugins/workbench/skills/epic-orchestration/references/lane-report.md) in lanes dispatched through epic-orchestration |
