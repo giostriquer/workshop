@@ -30,12 +30,15 @@ following cases do not require a new review:
 - **The branch changes no code.** Documentation, comments, and config-only
   edits with no behavior change. Measured on the diff, not on how routine the
   work felt.
-- **The review already ran on this diff.** Each required dispatch came back,
-  and its findings were acted on. Loading this skill is not a reason to run it
-  a second time. Record its revision and dispositions; verify direct corrections
-  (for a mutation finding, re-run the recorded `Mutation run` command on that file).
-  Material changes to behavior, design, or risk need focused independent follow-up.
-  Repeat a full review only if subsequent work broadly invalidated it.
+- **The review already covers this revision.** Each required dispatch returned,
+  and reviewers confirmed every blocking disposition, including direct corrections
+  and evidence-based rejections. Record the reviewed revision and closure evidence.
+  Apply `code-quality-review`'s bounded correction review: at most two automatic
+  follow-up passes, with unresolved blockers or unreviewed corrections holding
+  delivery. For a mutation finding, re-run the recorded `Mutation run` command on
+  that file. Loading this skill neither repeats a completed review nor resets its
+  budget. Later behavior, design, or risk changes require affected-delta review;
+  formatting-only changes need ordinary verification.
 
 Nothing else is an exemption. Not a deadline, not a reviewer waiting, not a
 branch that has been open a long time, not the user asking for the PR
@@ -51,7 +54,7 @@ mention it afterward.
 | "It's config / a version bump / generated output." | Config that changes behavior is code. If the diff changes what runs, the gate applies. |
 | "I reviewed it carefully as I wrote it." | The author is the one context that cannot run this review. That is stated in `code-quality-review`, not implied. |
 | "I ran the rubric over my own diff and found nothing." | A self-served pass is not this gate. It is reported as an author's pass or not at all. |
-| "The review ran earlier in this work-stream." | Check its revision and later changes. Verified corrections need no full repeat; material changes need focused follow-up. |
+| "The review ran earlier in this work-stream." | Check its revision, reviewer-confirmed blocking dispositions, and later deltas. Apply bounded correction review without resetting its budget. |
 | "The user asked for a PR now, so they've accepted the trade." | Asking for a PR is not waiving the gate. If time is the constraint, surface it and let them waive it explicitly. |
 | "CI is green and the tests pass." | Passing tests say the code works. This review asks whether it should be built this way. |
 | "I'll open it as a draft and get the review after." | A draft PR is a filed PR. The gate is before filing. |

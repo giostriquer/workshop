@@ -66,9 +66,51 @@ classified, not chased:
   pressure, or the session's own sense that this one doesn't need it are not
   among them. Run the initial review when implementation is believed complete,
   before filing a PR or merging directly. Record the reviewed revision and
-  dispositions. Verify direct corrections without restarting the whole review.
-  Material changes to behavior, design, or risk get focused independent follow-up;
-  repeat a full review only if changes broadly invalidate the earlier review.
+  dispositions. Complete the bounded correction review below before delivery.
+
+## Bounded correction review
+
+Use one initial review plus focused correction verification. The implementer owns
+fixes and focused tests; the independent reviewer owns closure of blocking findings.
+
+1. **Return every blocking disposition to its reviewer.** Send finding IDs, the
+   reviewed and current revisions, the correction diff, and focused test evidence.
+   Include evidence-based rejections as well as fixes. Reuse the same reviewer
+   session; if unavailable, give a replacement independent reviewer the prior
+   findings and evidence. A one-line correction or passing test does not close a
+   blocker without reviewer confirmation.
+2. **Keep follow-up focused.** Check unresolved findings, the correction delta,
+   and affected callers, contracts, and behavior. Trace outside changed lines when
+   needed to assess effects. New blockers need a concrete failure path, violated
+   requirement, or demonstrated material maintainability consequence. Cosmetic
+   preferences, alternative designs alone, and unrelated cleanup remain advisory
+   or follow-up work. A newly discovered defect that proves the change unsafe or
+   incorrect still blocks, even outside this focus.
+3. **Use at most two automatic follow-up passes per work-stream.** A pass is one
+   submission of the revised change to the required reviewers; code and test
+   reviewers may run together and share the same pass count. A replacement for
+   a reviewer that never returned completes the same unchanged submission; a new
+   correction submission consumes the next pass. Send each reviewer
+   the findings and changed surfaces it owns; a production fix that changes test
+   adequacy also needs test review. Stop early when all blocking dispositions are
+   confirmed and the current revision is covered. Advisory-only findings do not
+   require another pass. If a correction broadly invalidates the initial review,
+   review the full affected scope within the same budget; do not reset the count.
+4. **At the limit, hold delivery.** If blockers or unreviewed corrections remain
+   after the second follow-up, report them and recommend a smaller change, revised
+   approach, or adjudication of a specific disagreement. Ask for the needed
+   decision before continuing the loop. Exhaustion of the budget is never PASS,
+   and the author cannot dismiss a disputed blocker to bypass this gate.
+5. **Record closure against the revision.** Each reviewer returns the reviewed
+   revision, finding IDs with resolved / unresolved / rejected-with-evidence
+   dispositions, supporting evidence, and PASS or ISSUES_FOUND. Later changes to
+   behavior, design, or risk require affected-delta review under the remaining
+   budget. Formatting-only changes need ordinary verification. A new reviewer,
+   PR preparation, or session handoff does not reset the budget for the same work.
+
+These rules govern correction review for both code-quality-review and the required
+`test-quality-review` diff stage. Existing explicit user waivers and superseding
+repository processes retain precedence.
 
 ## Non-Negotiable Additional Standards
 
@@ -211,6 +253,10 @@ Open the report with the verdict, on its own line and before anything else:
 
 - `PASS` - no in-scope (blocking) finding. Advisory and out-of-scope findings may follow it.
 - `ISSUES_FOUND` - at least one in-scope (blocking) finding, judged against the approval bar below.
+
+After the verdict, record the reviewed revision (include a diff fingerprint for
+uncommitted changes), follow-up pass count, and stable finding IDs. On follow-up,
+include each prior blocker's disposition and supporting evidence.
 
 This is the line `test-quality-review` emits, so one rule reads every review stage. A report
 that omits it reads as `ISSUES_FOUND`.

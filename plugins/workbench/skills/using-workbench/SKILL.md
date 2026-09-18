@@ -61,14 +61,15 @@ IMPLEMENTATION (agency = user/harness call; implementer gets the plan/goal if pr
 COMPLETION (enters only when the work-stream's implementation is believed complete)
   deemed ready = verified with evidence
   (verification-before-completion; empirical-proof offered if runnable) →
-  ONE adversarial review: REQUIRED, not offered (code-quality-review +
+  Initial adversarial review: REQUIRED, not offered (code-quality-review +
   comment trim, per repo rules; plus test-quality-review in parallel when the
   diff changes production logic or tests); dispatched to reviewer contexts that
   did not write the code, never self-served; skipped only on an explicit user decline
   or a superseding repo process; fires here and nowhere else, right before the
   PR-or-merge ask, never mid-implementation →
-  blocking findings fixed + re-verified, advisory findings dispositioned, out-of-scope → follow-ups,
-  material corrections receive focused independent follow-up; minor verified fixes proceed →
+  blocking dispositions returned to reviewers for focused correction verification;
+  at most two automatic follow-up passes under code-quality-review; unresolved → hold,
+  advisory findings dispositioned, out-of-scope → follow-ups →
   USER gate: session outlines what was done, asks PR or merge
   (explicit repo/user rules may pre-authorize) → land: file-pr · merge · push;
   fix-ci delegates watching to Opus on Claude or gpt-5.6-sol on Codex
@@ -88,7 +89,7 @@ FEEDBACK
 | Implementing with a test harness | `test-driven-development` |
 | An unresolved failure requiring sustained investigation | `systematic-debugging` |
 | About to claim done / ready | `verification-before-completion` (offer `empirical-proof` if runnable) |
-| The one adversarial pass: **required** once the work-stream is complete, right before PR-or-merge, **dispatched** to reviewers that did not write the code | `code-quality-review`, run by the `code-quality-reviewer` agent; plus `test-quality-review` (`mode: diff`), run by the `test-quality-reviewer` agent, when the diff changes production logic or tests |
+| The initial adversarial pass: **required** once the work-stream is complete, right before PR-or-merge, **dispatched** to reviewers that did not write the code | `code-quality-review`, run by the `code-quality-reviewer` agent; plus `test-quality-review` (`mode: diff`), run by the `test-quality-reviewer` agent, when the diff changes production logic or tests |
 | Auditing an existing test suite or test strategy | `test-quality-review` (`mode: audit` or `mode: strategy`), run by the `test-quality-reviewer` agent |
 | Landing | outline gate → `file-pr` / merge / push; `fix-ci` |
 | Review feedback arrives | `receiving-code-review` |

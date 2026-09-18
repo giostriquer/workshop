@@ -212,8 +212,9 @@ folder (see Dispatching), containing:
   `test-quality-review` (`mode: diff`, given the range's base, routed as
   `code-quality-review` describes) when the range changes production logic or tests.
   Earlier blocked reports or requests for a ruling do not trigger the completion review.
-  Record the reviewed revision, correction evidence and finding dispositions;
-  later material changes follow those reviews' focused independent follow-up rules.
+  Record the reviewed revision, reviewer-confirmed blocking dispositions and
+  correction evidence. Apply code-quality-review's bounded correction review;
+  preserve its follow-up count through lane handoffs and delivery.
 - **The exact report format**: read the shared
   [lane report template](references/lane-report.md) and include its block in the
   dispatch. Ranges, not file lists: you read the diff yourself.
@@ -269,9 +270,9 @@ and mergeable.
 an adversarial review that ran on this diff, and the lane's completion review
 (`code-quality-review`, plus `test-quality-review` when required) is exactly that:
 dispatched, returned, findings acted on. Record the reviewed revision
-and which corrections were verified or independently reviewed. Left unsaid, the lane loads `file-pr`, reads the MUST, and burns a second
+and reviewer confirmation of every blocking disposition, plus the follow-up count. Left unsaid, the lane loads `file-pr`, reads the MUST, and burns a second
 full review pass on a diff that already had one. Two cases where the gate is **not**
-satisfied, and you say so instead: material corrections lack focused follow-up,
+satisfied, and you say so instead: blocking dispositions lack reviewer confirmation or later behavior changes lack review,
 or the integration merge hit a semantic conflict. The second is why a semantic conflict stops the lane rather than
 being resolved into new code.
 

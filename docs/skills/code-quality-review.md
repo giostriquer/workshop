@@ -6,7 +6,7 @@ This skill runs a strict maintainability review over a finished change: abstract
 
 It is **default-on**. Once a work-stream's implementation is complete, **"this review runs whether or not anyone asked for it. Exactly two things stop it: the user explicitly declining, or the repo's own process superseding it."** The skill enumerates the non-reasons directly: a small diff, a confident implementation, a clean-looking change, time pressure, or the session's own sense that this one doesn't need it. That last one is the point: the session's judgment that a change looks fine is precisely what an adversarial pass exists to distrust.
 
-It is a gate, not a fixer or bug-hunter. It produces labeled, prioritized findings; in-scope findings then get fixed and re-verified as a separate step, and direct corrections do not trigger a whole repeat review. Material new behavior or risk receives focused independent follow-up; broadly invalidated evidence calls for a full review. It owns maintainability and structural ambition, while correctness, behavior verification, and pattern conformance belong to other paths. It runs through its companion `code-quality-reviewer` agent, or a fresh reviewer context of some kind, never in the session that wrote the code; it is explicitly review-only, surfacing problems and pushing for a cleaner structure but never patching code.
+It is a gate, not a fixer or bug-hunter. It produces labeled, prioritized findings; blocking findings get fixed and tested, then return to the reviewer for focused closure. At most two automatic follow-up passes cover corrections and their effects; unresolved blockers or unreviewed corrections then hold delivery. Broadly invalidated evidence requires wider review within that same budget. It owns maintainability and structural ambition, while correctness, behavior verification, and pattern conformance belong to other paths. It runs through its companion `code-quality-reviewer` agent, or a fresh reviewer context of some kind, never in the session that wrote the code; it is explicitly review-only, surfacing problems and pushing for a cleaner structure but never patching code.
 
 ## When to reach for it
 
@@ -54,10 +54,10 @@ Yes, unless you decline it or your repo has its own mandated review stage that s
 No. Label them out-of-scope and record them as follow-up work. This rule exists because of a specific field failure: a one-ticket persistence change grew into a **52-file workset across six subsystems** through a loop of implement the ticket, find an adjacent defect, treat it as required, add tests and a fix, review the larger implementation, find more defects, repeat. Two weaknesses fed it: the review carried no scope classification distinguishing blocking findings from adjacent ones, and its timing was unpinned, so it ran as an implementation-discovery engine rather than a completion gate ([decision](../decisions/scope-guards-q15-q16.md)).
 
 **Should I re-run the review after fixing its findings?**
-Verify direct corrections and proceed. Material new behavior or risk requires focused independent follow-up; repeat the full review only when its prior basis is broadly invalidated. This preserves the gate without feeding every round's unrelated discoveries into the implementation.
+Yes: return every blocking fix or evidence-based rejection to the same reviewer, with finding IDs, revision, correction diff, and focused test evidence. Follow-up covers those corrections and affected behavior. New blockers need demonstrated consequences; cosmetic preferences and unrelated cleanup do not extend the loop. Code and test stages share at most two automatic follow-up passes. If blockers or unreviewed corrections remain, hold delivery and request a concrete next-step decision. A reviewer replacement or PR handoff does not reset the count.
 
 **Can I run it midway through, to catch problems early?**
-Not as this gate. It fires once, when the implementation is believed complete, right before the PR-or-merge question. Firing mid-implementation is the failure mode that produced the 52-file workset.
+Not as this gate. Its initial pass fires when the implementation is believed complete, right before the PR-or-merge question. Firing mid-implementation is the failure mode that produced the 52-file workset.
 
 **Is the 1000-line rule a hard cap?**
 No. It is a strong smell that starts a decomposition conversation, and the skill allows a waiver where there is a compelling structural reason and the resulting file is still clearly organized. What it does not allow is the threshold being crossed silently: if the diff crosses it, the review must explicitly ask whether the code should be decomposed first.
@@ -83,7 +83,7 @@ The agent cannot do that. It is review-only, does not edit, commit, or push, and
 - Every finding carries a blocking, advisory, or out-of-scope follow-up label, and the out-of-scope ones left the diff alone and became follow-up work.
 - The top findings are structural (a reframing that deletes a layer, a file that should be decomposed) rather than a list of naming suggestions.
 - Approval was withheld on a change that worked and passed its tests, because it left the local architecture messier.
-- The initial review covered the completed change; direct corrections were verified, and material changes received focused independent follow-up.
+- The initial review covered the completed change; reviewers confirmed blocking dispositions against the corrected revision, with the follow-up count recorded.
 
 Negative signals: the skill is being misapplied if:
 
@@ -94,6 +94,6 @@ Negative signals: the skill is being misapplied if:
 
 ## Where it fits
 
-This is the last gate before landing. Once a work-stream's implementation is complete and verified with evidence (`verification-before-completion` satisfied, and `empirical-proof` run if you asked for it) this single adversarial pass runs. When the diff changes production logic or tests, [test-quality-review](test-quality-review.md) is dispatched in parallel with it, in its own test-scoped prompt. In-scope blocking findings are fixed and re-verified, advisory findings receive a disposition, and out-of-scope findings become follow-ups, and the session proceeds after any required focused follow-up on material changes. Then outline what was done and carry existing landing authorization forward; ask PR or merge only if that choice is still open.
+This is the last gate before landing. Once a work-stream's implementation is complete and verified with evidence (`verification-before-completion` satisfied, and `empirical-proof` run if you asked for it) the initial adversarial pass runs. When the diff changes production logic or tests, [test-quality-review](test-quality-review.md) is dispatched in parallel with it, in its own test-scoped prompt. In-scope blocking findings are fixed and re-verified, advisory findings receive a disposition, and out-of-scope findings become follow-ups, and the session proceeds only after reviewer-confirmed closure and review of later behavior changes under the remaining budget. Then outline what was done and carry existing landing authorization forward; ask PR or merge only if that choice is still open.
 
 The full structural rubric, review questions, examples, remedies, and approval bar remain. File length and alternative designs prompt inspection; a blocker needs a demonstrated correctness or material maintainability consequence. A broadly invalidated prior review requires a full pass. Create external follow-up tickets only under existing explicit authority.

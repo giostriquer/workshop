@@ -25,7 +25,12 @@ WHEN receiving code review feedback:
 4. EVALUATE: Technically sound for THIS codebase?
 5. RESPOND: Technical acknowledgment or reasoned pushback
 6. IMPLEMENT: One item at a time, test each
+7. CLOSE: Return blocking fixes or evidence-based rejections to the independent reviewer
 ```
+
+For completion-review findings, use `code-quality-review`'s Bounded correction
+review. Passing tests support a fix; reviewer confirmation closes the finding.
+Keep the same review budget through feedback and handoffs.
 
 ## Forbidden Responses
 

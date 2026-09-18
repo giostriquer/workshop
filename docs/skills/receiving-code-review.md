@@ -11,6 +11,11 @@ Ordinary thanks is fine. Keep the technical claim, verification, and disposition
 
 Check whether review items depend on the unclear point. Ask the needed question and pause dependent changes; continue verified independent corrections within the request.
 
+Blocking completion-review findings close only after an independent reviewer
+confirms the fix or evidence-based rejection. Return the correction diff and
+focused test evidence under code-quality-review's bounded correction-review rules.
+Passing tests alone do not close the finding; preserve the count through handoffs.
+
 ## When to reach for it
 
 Reach for it when review feedback arrives and before implementing any of it,

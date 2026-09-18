@@ -8,6 +8,10 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.40.1: 2026-09-18
+
+- **Verify blocking corrections with the reviewer.** One initial review is followed by focused verification of every blocking fix or evidence-based rejection. Code and test reviewers share at most two automatic follow-up passes; unresolved findings or unreviewed corrections then hold delivery. Revision-bound closure and the pass count carry through PR preparation and epic handoffs, while advisory preferences and unrelated cleanup do not extend the loop. ([decision](decisions/bounded-correction-review.md))
+
 ## workbench 0.40.0: 2026-09-17
 
 - **A code-quality review opens with its verdict.** `code-quality-review` requires the report to start with `## Verdict: PASS | ISSUES_FOUND`, the line `test-quality-review` already emits, where `PASS` is no in-scope (blocking) finding and a report that omits the line reads as `ISSUES_FOUND`. One rule now reads the outcome of either review stage, by a session or by a tool counting reviews off a transcript. ([decision](decisions/a-code-quality-review-states-its-verdict.md))
@@ -84,33 +88,3 @@ deletes the oldest (git history keeps everything). Sections from before the
   with a ticket id before the wave closes. Debt the epic's own fixes create is
   filed in the wave that created it.
   ([decision](decisions/epic-orchestration.md))
-
-## workbench 0.35.0: 2026-09-04
-
-- **`epic-orchestration` joins the process core.** The epic-owner role the
-  operator had been running out of a private global skill (`epic-relay`) now
-  ships: it writes the paste-ready lane prompts other sessions execute,
-  validates each report against the repository rather than trusting it, and
-  authorizes the PR without ever implementing, committing, or merging. The
-  rename drops "relay", which named the transport rather than the job.
-- **It is wired to the skills it was describing in prose.** Lanes run
-  `code-quality-review` before handing back (dispatched, never self-served),
-  and authorization files through `file-pr` with an explicit statement that its
-  review gate is already satisfied, so no lane burns a second review pass on a
-  diff that already had one. That wiring is why the skill lands in `workbench`
-  rather than `toolkit`, which installs without it.
-- **The validation section gets a rationalization table and red flags.** It is
-  the step the whole pattern exists to defend and it shipped as bare
-  imperatives, which `writing-skills` classifies as the wrong form for a
-  discipline failure. Eight excuses are named, including the one the skill's
-  own text manufactures: that the lane's `code-quality-review` covers it.
-  ([decision](decisions/epic-orchestration.md))
-
-## workbench 0.34.0: 2026-08-25
-
-- **`handoff-goal` is user-invoked only.** It carries
-  `disable-model-invocation: true`, like `self-audit`: whether work should
-  outlive the session is the operator's call, so a session never packages a
-  goal contract on its own judgment. The route pick still offers the option;
-  choosing it is the user invoking the skill.
-  ([decision](decisions/handoff-goal-user-invoked-only.md))

@@ -286,8 +286,8 @@ h2{font:700 24px/1.2 var(--sans);letter-spacing:-.02em;margin:0;color:#f8fafc}
     </g>
 
     <path class="wire" d="M865 506 C 865 570, 620 606, 565 648" marker-end="url(#mN)"/>
-    <text class="wire-label" x="740" y="576">findings → fixed + re-verified</text>
-    <text class="wire-label" x="740" y="590">review material new risk</text>
+    <text class="wire-label" x="740" y="576">blocking fixes → reviewer check</text>
+    <text class="wire-label" x="740" y="590">2 follow-ups; unresolved → hold</text>
     <path class="wire-accent" d="M670 680 L735 680" marker-end="url(#mA)"/>
     <path class="wire-dash" d="M865 708 C 865 744, 420 748, 235 712" marker-end="url(#mN)"/>
     <text class="wire-label" x="520" y="744">on feedback</text>
@@ -349,7 +349,7 @@ h2{font:700 24px/1.2 var(--sans);letter-spacing:-.02em;margin:0;color:#f8fafc}
   <p class="sec-q">What did method drop from superpowers, and why? (Per-piece record: <code>.claude/skills/workbench-drift/manifest.json</code>, repo-local. The removal is of forced process: agency itself stays ask if still unsettled.)</p>
   <div class="rules">
     <div class="rule no"><span class="mark">✕</span><div class="body"><strong><code>using-superpowers</code> + SessionStart hook</strong><p>The enforcement dispatcher ("1% chance → MUST") and its delivery mechanism. Nothing replaces them; defanged descriptions are the entire activation surface.</p></div></div>
-    <div class="rule no"><span class="mark">✕</span><div class="body"><strong><code>subagent-driven-development</code></strong><p>Per-task subagent dispatch. The operator's process is direct implementation with one adversarial review at readiness.</p></div></div>
+    <div class="rule no"><span class="mark">✕</span><div class="body"><strong><code>subagent-driven-development</code></strong><p>Per-task subagent dispatch. The operator's process is direct implementation with one initial review and bounded correction verification at readiness.</p></div></div>
     <div class="rule no"><span class="mark">✕</span><div class="body"><strong><code>writing-plans</code> · <code>executing-plans</code></strong><p>The spec→plan→execute pipeline. PLAN is a user-picked route whose mechanism comes from the user's own stack.</p></div></div>
     <div class="rule no"><span class="mark">✕</span><div class="body"><strong><code>requesting-code-review</code></strong><p>Replaced by <code>code-quality-review</code> and the reviewer agents at the review stage.</p></div></div>
     <div class="rule no"><span class="mark">✕</span><div class="body"><strong><code>dispatching-parallel-agents</code> · <code>using-git-worktrees</code></strong><p>Native harness behavior when wanted; not workbench's business.</p></div></div>
@@ -358,16 +358,16 @@ h2{font:700 24px/1.2 var(--sans);letter-spacing:-.02em;margin:0;color:#f8fafc}
 </section>
 
 <section id="ledger">
-  <p class="sec-q">Historical decisions are refined by the current flow and <a href="decisions/skill-wording-hardening.md">wording-hardening decision</a>: carry existing authority, review material new risk, and run expensive proof only when authorized. Epic lanes use focused local tests plus required gates. Every verified wave ends with a next dispatch, delivery gate, closing audit, completion proposal, or concrete blocker.</p>
+  <p class="sec-q">Historical decisions are refined by the current flow and <a href="decisions/skill-wording-hardening.md">wording-hardening decision</a>: carry existing authority and run expensive proof only when authorized. The <a href="decisions/bounded-correction-review.md">bounded correction-review decision</a> requires reviewer-confirmed blocking dispositions within two automatic follow-up passes. Epic lanes use focused local tests plus required gates. Every verified wave ends with a next dispatch, delivery gate, closing audit, completion proposal, or concrete blocker.</p>
   <div class="sec-head"><span class="sec-num">04</span><h2>Decisions ledger</h2></div>
   <p class="sec-q">The eleven operator calls (2026-08-11) the flow encodes.</p>
   <div class="ledger-wrap glass-card">
     <table class="ledger">
       <tr><td class="q">Q1</td><td>Brainstorming always precedes feature/refactor design; owns what the codebase can't answer about an idea.</td></tr>
       <tr><td class="q">Q2</td><td>TDD is the default where a test harness exists; silent skip where none.</td></tr>
-      <tr><td class="q">Q3</td><td>Adversarial review fires once: at model-deemed readiness.</td></tr>
+      <tr><td class="q">Q3</td><td>Initial adversarial review fires at model-deemed readiness.</td></tr>
       <tr><td class="q">Q4</td><td>Comment trimming rides that review, per repo rules.</td></tr>
-      <tr><td class="q">Q5</td><td>Fixed findings re-verify and proceed straight to the outline gate: review material new risk.</td></tr>
+      <tr><td class="q">Q5</td><td>Blocking dispositions require reviewer confirmation; at most two automatic follow-ups, then hold if unresolved.</td></tr>
       <tr><td class="q">Q6</td><td>Review precedes landing; landing is outline-then-ask, with a rules bypass.</td></tr>
       <tr><td class="q">Q7</td><td>The confirm gate pauses only when the audit flagged uncertainty.</td></tr>
       <tr><td class="q">Q8</td><td>Audit sizes: quick look (inline) · deep (claim-check) · team sweep (qa-sweep).</td></tr>

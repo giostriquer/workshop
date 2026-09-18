@@ -25,7 +25,7 @@ their testing conventions.
 This review is **dispatched, never self-served.** The session that wrote the tests chose
 their inputs and assertions, so the gaps between them read as coverage.
 
-- **When:** as part of the one adversarial review, whenever the diff changes production
+- **When:** as part of the initial adversarial review, whenever the diff changes production
   logic or tests, next to `code-quality-review` and in parallel with it; and on request
   for `mode: audit` or `mode: strategy`.
 - **Who:** the `test-quality-reviewer` agent, or on a host without that agent type, a
@@ -145,20 +145,29 @@ task's diff. Trust your own context.
 
 ### Revision-round protocol
 
+For `mode: diff`, apply `code-quality-review`'s Bounded correction review: every
+blocking disposition returns to its reviewer, and code/test stages share at most
+two automatic follow-up passes per work-stream. Record the reviewed revision and
+finding IDs. Hold delivery on unresolved findings or unreviewed corrections when
+the budget is exhausted. Audit and strategy requests keep their agreed scope.
+
 1. Re-run step 1 of the Diff mode workflow. Always inspect the current change set, not a
    cached view.
 2. Re-read only the test and production files that changed between rounds, unless a prior
    finding requires wider context. Repeat the Mutation run when production files or their
    tests changed between rounds.
-3. Delta walk prior findings. Classify each as Resolved, Partially resolved, or Not
-   resolved, citing the specific test location that justifies it.
-4. Scan for new issues in every test file the revised diff touches.
+3. Delta walk prior findings by stable ID. Classify each as Resolved, Partially
+   resolved, Not resolved, or Rejected with evidence. Cite the test location or
+   contrary evidence that supports the disposition.
+4. Check the correction delta and its effects on test adequacy. New blockers need
+   a demonstrated consequence; unrelated cleanup and preferences do not extend the loop.
 5. Emit the standard output with a Delta walk subsection.
 
 ### Anti-closure rule
 
-The `PASS` bar is constant across rounds. Round 5 `PASS` meets the same standard as round
-1. Round count is not an input to the verdict.
+The `PASS` bar is constant across rounds. At the follow-up limit, unresolved
+findings or unreviewed corrections hold delivery; the limit never converts an
+unresolved finding into PASS. A clean second follow-up can pass.
 
 ## Capability lanes
 
@@ -293,6 +302,9 @@ stricter scrutiny:
 ```
 ## Verdict: PASS | ISSUES_FOUND
 
+Reviewed revision: [commit; include diff fingerprint for uncommitted changes]
+Follow-up pass: [0 initial / 1 / 2; explicit extension if authorized]
+
 ### Metrics
 - Coverage target: [project target or "not declared"]
 - CRAP target: [project target or "default <= 6"] / availability: [artifact summary]
@@ -302,10 +314,10 @@ stricter scrutiny:
   tests changed"]
 
 ### Delta walk
-[Only on revision rounds.]
+[On revision rounds: prior finding ID, disposition, and supporting evidence.]
 
 ### Issues
-1. **[Category]** Brief description
+1. **[Stable finding ID] [Category]** Brief description
    - Test: `path::TestName`, or `missing`
    - Mutant: `file:line` original → replacement (mutation findings only)
    - Problem: concrete way the test fails to protect behavior

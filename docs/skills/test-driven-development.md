@@ -24,7 +24,7 @@ It activates when you are implementing a feature or bugfix in a repo that has a 
 | A bug, test failure, or unexpected behavior you don't yet understand | `systematic-debugging`, before proposing fixes |
 | Tests already written; are they any good? | [test-quality-review](test-quality-review.md) |
 | About to claim done / fixed / passing | `verification-before-completion` |
-| The one adversarial pass at work-stream completion | `code-quality-review`, plus `test-quality-review` when production logic or tests changed |
+| The initial adversarial pass and bounded correction review at work-stream completion | `code-quality-review`, plus `test-quality-review` when production logic or tests changed |
 | Repo has no test harness | none: skip without ceremony |
 
 ## Precedence: a default, not a mandate

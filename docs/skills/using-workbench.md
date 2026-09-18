@@ -60,11 +60,13 @@ do not read the map.
   (repo conventions take precedence on conflict), `systematic-debugging` for persistent or unclear failures requiring investigation. Execution agency is the user's and the harness's call;
   workbench never dictates in-session versus dispatched, except required independent review and the designated separate CI watcher.
 - **Completion**: entered only when the work-stream's implementation is
-  believed complete: "deemed ready" (verified with evidence), then one
+  believed complete: "deemed ready" (verified with evidence), then one initial
   adversarial review right before the PR-or-merge ask (`code-quality-review`,
   plus `test-quality-review` in parallel when the diff changes production
   logic or tests), dispatched to reviewer contexts that did not write the code,
-  then the user gate.
+  then focused reviewer verification of blocking corrections (at most two
+  automatic follow-up passes shared across review stages). Unresolved blockers or
+  unreviewed corrections hold delivery; confirmed closure leads to the user gate.
 - **Feedback**: `receiving-code-review` governs acting on what arrived,
   verified fixes re-enter implementation.
 
