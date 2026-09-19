@@ -58,7 +58,8 @@ IMPLEMENTATION (agency = user/harness call; implementer gets the plan/goal if pr
       repo conventions take precedence on conflict
   systematic-debugging: sustained unresolved investigations; skip expected RED and obvious fixes
 
-COMPLETION (enters only when the work-stream's implementation is believed complete)
+COMPLETION (full agreed work set implemented and verified; about to ship
+through a PR or the repository's delivery process, not an intermediate checkpoint)
   deemed ready = verified with evidence
   (verification-before-completion; empirical-proof offered if runnable) →
   Initial adversarial review: REQUIRED, not offered (code-quality-review +
@@ -67,7 +68,7 @@ COMPLETION (enters only when the work-stream's implementation is believed comple
   did not write the code, never self-served; skipped only on an explicit user decline
   or a superseding repo process; fires here and nowhere else, right before the
   PR-or-merge ask, never mid-implementation →
-  blocking dispositions returned to reviewers for focused correction verification;
+  completed, verified correction batch returned for focused review before resuming delivery;
   at most two automatic follow-up passes under code-quality-review; unresolved → hold,
   advisory findings dispositioned, out-of-scope → follow-ups →
   USER gate: session outlines what was done, asks PR or merge

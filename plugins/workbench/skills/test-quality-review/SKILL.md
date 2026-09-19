@@ -27,7 +27,9 @@ their inputs and assertions, so the gaps between them read as coverage.
 
 - **When:** as part of the initial adversarial review, whenever the diff changes production
   logic or tests, next to `code-quality-review` and in parallel with it; and on request
-  for `mode: audit` or `mode: strategy`.
+  for `mode: audit` or `mode: strategy`. Automatic initial and correction rounds
+  use code-quality-review's shipping boundary: the full work set or correction
+  batch is verified and ready for delivery, not merely an edit or subtask done.
 - **Who:** the `test-quality-reviewer` agent, or on a host without that agent type, a
   reviewer context that loads this skill. Give it a separate, test-scoped prompt with the
   mode and the base branch.

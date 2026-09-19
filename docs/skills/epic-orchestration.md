@@ -102,20 +102,19 @@ The lane reads and applies the skill's procedure and model routing. The owner
 keeps lane instructions provider agnostic and does not restate or expand those
 procedures.
 
-The review and publication gates stay connected. Once implementation is complete,
-a lane runs [code-quality-review](code-quality-review.md) over its implementation
-range before reporting `ready-for-validation`, plus `test-quality-review` when
+The review and publication gates stay connected. When the full agreed work set
+is verified and about to ship through the repository's delivery process, a lane runs [code-quality-review](code-quality-review.md) over its implementation
+range, plus `test-quality-review` when
 the range changes production logic or tests, dispatched to reviewers that did
-not write the code. Earlier blocked or guidance reports do not trigger that review. And
-authorization files the PR through [file-pr](file-pr.md), with the block saying
-outright that `file-pr`'s review gate is already satisfied, because that review
-ran on this diff.
+not write the code. Validation handbacks and intermediate reports do not trigger
+review. Authorization uses [file-pr](file-pr.md) and states whether review has
+run, requiring it before delivery if pending.
 
 That last part matters in practice: `file-pr` opens with a MUST that an
 adversarial review has run, and a lane that is not told the gate is satisfied
 will read the MUST and run a second full review on a diff that already had one.
 The exemption being claimed is `file-pr`'s own ("the review already ran on this
-diff"), not a loophole. Require reviewer-confirmed closure of every blocking disposition and review of later behavior changes. Carry the reviewed revision, evidence, and shared follow-up count in REVIEW CLOSURE; handoff does not reset the two-pass budget. A semantic conflict while syncing the actual integration branch stops the lane for a decision rather than being guessed through.
+diff"), not a loophole. Run completion review at the full work set's shipping checkpoint, not validation handbacks or intermediate reports; require reviewer-confirmed closure of every blocking disposition and review of later behavior changes. Carry the reviewed revision, evidence, and shared follow-up count in REVIEW CLOSURE; handoff does not reset the two-pass budget. A semantic conflict while syncing the actual integration branch stops the lane for a decision rather than being guessed through.
 
 **Can it use subagents when several reports arrive?**
 

@@ -33,3 +33,11 @@ retain precedence.
 This refines the initial-review-only language in earlier workbench decisions.
 Ships in workbench 0.40.1 with synchronized host manifests and release notes.
 Installed plugin copies update through their host's normal update mechanism.
+
+## Completion boundary clarified, 2026-09-19
+
+Completion means the full agreed work set is implemented, verified, and about to
+ship through a PR or the repository's established delivery process. Intermediate
+edits, subtasks, local checkpoints and validation handbacks do not trigger reviews.
+Correction rounds likewise wait for a complete, verified batch before delivery
+resumes. This defines the existing gate instead of adding more review rules.

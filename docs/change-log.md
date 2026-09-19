@@ -8,6 +8,10 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.40.2: 2026-09-19
+
+- **Review at the shipping checkpoint.** Completion means the full agreed work set is implemented, verified, and about to ship through a PR or the repository's delivery process. Individual edits, subtasks, local checkpoints, and validation handbacks do not trigger reviews; correction rounds wait for a complete, verified batch before delivery resumes. ([decision](decisions/bounded-correction-review.md#completion-boundary-clarified-2026-09-19))
+
 ## workbench 0.40.1: 2026-09-18
 
 - **Verify blocking corrections with the reviewer.** One initial review is followed by focused verification of every blocking fix or evidence-based rejection. Code and test reviewers share at most two automatic follow-up passes; unresolved findings or unreviewed corrections then hold delivery. Revision-bound closure and the pass count carry through PR preparation and epic handoffs, while advisory preferences and unrelated cleanup do not extend the loop. ([decision](decisions/bounded-correction-review.md))
@@ -75,16 +79,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 
 - **Clarify dogfooding and recording authority.** Use me-human as a dogfooding perspective, make UI recordings opt-in, preserve visible application errors by default, and require existing authority for installs or uploads.
 - **Preserve report and architecture templates.** Allow unsupported report fields to be omitted or marked unknown, require self-contained assets, and verify artifact paths. ([decision](decisions/skill-wording-hardening.md))
-
-## workbench 0.36.0: 2026-09-04
-
-- **`epic-orchestration` stops letting actionable work die in context.** The
-  rule shipped as one non-negotiable about deferrals ("nothing lives only in a
-  report"), which left out debt noticed in passing, follow-ups, and anything
-  the orchestrator itself turns up while validating. It is now a section with a
-  table of the five places such items surface, and the structural half that
-  makes it stick: `DEBT + FOLLOW-UPS` is a required slot in the lane report
-  format, so a lane fills it in or visibly leaves it blank. Each entry closes
-  with a ticket id before the wave closes. Debt the epic's own fixes create is
-  filed in the wave that created it.
-  ([decision](decisions/epic-orchestration.md))

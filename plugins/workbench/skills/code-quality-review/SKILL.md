@@ -1,6 +1,6 @@
 ---
 name: code-quality-review
-description: Use for a strict or adversarial code quality review; required once a work-stream's implementation is complete, right before PR-or-merge, never mid-implementation.
+description: Use for a strict or adversarial code quality review; required when the full agreed work set is ready to ship through a PR or the repository's delivery process.
 ---
 
 # Code Quality Review
@@ -8,6 +8,12 @@ description: Use for a strict or adversarial code quality review; required once 
 Use this skill for a strict review focused on implementation quality, maintainability, abstraction quality, pattern drift, and codebase health.
 
 Above all, this skill should push the reviewer to be **ambitious** about code structure. Do not merely identify local cleanup opportunities. Actively search for "code judo" moves: restructurings that preserve behavior while making the implementation dramatically simpler, smaller, more direct, and more elegant.
+
+Completion for this gate means the full agreed work set is implemented and
+verified, and the session is about to ship it through a PR or the repository's
+established delivery process. Individual edits, finished subtasks, progress
+reports, and local checkpoints do not trigger review. Correction rounds follow
+the same boundary: finish and verify the batch before resuming delivery.
 
 ## Who runs it: a reviewer that did not write the code
 

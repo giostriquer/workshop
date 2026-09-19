@@ -4,9 +4,13 @@
 
 This skill runs a strict maintainability review over a finished change: abstraction quality, structure, pattern drift, file sprawl, and spaghetti growth. Its distinguishing posture is ambition. It is not looking for local cleanup opportunities; it is looking for **"code judo" moves: restructurings that preserve behavior while making the implementation dramatically simpler, smaller, more direct, and more elegant.** Where a normal review says "this could be cleaner," this one asks whether the change can be reframed so whole branches, helpers, modes, or layers disappear.
 
-It is **default-on**. Once a work-stream's implementation is complete, **"this review runs whether or not anyone asked for it. Exactly two things stop it: the user explicitly declining, or the repo's own process superseding it."** The skill enumerates the non-reasons directly: a small diff, a confident implementation, a clean-looking change, time pressure, or the session's own sense that this one doesn't need it. That last one is the point: the session's judgment that a change looks fine is precisely what an adversarial pass exists to distrust.
+It is **default-on**. Once the full agreed work set is implemented, verified, and about to ship through a PR or the repository's delivery process, **"this review runs whether or not anyone asked for it. Exactly two things stop it: the user explicitly declining, or the repo's own process superseding it."** The skill enumerates the non-reasons directly: a small diff, a confident implementation, a clean-looking change, time pressure, or the session's own sense that this one doesn't need it. That last one is the point: the session's judgment that a change looks fine is precisely what an adversarial pass exists to distrust.
 
 It is a gate, not a fixer or bug-hunter. It produces labeled, prioritized findings; blocking findings get fixed and tested, then return to the reviewer for focused closure. At most two automatic follow-up passes cover corrections and their effects; unresolved blockers or unreviewed corrections then hold delivery. Broadly invalidated evidence requires wider review within that same budget. It owns maintainability and structural ambition, while correctness, behavior verification, and pattern conformance belong to other paths. It runs through its companion `code-quality-reviewer` agent, or a fresh reviewer context of some kind, never in the session that wrote the code; it is explicitly review-only, surfacing problems and pushing for a cleaner structure but never patching code.
+
+Completion here is the shipping checkpoint for the full agreed work set.
+Individual edits, subtasks, progress reports, and local checkpoints do not trigger
+review. Finish and verify a correction batch before its review resumes delivery.
 
 ## When to reach for it
 

@@ -207,11 +207,13 @@ folder (see Dispatching), containing:
   "coordinate an ownership overlap before concurrent edits, then record the
   agreed change under FORKS/DEVIATIONS." Hard
   DO-NOT-TOUCH walls caused a lane to halt three tickets over one advisory conflict.
-- **Completion**: once implementation is complete, use `code-quality-review` over
-  the implementation range before reporting `ready-for-validation`, plus
+- **Completion review**: when the full agreed work set is verified and ready to
+  ship through the repository's delivery process, use `code-quality-review` over
+  the implementation range, plus
   `test-quality-review` (`mode: diff`, given the range's base, routed as
   `code-quality-review` describes) when the range changes production logic or tests.
-  Earlier blocked reports or requests for a ruling do not trigger the completion review.
+  Validation handbacks, intermediate reports and requests for a ruling do not
+  trigger review. Review completed correction batches only before resuming delivery.
   Record the reviewed revision, reviewer-confirmed blocking dispositions and
   correction evidence. Apply code-quality-review's bounded correction review;
   preserve its follow-up count through lane handoffs and delivery.
@@ -266,7 +268,7 @@ conflict), run affected checks and mandatory local gates, then use `file-pr` and
 back. That skill writes the body from the repo's own template and tends the PR to green
 and mergeable.
 
-**Say in the block that `file-pr`'s review gate is already satisfied.** The gate requires
+**State whether the completion review has run; if pending, require it before delivery.** Say the gate is satisfied only with the evidence below. The gate requires
 an adversarial review that ran on this diff, and the lane's completion review
 (`code-quality-review`, plus `test-quality-review` when required) is exactly that:
 dispatched, returned, findings acted on. Record the reviewed revision
