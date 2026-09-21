@@ -113,6 +113,16 @@ Not here. Record it as follow-up work. The exception is narrow: your change is u
 **Does every function need a test?**
 The bundled reference draws the line: constructors, getters, constants, and trivial forwarding earn tests "only when they validate, normalize, default, derive, enforce, or cause side effects." Otherwise assert the first consumer-visible result that depends on them. Prose written for humans earns no test at all.
 
+**Which parts of mutation testing should I commit?**
+Commit the valid implementation and reusable tests for required behavior. Improve
+existing assertions or table cases where suitable; one test can kill several
+mutants. Keep injected defects, mutant copies, temporary probe tests, and temporary
+run output outside the deliverable. Run probes in a disposable checkout, record
+the author's staged, unstaged, and untracked state, and verify preservation after
+success, failure, or timeout. Preserve pre-existing work and useful evidence.
+Before committing, inspect staged changes and new files, and verify the retained
+tests against the unmutated implementation. Unresolved cleanup holds delivery.
+
 **Where does this skill come from?**
 It is derived from [obra/superpowers](https://github.com/obra/superpowers) (MIT, © Jesse Vincent) and adapted for the workbench system. The repo tracks it against upstream, and the precedence layer is recorded as a deliberate workbench divergence so an upstream sync doesn't re-tighten it back into a mandate.
 
@@ -120,6 +130,7 @@ It is derived from [obra/superpowers](https://github.com/obra/superpowers) (MIT,
 
 - You can name, for every test you wrote, the production change that would make it fail, and that change is a bug, not a decision.
 - Changed behavior has an intended RED → GREEN check; characterization cases are identified, with independently derived expectations and appropriate sensitivity evidence.
+- Mutation probes leave pre-existing work intact, and the commit contains useful regression coverage without temporary mutation artifacts.
 - The diff stays inside the accepted work. Defects found in the neighborhood show up as follow-up items, not as new tests and fixes.
 - When the repo's rules collided with a step, there is a one-line announcement in the session output and the repo's rule won.
 

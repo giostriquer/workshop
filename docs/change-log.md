@@ -8,6 +8,10 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.40.3: 2026-09-21
+
+- **Keep mutation probes out of commits.** TDD retains useful behavior tests and strengthens existing cases where suitable instead of adding a test per mutant. Every mutation command runs in isolation and verifies preservation after success, failure, or timeout; the test-quality report records workspace preservation and holds delivery on unresolved cleanup. Before committing, inspect staged changes and new files for temporary mutation artifacts. ([decision](decisions/mutation-artifact-boundary.md))
+
 ## workbench 0.40.2: 2026-09-19
 
 - **Review at the shipping checkpoint.** Completion means the full agreed work set is implemented, verified, and about to ship through a PR or the repository's delivery process. Individual edits, subtasks, local checkpoints, and validation handbacks do not trigger reviews; correction rounds wait for a complete, verified batch before delivery resumes. ([decision](decisions/bounded-correction-review.md#completion-boundary-clarified-2026-09-19))
@@ -74,8 +78,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 - **Delegate CI watching.** It always runs in a separate read-only agent: Opus on Claude, Sol on Codex, never Astra or Fable. Reports bind checks to the requested revision. The two-attempt fix limit and two-resync PR limit remain.
 - **Use focused local checks for epic lanes.** Run focused local tests and mandatory gates, leaving full suites to PR CI unless specifically required. Every returned wave ends with verified acknowledgment and the next dispatch, delivery gate, closing audit, completion proposal, or concrete blocker. Mutation checks use disposable checkouts that preserve tests.
 - **Keep proof opt-in and preserve evidence.** Retain corroboration protocols, distinguish unresolved findings from disproved ones, and retain valid code while establishing missing test evidence. ([decision](decisions/skill-wording-hardening.md))
-
-## toolkit 0.10.0: 2026-09-09
-
-- **Clarify dogfooding and recording authority.** Use me-human as a dogfooding perspective, make UI recordings opt-in, preserve visible application errors by default, and require existing authority for installs or uploads.
-- **Preserve report and architecture templates.** Allow unsupported report fields to be omitted or marked unknown, require self-contained assets, and verify artifact paths. ([decision](decisions/skill-wording-hardening.md))

@@ -190,6 +190,13 @@ The TDD cycle (failing test, minimal implementation, refactor) is what
 trivial code and human prose earn none, and a test written to satisfy
 process costs maintenance forever.
 
+Mutation findings improve this retained suite. Strengthen an existing assertion or
+table case when it covers the missing behavior; add a case when it protects a
+distinct requirement. One test can kill several mutants. Keep useful regression
+tests, consolidate redundant candidates, and leave mutant copies, temporary probe
+tests, and temporary run output outside the deliverable. A test earns its place
+through the behavior it protects, not because a mutation run produced it.
+
 ## The Mutation Check
 
 Before finishing, mentally mutate the production code; at least one test

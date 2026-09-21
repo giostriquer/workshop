@@ -64,6 +64,21 @@ behavior may instead be covered by passing characterization tests. Preserve test
 and fixtures; the intended assertion must fail, not imports or setup. Never delete
 or rewrite valid code merely because it preceded its test.
 
+### Mutation probes and delivery
+
+Mutate production code in a disposable checkout; keep the tests and their
+expectations intact. Before probing, record the author's staged, unstaged, and
+untracked state. After success, failure, or timeout, stop any remaining probe
+processes and verify that state is preserved. Clean up only artifacts created by
+the probe; preserve pre-existing work and retain useful evidence in the scope's
+scratch location, verified to be outside the commit set.
+
+Before committing, inspect the staged diff and new files. Deliver the valid
+implementation and reusable behavior tests; exclude injected defects, mutant
+copies, temporary probe tests, and temporary run output. Verify the retained tests
+against the unmutated implementation. Unresolved preservation or cleanup is a
+delivery gap, not permission to reset or delete unrelated work.
+
 ## Red-Green-Refactor
 
 ```dot
@@ -313,6 +328,7 @@ Before marking work complete:
 - [ ] New errors/warnings are resolved; baseline failures and unrun checks are disclosed
 - [ ] Tests exercise real code with appropriate boundary doubles
 - [ ] Edge cases and errors covered
+- [ ] Mutation probes preserved pre-existing work; the proposed commit excludes temporary mutation artifacts, and retained tests pass against unmutated code
 
 An unchecked item is a concrete verification gap: resolve it or report its limit. Do not delete valid work to satisfy the checklist.
 

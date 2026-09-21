@@ -37,6 +37,14 @@ Every surviving mutant gets a judgment, not a score:
 | Changes only wording tests should not pin, such as a log or error message nobody matches on | Observation |
 | Hidden by a `Stryker disable` comment the diff added without a checkable reason | Issue |
 
+**Workspace preservation.** Every mutation command, including a project's custom
+command, runs in isolation with the reviewed changes and tests. The reviewer
+records the author's staged, unstaged, and untracked state and verifies it after
+success, failure, or timeout. It preserves pre-existing work, keeps useful evidence
+outside the commit set, and removes only artifacts known to belong to the run.
+The report includes a `Workspace preservation` line; unresolved preservation or
+cleanup produces `ISSUES_FOUND` even when no test-quality issue was found.
+
 **Property testing.** For round trips, normalization, permission matrices, numeric and accounting invariants, and snapshot loading, the review recommends or flags missing property-style coverage, blocking only when examples plainly cannot cover the risk or project policy requires it.
 
 **Metrics.** Coverage and CRAP data are read when the project publishes them and treated as risk evidence, never as a substitute for reading the tests.
@@ -52,6 +60,12 @@ Only if the runner plugin for your test framework is installed and can be named 
 **A survivor changes an error message. Must I add a test for the exact wording?**
 No. Unless a consumer matches on that message, it is an Observation. Pinning incidental wording is a change detector.
 
+**Does every mutant need its own committed test?**
+No. Strengthen an existing assertion or table case where suitable; add a case for
+a distinct required behavior. One test can kill several mutants. Commit useful
+regression coverage; keep injected defects, mutant copies, temporary probe tests,
+and temporary run output outside the deliverable.
+
 **Why can't one prompt ask for code quality and test quality together?**
 The review refuses combined prompts. Each review stage is a separate dispatch so its verdict stays focused.
 
@@ -59,6 +73,7 @@ The review refuses combined prompts. Each review stage is a separate dispatch so
 
 - Every PR that changed logic or tests had this review next to `code-quality-review`, run by a context that did not write the tests.
 - The output has a `Mutation run` line with real counts, or a specific `unavailable` reason.
+- The `Workspace preservation` line records verified preservation, an unresolved gap, or that no mutation run occurred.
 - Issues name concrete mutants and the assertions that kill them; equivalent and wording-only survivors are Observations.
 - The worktree is unchanged after the review.
 

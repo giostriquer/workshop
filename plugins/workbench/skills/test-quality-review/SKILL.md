@@ -251,6 +251,22 @@ A test that would obviously survive a relevant mutant is a test-quality issue.
 production code those changes touch or exercise: the changed hunks of changed production
 files (`path:startLine-endLine`), and the whole production file behind a changed test.
 
+**Workspace preservation, for every mutation command:**
+
+1. Record the author's staged, unstaged, and untracked state before running. Use an
+   isolated sandbox or disposable checkout that includes the reviewed changes and
+   tests. Mutate production code there, preserving test expectations. A documented
+   command that edits files in place also runs in isolation.
+2. After success, failure, or timeout, stop any remaining mutation processes and
+   compare the author checkout with that baseline. Remove only run-created
+   artifacts whose ownership is established; preserve pre-existing work and useful
+   evidence. Keep evidence in the scope's scratch location, verified to be outside
+   the commit set. Never reset the checkout or delete unrelated files for cleanup.
+3. Report the preservation result. Injected defects, mutant copies, temporary probe
+   tests, and temporary run output do not belong in staged changes or deliverables.
+   If preservation or cleanup remains unresolved, return `ISSUES_FOUND` with the
+   affected paths and the remaining gap; do not certify the review as complete.
+
 - Use the project's documented mutation command when it has one.
 - Otherwise, for JavaScript or TypeScript, use StrykerJS when the project has a Stryker
   config file, or when the runner plugin for the project's test framework is installed
@@ -276,6 +292,11 @@ files (`path:startLine-endLine`), and the whole production file behind a changed
 - A mutation-suppression comment the diff adds (`Stryker disable` or the tool's
   equivalent) is an Issue unless the comment states a reason a reader can check.
 - The mutation score is not a pass/fail threshold.
+
+Recommend the smallest behavioral improvement that covers a real gap: strengthen
+an existing assertion or table case where suitable, or add a case for a distinct
+requirement. Several mutants may be killed by one test. Do not request a separate
+test per mutant or retain temporary mutation probes as regression coverage.
 
 In `audit` or `strategy` mode, recommend targeted mutation checks for high-impact code,
 complex branches, permission gates, parsing, persistence, cost/accounting, and
@@ -314,6 +335,8 @@ Follow-up pass: [0 initial / 1 / 2; explicit extension if authorized]
 - Mutation run: [command, then killed / timeout / survived / no coverage / errors from the
   clear-text table; or "unavailable: <reason>"; or "not applicable: no production logic or
   tests changed"]
+- Workspace preservation: [verified against pre-run staged, unstaged, and untracked
+  state; or "unresolved: <paths and reason>"; or "not applicable: no mutation run"]
 
 ### Delta walk
 [On revision rounds: prior finding ID, disposition, and supporting evidence.]
@@ -334,8 +357,8 @@ Follow-up pass: [0 initial / 1 / 2; explicit extension if authorized]
 ```
 
 - `PASS` - no test-trustworthiness issue found that would let a weak or misleading test
-  merge.
-- `ISSUES_FOUND` - at least one such issue.
+  merge, and any mutation run's workspace preservation is verified.
+- `ISSUES_FOUND` - at least one such issue, or unresolved mutation workspace preservation.
 - Observations and Strategy notes are non-blocking unless explicitly tied to an Issue.
 
 ### audit mode
@@ -395,6 +418,8 @@ Use these in order:
 
 This review covers test code and test strategy. It does not:
 
+- edit, commit, or push changes in the author's checkout; mutation runs use isolation
+  and must leave that checkout as found, including its staged and untracked state
 - review production-code quality - the code-quality review stage owns that
 - review implementation patterns - `pattern-reviewer` owns that
 - review specs or plans - `spec-reviewer` owns that
