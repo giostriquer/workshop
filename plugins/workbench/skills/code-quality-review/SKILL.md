@@ -30,8 +30,15 @@ fresh reviewer takes apart. Dispatching also keeps the full diff and file
 contents out of the implementing session's window.
 
 When the diff changes production logic or tests, the dispatching session also
-dispatches `test-quality-review` (`mode: diff`, given the base branch) in a
+dispatches `test-quality-review` for that change set, with the base branch when known, in a
 separate, test-scoped prompt; the two run in parallel.
+
+Both dispatches form **one initial review round**, including when a brief calls
+for "exactly one code-quality review." The dispatching session records each
+required stage's verdict against the same change set and revision. A missing
+stage keeps the gate pending; dispatch it to complete that unchanged round
+without repeating a valid completed stage. Explicit user waivers and superseding
+repository processes retain precedence.
 
 Where the host offers no subagent mechanism, the review still does not run
 inside the implementing context: hand the diff to a fresh session and name that
@@ -76,7 +83,7 @@ classified, not chased:
 
 ## Bounded correction review
 
-Use one initial review plus focused correction verification. The implementer owns
+Use one initial review round plus focused correction verification. The implementer owns
 fixes and focused tests; the independent reviewer owns closure of blocking findings.
 
 1. **Return every blocking disposition to its reviewer.** Send finding IDs, the
@@ -95,9 +102,9 @@ fixes and focused tests; the independent reviewer owns closure of blocking findi
 3. **Use at most two automatic follow-up passes per work-stream.** A pass is one
    submission of the revised change to the required reviewers; code and test
    reviewers may run together and share the same pass count. Correction dispatches,
-   lane handbacks and owner validation do not consume review passes. A replacement for
-   a reviewer that never returned completes the same unchanged submission; a new
-   correction submission consumes the next pass. Send each reviewer
+   lane handbacks and owner validation do not consume review passes. A missing
+   stage or replacement for a reviewer that never returned completes the same
+   unchanged submission; a new correction submission consumes the next pass. Send each reviewer
    the findings and changed surfaces it owns; a production fix that changes test
    adequacy also needs test review. Stop early when all blocking dispositions are
    confirmed and the current revision is covered. Advisory-only findings do not
@@ -121,7 +128,7 @@ fixes and focused tests; the independent reviewer owns closure of blocking findi
    PR preparation, or session handoff does not reset the budget for the same work.
 
 These rules govern correction review for both code-quality-review and the required
-`test-quality-review` diff stage. Existing explicit user waivers and superseding
+`test-quality-review` delivery stage. Existing explicit user waivers and superseding
 repository processes retain precedence.
 
 ## Non-Negotiable Additional Standards

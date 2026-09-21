@@ -6,19 +6,23 @@ This skill reviews implemented test code for **trustworthiness**: whether each t
 
 It is the test half of the adversarial review. When a diff changes production logic or tests, it runs next to `code-quality-review`, in parallel and in its own test-scoped prompt. Like that review, it is **dispatched, never self-served**: the session that wrote the tests chose their inputs and assertions, so the gaps between them read as coverage. It runs through its companion `test-quality-reviewer` agent, as a separate Opus agent on Claude Code or a `gpt-5.6-sol` agent on Codex, and on the host's default model elsewhere. On a host without that agent type, a reviewer context loads this skill directly.
 
-It is review-only. It produces a `PASS` / `ISSUES_FOUND` verdict with findings; the implementer owns the fixes.
+It produces a `PASS` / `ISSUES_FOUND` verdict with findings. The reviewer sets up
+and repairs mutation tooling in isolation; the implementer owns test, production,
+and permanent repository tooling changes.
 
 ## When to reach for it
 
 Mostly you don't. It fires with the adversarial review whenever the diff changes production logic or tests, right before the PR-or-merge question. `file-pr` will not file a PR that changes logic or tests until it has run.
 
-Reach for it directly when you want to know whether an existing suite deserves the confidence people place in it (`mode: audit`), or when a high-impact project needs a test-quality profile (`mode: strategy`).
+Reach for it directly to check whether existing tests protect their claimed
+behavior or to recommend a testing approach. Give it the question or target in
+plain language; it resolves the scope from the request.
 
 | The problem | The skill |
 | --- | --- |
 | A finished diff changes logic or tests and needs its adversarial review | `code-quality-review` plus `test-quality-review`, in parallel |
-| Do the tests in this folder actually catch regressions? | `test-quality-review`, `mode: audit` |
-| What coverage, mutation, and property-testing posture should this project adopt? | `test-quality-review`, `mode: strategy` |
+| Do the tests in this folder actually catch regressions? | `test-quality-review`, with the folder and question |
+| What coverage, mutation, and property-testing posture should this project adopt? | `test-quality-review`, with the project's risks and question |
 | How should I write the tests in the first place? | [test-driven-development](test-driven-development.md) and its `writing-good-tests.md` reference |
 | Is the production code well structured? | [code-quality-review](code-quality-review.md) |
 
@@ -26,7 +30,26 @@ Reach for it directly when you want to know whether an existing suite deserves t
 
 **Baseline trustworthiness checklist.** Trivially-passing setup, weak or absent assertions, mock-saturated or tautological-mock tests, wrong-path testing, missing edge cases, brittle coupling, non-determinism, and test-code complexity. A finding needs a concrete way the test fails to protect the behavior it claims.
 
-**The mutation run.** In `diff` mode, the review runs a mutation tool over the changed code: the project's documented command, or StrykerJS for JavaScript and TypeScript when the project has a Stryker config or an installed runner plugin. It mutates the changed hunks and the production files behind changed tests, never uses Stryker's `command` runner, and keeps Stryker's sandbox outside the worktree. The output always carries a `Mutation run` line with the command and counts, or `unavailable: <reason>` when no tool qualifies or the run matched no files, instrumented nothing, failed its initial test run, or passed 15 minutes. The review never installs tooling.
+**The mutation run.** When the reviewed change set changes logic or tests, the review
+uses StrykerJS for `.ts`, `.tsx`,
+`.js`, and `.jsx` production code, and `cargo-mutants` for Rust. Mixed changes
+need both. It mutates changed hunks and the whole production files behind changed
+tests, then runs focused tests against those defects. Applicable project commands
+can supply the setup. Explicit user or repository overrides retain precedence.
+
+Missing tools trigger installation; broken configuration triggers repair. Both
+happen in a disposable review copy or dedicated tool prefix. The reviewer records
+tool versions, setup and run commands, scope, report paths and outcome counts.
+It diagnoses empty selections, baseline failures and timeouts, then reruns. Each
+mutation invocation has a 15-minute limit; slower scope can be split without
+dropping required coverage. If required execution remains blocked, the verdict is
+`ISSUES_FOUND` with attempted repairs, remaining scope and the next action. A
+qualitative review alone cannot clear that gap. Explicit waivers and source-backed
+`not applicable` findings are recorded separately from successful execution.
+
+An explicitly requested mutation run over existing code follows the same setup,
+isolation and evidence rules. A request for findings or testing advice does not
+automatically start tooling installation or create a delivery gate.
 
 Every surviving mutant gets a judgment, not a score:
 
@@ -42,7 +65,8 @@ command, runs in isolation with the reviewed changes and tests. The reviewer
 records the author's staged, unstaged, and untracked state and verifies it after
 success, failure, or timeout. It preserves pre-existing work, keeps useful evidence
 outside the commit set, and removes only artifacts known to belong to the run.
-The report includes a `Workspace preservation` line; unresolved preservation or
+The report includes a `Workspace preservation` line, including after tool setup;
+unresolved preservation or
 cleanup produces `ISSUES_FOUND` even when no test-quality issue was found.
 
 **Property testing.** For round trips, normalization, permission matrices, numeric and accounting invariants, and snapshot loading, the review recommends or flags missing property-style coverage, blocking only when examples plainly cannot cover the risk or project policy requires it.
@@ -51,11 +75,41 @@ cleanup produces `ISSUES_FOUND` even when no test-quality issue was found.
 
 ## Common questions
 
+**What does the caller need to provide?**
+The test-quality question or target, and the base branch when known. For example:
+"Review this change's tests before delivery; the base is main" or "Check whether
+the parser tests catch malformed-input regressions." There is no mode to choose.
+
 **It found no survivors the reviewer couldn't have spotted by reading. Why run the tool?**
 On a strong model, reading the code often finds the same gaps. The tool turns each finding into checkable evidence, separates equivalent mutants from real gaps, and catches suppression comments. Its advantage grows on large diffs and on weaker reviewer models ([decision](../decisions/test-shape-and-mutation-review.md)).
 
-**My project has Stryker installed but no config. Will the review run it?**
-Only if the runner plugin for your test framework is installed and can be named with `--testRunner`. Without either, stock Stryker falls back to the `command` runner, which reruns the whole suite for every mutant, so the review reports `unavailable` instead.
+**My project has no mutation tool or config. Will the review set it up?**
+Yes. It installs a compatible StrykerJS core and required runner dependencies for
+JavaScript or TypeScript, or `cargo-mutants` for Rust, in isolation. It creates or
+repairs a focused config, verifies a passing nonempty baseline, and runs mutation
+testing. An existing config for another feature must have its mutation targets
+and selected tests adapted. The author's manifest, lockfile and config remain
+intact; needed permanent changes go back to the implementer. An explicit install
+restriction or an unresolved environment failure is reported as a blocker, with
+the evidence and action needed to continue.
+
+**How does it scope Rust mutation testing?**
+Install with `cargo install --locked cargo-mutants --root <isolated-tool-prefix>`
+and add that prefix's `bin` to the run's PATH. Run `cargo mutants` in the isolated
+crate or workspace, selecting source files and packages. For example,
+`cargo mutants --file 'src/parser.rs' -- --test parser` runs the named integration
+test target. `--in-diff <patch>` can limit changed production hunks, but a changed
+test needs mutation of its whole production file. The report includes caught,
+missed, timeout and unviable counts. Missed mutants need survivor review; these
+outcomes do not establish line coverage.
+
+**Can it use Bun through Stryker's command runner?**
+Yes. Set `coverageAnalysis: "off"`, select explicit relevant test files, propagate
+test failures, and verify a nonempty baseline against the isolated source. A bare
+full-suite command does not qualify. Stryker reruns those selected tests for every
+mutant and cannot distinguish unexecuted code from other surviving mutants.
+Report the runner, test scope and `NoCoverage: unavailable`, even when the raw
+table shows zero. Review every survivor; the mutation score is not an approval bar.
 
 **A survivor changes an error message. Must I add a test for the exact wording?**
 No. Unless a consumer matches on that message, it is an Observation. Pinning incidental wording is a change detector.
@@ -72,15 +126,19 @@ The review refuses combined prompts. Each review stage is a separate dispatch so
 ## It's working if
 
 - Every PR that changed logic or tests had this review next to `code-quality-review`, run by a context that did not write the tests.
-- The output has a `Mutation run` line with real counts, or a specific `unavailable` reason.
-- The `Workspace preservation` line records verified preservation, an unresolved gap, or that no mutation run occurred.
+- The output has a `Mutation run` line with real counts and scope, or an explicit
+  blocker, waiver, or source-backed reason mutation does not apply.
+- The `Workspace preservation` line records verified preservation, an unresolved gap, or that no setup or mutation run occurred.
 - Issues name concrete mutants and the assertions that kill them; equivalent and wording-only survivors are Observations.
 - The worktree is unchanged after the review.
 
 Signs of misapplication:
 
 - The review ran in the session that wrote the tests.
-- A Stryker run used the `command` runner, or reported 0 mutants and was read as clean.
+- A command runner ran an unbounded suite, or its zero NoCoverage count was treated
+  as coverage evidence; a run reported 0 mutants and was read as clean.
+- Missing or broken tools produced a qualitative PASS without setup or repair.
+- A mixed Rust and TypeScript change ran only one language's mutation tool.
 - A PR landed with a new `Stryker disable` comment nobody questioned.
 - A mutation score was used as the pass/fail line.
 

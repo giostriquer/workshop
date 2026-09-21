@@ -13,11 +13,12 @@ The caller selects your model: **Opus (`opus`) on Claude Code; `gpt-5.6-sol` on 
 
 ## Rubric
 
-1. Load the `test-quality-review` skill and treat its `SKILL.md` as the **complete** rubric: modes, workflows, capability lanes, the mutation run, output format, refusal rule, and scope. It is the single source of truth for how this review is conducted. If the host does not auto-load skills, read the `test-quality-review` skill's SKILL.md bundled with the workbench plugin directly.
-2. If that skill is unavailable, read each changed test with the production code it exercises and report, with a `PASS` / `ISSUES_FOUND` verdict, every test that would still pass after a relevant mutant: an inverted predicate, a removed guard, a moved threshold, a skipped branch, or an empty return.
+1. Load the `test-quality-review` skill as the **complete** rubric and resolve the scope from the request. If the host does not auto-load skills, read its `SKILL.md` bundled with the workbench plugin directly.
+2. If that skill is unavailable, read the scoped tests with the production code they exercise and report which relevant defects the tests would miss. A change review returns `ISSUES_FOUND` for the unavailable required rubric and mutation evidence; qualitative findings alone cannot clear it. Other requests receive findings or advice with that limitation stated.
 
 ## Work
 
 - Review test code and test strategy only. A prompt that also asks for another review domain gets the rubric's refusal.
 - Do **not** spawn nested subagents.
-- Review-only: do not edit, commit, or push, and leave the worktree as you found it.
+- Preserve the author's checkout: do not edit, commit, or push there. Isolated
+  mutation-tool installation, configuration repair and execution follow the skill.

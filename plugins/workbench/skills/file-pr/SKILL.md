@@ -12,7 +12,7 @@ reviewer contexts that did not write the code:
 
 1. The `code-quality-review` skill, dispatched as that skill describes.
 2. When the diff changes production logic or tests: the `test-quality-review` skill
-   in `mode: diff`, given the PR's base branch in a separate, test-scoped prompt, run
+   given the PR's base branch in a separate, test-scoped prompt, run
    by the `test-quality-reviewer` agent as a separate Opus (`opus`) agent on Claude
    Code or `gpt-5.6-sol` agent on Codex (the host's default model elsewhere). On a
    host without that agent type, dispatch a reviewer that loads the skill. It can run

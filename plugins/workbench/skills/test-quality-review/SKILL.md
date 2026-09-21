@@ -26,150 +26,63 @@ This review is **dispatched, never self-served.** The session that wrote the tes
 their inputs and assertions, so the gaps between them read as coverage.
 
 - **When:** as part of the initial adversarial review, whenever the diff changes production
-  logic or tests, next to `code-quality-review` and in parallel with it; and on request
-  for `mode: audit` or `mode: strategy`. Automatic initial and correction rounds
+  logic or tests, next to `code-quality-review` and in parallel with it; and when
+  asked to inspect existing tests or recommend a testing approach. Automatic rounds
   use code-quality-review's shipping boundary: the full work set or correction
   batch is verified and ready for delivery, not merely an edit or subtask done.
 - **Who:** the `test-quality-reviewer` agent, or on a host without that agent type, a
-  reviewer context that loads this skill. Give it a separate, test-scoped prompt with the
-  mode and the base branch.
+  reviewer context that loads this skill. Give it the test-quality question or
+  target, plus the base branch when known, in a separate prompt.
 - **Model:** a separate **Opus (`opus`) agent on Claude Code** or **`gpt-5.6-sol` agent on
   Codex**, and the host's default model on any other host. Select it explicitly; do not
   inherit the parent's model. The reviewer never dispatches another agent.
 
-## Role boundary
+## Workflow
 
-This review is distinct from every other review stage:
-
-- `spec-reviewer` reviews specs and plans before code exists.
-- the code-quality review stage reviews production code for bugs and regressions.
-- `pattern-reviewer` reviews implementation-pattern conformance and explicitly defers
-  test quality and test design to this review.
-- this review covers test code for trustworthiness, risk coverage, and test strategy.
-
-It reads production code to judge whether tests are meaningful, but it reports only on
-test files, test helpers, missing test strategy, and mutation-suppression comments. It
-does not emit production-code quality, implementation-pattern, or spec findings.
-
-## Modes
-
-Every review runs in one of these modes. The mode is passed as plain text in the dispatch
-prompt, for example `mode: diff`.
-
-- `mode: diff` - in-loop review stage. Reviews the task's change set (Diff mode workflow,
-  step 1).
-- `mode: audit` - on-demand sweep of existing tests for a file, folder, or full suite.
-- `mode: strategy` - advisory pass over a project, subsystem, or risk surface to propose
-  metrics, property-test candidates, mutation-test candidates, and audit cadence.
-
-If no mode is provided, infer it: a task diff implies `diff`; a named test target implies
-`audit`; a question about thresholds, project risk, or future testing approach implies
-`strategy`. State the inferred mode.
-
-## Invocation protocol
-
-In normal use this review is dispatched by an orchestrator, not an end user.
-
-- `diff` mode: the orchestrator provides the mode and the base branch when it knows it;
-  the change set comes from step 1 of the Diff mode workflow.
-- `audit` mode: the orchestrator provides the mode and target.
-- `strategy` mode: the orchestrator provides the project or subsystem and any existing
-  metrics, risk profile, or test-policy notes.
-
-Keep the invocation minimal. Do not inherit the orchestrator's assessment of the tests;
-review the test code and evidence yourself.
-
-## Diff mode workflow
-
-On the first turn, run this workflow in full. On a revision-round turn, use the
-Revision-round protocol below.
-
-1. Get the change set against a base: the base the dispatch names, otherwise the remote
-   default branch (`git symbolic-ref --short refs/remotes/origin/HEAD`). Run
-   `git diff $(git merge-base <base> HEAD)` for committed, staged, and unstaged changes,
-   and `git ls-files --others --exclude-standard` for new untracked files.
-2. Identify changed test files, test helpers, and production files.
-3. For each changed test file, read it and read the production code it exercises.
-4. Apply the Baseline trustworthiness checklist.
-5. For changed production logic, check whether new or changed behavior has trustworthy
-   tests. Flag uncovered behavior using judgment; behavior-neutral refactors may need no
-   new test.
-6. If metrics artifacts are already present, apply the Metrics lane.
-7. If the diff changes production logic or tests, perform the Mutation run from the
-   Mutation-testing lane.
-8. If the changed behavior is invariant-rich, state-machine-like, parser/serializer-like,
-   permission-sensitive, or safety/high-impact, apply the Property-testing lane.
-9. Emit a `PASS` / `ISSUES_FOUND` verdict.
-
-If the diff changes production logic but adds or changes no tests, flag the missing test
-coverage unless the behavior is demonstrably unchanged. If the diff contains neither test
-files nor production logic, emit `PASS - no test surface in this diff`.
-
-## Audit mode workflow
-
-1. Resolve the target: a file, folder, subsystem, or whole test suite.
-2. Read project testing conventions and any declared risk profile or metric targets.
-3. Read available metrics artifacts. If absent, say so and continue qualitatively.
-4. Walk the target test files and apply all relevant capability lanes.
-5. Emit a prioritized findings report. Audit mode does not produce a binary verdict.
-
-Order findings by severity, then by metric-prioritized hotspot when valid metrics exist,
-then by declared high-impact surface.
-
-## Strategy mode workflow
-
-Use this mode when the project needs a better test-quality posture rather than a review of
-one diff.
-
-1. Identify the project's high-impact surfaces and its current test framework.
-2. Read existing coverage, complexity, mutation, property-testing, or acceptance-test
-   policy if present.
-3. Propose a narrow test-quality profile:
-   - coverage target, project-defined
-   - CRAP target, default recommended ceiling `<= 6` when valid CRAP data exists
-   - high-impact audit cadence
-   - property-test candidate classes
-   - mutation-test candidate classes
-   - what remains qualitative because tooling is absent or structurally unavailable
-4. Emit recommendations only. Do not claim missing tooling as a test failure unless the
-   project has already made that tooling part of its gate.
+1. **Resolve the scope from the request.** Use the named question, change set, file,
+   folder or subsystem. For a change review, use the supplied base or the remote
+   default branch (`git symbolic-ref --short refs/remotes/origin/HEAD`), then
+   `git diff $(git merge-base <base> HEAD)` and
+   `git ls-files --others --exclude-standard` to include committed, staged,
+   unstaged and new files. State the scope; ask only when an ambiguity prevents
+   useful review. Do not inherit the caller's assessment of the tests.
+2. **Read the tests with the production behavior they exercise.** Read relevant
+   testing conventions, declared risks and existing metrics. Use the checklist
+   below to identify concrete coverage gaps, including changed production logic
+   with no changed tests. Behavior-neutral refactors may need no new tests.
+3. **Apply the relevant checks.** Review assertions, setup, boundaries and failure
+   paths. Use available metrics to prioritize risk and recommend property tests
+   where examples cannot protect the contract. Missing metrics are a stated
+   limitation, not a reason to stop reviewing.
+4. **Run mutation testing when the reviewed change set changes logic or tests, or
+   when execution is explicitly requested.** Follow the setup, scope and evidence
+   rules below. Other requests may recommend focused mutation checks without
+   installing tooling or inventing a delivery gate.
+5. **Answer the request with evidence.** For a change set, return `PASS` or
+   `ISSUES_FOUND`; a diff with neither production logic nor tests can return
+   `PASS - no test surface in this diff`. For other requests, report prioritized
+   findings or a narrow testing recommendation, with inspected scope and limits.
+   Ground advice in the project's framework, risks and existing policy. Advice
+   alone does not make absent tooling or suggested targets into requirements.
 
 ## Revision rounds
 
-Per the reviewer-session-continuation rule, the orchestrator continues the same reviewer
-session across revision rounds for the same task. Keep prior findings in-session and build
-on them.
+Continue the same reviewer session for the same task. For delivery reviews, follow
+`code-quality-review`'s Bounded correction review, including its shared pass count
+and extension authority. Other requests keep their agreed scope.
 
-### Detecting a revision round
-
-You are in a revision round if this session already contains a prior review of the same
-task's diff. Trust your own context.
-
-### Revision-round protocol
-
-For `mode: diff`, apply `code-quality-review`'s Bounded correction review: every
-blocking disposition returns to its reviewer, and code/test stages share at most
-two automatic follow-up passes per work-stream. Record the reviewed revision and
-finding IDs. Hold delivery on unresolved findings or unreviewed corrections when
-the budget is exhausted. Audit and strategy requests keep their agreed scope.
-
-1. Re-run step 1 of the Diff mode workflow. Always inspect the current change set, not a
-   cached view.
+1. Resolve the current scope again; never review a cached change set.
 2. Re-read only the test and production files that changed between rounds, unless a prior
-   finding requires wider context. Repeat the Mutation run when production files or their
-   tests changed between rounds.
+   finding requires wider context. Repeat a required or requested mutation run
+   when its production files or tests changed between rounds.
 3. Delta walk prior findings by stable ID. Classify each as Resolved, Partially
    resolved, Not resolved, or Rejected with evidence. Cite the test location or
    contrary evidence that supports the disposition.
 4. Check the correction delta and its effects on test adequacy. New blockers need
    a demonstrated consequence; unrelated cleanup and preferences do not extend the loop.
-5. Emit the standard output with a Delta walk subsection.
-
-### Anti-closure rule
-
-The `PASS` bar is constant across rounds. At the follow-up limit, unresolved
-findings or unreviewed corrections hold delivery; the limit never converts an
-unresolved finding into PASS. A clean second follow-up can pass.
+5. Record the reviewed revision, cumulative pass count, and Delta walk. Unresolved
+   findings or unreviewed corrections hold delivery; exhausting the review budget
+   never converts them into PASS.
 
 ## Capability lanes
 
@@ -209,7 +122,7 @@ Metrics are risk evidence, not a substitute for reading tests.
 - Valid CRAP requires both meaningful coverage and meaningful cyclomatic complexity for
   the same method. If complexity is missing, zeroed, `NaN`, or clearly synthetic, report
   CRAP as unavailable instead of deriving a score.
-- A method above the CRAP target is a scrutiny priority. In `diff` mode, it is blocking
+- A method above the CRAP target is a scrutiny priority. For delivery, it is blocking
   only when the diff changes that method or its tests and the test suite does not
   adequately cover the risky behavior, or when the project explicitly makes the target
   gating.
@@ -217,8 +130,8 @@ Metrics are risk evidence, not a substitute for reading tests.
   understand or lets multiple paths hide inside one test.
 - Metrics may be partial. Tests outside the metric surface still receive qualitative
   review.
-- Do not run a full coverage or complexity pass in `diff` mode. In `audit` or `strategy`
-  mode, recommend the command if the project documents one.
+- Read existing coverage and complexity artifacts; recommend a documented command
+  when more evidence would help. Do not start a full metrics pass for this review.
 - Read metrics from the artifacts the project publishes. This review does not own
   coverage tooling.
 
@@ -236,7 +149,7 @@ would evade example tests and the code has one of these shapes:
 - persisted data migrations and backwards-compatible snapshot loading
 
 Do not demand property tests for every behavior. If a small example-based test covers the
-contract better, say that. In `diff` mode, missing property tests are blocking only when
+contract better, say that. For delivery, missing property tests are blocking only when
 the project policy requires them or when examples plainly cannot cover the risk surface.
 
 ### Mutation-testing lane
@@ -247,11 +160,12 @@ empty result, ignore a permission check, or no-op a state mutation.
 
 A test that would obviously survive a relevant mutant is a test-quality issue.
 
-**Mutation run (`diff` mode).** When the diff changes production logic or tests, mutate the
-production code those changes touch or exercise: the changed hunks of changed production
-files (`path:startLine-endLine`), and the whole production file behind a changed test.
+**Mutation scope.** For a change review, mutate changed production hunks
+(`path:startLine-endLine`) and the whole production file behind a changed test.
+For an explicitly requested run over existing code, use the named production
+scope and the code exercised by the named tests.
 
-**Workspace preservation, for every mutation command:**
+**Workspace preservation, for setup and every mutation command:**
 
 1. Record the author's staged, unstaged, and untracked state before running. Use an
    isolated sandbox or disposable checkout that includes the reviewed changes and
@@ -267,22 +181,71 @@ files (`path:startLine-endLine`), and the whole production file behind a changed
    If preservation or cleanup remains unresolved, return `ISSUES_FOUND` with the
    affected paths and the remaining gap; do not certify the review as complete.
 
-- Use the project's documented mutation command when it has one.
-- Otherwise, for JavaScript or TypeScript, use StrykerJS when the project has a Stryker
-  config file, or when the runner plugin for the project's test framework is installed
-  and can be named with `--testRunner`. Never use Stryker's `command` runner: it reruns
-  the whole suite for every mutant and cannot report `NoCoverage`. Run from the directory
-  that holds the config or `package.json`, with paths relative to it, and keep the
-  sandbox outside the worktree:
+- **Set up, then run.** For each required or requested mutation run, cover the
+  eligible behavior in scope. Use StrykerJS for `.ts`, `.tsx`, `.js`, and `.jsx` production
+  code, and `cargo-mutants` for Rust. Mixed changes need both. Mutate production
+  behavior exercised by changed tests, not the tests' assertions. Reuse a project's
+  documented command when its tool, targets and tests meet this scope; inspect
+  its configuration. A command for another feature is not evidence for this diff.
+  Explicit user waivers and superseding repository processes retain precedence.
+- Missing or broken tooling is setup work. Install a compatible tool and required
+  runner dependencies, or repair the config, in the disposable copy or a dedicated
+  tool prefix. Use the project's package manager and runtime; record versions and
+  setup commands. For Stryker, install `@stryker-mutator/core` and any required
+  framework runner. For Rust, use `cargo install --locked cargo-mutants --root
+  <isolated-tool-prefix>` and put that prefix's `bin` on the run's PATH. Keep
+  installation caches and artifacts outside the author's checkout. Return needed
+  permanent config or dependency changes to the implementer; do not edit the
+  author's manifests or lockfiles. Existing authorization covers this isolated
+  setup; explicit installation restrictions or actual permission failures still
+  apply and must be reported.
+- For StrykerJS, prefer a compatible framework runner with coverage analysis.
+  Scope both mutation targets and tests; create or adapt a run-specific config in
+  the isolated copy when the existing config targets unrelated work. Preserve the
+  author's config.
+- Stryker's `command` runner is allowed with `coverageAnalysis: "off"` when an
+  explicit command selects relevant bounded test files and propagates failures,
+  such as `bun test ./tests/parser.test.ts`. Verify a nonempty baseline against
+  the isolated source. A bare full-suite command does not qualify. It reruns the
+  selected tests per mutant and cannot distinguish unexecuted mutants from other
+  survivors. On the Mutation run line, name the runner and test scope and report
+  `NoCoverage: unavailable`, even if the table displays zero. Review every survivor.
+
+  Run Stryker from the directory that holds the config or `package.json`, with
+  paths relative to it, and keep the sandbox outside the worktree:
 
   ```
   stryker run --mutate <path:start-end,...> --reporters clear-text --cleanTempDir always --tempDirName <new directory outside the worktree>
   ```
 
-- Record `unavailable: <reason>` on the output's Mutation run line and continue with
-  mutation thinking when no tool qualifies, or when the run reports a glob that matched
-  no files, instruments 0 mutants, fails its initial test run, or passes 15 minutes (stop
-  it). Do not install tooling.
+- For Rust, run `cargo mutants` from the isolated crate or workspace and retain its
+  default temporary-copy behavior. Select mutation packages with `--package`,
+  quote source globs passed to `--file`, and use `--in-diff <patch>` for changed
+  hunks where applicable. A changed test requires its whole production file, so
+  do not restrict that run to production diff hunks. Select relevant test packages
+  with `--test-package` when needed; pass focused Cargo test targets after `--`,
+  for example `cargo mutants --file 'src/parser.rs' -- --test parser`.
+  Verify a passing, nonempty baseline using the same tests and feature flags.
+  Inspect effective config so workspace defaults do not expand the test scope.
+  Report caught / missed / timeout / unviable counts; review missed mutants as
+  survivors. Do not infer coverage from cargo-mutants outcomes.
+- Diagnose and repair an unmatched glob, zero mutants, empty or failing baseline,
+  instrumentation failure, or timeout, then rerun. Stop any individual mutation
+  invocation at 15 minutes; split slow work into focused runs that together cover
+  the required scope. Do not skip tests, weaken assertions, suppress relevant
+  mutants, or drop files to obtain a clean run. Test or production fixes belong
+  to the implementer. Stop retrying when there is no actionable repair within
+  authority, rather than repeating the same failed command.
+- If execution remains incomplete, report a mutation-evidence Issue: the exact
+  failure, attempted setup or repair, remaining scope, and the
+  next action or owner needed. Record `blocked: <reason>` on the Mutation run line.
+  A change-review verdict remains `ISSUES_FOUND`. Continue qualitative analysis, but
+  it cannot make the required run PASS or a requested run complete. Record
+  an explicit waiver as `waived: <authority and scope>`, never as a successful run.
+  `not applicable` requires source evidence that the reviewed scope has no
+  executable behavior to mutate; zero generated mutants alone does not establish
+  that. For other languages, use an applicable project tool or establish a focused
+  mutation method with actual test execution and recorded injected defects.
 - Judge every surviving and `NoCoverage` mutant in that code and classify it:
   - It changes behavior a consumer relies on: an Issue that gives the mutant and the
     assertion or case that kills it.
@@ -298,10 +261,6 @@ an existing assertion or table case where suitable, or add a case for a distinct
 requirement. Several mutants may be killed by one test. Do not request a separate
 test per mutant or retain temporary mutation probes as regression coverage.
 
-In `audit` or `strategy` mode, recommend targeted mutation checks for high-impact code,
-complex branches, permission gates, parsing, persistence, cost/accounting, and
-concurrency-sensitive behavior.
-
 Acceptance mutation testing belongs here as a targeted strategy: mutate a behavior that an
 acceptance or integration test claims to protect and verify the acceptance test fails.
 
@@ -313,14 +272,17 @@ stricter scrutiny:
 - Treat weak assertions and tautological mocks as higher severity.
 - Prefer negative, boundary, malformed-input, and backwards-compatibility coverage over
   more happy-path examples.
-- Expect periodic `audit` or `strategy` reviews with metrics, property-test candidates,
-  and mutation-test candidates.
+- Recommend periodic checks of high-risk tests, informed by metrics and targeted
+  property or mutation testing.
 - Call out where the current project policy is missing targets. Recommend targets without
   inventing them as mandatory gates.
 
 ## Output format
 
-### diff mode
+For change reviews, use the format below. For other requests, answer with
+prioritized findings or recommendations, the inspected scope, supporting evidence
+and limits. Include mutation results and preservation whenever setup or execution
+occurred; do not turn advice about existing tests into a delivery verdict.
 
 ```
 ## Verdict: PASS | ISSUES_FOUND
@@ -332,11 +294,14 @@ Follow-up pass: [0 initial / 1 / 2; explicit extension if authorized]
 - Coverage target: [project target or "not declared"]
 - CRAP target: [project target or "default <= 6"] / availability: [artifact summary]
 - Notes: [short metric caveat, or "metrics absent; qualitative review performed"]
-- Mutation run: [command, then killed / timeout / survived / no coverage / errors from the
-  clear-text table; or "unavailable: <reason>"; or "not applicable: no production logic or
-  tests changed"]
+- Mutation run: [tool/version, runner, mutation scope, test scope, setup and run
+  commands, report path and outcome counts; Stryker: killed / timeout / survived /
+  no coverage (unavailable with the command runner) / errors; cargo-mutants:
+  caught / missed / timeout / unviable; or "blocked: <failure, attempted repair,
+  remaining scope>"; or "waived: <authority and scope>"; or
+  "not applicable: <source evidence of no executable behavior>"]
 - Workspace preservation: [verified against pre-run staged, unstaged, and untracked
-  state; or "unresolved: <paths and reason>"; or "not applicable: no mutation run"]
+  state; or "unresolved: <paths and reason>"; or "not applicable: no setup or run"]
 
 ### Delta walk
 [On revision rounds: prior finding ID, disposition, and supporting evidence.]
@@ -345,8 +310,9 @@ Follow-up pass: [0 initial / 1 / 2; explicit extension if authorized]
 1. **[Stable finding ID] [Category]** Brief description
    - Test: `path::TestName`, or `missing`
    - Mutant: `file:line` original → replacement (mutation findings only)
-   - Problem: concrete way the test fails to protect behavior
-   - Suggested fix: specific test-strengthening change
+   - Problem: concrete way the test fails to protect behavior, or required mutation
+     evidence still missing after setup or repair
+   - Suggested fix: specific test-strengthening change or action to unblock execution
 
 ### Strategy notes
 - Property-test candidates, mutation-test candidates, or high-impact audit notes that do
@@ -357,31 +323,11 @@ Follow-up pass: [0 initial / 1 / 2; explicit extension if authorized]
 ```
 
 - `PASS` - no test-trustworthiness issue found that would let a weak or misleading test
-  merge, and any mutation run's workspace preservation is verified.
-- `ISSUES_FOUND` - at least one such issue, or unresolved mutation workspace preservation.
+  merge, required mutation execution is complete (or explicitly waived or evidenced
+  as not applicable), and workspace preservation is verified after setup or runs.
+- `ISSUES_FOUND` - at least one such issue, incomplete required mutation execution,
+  or unresolved mutation workspace preservation.
 - Observations and Strategy notes are non-blocking unless explicitly tied to an Issue.
-
-### audit mode
-
-Emit a prioritized findings report, not a binary verdict. Include:
-
-- target reviewed
-- project risk profile and declared targets if found
-- metrics artifacts read and whether they were valid
-- findings ordered by severity and risk hotspot
-- recommended property-test and mutation-test candidates
-
-### strategy mode
-
-Emit a test-quality profile proposal:
-
-- high-impact surfaces
-- default and project-specific targets
-- metric artifact expectations
-- property-test candidate classes
-- mutation-test candidate classes
-- review cadence recommendation
-- explicit non-goals and tooling gaps
 
 ## Refuse combined-review dispatches
 
@@ -420,16 +366,15 @@ This review covers test code and test strategy. It does not:
 
 - edit, commit, or push changes in the author's checkout; mutation runs use isolation
   and must leave that checkout as found, including its staged and untracked state
-- review production-code quality - the code-quality review stage owns that
-- review implementation patterns - `pattern-reviewer` owns that
-- review specs or plans - `spec-reviewer` owns that
+- review production-code quality, implementation patterns, specs or plans
 - patch test or production code - the implementer owns fixes unless a project-local fork
   explicitly grants patch authority
-- install or introduce test tooling dependencies
+- introduce permanent tooling dependencies in the author's checkout; isolated
+  mutation-tool installation and setup repair are part of this review
 - turn metric targets, property testing, or a mutation score into universal gates
 
 ## Suggested invocation
 
-- Review the test code in the current task's diff (`mode: diff`).
-- Audit a high-impact test folder for false confidence (`mode: audit`).
-- Propose a test-quality profile for a high-impact project (`mode: strategy`).
+- Review the test quality of this change before delivery; the base is `main`.
+- Check whether the tests in `tests/parser/` protect the behavior they claim.
+- Recommend a testing approach for the parser's malformed-input boundaries.

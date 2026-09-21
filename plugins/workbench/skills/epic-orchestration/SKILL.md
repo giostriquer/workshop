@@ -242,7 +242,7 @@ folder (see Dispatching), containing:
 - **Completion review**: when the full agreed work set is verified and ready to
   ship through the repository's delivery process, use `code-quality-review` over
   the implementation range, plus
-  `test-quality-review` (`mode: diff`, given the range's base, routed as
+  `test-quality-review` (given the range's base, routed as
   `code-quality-review` describes) when the range changes production logic or tests.
   Validation handbacks, intermediate reports and requests for a ruling do not
   trigger review. Review completed correction batches only before resuming delivery.

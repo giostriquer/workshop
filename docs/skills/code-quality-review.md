@@ -68,6 +68,16 @@ and continue the cumulative count. Corrections and owner validation can continue
 under existing task authority. A reviewer replacement or PR handoff does not reset
 the count; an extension does not waive independent closure of blockers.
 
+**Does "exactly one code-quality review" exclude test-quality review?**
+
+No. One initial round includes code-quality review and a separate test-quality
+review when production logic or tests changed. The dispatching session records
+both required verdicts for the same change set and revision. If the test stage
+was missed, run it and retain a valid completed code review; completing the
+unchanged round does not consume a correction pass. The gate stays pending until
+every required stage returns. Explicit user waivers and repository overrides
+still apply.
+
 **Can I run it midway through, to catch problems early?**
 Not as this gate. Its initial pass fires when the implementation is believed complete, right before the PR-or-merge question. Firing mid-implementation is the failure mode that produced the 52-file workset.
 

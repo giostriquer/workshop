@@ -4,6 +4,12 @@
 
 **Release:** workbench 0.39.0
 
+The command-runner restriction, installation ban and unavailable-run disposition
+below are superseded by
+[focused mutation runs and tooling repair](focused-command-mutation-runner.md).
+The mode-based dispatch and separate workflows below are superseded by
+[test review follows the request](test-review-request-scope.md).
+
 ## Change and reason
 
 Five connected changes split test quality between the author and the reviewer.

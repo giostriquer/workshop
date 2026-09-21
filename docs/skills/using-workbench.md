@@ -62,12 +62,17 @@ do not read the map.
 - **Completion**: entered only when the work-stream's implementation is
   implemented and verified, and the session is about to ship through a PR or
   the repository's delivery process (not an edit, subtask, or progress checkpoint): "deemed ready" (verified with evidence), then one initial
-  adversarial review right before the PR-or-merge ask (`code-quality-review`,
+  adversarial review round right before the PR-or-merge ask (`code-quality-review`,
   plus `test-quality-review` in parallel when the diff changes production
   logic or tests), dispatched to reviewer contexts that did not write the code,
   then focused reviewer verification of blocking corrections (at most two
   automatic follow-up passes shared across review stages). Unresolved blockers or
   unreviewed corrections hold delivery; confirmed closure leads to the user gate.
+
+  One initial round includes both required review stages. A missing stage keeps
+  the gate pending; complete it for the same change set and revision without
+  repeating a valid completed stage or consuming a correction pass.
+
 - **Feedback**: `receiving-code-review` governs acting on what arrived,
   verified fixes re-enter implementation.
 

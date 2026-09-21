@@ -62,10 +62,11 @@ COMPLETION (full agreed work set implemented and verified; about to ship
 through a PR or the repository's delivery process, not an intermediate checkpoint)
   deemed ready = verified with evidence
   (verification-before-completion; empirical-proof offered if runnable) →
-  Initial adversarial review: REQUIRED, not offered (code-quality-review +
+  Initial adversarial review round: REQUIRED, not offered (code-quality-review +
   comment trim, per repo rules; plus test-quality-review in parallel when the
-  diff changes production logic or tests); dispatched to reviewer contexts that
-  did not write the code, never self-served; skipped only on an explicit user decline
+  diff changes production logic or tests). One round includes both required stages,
+  each dispatched to a context that did not write the code, never self-served.
+  A missing stage keeps the gate pending. Skipped only on an explicit user decline
   or a superseding repo process; fires here and nowhere else, right before the
   PR-or-merge ask, never mid-implementation →
   completed, verified correction batch returned for focused review before resuming delivery;
@@ -90,8 +91,8 @@ FEEDBACK
 | Implementing with a test harness | `test-driven-development` |
 | An unresolved failure requiring sustained investigation | `systematic-debugging` |
 | About to claim done / ready | `verification-before-completion` (offer `empirical-proof` if runnable) |
-| The initial adversarial pass: **required** once the work-stream is complete, right before PR-or-merge, **dispatched** to reviewers that did not write the code | `code-quality-review`, run by the `code-quality-reviewer` agent; plus `test-quality-review` (`mode: diff`), run by the `test-quality-reviewer` agent, when the diff changes production logic or tests |
-| Auditing an existing test suite or test strategy | `test-quality-review` (`mode: audit` or `mode: strategy`), run by the `test-quality-reviewer` agent |
+| The initial adversarial pass: **required** once the work-stream is complete, right before PR-or-merge, **dispatched** to reviewers that did not write the code | `code-quality-review`, run by the `code-quality-reviewer` agent; plus `test-quality-review`, run by the `test-quality-reviewer` agent, when the diff changes production logic or tests |
+| Checking existing tests or recommending a testing approach | `test-quality-review`, run by the `test-quality-reviewer` agent; give it the question and target |
 | Landing | outline gate → `file-pr` / merge / push; `fix-ci` |
 | Review feedback arrives | `receiving-code-review` |
 

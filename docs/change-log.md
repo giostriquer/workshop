@@ -8,6 +8,12 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.40.6: 2026-09-21
+
+- **Complete both review stages in one round.** An initial code-quality review also includes the separate test-quality review when logic or tests changed. A missing stage keeps the gate pending and completes the same unchanged submission without repeating a valid completed stage. ([decision](decisions/completion-review-stages.md))
+- **Repair tooling and run focused mutation checks.** Test review installs or repairs tooling in isolation, using StrykerJS for JavaScript and TypeScript, including JSX and TSX, and cargo-mutants for Rust. Focused command runners are supported with their coverage limitation disclosed; incomplete required execution holds the review instead of receiving a qualitative PASS. ([decision](decisions/focused-command-mutation-runner.md))
+- **Infer test-review scope from the request.** One workflow replaces the three modes, and callers provide a question or target without a mode parameter. Change reviews retain mutation requirements, existing-test inspections and advice keep their requested scope, and stale references to unrelated reviewers are removed. ([decision](decisions/test-review-request-scope.md))
+
 ## workbench 0.40.5: 2026-09-21
 
 - **Keep epic correction decisions with the owner.** The epic owner can return in-scope corrections to a lane and authorize a bounded review extension after the two automatic follow-ups. Correction dispatches, lane handbacks and owner validation do not consume review passes; cumulative counts, independent blocker closure and delivery holds remain. Standalone review extensions still require user authorization. ([decision](decisions/epic-correction-review-authority.md))
@@ -70,8 +76,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 
 - **Place the PR Architecture section with the change description.** The conditional `## Architecture` section now sits immediately after the template's `Summary` / `What` / `Why` style sections and before verification, testing, checklist, release-note or footer sections, instead of being appended after the whole template. Existing template Architecture sections are still reused in place. ([decision](decisions/file-pr-architecture-section.md))
 - **Act on the first failed check.** The `ci-watcher` returns at the first failed required check with the still-pending checks listed, and `fix-ci` starts the fix then instead of after the whole run finishes. Branch-only CI polls run jobs since `gh run watch` cannot fail fast. One snapshot right before pushing folds in further in-scope failures that appeared meanwhile. The two-attempt cap is now counted per failing cause. ([decision](decisions/fix-ci-act-on-first-failure.md))
-
-## workbench 0.37.2: 2026-09-10
-
-- **Use a local epic ledger for coordinator recovery.** Keep current actions, constraints and evidence pointers in one local entry point, with useful detailed records retained locally. Shared tracker updates carry concise tasks, decisions and outcomes; ledger retirement preserves outstanding work, holds and retained evidence. ([decision](decisions/epic-orchestration-artifact-lifecycle.md))
-- **Show relevant module interactions in PR bodies.** Add a Mermaid graph under `## Architecture` when it clarifies architectural calls or interactions, even if the repository template omits that section. Preserve the original template, reuse an existing Architecture section, and omit unnecessary diagrams. ([decision](decisions/file-pr-architecture-section.md))
