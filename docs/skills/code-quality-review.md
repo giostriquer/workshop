@@ -58,7 +58,15 @@ Yes, unless you decline it or your repo has its own mandated review stage that s
 No. Label them out-of-scope and record them as follow-up work. This rule exists because of a specific field failure: a one-ticket persistence change grew into a **52-file workset across six subsystems** through a loop of implement the ticket, find an adjacent defect, treat it as required, add tests and a fix, review the larger implementation, find more defects, repeat. Two weaknesses fed it: the review carried no scope classification distinguishing blocking findings from adjacent ones, and its timing was unpinned, so it ran as an implementation-discovery engine rather than a completion gate ([decision](../decisions/scope-guards-q15-q16.md)).
 
 **Should I re-run the review after fixing its findings?**
-Yes: return every blocking fix or evidence-based rejection to the same reviewer, with finding IDs, revision, correction diff, and focused test evidence. Follow-up covers those corrections and affected behavior. New blockers need demonstrated consequences; cosmetic preferences and unrelated cleanup do not extend the loop. Code and test stages share at most two automatic follow-up passes. If blockers or unreviewed corrections remain, hold delivery and request a concrete next-step decision. A reviewer replacement or PR handoff does not reset the count.
+Yes: return every blocking fix or evidence-based rejection to the same reviewer, with finding IDs, revision, correction diff, and focused test evidence. Follow-up covers those corrections and affected behavior. New blockers need demonstrated consequences; cosmetic preferences and unrelated cleanup do not extend the loop. Code and test stages share at most two automatic follow-up passes. Correction dispatches, lane handbacks and owner validation do not consume those passes.
+
+If blockers or unreviewed corrections remain at the limit, hold delivery and route
+the next review decision to the epic owner for a delegated lane, or the user for
+standalone implementation. That authority can approve a specific correction scope
+and number of extra submissions within its existing authority. Record the decision
+and continue the cumulative count. Corrections and owner validation can continue
+under existing task authority. A reviewer replacement or PR handoff does not reset
+the count; an extension does not waive independent closure of blockers.
 
 **Can I run it midway through, to catch problems early?**
 Not as this gate. Its initial pass fires when the implementation is believed complete, right before the PR-or-merge question. Firing mid-implementation is the failure mode that produced the 52-file workset.

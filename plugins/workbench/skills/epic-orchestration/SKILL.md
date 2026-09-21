@@ -325,6 +325,14 @@ follow the repo's title convention and place ticket links in its template fields
 
 Lanes stop and ask; you decide, with evidence:
 
+- **Lane corrections and review extensions**: return confirmed in-scope defects
+  to the owning lane through a correction dispatch. When its two automatic review
+  follow-ups are consumed, you own the bounded next-step decision under
+  `code-quality-review`: record the correction scope, additional submission count
+  and reason in the ledger and dispatch, then provide the operator's paste-ready
+  pointer. Preserve the cumulative count and delivery hold until independent
+  review closes the blockers. Escalate to the operator when the needed decision
+  exceeds your existing scope or authority; routine correction handoffs stay yours.
 - **Semantic merge conflicts**: which policy wins, and how to compose rather than choose.
 - **Scope boundaries**: before ticketing an audit finding, confirm the flow under audit
   actually reaches that code. Presence in a preserved artifact is the wrong test;

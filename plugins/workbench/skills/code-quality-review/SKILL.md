@@ -94,7 +94,8 @@ fixes and focused tests; the independent reviewer owns closure of blocking findi
    incorrect still blocks, even outside this focus.
 3. **Use at most two automatic follow-up passes per work-stream.** A pass is one
    submission of the revised change to the required reviewers; code and test
-   reviewers may run together and share the same pass count. A replacement for
+   reviewers may run together and share the same pass count. Correction dispatches,
+   lane handbacks and owner validation do not consume review passes. A replacement for
    a reviewer that never returned completes the same unchanged submission; a new
    correction submission consumes the next pass. Send each reviewer
    the findings and changed surfaces it owns; a production fix that changes test
@@ -102,11 +103,16 @@ fixes and focused tests; the independent reviewer owns closure of blocking findi
    confirmed and the current revision is covered. Advisory-only findings do not
    require another pass. If a correction broadly invalidates the initial review,
    review the full affected scope within the same budget; do not reset the count.
-4. **At the limit, hold delivery.** If blockers or unreviewed corrections remain
-   after the second follow-up, report them and recommend a smaller change, revised
-   approach, or adjudication of a specific disagreement. Ask for the needed
-   decision before continuing the loop. Exhaustion of the budget is never PASS,
-   and the author cannot dismiss a disputed blocker to bypass this gate.
+4. **At the limit, hold delivery and route the review decision.** If blockers or
+   unreviewed corrections remain after the second follow-up, report them and
+   recommend a bounded next step to the authority that owns the work: the epic
+   owner for a delegated lane, or the user for standalone implementation. That
+   authority may authorize a specific correction scope and number of additional
+   reviewer submissions within its existing authority. Record the decision and
+   retain the cumulative pass count. Corrections and owner validation continue
+   under existing task authority; the limit governs further review submissions.
+   Exhaustion of the budget is never PASS, and the author cannot dismiss a
+   disputed blocker to bypass this gate.
 5. **Record closure against the revision.** Each reviewer returns the reviewed
    revision, finding IDs with resolved / unresolved / rejected-with-evidence
    dispositions, supporting evidence, and PASS or ISSUES_FOUND. Later changes to

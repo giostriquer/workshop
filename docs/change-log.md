@@ -8,6 +8,10 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.40.5: 2026-09-21
+
+- **Keep epic correction decisions with the owner.** The epic owner can return in-scope corrections to a lane and authorize a bounded review extension after the two automatic follow-ups. Correction dispatches, lane handbacks and owner validation do not consume review passes; cumulative counts, independent blocker closure and delivery holds remain. Standalone review extensions still require user authorization. ([decision](decisions/epic-correction-review-authority.md))
+
 ## workbench 0.40.4: 2026-09-21
 
 - **Revalidate epic work before delegation.** The epic owner refreshes the integration branch locally and checks each ticket against its current implementation and tests before issuing a lane or workset. Dispatches name the validated revision and remaining scope; already-resolved work is excluded, and failed refreshes or unresolved claims hold the affected handoff. Active lane worktrees remain intact. ([decision](decisions/epic-dispatch-freshness.md))
@@ -71,7 +75,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 
 - **Use a local epic ledger for coordinator recovery.** Keep current actions, constraints and evidence pointers in one local entry point, with useful detailed records retained locally. Shared tracker updates carry concise tasks, decisions and outcomes; ledger retirement preserves outstanding work, holds and retained evidence. ([decision](decisions/epic-orchestration-artifact-lifecycle.md))
 - **Show relevant module interactions in PR bodies.** Add a Mermaid graph under `## Architecture` when it clarifies architectural calls or interactions, even if the repository template omits that section. Preserve the original template, reuse an existing Architecture section, and omit unnecessary diagrams. ([decision](decisions/file-pr-architecture-section.md))
-
-## workbench 0.37.1: 2026-09-10
-
-- **Bound epic coordination reading and retire temporary instructions.** Dispatches name complete required reading sets and load supporting material for specific questions or checks. One current coordinator view replaces changed entries in place; lane closeout preserves contracts, dependencies, holds and audit evidence while retiring obsolete instructions from default reading. Validation and blind closing-audit requirements remain unchanged. ([decision](decisions/epic-orchestration-artifact-lifecycle.md))
