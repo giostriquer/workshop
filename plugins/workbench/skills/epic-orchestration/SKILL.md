@@ -59,12 +59,41 @@ take both.
 ## The loop
 
 ```
-audit → tickets → lane prompt → [operator dispatches] → report
+audit → tickets → refresh integration branch + revalidate → lane prompt → [operator dispatches] → report
    → YOU validate independently → authorize | correct
    → PR → [operator merges] → close tickets with fixing-PR notes
    → repeat until the tree is clear → blind re-audit
    → HOLDS closes the epic; DEFECTS FOUND starts the next wave
 ```
+
+## Revalidate before delegation
+
+Before handing off any implementation lane or workset, including reopened work
+and scope-changing amendments, refresh the integration branch locally and check
+each ticket yourself. The lane's setup fetch does not replace this check.
+
+1. **Refresh the base.** Use `origin/dev` unless the repo or operator explicitly
+   names another integration target. In a clean checkout of that branch, pull
+   fast-forward-only (`git pull --ff-only origin dev` for `origin/dev`) and verify
+   that HEAD equals the refreshed remote-tracking SHA. Otherwise fetch the target
+   and inspect its exact SHA in an isolated local checkout, following the repo's
+   and `using-workbench`'s worktree-location rules. A local branch ahead of the
+   remote is not that snapshot. Use explicit worktree paths; preserve active
+   lanes and user changes. Never pull into a feature branch, reset, or stash work
+   to pass this gate. A missing target or failed refresh holds the dispatch;
+   cached refs are not evidence of the latest code.
+2. **Revalidate each ticket at that SHA.** Compare its defect or objective,
+   current source anchor, and behavioral completion bar with the implementation
+   and tests. Use focused repro evidence when needed to settle validity. Remove
+   already-fixed or obsolete work from the dispatch, narrow partially resolved
+   work, and hold unresolved claims. Record evidence and disposition; tracker
+   status alone proves neither validity nor completion. Update tickets only
+   under existing ownership and write authority.
+3. **Bind the handoff.** Record the integration ref, refreshed SHA, and each
+   ticket's remaining scope and evidence in the ledger and dispatch. One
+   simultaneous batch of independent lanes may share a refresh. Refresh and
+   revalidate again for a later batch, a postponed handoff, or an intervening
+   merge before handing over the prompt.
 
 ## Validation is the job, and it is where the failures live
 
@@ -179,7 +208,10 @@ handback in the shared report format across rounds.
 The prompt is one self-contained document, written to a file under the epic's scope
 folder (see Dispatching), containing:
 
-- **Setup**: fetch, worktree path, branch name carrying the ticket ids, install.
+- **Setup**: validated integration ref and SHA from the pre-dispatch check,
+  fetch, worktree path, branch name carrying the ticket ids, install. If the
+  integration head changed before lane setup, return the change to the owner for
+  revalidation before implementing; do not silently use a different base.
 - **Tickets and required reading**: give each ticket's defect, source anchor
   (`file:line`) and behavioral completion bar. Use this dispatch as the lane's
   brief. Name the smallest complete required reading set, including exact sections
@@ -222,6 +254,10 @@ folder (see Dispatching), containing:
   dispatch. Ranges, not file lists: you read the diff yourself.
 
 ## Dispatching
+
+Complete **Revalidate before delegation** before issuing an implementation
+dispatch file and its pointer block. A ready ticket list or a previous wave's
+refresh does not satisfy the gate.
 
 Everything you hand over is dispatchable the moment you write it. The operator is a wire,
 not a queue: they are pasting into worker sessions, and a prompt they have to hold until
@@ -390,7 +426,8 @@ delivery gates. “Ready for PR” is distinct from merged or epic-complete.
 
 Then evaluate the epic's current state and choose exactly one immediate next step:
 
-1. **More ready work:** name the next lanes and provide their dispatch blocks now.
+1. **More ready work:** refresh the integration branch and revalidate the next
+   workset, then name the ready lanes and provide their dispatch blocks now.
 2. **Delivery still pending:** name the owner and next action for review, CI, PR,
    or merge. Keep that gate visible instead of acknowledging the wave as finished.
 3. **Implementation complete, closing audit owed:** state the audit stopping point

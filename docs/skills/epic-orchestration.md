@@ -69,6 +69,26 @@ have to sit on gets pasted at the wrong moment or not at all. A prompt whose
 trigger has not fired is not written yet: the session holds it, watches for the
 trigger itself, and issues it in its own block when it fires.
 
+**Does it check that a ticket is still valid before assigning it?**
+
+Yes. Before delegating a lane or workset, including reopened work and scope
+amendments, the owner refreshes `origin/dev` locally and checks each ticket
+against that exact revision. An explicitly configured integration target takes
+precedence. It uses a fast-forward-only pull in a clean integration checkout, or
+fetches and inspects the remote commit in isolation, preserving active lanes and
+user changes.
+
+Already-fixed or obsolete work leaves the dispatch. Partially resolved work gets
+a narrower scope and current anchors. Failed refreshes and unresolved claims hold
+the affected dispatch. The ledger and dispatch record the integration ref, SHA,
+and evidence; an Open tracker status is not proof that the work remains.
+
+Independent lanes dispatched together may share one refresh. Later batches,
+postponed handoffs, and intervening merges require another refresh and validity
+check. If the base changes before lane setup, the lane returns to the owner for
+revalidation before implementing. The lane's own setup fetch does not discharge
+the owner's pre-dispatch check.
+
 **The session wrote a huge prompt inline instead of a file. Why?** An earlier
 revision defined the envelope as the lane's full prompt inline. Since workbench
 0.37.4 the prompt is a file and the block is a pointer, so the paste is a few
@@ -253,6 +273,8 @@ review mechanics; ticket links go in the actual repository template fields.
 ## It's working if
 
 - Every prompt you receive is dispatchable as-is, with nothing for you to fill in.
+- Every implementation dispatch names a freshly validated integration revision
+  and only work that still remains at that revision.
 - Reports come back validated against the repo, with the checks named and the
   unverified parts stated as unverified.
 - Lanes that touch the same file arrive in the same prompt.
