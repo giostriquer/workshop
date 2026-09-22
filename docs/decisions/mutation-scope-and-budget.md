@@ -142,3 +142,22 @@ prompt, where the recorded run had pulled two such tests in; both avoided
 prompt said still existed, where the recorded runs had deleted it at the end of
 the initial round as a run artifact. The preservation text now says the copy
 stays until the final round's verdict.
+
+## cargo-mutants runs in place inside the copy (2026-09-22)
+
+The Rust recipe kept cargo-mutants' default temporary copy so a reviewer
+could never mutate the author's tree in place. The disposable copy already
+guarantees that, and the temporary copy costs the build cache: cargo-mutants
+stopped copying `target/` in 24.9.0, and `--copy-target=true` (25.1.0, meant
+for tests that need build artifacts) copies it byte for byte once per job. Two
+reviews of a 4.6 GB Tauri crate on that setting saw 73- and 84-second
+baselines and about 9.5 seconds per mutant across four jobs, because cargo's
+fingerprints depend on the workspace path and the build script reran; the
+setting had entered one project's dispatch rule as "earlier reviewers needed
+it". A third review ran `--in-place` inside a filesystem clone of the worktree
+and saw 2- to 39-second baselines and about 6 seconds per mutant on one job.
+The recipe now runs `cargo mutants --in-place` inside the disposable copy as a
+single job with `--copy-target` and `--jobs` unset, and the copy text says to
+delete the `.git` pointer a clone of a linked worktree carries, since git
+commands in the copy would otherwise reach the author's index.
+

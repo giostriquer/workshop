@@ -233,8 +233,10 @@ named tests.
 - The disposable copy is the cheapest the host offers: a filesystem clone
   (`cp -c` on APFS) or `git worktree add --detach <revision>` with the author's
   dependency directory linked and build caches cloned, not a fresh dependency
-  install when the author's serves. One copy holds every run of the round,
-  mutation tools and hand-applied defects alike. Bound a run with the host's
+  install when the author's serves. A clone of a linked worktree carries a
+  `.git` file that points at the author's git directory: delete it from the
+  copy before any git command runs there. One copy holds every run of the
+  round, mutation tools and hand-applied defects alike. Bound a run with the host's
   tool timeout or a background job polled by an `until` loop: macOS has no
   `timeout` command, and some hosts reject a `sleep` chained before a command.
 - For StrykerJS, prefer a compatible framework runner with coverage analysis.
@@ -256,8 +258,11 @@ named tests.
   stryker run --mutate <path:start-end,...> --reporters clear-text --cleanTempDir always --tempDirName <new directory outside the worktree>
   ```
 
-- For Rust, run `cargo mutants` from the isolated crate or workspace and retain its
-  default temporary-copy behavior. Select mutation packages with `--package`,
+- For Rust, run `cargo mutants --in-place` from the crate or workspace inside the
+  disposable copy, as a single job, with `--copy-target` and `--jobs` unset and
+  `--output` outside the copy: the clone's build cache serves every mutant, where
+  the tool's own temporary copy rebuilds cold or copies `target/` once per job.
+  Select mutation packages with `--package`,
   quote source globs passed to `--file`, and use `--in-diff <patch>` for changed
   hunks where applicable, and `--re` on the function names behind a changed
   test instead of the whole file. Select relevant test packages

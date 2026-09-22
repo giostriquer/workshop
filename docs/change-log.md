@@ -8,6 +8,10 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.40.10: 2026-09-22
+
+- **Run cargo-mutants in place inside the copy.** `test-quality-review` runs `cargo mutants --in-place` in the disposable copy as a single job, with `--copy-target` and `--jobs` unset, so the clone's build cache serves every mutant instead of the tool's cold temporary copy; a clone of a linked worktree has its `.git` pointer deleted before any git command runs there. ([decision](decisions/mutation-scope-and-budget.md#cargo-mutants-runs-in-place-inside-the-copy-2026-09-22))
+
 ## workbench 0.40.9: 2026-09-22
 
 - **Mutate the subject of a changed test, not its whole file.** Behind a changed test file, `test-quality-review` scopes mutation to the production functions its added, changed or removed cases call, plus the lines a removed or relaxed assertion pinned. A survivor on a line the diff did not change is a pre-existing gap under Strategy notes, not an Issue. ([decision](decisions/mutation-scope-and-budget.md#the-scope-behind-a-changed-test-is-its-subject-a-follow-up-reruns-the-delta-2026-09-22))
@@ -76,8 +80,4 @@ deletes the oldest (git history keeps everything). Sections from before the
 ## workbench 0.38.0: 2026-09-15
 
 - **Keep epic lane handbacks consistent.** Add `epic-implementation` for implementation lanes dispatched through `epic-orchestration`, including amendments, recovery and delivery rounds. Both skills share one report reference, and each final handback contains a complete copyable report. Blocked, follow-up and guidance states include a `NEXT STEP` with the action or decision, owner and recommendation. ([decision](decisions/epic-implementation.md))
-
-## workbench 0.37.6: 2026-09-14
-
-- **Keep epic delegation provider agnostic.** Lane prompts name required skills, inputs, outcomes and evidence without restating their procedures or model routing. Optional local helpers inherit the owner's model; smaller models in the same provider/harness may handle mechanical work with cheaply verifiable results. The owner retains synthesis, rulings and authorization. ([decision](decisions/epic-orchestration-delegation.md))
 
