@@ -74,7 +74,13 @@ and extension authority. Other requests keep their agreed scope.
 1. Resolve the current scope again; never review a cached change set.
 2. Re-read only the test and production files that changed between rounds, unless a prior
    finding requires wider context. Repeat a required or requested mutation run
-   when its production files or tests changed between rounds.
+   when its production files or tests changed between rounds, over the round's
+   delta only: the production lines the correction changed and the lines behind
+   each finding it claims to close, with the initial round's tool. Bring the
+   initial round's disposable copy to the new revision (check out the reviewed
+   commit or apply the delta there) and keep its build caches; a follow-up round
+   creates no new copy and does not rerun the initial round's scope. A follow-up
+   round's mutation lane has 15 minutes of wall clock in total.
 3. Delta walk prior findings by stable ID. Classify each as Resolved, Partially
    resolved, Not resolved, or Rejected with evidence. Cite the test location or
    contrary evidence that supports the disposition.
@@ -161,8 +167,13 @@ empty result, ignore a permission check, or no-op a state mutation.
 A test that would obviously survive a relevant mutant is a test-quality issue.
 
 **Mutation scope.** For a change review, the scope is the production lines whose
-content changed (`path:startLine-endLine`) and the whole production file behind a
-changed test. Resolve it with rename detection (`git diff -M`) and, for content
+content changed (`path:startLine-endLine`) and, behind a changed test file, the
+production functions its added, changed or removed test cases call (Stryker
+`path:start-end` ranges over those functions; cargo-mutants `--re` on their
+names), not the whole file. When the diff removes or relaxes an assertion, the
+lines that assertion pinned join the scope. A survivor on a line the diff did
+not change is a pre-existing gap: record it under Strategy notes, not as an
+Issue. Resolve the scope with rename detection (`git diff -M`) and, for content
 that left one file and appeared in another, a byte comparison of the removed and
 added text. Content that moved without an edit has no changed lines: the tests
 that exercised it before the move still characterize it, and mutating it audits
@@ -178,11 +189,14 @@ named tests.
    isolated sandbox or disposable checkout that includes the reviewed changes and
    tests. Mutate production code there, preserving test expectations. A documented
    command that edits files in place also runs in isolation.
-2. After success, failure, or timeout, stop any remaining mutation processes and
-   compare the author checkout with that baseline. Remove only run-created
+2. After success, failure, or timeout, stop any remaining mutation processes,
+   including test processes the mutated tests spawned (search `ps` for the copy's
+   path), and compare the author checkout with that baseline. Remove only run-created
    artifacts whose ownership is established; preserve pre-existing work and useful
    evidence. Keep evidence in the scope's scratch location, verified to be outside
-   the commit set. Never reset the checkout or delete unrelated files for cleanup.
+   the commit set. The disposable copy itself stays for the task's later rounds
+   and goes after the final round's verdict. Never reset the checkout or delete
+   unrelated files for cleanup.
 3. Report the preservation result. Injected defects, mutant copies, temporary probe
    tests, and temporary run output do not belong in staged changes or deliverables.
    If preservation or cleanup remains unresolved, return `ISSUES_FOUND` with the
@@ -191,7 +205,11 @@ named tests.
 - **Set up, then run.** For each required or requested mutation run, cover the
   eligible behavior in scope. Use StrykerJS for `.ts`, `.tsx`, `.js`, and `.jsx` production
   code, and `cargo-mutants` for Rust. Mixed changes need both. Mutate production
-  behavior exercised by changed tests, not the tests' assertions. Reuse a project's
+  behavior exercised by changed tests, not the tests' assertions. The run's test
+  set is the focused tests that exercise the scope; a test whose own run takes
+  longer than 60 seconds stays out of it, and the lines only it exercises get
+  one hand-applied defect run once against that test, recorded on the Mutation
+  run line. Reuse a project's
   documented command when its tool, targets and tests meet this scope; inspect
   its configuration. A command for another feature is not evidence for this diff.
   Explicit user waivers and superseding repository processes retain precedence.
@@ -212,6 +230,13 @@ named tests.
   author's manifests or lockfiles. Existing authorization covers this isolated
   setup; explicit installation restrictions or actual permission failures still
   apply and must be reported.
+- The disposable copy is the cheapest the host offers: a filesystem clone
+  (`cp -c` on APFS) or `git worktree add --detach <revision>` with the author's
+  dependency directory linked and build caches cloned, not a fresh dependency
+  install when the author's serves. One copy holds every run of the round,
+  mutation tools and hand-applied defects alike. Bound a run with the host's
+  tool timeout or a background job polled by an `until` loop: macOS has no
+  `timeout` command, and some hosts reject a `sleep` chained before a command.
 - For StrykerJS, prefer a compatible framework runner with coverage analysis.
   Scope both mutation targets and tests; create or adapt a run-specific config in
   the isolated copy when the existing config targets unrelated work. Preserve the
@@ -234,8 +259,8 @@ named tests.
 - For Rust, run `cargo mutants` from the isolated crate or workspace and retain its
   default temporary-copy behavior. Select mutation packages with `--package`,
   quote source globs passed to `--file`, and use `--in-diff <patch>` for changed
-  hunks where applicable. A changed test requires its whole production file, so
-  do not restrict that run to production diff hunks. Select relevant test packages
+  hunks where applicable, and `--re` on the function names behind a changed
+  test instead of the whole file. Select relevant test packages
   with `--test-package` when needed; pass focused Cargo test targets after `--`,
   for example `cargo mutants --file 'src/parser.rs' -- --test parser`.
   Verify a passing, nonempty baseline using the same tests and feature flags.
@@ -268,10 +293,15 @@ named tests.
   `not applicable` requires source evidence that the content has no executable
   behavior, or that it is an input the named tool does not parse; zero generated
   mutants alone does not establish either. For other languages, use the
-  project's mutation tool when it has one; otherwise inject a small hand-picked
-  set of defects (at most five per changed file) into the changed lines in the
-  disposable copy, run the relevant tests, record each defect and outcome, and
-  restore the copy.
+  project's mutation tool when it has one; otherwise hand-applied defects on the
+  changed lines are the evidence.
+- Hand-applied defects, in any language, cover what the named tool leaves: a
+  line it makes no mutant for (a JSX attribute, an `as const` object, a tuple
+  comparison), a test excluded for its run time, or a follow-up round under a
+  project rule that waives the tool. They run one at a time in the one
+  disposable copy, restoring the file between defects and reusing its
+  incremental build, at most five per changed file per round, and never in
+  parallel copies of the tree. Record each defect and its outcome.
 - Judge every surviving and `NoCoverage` mutant in that code and classify it:
   - It changes behavior a consumer relies on: an Issue that gives the mutant and the
     assertion or case that kills it.
@@ -321,7 +351,8 @@ Follow-up pass: [0 initial / 1 / 2; explicit extension if authorized]
 - CRAP target: [project target or "default <= 6"] / availability: [artifact summary]
 - Notes: [short metric caveat, or "metrics absent; qualitative review performed"]
 - Mutation run: [tool/version, runner, mutation scope, test scope, setup and run
-  commands, report path and outcome counts; Stryker: killed / timeout / survived /
+  commands, lane time as minutes of the round's budget, report path and outcome
+  counts; Stryker: killed / timeout / survived /
   no coverage (unavailable with the command runner) / errors; cargo-mutants:
   caught / missed / timeout / unviable; or "partial: <covered scope> /
   <uncovered scope>" when the time budget ended first; or "blocked: <failure,

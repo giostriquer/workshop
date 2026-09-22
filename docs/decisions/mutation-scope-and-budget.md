@@ -77,3 +77,68 @@ Mutation run line with mutation thinking.
 
 Three reps per arm is regression evidence for this dispatch shape, not a
 reliability estimate across dispatches or models.
+
+## The scope behind a changed test is its subject; a follow-up reruns the delta (2026-09-22)
+
+Eleven reviewer dispatches on 2026-09-22, seven on the 0.40.6 wording and four
+on 0.40.8, showed that the budget and the moved-content rule stopped the
+runaway but left the same total time per dispatch. The remaining time had four
+sources. The clause "the whole production file behind a changed test" put 100
+to 600 mutants on files whose diff touched ten lines (174 mutants and 30
+minutes for one ten-line change; 494 mutants across three files for another),
+and the survivors it produced were pre-existing gaps reported as findings; one
+adopting project had already overridden the clause with a per-repository
+"in-diff only, never whole files" rule. Follow-up rounds rebuilt the disposable
+copy, reran the baseline and swept the initial scope again (40 of one
+dispatch's 65 active minutes were its two follow-ups; another rebuilt a
+worktree and reran Stryker for a four-line test-only delta). Hand-applied
+defects ran in parallel copies of a 5 GB build tree and crashed, or were written
+as a fresh harness per round. A multi-minute runtime test pulled into Stryker's
+test set hit the tool's limit and produced no result. Six runs also lost a turn
+each to `timeout`, which macOS does not have, and five to a `sleep` chained
+before a command, which the host rejects.
+
+The scope behind a changed test file is now the production functions its
+added, changed or removed cases call, selected by line range in Stryker or by
+name with cargo-mutants' `--re`, plus the lines a removed or relaxed assertion
+pinned; a survivor on a line the diff did not change is recorded under Strategy
+notes as a pre-existing gap. A follow-up round brings the initial round's copy
+to the new revision, keeps its build caches, reruns the initial tool over the
+round's delta and the lines behind each finding it claims to close, and has 15
+minutes. The disposable copy is the cheapest the host offers, one for the task's
+rounds, holding tool runs and hand-applied defects alike; hand-applied defects, in any
+language, cover what the tool leaves and run one at a time in that copy, at
+most five per changed file per round. A test slower than 60 seconds stays out
+of the tool's test set and the lines only it reaches get one hand-applied
+defect. The Mutation run line records the lane's elapsed time against the
+budget, and the setup text names the macOS `timeout` and chained-`sleep` traps.
+
+A plan-only micro-test compared the 0.40.8 wording with this one: three fresh
+reviewer contexts per arm on an initial-round dispatch (a ten-line Rust change
+inside an 812-line file with a changed test, a tuple comparison the tool cannot
+mutate, a 257-second integration test, macOS) and three per arm on a follow-up
+dispatch (a warm copy from the initial round, a three-line delta). The scored
+questions and their counts are below; three reps per arm is regression
+evidence for these dispatch shapes, not a reliability estimate.
+
+| Question | 0.40.8 wording | This wording |
+|---|---|---|
+| Initial round: the whole file behind the changed test in scope | 3 of 3 | 0 of 3 |
+| Initial round: a survivor on an unchanged line reported as an Issue | 3 of 3 | 0 of 3 (Strategy note) |
+| Initial round: the 257-second test kept out of the tool's test set | 3 of 3 | 3 of 3 |
+| Initial round: the lines only that test reaches covered by one hand-applied defect | 0 of 3 | 3 of 3 |
+| Initial round: lines the tool cannot mutate covered by hand-applied defects, sequential in one copy | 0 of 3 (reasoning only) | 3 of 3 |
+| Follow-up: the initial round's copy reused | 3 of 3 | 3 of 3 |
+| Follow-up: the whole file swept again | 3 of 3 | 0 of 3 |
+| Follow-up: a 15-minute lane stated | 0 of 3 (30 minutes) | 3 of 3 |
+| Either round: a `timeout` command planned | 0 of 3 | 0 of 3 |
+
+Every control plan cited the same sentences the transcripts followed: "the
+whole production file behind a changed test", and hand-picked defects "for
+other languages" only. Three questions did not separate the arms in a plan-only
+test. Both arms kept the slow test out, primed by the 257-second figure in the
+prompt, where the recorded run had pulled two such tests in; both avoided
+`timeout`, primed by "macOS" in the prompt; and both reused the copy, which the
+prompt said still existed, where the recorded runs had deleted it at the end of
+the initial round as a run artifact. The preservation text now says the copy
+stays until the final round's verdict.

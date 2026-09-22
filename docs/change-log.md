@@ -8,6 +8,12 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.40.9: 2026-09-22
+
+- **Mutate the subject of a changed test, not its whole file.** Behind a changed test file, `test-quality-review` scopes mutation to the production functions its added, changed or removed cases call, plus the lines a removed or relaxed assertion pinned. A survivor on a line the diff did not change is a pre-existing gap under Strategy notes, not an Issue. ([decision](decisions/mutation-scope-and-budget.md#the-scope-behind-a-changed-test-is-its-subject-a-follow-up-reruns-the-delta-2026-09-22))
+- **Follow-up rounds rerun the delta in the same copy.** A follow-up brings the initial round's disposable copy to the new revision, keeps its build caches, reruns the initial tool over the correction's lines and the lines behind each finding it claims to close, and has a 15-minute lane. ([decision](decisions/mutation-scope-and-budget.md#the-scope-behind-a-changed-test-is-its-subject-a-follow-up-reruns-the-delta-2026-09-22))
+- **One cheap copy, sequential hand defects, no slow tests under the tool.** The disposable copy is a filesystem clone or detached worktree with the author's dependencies linked; hand-applied defects in any language run one at a time in it, at most five per changed file per round; a test slower than 60 seconds stays out of the tool's test set and gets one hand-applied defect instead. The Mutation run line records the lane's elapsed time against its budget, and the setup text names the macOS `timeout` and chained-`sleep` traps. ([decision](decisions/mutation-scope-and-budget.md#the-scope-behind-a-changed-test-is-its-subject-a-follow-up-reruns-the-delta-2026-09-22))
+
 ## workbench 0.40.8: 2026-09-22
 
 - **Mutate only the lines that changed.** `test-quality-review` resolves the mutation scope with rename detection and a byte comparison of removed and added text. Content that moved without an edit has no changed lines; a move's scope is the wiring that now points at it. Mutating moved bodies audits the existing suite, which stays a separate request. ([decision](decisions/mutation-scope-and-budget.md))
@@ -75,6 +81,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 
 - **Keep epic delegation provider agnostic.** Lane prompts name required skills, inputs, outcomes and evidence without restating their procedures or model routing. Optional local helpers inherit the owner's model; smaller models in the same provider/harness may handle mechanical work with cheaply verifiable results. The owner retains synthesis, rulings and authorization. ([decision](decisions/epic-orchestration-delegation.md))
 
-## workbench 0.37.5: 2026-09-11
-
-- **One CI watcher per pinned head.** `fix-ci` and `ci-watcher` state that reading and watching are one dispatch, that a head whose watcher returned red gets no second watcher for its pending checks, that the pre-push snapshot is a single read the parent runs itself, and that a re-watch is a new head with a new watcher. The watcher's description no longer asks hosts to dispatch it proactively. ([decision](decisions/fix-ci-act-on-first-failure.md))

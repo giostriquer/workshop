@@ -21,9 +21,9 @@ Mostly you don't. When a diff changes production logic or tests, it fires in par
 
 **Checklist.** Trivially-passing setup, weak or absent assertions, tautological or saturated mocks, wrong-path testing, missing edge cases, brittle coupling, non-determinism, and test-code complexity. A finding names a concrete way the test fails to protect its claimed behavior.
 
-**Mutation scope** ([decision](../decisions/mutation-scope-and-budget.md)). When the change set changes logic or tests, the reviewer runs StrykerJS for `.ts`, `.tsx`, `.js`, and `.jsx` production code and `cargo-mutants` for Rust (both for mixed changes). The scope is the production lines whose content changed, plus the whole production file behind a changed test. Moved content is out of scope: content that moved without an edit has no changed lines, so a move's scope is the wiring the diff changed (the references, exports, and bindings that now point at it) plus any lines the move also edited.
+**Mutation scope** ([decision](../decisions/mutation-scope-and-budget.md)). When the change set changes logic or tests, the reviewer runs StrykerJS for `.ts`, `.tsx`, `.js`, and `.jsx` production code and `cargo-mutants` for Rust (both for mixed changes). The scope is the production lines whose content changed plus, behind a changed test file, the production functions its added, changed or removed cases call, not the whole file; when the diff removes or relaxes an assertion, the lines it pinned join the scope. A survivor on a line the diff did not change is a pre-existing gap and lands under Strategy notes, not as an Issue. Moved content is out of scope: content that moved without an edit has no changed lines, so a move's scope is the wiring the diff changed (the references, exports, and bindings that now point at it) plus any lines the move also edited.
 
-**Setup and budget.** Missing tools are installed and broken config repaired in isolation, never in the author's manifests, lockfiles, or config. The mutation lane has a 30-minute total budget per review round, setup included; a single invocation stops at 15 minutes. If the budget ends with in-scope lines uncovered, the reviewer records `partial: <covered scope> / <uncovered scope>`, names the uncovered scope in an Issue for the implementer to run, and opens no further copy.
+**Setup and budget.** Missing tools are installed and broken config repaired in isolation, never in the author's manifests, lockfiles, or config. The disposable copy is the cheapest the host offers (a filesystem clone or a detached worktree with the author's dependencies linked), and one copy holds every run of a round, tool runs and hand-applied defects alike. The mutation lane has a 30-minute total budget for the initial round, setup included, and 15 minutes for a follow-up round; a single invocation stops at 15 minutes. A test that takes longer than 60 seconds on its own stays out of the tool's test set, and the lines only it reaches get one hand-applied defect run against it. Hand-applied defects run one at a time in that copy, at most five per changed file per round. If the budget ends with in-scope lines uncovered, the reviewer records `partial: <covered scope> / <uncovered scope>`, names the uncovered scope in an Issue for the implementer to run, and opens no further copy.
 
 **Not applicable.** Files the named tool does not parse (a template, a fixture, a generated artifact) are recorded as `not applicable: <files and reason>` on the Mutation run line and covered by mutation thinking, not a hand-built harness. Zero mutants over parsed content is a config defect to repair, unless the lines hold nothing the tool mutates (an import, a member access). Blocked required execution means `ISSUES_FOUND`, and a waiver is recorded as `waived`, never as a successful run.
 
@@ -39,7 +39,13 @@ Mostly you don't. When a diff changes production logic or tests, it fires in par
 No. The tests that exercised it before the move still characterize it; only the changed wiring and edited lines are in scope.
 
 **My project has no mutation tool or config. Will the review set it up?**
-Yes, in isolation, with a focused config and a passing, nonempty baseline. For Rust, a changed test needs its whole production file mutated, not just diff hunks. Permanent changes go back to the implementer; an install restriction or unresolved environment failure is reported as a blocker.
+Yes, in isolation, with a focused config and a passing, nonempty baseline. Permanent changes go back to the implementer; an install restriction or unresolved environment failure is reported as a blocker.
+
+**A test file changed but the production file did not. What gets mutated?**
+The functions the changed test cases call, selected by name or line range, not the whole file. Survivors on lines the diff never touched are reported as pre-existing gaps under Strategy notes.
+
+**What does a follow-up round rerun?**
+Only the delta: the lines the correction changed and the lines behind each finding it claims to close, in the initial round's copy brought to the new revision, within 15 minutes.
 
 **Can it use Bun through Stryker's command runner?**
 Yes, with `coverageAnalysis: "off"` and an explicit command that selects the relevant test files and propagates failures; a bare full-suite command does not qualify. The report shows `NoCoverage: unavailable`.
@@ -53,12 +59,12 @@ No. The reviewer answers `## Verdict: REFUSED - out-of-scope dispatch`; each sta
 ## It's working if
 
 - Every PR that changed logic or tests had this review, run by a context that did not write the tests.
-- The report has a `Mutation run` line with scope and real counts, or an explicit `partial`, `blocked`, `waived`, or `not applicable` record.
+- The report has a `Mutation run` line with scope, real counts and the lane's elapsed time against its budget, or an explicit `partial`, `blocked`, `waived`, or `not applicable` record.
 - The `Workspace preservation` line is present, and the author's checkout is unchanged.
 - Issues name concrete mutants and the assertions that kill them.
 
-It's misapplied if the author's session ran it, missing tools produced a qualitative PASS, a pure move's bodies were mutated, a custom harness was built for unparsed files, or the lane ran past its budget.
+It's misapplied if the author's session ran it, missing tools produced a qualitative PASS, a pure move's bodies were mutated, a whole file was swept because one of its tests changed, a follow-up round rebuilt the copy and reran the initial scope, a custom harness was built for unparsed files, or the lane ran past its budget.
 
 ## Where it fits
 
-It runs at completion alongside `code-quality-review`. Corrections return as a verified batch; both stages share that skill's two automatic follow-up passes, and a mutation run repeats when its production files or tests changed between rounds.
+It runs at completion alongside `code-quality-review`. Corrections return as a verified batch; both stages share that skill's two automatic follow-up passes, and a mutation run repeats over the round's delta when its production files or tests changed between rounds.
