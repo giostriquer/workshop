@@ -8,6 +8,12 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.40.8: 2026-09-22
+
+- **Mutate only the lines that changed.** `test-quality-review` resolves the mutation scope with rename detection and a byte comparison of removed and added text. Content that moved without an edit has no changed lines; a move's scope is the wiring that now points at it. Mutating moved bodies audits the existing suite, which stays a separate request. ([decision](decisions/mutation-scope-and-budget.md))
+- **Give the mutation lane a total budget.** One review round gets 30 minutes of wall clock for mutation work, setup included, with the 15-minute limit per invocation kept, on one disposable copy. Scope left uncovered when the budget ends is recorded as `partial` on the Mutation run line and handed to the implementer as a named Issue instead of continuing on more copies or lanes. ([decision](decisions/mutation-scope-and-budget.md))
+- **Setup covers the named tools' own inputs.** In-scope files a tool does not parse are recorded as `not applicable` and reviewed with mutation thinking, not through a hand-built harness. Zero mutants over unparsed content is not a repair target, and the fallback for languages without a project tool is a small hand-picked injection set. ([decision](decisions/mutation-scope-and-budget.md))
+
 ## workbench 0.40.7: 2026-09-22
 
 - **Name the current fleet.** `model-reference`, `fix-ci`, `file-pr`, `using-workbench`, `test-quality-review` and the `ci-watcher` and `test-quality-reviewer` agents name opus-5.5, fable-5.1, gpt-6-sol, gpt-6-luna and grok-4.7 in place of their retired predecessors; the Codex watcher and reviewer assignments now read `gpt-6-sol`. ([decision](decisions/fleet-refresh-2026-09.md))
@@ -72,7 +78,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 ## workbench 0.37.5: 2026-09-11
 
 - **One CI watcher per pinned head.** `fix-ci` and `ci-watcher` state that reading and watching are one dispatch, that a head whose watcher returned red gets no second watcher for its pending checks, that the pre-push snapshot is a single read the parent runs itself, and that a re-watch is a new head with a new watcher. The watcher's description no longer asks hosts to dispatch it proactively. ([decision](decisions/fix-ci-act-on-first-failure.md))
-
-## workbench 0.37.4: 2026-09-11
-
-- **Epic dispatches are files; paste blocks are pointers.** `epic-orchestration` writes each lane prompt, audit brief and authorization to a file under the epic's scope folder and hands the operator a few-line block: role and authority, "Read and execute this dispatch:", the path, and any verbatim-required lines. Long inline briefs are gone. ([decision](decisions/epic-orchestration-dispatch-files.md))

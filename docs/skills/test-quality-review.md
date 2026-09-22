@@ -33,19 +33,25 @@ plain language; it resolves the scope from the request.
 **The mutation run.** When the reviewed change set changes logic or tests, the review
 uses StrykerJS for `.ts`, `.tsx`,
 `.js`, and `.jsx` production code, and `cargo-mutants` for Rust. Mixed changes
-need both. It mutates changed hunks and the whole production files behind changed
-tests, then runs focused tests against those defects. Applicable project commands
-can supply the setup. Explicit user or repository overrides retain precedence.
+need both. It mutates the production lines whose content changed and the whole
+production files behind changed tests, then runs focused tests against those
+defects. Content that moved without an edit has no changed lines, so a move's
+scope is the wiring that now points at it. Applicable project commands can supply
+the setup. Explicit user or repository overrides retain precedence.
 
 Missing tools trigger installation; broken configuration triggers repair. Both
 happen in a disposable review copy or dedicated tool prefix. The reviewer records
 tool versions, setup and run commands, scope, report paths and outcome counts.
-It diagnoses empty selections, baseline failures and timeouts, then reruns. Each
-mutation invocation has a 15-minute limit; slower scope can be split without
-dropping required coverage. If required execution remains blocked, the verdict is
-`ISSUES_FOUND` with attempted repairs, remaining scope and the next action. A
-qualitative review alone cannot clear that gap. Explicit waivers and source-backed
-`not applicable` findings are recorded separately from successful execution.
+It diagnoses empty selections, baseline failures and timeouts, then reruns. The
+lane has a 30-minute total budget per review round, setup included, with a
+15-minute limit per invocation; scope still uncovered when the budget ends is
+recorded as `partial` and handed to the implementer as a named Issue. Content the
+named tool does not parse is recorded as `not applicable` and covered by mutation
+thinking, not by a hand-built harness. If required execution remains blocked, the
+verdict is `ISSUES_FOUND` with attempted repairs, remaining scope and the next
+action. A qualitative review alone cannot clear that gap. Explicit waivers and
+source-backed `not applicable` findings are recorded separately from successful
+execution.
 
 An explicitly requested mutation run over existing code follows the same setup,
 isolation and evidence rules. A request for findings or testing advice does not
@@ -82,6 +88,15 @@ the parser tests catch malformed-input regressions." There is no mode to choose.
 
 **It found no survivors the reviewer couldn't have spotted by reading. Why run the tool?**
 On a strong model, reading the code often finds the same gaps. The tool turns each finding into checkable evidence, separates equivalent mutants from real gaps, and catches suppression comments. Its advantage grows on large diffs and on weaker reviewer models ([decision](../decisions/test-shape-and-mutation-review.md)).
+
+**The diff is a pure move. Does the review mutate the moved code?**
+No. Lines that moved byte-for-byte have no changed content, and the tests that
+exercised them before the move still characterize them; mutating them would audit
+those tests, which is a separate request. The scope is the wiring the diff
+changed: the imports, exports and bindings that now point at the moved content,
+plus any lines the move also edited. Moved content the tool cannot parse, such as
+a text template, is recorded as `not applicable` rather than mutated through a
+custom harness.
 
 **My project has no mutation tool or config. Will the review set it up?**
 Yes. It installs a compatible StrykerJS core and required runner dependencies for
@@ -139,6 +154,8 @@ Signs of misapplication:
   as coverage evidence; a run reported 0 mutants and was read as clean.
 - Missing or broken tools produced a qualitative PASS without setup or repair.
 - A mixed Rust and TypeScript change ran only one language's mutation tool.
+- A pure move's moved bodies were mutated, a custom harness was built for files
+  the tool does not parse, or the lane ran past its budget by opening more copies.
 - A PR landed with a new `Stryker disable` comment nobody questioned.
 - A mutation score was used as the pass/fail line.
 

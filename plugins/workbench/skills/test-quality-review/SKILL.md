@@ -160,10 +160,17 @@ empty result, ignore a permission check, or no-op a state mutation.
 
 A test that would obviously survive a relevant mutant is a test-quality issue.
 
-**Mutation scope.** For a change review, mutate changed production hunks
-(`path:startLine-endLine`) and the whole production file behind a changed test.
-For an explicitly requested run over existing code, use the named production
-scope and the code exercised by the named tests.
+**Mutation scope.** For a change review, the scope is the production lines whose
+content changed (`path:startLine-endLine`) and the whole production file behind a
+changed test. Resolve it with rename detection (`git diff -M`) and, for content
+that left one file and appeared in another, a byte comparison of the removed and
+added text. Content that moved without an edit has no changed lines: the tests
+that exercised it before the move still characterize it, and mutating it audits
+those tests rather than this change. For a move, the scope is the wiring the diff
+changed: the references, exports, and bindings that now point at the moved
+content, plus any lines the move also edited. For an explicitly requested run
+over existing code, use the named production scope and the code exercised by the
+named tests.
 
 **Workspace preservation, for setup and every mutation command:**
 
@@ -188,6 +195,12 @@ scope and the code exercised by the named tests.
   documented command when its tool, targets and tests meet this scope; inspect
   its configuration. A command for another feature is not evidence for this diff.
   Explicit user waivers and superseding repository processes retain precedence.
+- Setup is installing and configuring the named tools for the inputs they parse.
+  In-scope content the named tool does not mutate (a template, a fixture, a
+  generated artifact, a file of constant exports) gets `not applicable: <files and
+  reason>` on the Mutation run line and mutation thinking in the review; its
+  evidence is that record, not a hand-built harness (a custom instrumenter
+  script, a mutant loop, or probe lanes).
 - Missing or broken tooling is setup work. Install a compatible tool and required
   runner dependencies, or repair the config, in the disposable copy or a dedicated
   tool prefix. Use the project's package manager and runtime; record versions and
@@ -229,23 +242,36 @@ scope and the code exercised by the named tests.
   Inspect effective config so workspace defaults do not expand the test scope.
   Report caught / missed / timeout / unviable counts; review missed mutants as
   survivors. Do not infer coverage from cargo-mutants outcomes.
-- Diagnose and repair an unmatched glob, zero mutants, empty or failing baseline,
-  instrumentation failure, or timeout, then rerun. Stop any individual mutation
-  invocation at 15 minutes; split slow work into focused runs that together cover
-  the required scope. Do not skip tests, weaken assertions, suppress relevant
-  mutants, or drop files to obtain a clean run. Test or production fixes belong
-  to the implementer. Stop retrying when there is no actionable repair within
+- Diagnose and repair an unmatched glob, an empty or failing baseline, an
+  instrumentation failure, or a timeout, then rerun. Zero mutants over content
+  the tool parses is a configuration defect to repair, unless the lines hold no
+  expression the tool mutates (an import, a member access): record that count
+  and reason on the Mutation run line and cover the lines with mutation
+  thinking. Zero mutants over content it does not parse is `not applicable` for
+  that content. Do not skip tests, weaken assertions, suppress relevant mutants,
+  or drop files to obtain a clean run. Test or production fixes belong to the
+  implementer. Stop retrying when there is no actionable repair within
   authority, rather than repeating the same failed command.
+- **Time budget.** The mutation lane of one review round has 30 minutes of wall
+  clock in total, setup included, and any single invocation stops at 15 minutes.
+  Split slow scope into focused runs inside that budget, on one disposable copy.
+  When the budget ends with in-scope lines uncovered, stop: judge the survivors
+  you have, record `partial: <covered scope> / <uncovered scope>` on the Mutation
+  run line, and name the uncovered scope in a mutation-evidence Issue for the
+  implementer to run. Do not open another copy or lane to continue.
 - If execution remains incomplete, report a mutation-evidence Issue: the exact
   failure, attempted setup or repair, remaining scope, and the
   next action or owner needed. Record `blocked: <reason>` on the Mutation run line.
   A change-review verdict remains `ISSUES_FOUND`. Continue qualitative analysis, but
   it cannot make the required run PASS or a requested run complete. Record
   an explicit waiver as `waived: <authority and scope>`, never as a successful run.
-  `not applicable` requires source evidence that the reviewed scope has no
-  executable behavior to mutate; zero generated mutants alone does not establish
-  that. For other languages, use an applicable project tool or establish a focused
-  mutation method with actual test execution and recorded injected defects.
+  `not applicable` requires source evidence that the content has no executable
+  behavior, or that it is an input the named tool does not parse; zero generated
+  mutants alone does not establish either. For other languages, use the
+  project's mutation tool when it has one; otherwise inject a small hand-picked
+  set of defects (at most five per changed file) into the changed lines in the
+  disposable copy, run the relevant tests, record each defect and outcome, and
+  restore the copy.
 - Judge every surviving and `NoCoverage` mutant in that code and classify it:
   - It changes behavior a consumer relies on: an Issue that gives the mutant and the
     assertion or case that kills it.
@@ -297,9 +323,11 @@ Follow-up pass: [0 initial / 1 / 2; explicit extension if authorized]
 - Mutation run: [tool/version, runner, mutation scope, test scope, setup and run
   commands, report path and outcome counts; Stryker: killed / timeout / survived /
   no coverage (unavailable with the command runner) / errors; cargo-mutants:
-  caught / missed / timeout / unviable; or "blocked: <failure, attempted repair,
-  remaining scope>"; or "waived: <authority and scope>"; or
-  "not applicable: <source evidence of no executable behavior>"]
+  caught / missed / timeout / unviable; or "partial: <covered scope> /
+  <uncovered scope>" when the time budget ended first; or "blocked: <failure,
+  attempted repair, remaining scope>"; or "waived: <authority and scope>"; or
+  "not applicable: <source evidence of no executable behavior, or files the
+  tool does not parse>"]
 - Workspace preservation: [verified against pre-run staged, unstaged, and untracked
   state; or "unresolved: <paths and reason>"; or "not applicable: no setup or run"]
 
