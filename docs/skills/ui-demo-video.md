@@ -2,153 +2,115 @@
 
 ## What it does
 
-Drives your running app with Playwright through a short scripted walkthrough and
-records it: producing a webm and (with `ffmpeg`) an mp4 you can drag into a pull
-request. That is the half people expect.
-
-The half people miss: it emits **one PNG frame per scene**, and those frames are
-the point *for the model*. A model cannot watch a video mid-session, but it can
-`Read` a PNG, see the actual rendered UI, and iterate. The skill states it
-directly: "**The frames are the point for the model**: Read them after
-recording to visually verify the UI state, and iterate (fix code or scenario,
-re-record) until the frames show the expected result. The video is the
-human-shareable artifact." Use proportionate visual checks after UI work; record when requested, required by a standing gate, or included in authorized verification.
+Drives your running app with Playwright through a short scripted walkthrough
+and records a video for sharing. It also emits **one PNG frame per scene**, and
+those frames are the point for the model: it reads them, checks the rendered UI,
+and fixes and re-records until they show the expected result.
 
 It is **not a test suite**. Scenes demonstrate and verify visually; they do not
-assert. Assertions belong to your project's test suite. Use existing tools; install missing dependencies only within authorized setup, otherwise report the prerequisite and install hint
-([decision](../decisions/ui-demo-video.md)).
+assert.
 
 ## When to reach for it
 
-It activates "after UI work that can be verified visually: a new element, layout
-change, or user flow in a web app whose dev server a browser can drive." Not for
-API-only or non-visual changes.
-
-Reach for it when you've just changed something you'd otherwise verify by
-squinting at code: a new dialog, a layout that could break at the wrong
-breakpoint, a multi-step flow whose middle state you never actually looked at.
-Offer a recording when useful; do not turn every visual check into an unrequested recording.
+After UI work a browser can drive and show: a new element, a layout change, a
+user flow. Not for API-only or non-visual changes. Record when asked, when the
+repo requires it, or when it helps an authorized UI task; a small visual check
+needs no recording toolchain ([decision](../decisions/ui-demo-video.md)).
 
 | The problem | The skill |
 | --- | --- |
-| A visual change you want to *see* rendered, and optionally share | `ui-demo-video` |
-| A finished change with a drivable but non-visual surface: an endpoint, an MCP tool, a generator's output | `empirical-proof` (workbench) |
-| A broad release or branch surface that splits into slices | `qa-sweep` (workbench) |
-| Behavior that must *fail* when it regresses | Your project's test suite. This skill does not assert. |
-| About to claim the work is done | `verification-before-completion` (workbench): the always-on gate this feeds |
+| A visual change you want to *see* rendered | `ui-demo-video` |
+| A drivable non-visual surface (endpoint, MCP tool) | `empirical-proof` (workbench) |
+| A broad release or branch surface | `qa-sweep` (workbench) |
+| Behavior that must *fail* when it regresses | Your test suite |
+| About to claim the work is done | `verification-before-completion` (workbench) |
 
 ## Prerequisites
 
-Use the project's existing browser and recording tools. Missing Playwright/browser dependencies are a setup gap; install only under authorized setup, using the repository package manager. The harness, named scenes, screenshots, manifest, frame inspection, and cleanup still apply.
+- The app runs locally through its documented run path.
+- Playwright with Chromium, installed in the project. If it's missing, the skill
+  uses an available browser tool and reports the gap; it installs only when
+  setup is in the authorized scope, never editing package or lock files for a demo.
+- `ffmpeg` on PATH for the mp4 (optional).
 
 ## The run
 
-1. **App running first.** Start the dev server via the documented run path, in
-   the background, and health-check it before anything else. If booting can
-   reseed or migrate a local dev database, back that file up first. Seed the data
-   your scenes need through the app's **real surface**: a fixture or seed
-   endpoint, the REST/RPC API, a documented CLI seeder: "never direct DB writes:
-   seeded state must pass the same validation real usage does."
-2. **Copy the harness, then write a scenario beside it.** `scripts/harness.mjs`
-   from the skill's directory gets copied into the project's `tmp/` folder, and
-   `tmp/<scenario>.mjs` sits next to it. Scenes should be short and named for
-   what they prove. `highlight()` draws the eye to the element under test. Every
-   route the scenario visits is listed in `prewarm` "so dev-compile skeletons stay
-   out of frame."
+1. **App running first.** Start and health-check the dev server, backing up a
+   local dev database that booting could reseed. Seed data through the app's
+   **real surface**, never direct DB writes.
+2. **Copy the harness, then write a scenario.** Copy `scripts/harness.mjs` into
+   the project's `tmp/` and write `tmp/<scenario>.mjs` beside it. Name short
+   scenes for what they prove; `highlight()` marks the element under test;
+   `prewarm` lists every visited route.
 3. **Run it:** `node tmp/<scenario>.mjs`.
-4. **Feedback loop (mandatory).** Read every `scene-*.png` and check the UI is
-   actually correct: "the element present, states right, no dev-overlay badges
-   or half-loaded skeletons. Wrong → fix and re-record. Only a frame-verified
-   recording counts as evidence."
-5. **Cleanup.** Delete the demo entities you seeded, through the same real
-   surface you created them with; stop any dev server you started; confirm the
-   port is closed.
-6. **Delivery.** Report local artifact paths. Upload only under explicit publication authority, using an available host/browser capability; otherwise give the user the file for attachment.
+4. **Feedback loop (mandatory).** Read every `scene-*.png`: element present,
+   states right, no hidden runtime errors or half-loaded skeletons. Wrong → fix
+   in scope and re-record. "Only a frame-verified recording counts as
+   evidence."
+5. **Cleanup.** Delete seeded entities through the same surface, stop the dev
+   server you started, and confirm the port is closed.
+6. **Delivery.** Hand over the local recording and frames.
 
 ### What lands in `tmp/<name>/`
 
 | File | What it's for |
 | --- | --- |
-| `scene-NN-<slug>.png` | One per scene. The model reads these. |
+| `scene-NN-<slug>.png` | One per scene; the model reads these. |
 | `<name>.webm` | Always produced. |
-| `<name>.mp4` | Only with `ffmpeg` on PATH. This is the PR attachment. |
-| `manifest.json` | Scene list, timings, file paths, and an `ok` flag. |
-| `scene-FAIL.png` | Written when the scenario throws: the page state at failure. |
+| `<name>.mp4` | With `ffmpeg` only; the PR attachment. |
+| `manifest.json` | Scenes, timings, files, and an `ok` flag. |
+| `scene-FAIL.png` | Page state when the scenario throws. |
 
 ### Knobs on `recordUiDemo`
 
-| Option | Default | Notes |
-| --- | --- | --- |
-| `name`, `baseUrl` | Required | `name` becomes the output folder and file basename. |
-| `prewarm` | `[]` | Routes visited off-camera first, so nothing compiles on film. |
-| `viewport` | 1280×720 | Override when the surface needs it. |
-| `outDir` | `"tmp"` | Parent of the run folder. |
-| `hideNextDevOverlay` | `false` | Explicit presentation-only suppression of `nextjs-portal`; preserve unfiltered diagnostic evidence first. |
-| `hideSelectors` | `[]` | Explicit presentation-only suppression; inspect errors and preserve unsuppressed evidence first. |
-| `defaultTimeoutMs` | 60000 | Per-action Playwright timeout. |
-| `scenePauseMs` | 1200 | Settle time before each frame is captured. |
+`name` and `baseUrl` are required; `name` becomes the folder and file
+basename. Optional: `prewarm` (routes visited off-camera first), `viewport`
+(1280×720), `outDir` (`"tmp"`), `defaultTimeoutMs` (60000), `scenePauseMs`
+(1200, settle time before each frame), and the presentation-only
+`hideNextDevOverlay` (`false`) and `hideSelectors` (`[]`).
 
 ## Common questions
 
-**Why copy the harness into the project instead of importing it from the
-plugin?** Node resolves `import "@playwright/test"` relative to the importing
-file, "so a harness left in the plugin cache can never find the project's
-Playwright install." The copy is not laziness; it is the only arrangement that
-resolves.
+**Why copy the harness into the project?** Node resolves Playwright relative to
+the importing file, so the harness must sit inside the project.
 
-**The scenario failed. Is the output garbage?** No. "A scenario failure still
-saves the video and a `scene-FAIL.png`; those are debugging evidence, not
-garbage." The frame shows you the page state at the moment it broke.
+**The scenario failed. Is the output garbage?** No. The video and
+`scene-FAIL.png` are still saved as debugging evidence.
 
-**The frames show a dev badge or a half-loaded skeleton.** Inspect error overlays and preserve unfiltered evidence. Prewarm the scenario routes so they have compiled before recording. Hide an overlay only for an explicitly requested presentation, after investigating any error; the default preserves it.
+**The frames show a dev overlay or a half-loaded skeleton.** Investigate the
+overlay; it may be a real runtime error. Add routes to `prewarm` so they compile
+first. Hide overlays only for a presentation recording, after keeping
+unfiltered frames.
 
-**Can I just insert rows into the dev database to set up the scene?** No. Seed
-through the app's real surface, so "seeded state must pass the same validation
-real usage does." Direct DB writes can produce a demo of a state your app could
-never actually reach.
+**Can I insert rows straight into the dev database?** No. Seeded state must pass
+the same validation real usage does.
 
-**The recording doesn't show my change.** "The app under test must be the working
-tree you changed: the dev server compiles from source, so a stale server proves
-old code; restart when in doubt."
+**The recording doesn't show my change.** A stale server proves old code;
+restart when in doubt.
 
-**Can it attach the mp4 to the PR for me?** Only when upload is explicitly authorized and an available host/browser capability supports it. Otherwise deliver the local artifact and attachment instructions.
+**Can it attach the mp4 to the PR?** Only when existing authorization covers
+that write. Otherwise you get the local file to attach.
 
-**No `ffmpeg` on this machine.** The webm is still produced, and the frames,
-which are the part that matters for verification, are unaffected.
+**Should seeded data look like test data?** No. Name entities as a user would
+("Sprint review"), not "TEST-1234 probe".
 
-**Should the seeded data look like test data?** No: "Realistic demo data reads
-better than test slugs: name seeded entities like a user would ('Sprint
-review'), not 'TEST-1234 probe'."
-
-**Does it work outside Next.js?** Yes. The one framework-specific behavior, the
-Next dev-overlay hack, was generalized to a `hideSelectors` option; the Next
-default is off; explicit suppression is a no-op elsewhere. The harness was validated end-to-end
-against a plain static page with no framework and no project fixtures.
+**Does it work outside Next.js?** Yes. `hideNextDevOverlay` is the only
+Next-specific option, and it is off by default.
 
 ## It's working if
 
-- Every `scene-*.png` got read back, and each shows the element you expected in
-  the state you expected: no dev badges, no skeletons.
-- `manifest.json` lists the scenes you wrote, with `ok: true`.
-- A scene that looked wrong triggered a fix and a re-record, not a shrug. That
-  loop *is* the skill.
-- The dev server you started is stopped and the port is closed; the entities you
-  seeded are gone, removed through the same surface that created them.
+- Every `scene-*.png` was read and shows the expected state, with no runtime
+  errors or skeletons.
+- `manifest.json` lists your scenes with `ok: true`.
+- A wrong-looking scene triggered a fix and a re-record.
+- The dev server you started is stopped, the port is closed, and seeded
+  entities are gone.
 
-**Not working if** you hand over a video nobody looked at frame by frame. "Only a
-frame-verified recording counts as evidence": an unread recording is an artifact,
-not proof. Equally: if you find yourself adding assertions to scenes so a failure
-fails the build, you've drifted into test-suite territory the skill deliberately
-doesn't occupy.
+**Not working if** you hand over a video nobody checked frame by frame, or you
+start adding assertions to scenes so failures break the build.
 
 ## Where it fits
 
-`ui-demo-video` ships in **`toolkit`**, the optional plugin, rather than the `workbench`
-process core. Toolkit holds artifact-making utilities you install alongside
-workbench when you want them; nothing in the workbench flow requires this one. It
-was the first toolkit skill to ship a supporting script, and `scripts/harness.mjs`
-travels with it. Where it lands in practice is just before a done-claim: the
-frames are the visual evidence that `verification-before-completion` asks for,
-and the mp4 is what the PR reviewer sees.
-
-Keep development error overlays visible by default. Explicit presentation-only suppression does not replace unfiltered diagnostic evidence. Keep the recording local unless upload/publication is explicitly authorized. Use proportionate visual feedback; recording is requested, required, or useful within already-authorized UI verification.
+`ui-demo-video` ships in **`toolkit`**, the optional plugin; nothing in the
+`workbench` flow requires it. It lands before a done-claim: the frames are
+visual evidence, and the mp4 is what the reviewer sees.

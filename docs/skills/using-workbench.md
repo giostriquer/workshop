@@ -2,217 +2,131 @@
 
 ## What it does
 
-`using-workbench` is the orientation map for the workbench system. It tells a
-session how work enters, who owns each moment, which skill to invoke when one
-applies, and where the session's working material goes. It also carries the
-session-conduct conventions that belong to no single skill, including where flow
-artifacts live, where worktrees go, and when a growing change should stop and
-ask to be rescoped.
+`using-workbench` is the orientation map for the workbench system: how work
+enters, who owns each moment, which skill to invoke, and where working material
+and worktrees go. It runs no loop and reaches no verdict: "**Orientation, not
+compulsion, except for two standing gates.**"
 
-It is a reference, not a process. It runs no loop, produces no artifact, and
-reaches no verdict. Its own Boundaries section states the stance:
-"**Orientation, not compulsion, with two standing exceptions.** When needed it maps; it never forces, and it never responds to 'how does the flow
-work?' by starting the flow." Ask it how the flow works and you get an answer,
-not an audit.
+Those two gates are the only parts that bind. `verification-before-completion`
+fires at every done/fixed/passing claim. The adversarial review
+(`code-quality-review`, plus `test-quality-review` when the diff changes
+production logic or tests) fires once the implementation is complete, before
+PR-or-merge. Each runs unless the user explicitly declines it or the repo's own
+process supersedes it; a small diff, time pressure, or the session's confidence
+are not reasons to skip. Everything else fires on relevance.
 
-The two standing exceptions matter, because they are the only parts of the map
-that bind. `verification-before-completion` fires at every done/fixed/passing
-claim, and the adversarial review (`code-quality-review`, plus `test-quality-review`
-when production logic or tests changed) fires once the work-stream's implementation is
-complete. Each "runs unless **the user explicitly declines
-it**, or **the repo's own process supersedes it**." Everything else on the map
-is a default the user configured; it fires on relevance.
-
-Repo precedence is a general rule on the map, and it runs in both directions.
-Where the repo carries its own process document, the session follows it for
-worktrees, test discipline, and completion gates instead of re-running the
-flow's version of the same ceremony. A repo gate can also *invite* a tier the
-flow would otherwise only offer. Ask only for unresolved material scope, route, or delivery choices. Existing authorization remains valid; review follows the accepted repository process or the workbench readiness gate.
+Repo process takes precedence in both directions: the repo's own `CLAUDE.md`,
+`AGENTS.md`, or `CONTRIBUTING` governs worktrees, test discipline, and
+completion gates, and a repo gate can also invite a tier the flow would
+otherwise only offer.
 
 ## When to reach for it
 
-Use it when orientation or skill selection is needed. Its description no longer loads the map before every task. There is no session-start hook; user rules and relevant skill descriptions guide invocation. It answers "how does the workbench flow work?" and "which skill owns this task?"
-
-One carve-out sits at the top of the skill: "If you were dispatched as a
-subagent to execute a specific task, skip this orientation." Dispatched agents
-do not read the map.
+Its description loads it before coding, auditing, planning, shipping, filing a
+PR, debugging, or using any workbench skill. It answers "how does the flow
+work?" and "which skill owns this task?" A subagent dispatched to execute a
+specific task skips it.
 
 | The problem | The skill |
 | --- | --- |
-| Which skill owns this moment? Where am I in the flow? | `using-workbench` |
+| Which skill owns this moment? | `using-workbench` |
 | Something to verify, hunt, or check | `audit` |
 | Designing a feature or a refactor | `brainstorming` |
-| One premise, ticket, or hunch to investigate | `claim-check` |
 | About to claim done, fixed, or passing | `verification-before-completion` |
-| A work-stream's implementation is complete | `code-quality-review`, plus `test-quality-review` when production logic or tests changed |
+| Implementation complete, before PR-or-merge | `code-quality-review` (+ `test-quality-review`) |
 | Picking a model | `model-reference` |
 
 ## The map
 
-**The flow, in five stages.**
-
-- **Entry**: two optional doors. Door A is `audit`: the request supplies scope, an engine runs it, the user supplies missing decisions, evidence gaps remain uncertain, and the exit
-  is a report or revealed work. Door B is an idea: ground it against the
-  codebase first, then `brainstorming` owns what the code cannot answer.
-- **Scoping**: `brainstorming` resolves open feature and refactor design,
-  carrying the user's route choice: direct, plan, or handoff-goal.
+- **Entry**: two optional doors. Door A is `audit`, which exits with a report
+  or revealed work. Door B is an idea: ground it against the codebase, then
+  `brainstorming` owns what the code cannot answer.
+- **Scoping**: `brainstorming` settles open design, then follows the
+  authorized route (direct, plan, or handoff-goal) or asks for a missing one.
 - **Implementation**: `test-driven-development` where a test harness exists
-  (repo conventions take precedence on conflict), `systematic-debugging` for persistent or unclear failures requiring investigation. Execution agency is the user's and the harness's call;
-  workbench never dictates in-session versus dispatched, except required independent review and the designated separate CI watcher.
-- **Completion**: entered only when the work-stream's implementation is
-  implemented and verified, and the session is about to ship through a PR or
-  the repository's delivery process (not an edit, subtask, or progress checkpoint): "deemed ready" (verified with evidence), then one initial
-  adversarial review round right before the PR-or-merge ask (`code-quality-review`,
-  plus `test-quality-review` in parallel when the diff changes production
-  logic or tests), dispatched to reviewer contexts that did not write the code,
-  then focused reviewer verification of blocking corrections (at most two
-  automatic follow-up passes shared across review stages). Unresolved blockers or
-  unreviewed corrections hold delivery; confirmed closure leads to the user gate.
+  (repo conventions win on conflict); `systematic-debugging` for sustained,
+  unresolved failures. In-session versus dispatched is the user's and the
+  harness's call.
+- **Completion**: only when the full agreed work set is implemented, verified,
+  and about to ship, not at a checkpoint. One adversarial round runs both
+  required stages, each dispatched to a context that did not write the code.
+  Blocking corrections get focused re-review (at most two automatic follow-up
+  passes); unresolved blockers hold delivery. Then the session outlines the
+  work and asks PR or merge, unless repo or user rules pre-authorize it.
+- **Feedback**: `receiving-code-review`; verified fixes re-enter implementation.
 
-  One initial round includes both required review stages. A missing stage keeps
-  the gate pending; complete it for the same change set and revision without
-  repeating a valid completed stage or consuming a correction pass.
-
-- **Feedback**: `receiving-code-review` governs acting on what arrived,
-  verified fixes re-enter implementation.
-
-Sizing, route, and delivery are user decisions when still unresolved. Follow existing authorization and ask only for a material missing choice; the map does not authorize destructive actions or external publication.
-
-**Picking the verification piece.** Several pieces touch verification; the map
-tells you to pick by the work's shape rather than read them all.
+**Picking the verification piece** by the work's shape:
 
 | Shape | Piece |
 | --- | --- |
-| Any done/fixed/passing claim | `verification-before-completion` is always on |
+| Any done/fixed/passing claim | `verification-before-completion`, always on |
 | One just-finished change with a drivable surface | `empirical-proof` |
 | A broad decomposable surface at team scale | `qa-sweep` |
 | One premise, ticket, or hunch | `claim-check` |
-| Landing (assumes other gates ran and checks that adversarial review covers the current change) | `file-pr` |
+| Landing; refuses a code PR without the adversarial review | `file-pr` |
 
-Two principles ride with it: "When no frame fits the work's shape, keep the
-standard and drop the frame," and "The protocols are checkpoints, not reading
-assignments: load one when its moment arrives, not preemptively."
+When no frame fits, keep the standard and drop the frame: prove the
+deliverable the way its real consumer would use it.
 
 **Cost and authority.** `empirical-proof` and `qa-sweep` are the expensive
-tiers: "**offer them, never default to them**." They run on the user's explicit
-ask, now or standing. Running one uninvited spends time and budget on ceremony
-nobody ordered. A repo's own completion gate that requires driving the real
-artifact for a change of this kind counts as that standing ask: the session runs
-it, names the gate that invited it, and reports the run as part of satisfying
-the gate.
+tiers: "**Offer them; never default to them.**" They run on the user's ask,
+now or standing. A repo completion gate that requires driving the real
+artifact counts as a standing ask; the session runs it and names the gate.
 
-**Artifacts are disposable.** Audit reports, brainstorm designs, route plans,
-outlines: all working material. They live in `.workbench/<work_scope>/` (or
-`.tmp/workbench/<work_scope>/` in repos that centralize scratch), typically
-gitignored. Promotion to a committed doc is the user's call. And there is one
-home per work scope: the dispatching session hands the scope folder's path to
-every agent in its contract, and "agents never invent their own locations."
+**Artifacts are disposable.** Working material lives in
+`.workbench/<work_scope>/` (or `.tmp/workbench/<work_scope>/`), typically
+gitignored. Promotion to a committed doc is the user's call. The dispatching
+session hands that folder's path to every agent it dispatches.
 
-**Worktree location.** Prefer the harness's native worktree mechanism. Absent
-a repo or user convention, create worktrees at `<repo>/.worktrees/<task-name>`,
-verifying the directory is ignored (`git check-ignore .worktrees`) before the
-worktree exists. "Never place a worktree in the system temp directory or any
-path outside the repository unless the user explicitly asks."
+**Worktree location.** Prefer the harness's native worktree mechanism and any
+established repo or user pattern; otherwise `<repo>/.worktrees/<task-name>`,
+confirmed ignored first. Never outside the repository unless the user asks.
+
+**CI watching** always goes to a separate Opus agent on Claude or `gpt-6-sol`
+agent on Codex, never parent polling.
 
 ## Common questions
 
 **It fired at the start of my session. Is it about to run a process on me?**
 
-No. It maps and stops. The skill explicitly refuses to answer "how does the
-flow work?" by starting the flow. What it does change is that a session
-matching a moment on the map should invoke the owning skill and say so briefly
-("Using audit to size this investigation") rather than improvising.
+No. It maps and stops. A session whose task matches a moment invokes the
+owning skill and says so ("Using audit to size this investigation").
 
 **Which parts are actually mandatory?**
 
-Two, and only two: `verification-before-completion` and the adversarial review
-(`code-quality-review`, plus `test-quality-review` when production logic or tests
-changed). This used to be one. The file said outright that
-"`verification-before-completion` is the only always-on piece," and three other
-passages generalized the no-compulsion framing over everything, so sessions
-finished implementations, verified them, and went straight to the landing gate,
-skipping the adversarial review entirely. All four sites were rewritten to
-state the same rule, and the framing now names the non-reasons: a small diff, a
-confident implementation, a tidy-looking change, time pressure, and the
-session's own judgment that this one looks fine are not grounds to skip
-([decision](../decisions/adversarial-review-is-default-on.md)).
+Two: `verification-before-completion` and the adversarial review. Both stop
+only for your explicit decline or a superseding repo process
+([decision](../decisions/code-quality-review.md)).
 
 **Do dispatched subagents inherit these conventions?**
 
-No, and this caused a real failure. Subagents are told to skip the orientation,
-so an audit run left its evidence spread across three per-agent system-temp
-directories although all of it belonged to one work scope. The fix is not that
-agents read the map; it is that the dispatching session hands the scope
-folder's path to each agent in its contract
-([decision](../decisions/evidence-one-home-per-scope.md)). If you are
-dispatching, put the path in the contract.
+No; they skip the orientation. The dispatching session puts the scope
+folder's path in each agent's contract.
 
 **My one-ticket change turned into a sprawl. Does workbench catch that?**
 
-No. Scope is the user's to define in the ask and the session's to follow; a
-general guard on it proved too interpretative to state safely and was removed
-([decision](../decisions/scope-guard-removed.md)). What remains is narrower:
-the adversarial review labels findings blocking, advisory, or out-of-scope follow-up, and
-out-of-scope findings become follow-ups rather than diff growth. State the
-boundary in the ask, or in the repo's own rules, when it matters.
+No. Scope is yours to define and the session's to follow. The adversarial
+review sends out-of-scope findings to follow-ups rather than growing the diff.
+State the boundary in the ask or the repo's rules when it matters.
 
-**Should I be running `empirical-proof` or `qa-sweep`?**
+**Does it enforce anything with hooks?**
 
-Only if you ask for them, or if your repo's own process document already
-requires driving the real artifact for the change in hand, which counts as the
-ask. Otherwise they are offered, never automatic. The flow's earlier
-wording ("empirical-proof if runnable", "the deeper sibling") read as an
-instruction to run them whenever a change qualified. They are expensive due to
-subagent fan-outs, booted apps, and corroboration loops, and the choice is the
-user's ([decision](../decisions/expensive-verification-user-optioned.md)).
-
-**Does it decide whether work runs in-session or gets dispatched to agents?**
-
-Two roles require separate agents. The adversarial review (`code-quality-review`, plus
-`test-quality-reviewer` when production logic or tests changed) is dispatched to
-reviewer contexts that did not write the code, because a session reviewing its
-own diff is not adversarial. CI polling always uses the designated separate Opus (Claude) or Sol (Codex) watcher, never Astra/Fable or the parent. Outside those assignments, the rule stands: "Workbench never
-dictates execution agency (in-session vs dispatched)." That is the user's and
-the harness's call, and the flow's only job at that moment is handing the
-implementer the plan or goal when one exists
-([decision](../decisions/adversarial-review-is-dispatched.md)).
-
-**Does it enforce anything with hooks or an injected dispatcher?**
-
-No. The system was built specifically to drop the hook layer it replaced;
-skill descriptions and the user's own rules are the entire activation surface
-([decision](../decisions/workbench-system.md)).
-
-**Where do I put a design doc I want to keep?**
-
-Ask for it. Working material becomes durable "only when they explicitly ask, or
-when the repo has an established pattern for that artifact kind." A session
-that quietly commits a brainstorm doc is misbehaving.
+No. Skill descriptions and your own rules are the whole activation surface.
 
 ## It's working if
 
-- The session names the moment and the skill before acting ("Using audit to
-  size this investigation").
-- Questions resolve missing material scope, route, or delivery choices without repeating existing authorization.
-- Reports, designs, and evidence from one work-stream all land in one folder
-  under `.workbench/<work_scope>/`, including anything dispatched agents
-  produced.
-- A change that starts crossing subsystems you never named comes back as a
-  question about splitting, not as a bigger diff.
+- The session names the moment and the skill before acting.
+- Questions cover only missing scope, route, or delivery choices.
+- Everything from one work scope, including dispatched agents' output, lands
+  in one `.workbench/<work_scope>/` folder.
 - Negative signal: you ask how the flow works and the session starts running
-  it. Also negative: a session announces work is done and ready without fresh
-  verification output, or skips the adversarial review because the diff looked
-  small.
+  it; work is called done without fresh verification output; or the
+  adversarial review is skipped because the diff looked small.
 
 ## Where it fits
 
-`using-workbench` is the frame rather than a stage in it. It sits above entry,
-scoping, implementation, completion, and feedback, and hands off to whichever
-skill owns the moment: `audit` and `brainstorming` at the two entry doors,
-`test-driven-development` and `systematic-debugging` inside implementation,
-`verification-before-completion` and `code-quality-review` at the completion
-gates, `file-pr` and `fix-ci` at landing. Nothing hands off *to* it; it is
-already loaded when the session starts, and it is the thing you re-read when
-you cannot tell which piece owns what is in front of you.
-
-CI polling always uses a separate Opus agent on Claude or gpt-6-sol agent on Codex, never Astra/Fable or parent polling. Epic returns require verified acknowledgment and a concrete next action. Completion retains relevant evidence and independent review; changed relevant state invalidates evidence, not a new message alone.
+`using-workbench` is the frame, not a stage. It points to whichever skill owns
+the moment: `audit` and `brainstorming` at entry, `test-driven-development` and
+`systematic-debugging` in implementation, `verification-before-completion` and
+`code-quality-review` at completion, `file-pr` and `fix-ci` at landing.
+Re-read it when you cannot tell which piece owns what is in front of you.

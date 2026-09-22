@@ -2,45 +2,37 @@
 
 ## What it does
 
-`model-reference` is a reference table for the model fleet: one row per model,
-graded on cost, intelligence, taste, code, and speed, plus the routing
-invariants that hold regardless of which models you run. You consult it when a
-model choice needs grounding and is not already settled.
+`model-reference` is a lookup for the model fleet: a table grading each model on
+cost, intelligence, taste, code, and speed, plus the routing invariants that
+hold whatever models you run. It has no rubric, output contract, or dispatch
+procedure, and "it never dispatches anything"; the call stays with you.
 
-It is a lookup, and nothing else. The skill draws the line itself: "a lookup,
-not a step before every dispatch, and it never dispatches anything."
-There is no rubric to grade your task against, no output contract to fill in,
-no process pattern to select, and no dispatch mechanics. It does not decide for
-you; it gives you the numbers and the invariants and leaves the call where it
-was.
-
-Outside the explicit CI watcher assignment below, it does not ship a general fleet policy. The rows are a worked example for
-adopters to swap and re-grade, and the invariants carry the *shape* of each
-rule rather than its content: "the concrete policy, which models are in, which
-are out, where the floor sits" belongs to the operator's always-injected rules
-file.
+It ships no general fleet policy: which models are in or out, and where a floor
+sits, belong to the operator's always-injected rules file.
 
 ## When to reach for it
 
-Invoke `/model-reference` when you are about to make a model choice that you cannot
-already justify, or when the fleet changes and the table needs updating. The canonical copy "lives here and nowhere else": an operator's
-always-injected rules file carries only the hard invariants and points at this
-skill, so the table has exactly one place to go stale.
-
-Do not invoke it before every dispatch. That is the misuse the skill names,
-in its trigger and again in its opening.
+Invoke `/model-reference` when a model choice needs grounding and is not already
+settled, or when the fleet changes. The table lives only in this skill; a rules
+file carries the hard invariants and points here. Do not invoke it before every
+dispatch.
 
 | The problem | The skill |
 | --- | --- |
 | Which model to run this on | `model-reference` |
-| Which skill owns this moment in the flow | `using-workbench` |
-| How big an investigation should be (quick look / deep / sweep) | `audit` |
-| Which implementation route the work takes (direct / plan / long-running goal) | `brainstorming`'s route gate |
-| Handing a defined goal to a fresh autonomous session | `handoff-goal` |
+| Which skill owns this moment | `using-workbench` |
+| How big an investigation should be | `audit` |
+| Which implementation route the work takes | `brainstorming`'s route gate |
+| Handing a defined goal to a fresh session | `handoff-goal` |
 
 ## The table
 
-The numeric table is retained as a legacy illustration without dated calibration; it must not drive current dispatch. The fable-5.1 row was renamed from fable-5 without re-grading. New grades require operator-supplied date, task set, effort, and observed results. Otherwise use available host capabilities and the current session model within standing rules.
+The scores are legacy illustrations without dated calibration, kept to explain
+the axes. Do not route current work from them; the fable-5.1 row has not been
+re-graded. Edit the table when the fleet changes; each new or re-graded row
+needs an operator-supplied calibration: date, task set, method, and observed
+trade-offs. Until then, use the host's available capabilities and the session's
+current model under your standing rules.
 
 Scores are 1-10, higher is better.
 
@@ -53,136 +45,83 @@ Scores are 1-10, higher is better.
 | fable-5.1 | 1 | 10 | 9.5 | 9 | 5 |
 | grok-4.7 | 5 | 6 | 6 | 6 | 6 |
 
-There is **one row per model**, "graded at the effort that model is actually
-run at." Effort is not a separate axis, if you change the effort you
-habitually run a model at, you re-grade its row rather than adding one.
+One row per model, graded at the effort you actually run it at.
 
-The axes are defined precisely, and two of them are easy to misread:
-
-- **Cost** is "subscription-limit burn, not dollars": the fleet runs on
-  subscriptions, so a low cost score means "eats the weekly limit fast," not
-  "expensive per token." Higher is cheaper.
-- **Speed** is wall-clock turnaround on the same task. It is scored apart from
-  cost "because a model that thinks for ten minutes and one that drains the
-  weekly limit fail in different ways and constrain different work." Higher is
-  faster.
+- **Cost** is subscription-limit burn, not dollars. Higher is cheaper: a 10
+  barely touches the weekly limit.
+- **Speed** is wall-clock turnaround on the same task.
 - **Intelligence** is how hard a problem the model can carry unsupervised.
 - **Taste** covers user-facing surfaces only: UI/UX, copy, API shape, docs,
   research, audits.
-- **Code** is coding craft: how correct and well-built the implementation comes
-  out when the work is code.
+- **Code** is how correct and well-built the implementation comes out.
 
-**Historical reading examples:** apply model-specific choices only after current operator calibration; these undated rows do not establish current capability.
+**Reading a calibrated table** (only after the rows are verified for your
+fleet):
 
-- Routine, well-specified work goes to the cheap end: "luna only for truly
-  mechanical bulk, sol for routine work that still needs judgment."
-- Judgment-heavy, taste-critical, or silent-failure work goes to the frontier:
-  opus-5.5 by default, fable-5.1 only where the work loads intelligence past
-  what opus-5.5 carries. "Putting high-tier judgment at the plan while a
-  cheaper tier implements is often the better spend."
-- "A shipping taste surface needs taste >= 7: luna and grok are not taste routes."
-- "Speed breaks ties, never quality": level rows go to the faster one, but speed
-  "does not buy a drop on intelligence, taste, or code."
+- Routine work goes to the cheap end: luna for truly mechanical bulk, sol when
+  it still needs judgment.
+- Judgment-heavy, taste-critical, or silent-failure work goes to opus-5.5 by
+  default; fable-5.1 only where the work needs more intelligence than opus-5.5
+  carries.
+- A shipping taste surface needs taste of 7 or more.
+- Speed breaks ties, never quality.
 
 ## The invariants
 
-These are the portable half. The table is a worked example; these survive any
-fleet.
+These hold for any fleet ([decision](../decisions/model-routing-stays-in-harness.md)).
 
-| Invariant | What it means in practice |
+| Invariant | In practice |
 | --- | --- |
-| **Orchestration stays home** | Decomposing, dispatching, and judging a set of work always run on the session's own model, or on whatever the operator's rules file specifies, never a weaker-model subagent |
-| **Standing escalation permission** | When output misses the bar, rerun or redo on a smarter tier without asking. "Judge the output, not the price tag" |
-| **Cost and speed are tie-breakers only** | When axes conflict for anything that ships: intelligence > taste > cost > speed. Neither of the last two buys a drop on the first two |
-| **Local policy wins** | Repo-local model policies override this table where they conflict |
+| **Orchestration stays home** | Decomposing, dispatching, and judging run on the session's own model (or what the operator's rules file specifies), never a weaker subagent |
+| **Standing escalation permission** | Output that misses the bar gets rerun on a smarter tier without asking |
+| **Cost and speed are tie-breakers only** | For anything that ships: intelligence > taste > cost > speed |
+| **Route inside your harness** | Pick from the models your host exposes. If the fitting row is unreachable, take the best reachable one and name the one you could not reach; crossing harnesses is the operator's move |
+| **Local policy wins** | Repo-local model policies override this table |
 
 ## Common questions
 
 **Doesn't this skill ban Haiku and Sonnet? Doesn't it set a model floor?**
 
-Neither. An earlier invariant read "**Never Haiku or Sonnet: any task, no
-exceptions**," naming specific models from one operator's subscription mix.
-That was replaced by a portable "set a model floor" invariant
-([decision](../decisions/route-work-model-floor-portable.md)), and the floor
-invariant has since been dropped as well: a floor is fleet policy, and this
-skill carries no general model floor. Routing also stays inside the harness you run in: a row describes a model's performance, not its reachability from this session, and starting another provider's CLI to reach one is the operator's move, not a routing step. The dedicated CI watcher is an explicit exception: separate Opus on Claude or gpt-6-sol on Codex, never Astra/Fable or parent polling. The test-quality reviewer is another: separate Opus on Claude Code or gpt-6-sol on Codex, and the host's default model elsewhere. Where the floor sits, and which models are banned, belong
-in your own always-injected rules file. `adopt-global-rules` ships one such
-file (`model-floor.md`) if you want a worked example.
+Not as fleet policy. A floor or ban list belongs in your own always-injected
+rules file; `adopt-global-rules` ships one example, `model-floor.md`. The skill
+names models only in two exceptions, each a separate agent whose model is
+selected explicitly, not inherited:
+
+- **CI watching:** Opus on Claude or gpt-6-sol on Codex. Never Astra, Fable,
+  Haiku, or Sonnet, and never parent polling. See `fix-ci`.
+- **Test-quality review:** Opus on Claude Code or gpt-6-sol on Codex; the
+  host's default model elsewhere.
 
 **The table lists models I don't have.**
 
-Expected. The rows are a worked example, not a recommendation. What you keep is
-the axis definitions, the reading notes, and the invariants; what you replace
-is every row.
+Expected. Keep the axes, reading notes, and invariants; replace the rows with
+your own calibrated grades.
 
 **Will it recommend a route for my task?**
 
-No. It used to: earlier versions carried a five-axis grading rubric, four named
-process patterns, a three-line `route:` / `why:` / `grades:` output contract,
-worked examples, and dispatch mechanics. All of it was cut: the skill read as a
-dispatch procedure and was being treated as a step before every subagent
-dispatch ([decision](../decisions/route-work-recalibration-and-trim.md)). What
-remains is the table, the invariants, and four reading notes. You do the
-grading.
-
-**Why does the cheapest model have the highest cost score?**
-
-Because cost is scored like every other axis: higher is better. A 10 means
-lowest burn: fast and light on the weekly limit. Read the column as "cheapness,"
-not "price."
+No. You read the table and make the call ([decision](../decisions/model-reference.md)).
 
 **What effort should I run these at?**
 
-Whatever effort you graded the row at. The table has one row per model, "graded
-at the effort that model is actually run at," so the numbers already assume your
-habitual setting. If you start running a model at a different effort and its
-behaviour moves, re-grade that row. Do not add a second row for the new tier.
+The effort the row was graded at. If you change a model's habitual effort,
+re-grade its row rather than adding a second one.
 
 **Two models tie on intelligence. Which do I pick?**
 
-Look at which axis the work actually loads. Implementation work reads the code
-column the way user-facing work reads taste. If the axes genuinely conflict for
-something that ships, the order is intelligence, then taste, then cost, then
-speed: neither cost nor speed breaks a tie in its own favor when quality is at
-stake. Between rows that are genuinely level on the axis the work loads, take
-the faster one.
-
-**Can I dispatch orchestration work to a cheap tier to save budget?**
-
-No. That is an invariant, not a preference: decomposing, dispatching, and
-judging run on the session's own model. The cheap tiers are for the work being
-dispatched, not the dispatching.
-
-**My repo has its own model policy. Which wins?**
-
-The repo's. "Repo-local model policies override this table where they
-conflict."
-
-**When do I edit the table?**
-
-When the fleet changes: a model launches, a tier is retired, a calibration
-proves wrong in use. Dead rows leave rather than lingering for reference; a
-stale row is the exact failure the skill exists to prevent, since an
-always-injected copy of a table has no update trigger
-([decision](../decisions/route-work.md)).
+Look at the axis the work loads: code for implementation, taste for user-facing
+work. Between rows level on that axis, take the faster one.
 
 ## It's working if
 
-- A model choice can be pointed at a row and an axis, not at a habit.
-- A row that stops matching how a model actually behaves gets re-graded, rather
-  than worked around in the moment.
+- A model choice points at a row and an axis, not a habit.
+- A row that stops matching behavior gets re-graded, not worked around.
 - Output that misses the bar gets rerun a tier up rather than shipped.
-- Negative signal: the skill is being invoked before every subagent dispatch,
-  or a session is producing a formatted "route recommendation" from it. It is a
-  table you read, not a procedure you run.
+- Negative signal: the skill runs before every dispatch, or produces a
+  formatted "route recommendation".
 
 ## Where it fits
 
-`model-reference` sits off the workbench spine. Nothing in the flow requires
-it, and no stage hands off to it; it is consulted from wherever a model
-decision happens to land: a dispatch, an agent definition, a rules file being
-written. Its closest neighbor in kind is `using-workbench`, the other pure
-reference in the set: one tells you which piece owns the moment, the other tells
-you what to run it on. Its closest neighbors in practice are the moments that
-spend model budget: the route gate at the end of `brainstorming`, `audit`'s
-sizing question, and any fan-out a session is about to launch.
+Off the workbench spine: nothing requires it and no stage hands off to it.
+Consult it wherever a model decision lands, such as `brainstorming`'s route
+gate, `audit`'s sizing question, or a fan-out. `using-workbench` says which
+piece owns the moment; this says what to run it on.

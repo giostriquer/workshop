@@ -4,9 +4,8 @@
 
 ## Status
 
-Implemented. Supersedes the format half of
-[`change-log-version-keyed.md`](change-log-version-keyed.md) (version-keyed
-sections stay; everything else tightens).
+Implemented. Supersedes the format half of the 2026-08-11 version-keyed
+change-log decision (version-keyed sections stay; everything else tightens).
 
 ## Context
 

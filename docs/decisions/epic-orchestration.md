@@ -1,153 +1,43 @@
-# Decision: `epic-orchestration`: the epic owner is a role, and it ships
+# epic-orchestration: decisions in force
 
-**Date:** 2026-09-04
+This note is the rationale for the `epic-orchestration` skill, shipped in the `workbench` plugin; superseded choices are omitted and git history keeps the originals.
 
-## Status
+## The epic owner is a role, shipped as a skill (2026-09-04)
 
-Implemented. Ships as `toolkit 0.10.0`.
+Nothing covered an epic too large for one session whose lanes the operator dispatches by hand. The owning session becomes a persona that owns tickets, lane prompts, independent validation, rulings and authorization, and never implements, commits, pushes, opens PRs or merges; opening an editor on the implementation means leaving the seat. It was renamed from `epic-relay`: relaying prompts is one line of the job.
 
-## Context
+## It ships in workbench and stays user-invoked (2026-09-04)
 
-The skill existed and was already field-proven, but it lived in the operator's
-private global scope (`~/.claude/skills/epic-relay/`), where it was invisible
-to the plugins, absent from every other host, and outside the repo's review and
-release surface. Nothing about it was machine-specific: it describes a role, a
-validation checklist, and a prompt contract, all portable.
+Its load-bearing references, `code-quality-review` and `file-pr`, are workbench skills, and toolkit installs without workbench, so dependency direction, not rarity, decides the plugin. It stays user-invoked: running an epic this way is the operator's call. Its description states only triggers and boundary, so sessions read the body rather than a summary.
 
-The workbench covers the inside of one session's work. `handoff-goal` packages
-one goal for one fresh session. Nothing covered the tier above: an epic whose
-tickets exceed what a single session can hold, implemented by several sessions
-that the operator dispatches by hand, with no dispatcher and no automation
-between them.
+## Validation is the job (2026-09-04)
 
-## The shape
+A lane report is a claim the owner verifies against the repository; each check exists because skipping it let a real defect through. The lane's completion review, which the lane runs through an independent reviewer, does not discharge this: it asks whether the code is well built, validation whether the claim is true. Skipping checks is a discipline failure, so the section carries a rationalization table and red flags, not bare imperatives.
 
-A user-invoked orchestrator persona. The session owns tickets, lane prompts,
-independent validation, rulings, and authorization, and never implements,
-commits, pushes, opens PRs, or merges. Three claims carry it:
+## Handoffs are dispatchable when written (2026-09-04)
 
-- **Four roles that do not blur**, stated as a table, with the operator as the
-  only cross-session wire.
-- **Validation is the job.** Every check in that section is there because
-  skipping it let a real defect through: explicit `cd <worktree>` per
-  invocation, red-flip that deletes added files rather than `git checkout`-ing
-  a path that did not exist at base, design-reading anything
-  infrastructure-shaped, and testing what a gate **accepts** rather than
-  whether it runs cleanly.
-- **The epic closes on a blind re-audit**, never on an empty ticket list, and
-  the auditor's mandate includes attacking the fixes the previous round
-  produced.
+The operator is a wire, not a queue: a prompt held for a later trigger gets pasted at the wrong moment or not at all. Every handoff is ready when written, several lanes per message is the desirable case, and a prompt whose trigger has not fired is not written yet. Lanes group by observable file ownership, not by topic.
 
-## What changed in the move
+## Actionable work leaves the context (2026-09-04)
 
-- **Renamed** `epic-relay` to `epic-orchestration`. "Relay" named the transport
-  (the operator pasting between sessions); the skill is about owning the epic,
-  and the transport is one line of it.
-- **Description trimmed to trigger-only**, per
-  [description-trim-sdo](description-trim-sdo.md): the workflow summary ("you
-  write paste-ready lane prompts, independently validate what comes back, and
-  authorize or refuse the PR") is exactly the pattern `writing-skills` names as
-  a defect, since a description that summarizes the body gets followed instead
-  of the body being read. The invocation-gating boundary ("never implements,
-  commits, or opens the PR itself") is kept.
-- **Em dashes removed**, matching the repo-wide copy convention.
-- **Dispatch becomes a recipe with an envelope.** The rule shipped as a single
-  prohibition at the tail of "Writing a lane prompt": *"Every prompt must be
-  dispatchable the moment it is written. Never write 'when X finishes, paste
-  this'."* Two things were missing and one was the wrong form. Missing: the
-  reason (a prompt the operator has to hold gets pasted at the wrong moment or
-  not at all, because the operator is routing to workers rather than keeping a
-  queue) and the parallel case (several lanes in one message is the desirable
-  case, not a tolerated one). Wrong form: `writing-skills` classifies
-  wrong-shaped output as the failure a prohibition backfires on and a positive
-  recipe binds, so the rule is now its own `## Dispatching` section stating what
-  a handoff **is**, with the literal `Paste this into <LANE>:` envelope repeated
-  per destination. "Hold it until the trigger fires" survives as a definition
-  rather than a ban: a prompt whose trigger has not fired is not written yet.
-- **A `writing-skills` pass closed four gaps.** (1) The validation section was
-  built as bare imperatives plus war stories, which is the wrong form for a
-  discipline failure; it gains a rationalization table and a red-flags list.
-  (2) The skill manufactured the excuse it never countered, requiring a lane
-  review and then saying "validate anyway" with nothing bridging them; the
-  bridge is now explicit, since the two ask different questions (is the code
-  well built, versus is the claim true). (3) There was no when-not-to-use in
-  the body, so `## When this is the right seat` states the three conditions and
-  the sibling skills, and names leaving the seat (opening an editor on the
-  implementation) as the boundary. (4) `## Dispatching` said "as many lanes as
-  the work parallelizes into", which is not observable; it now keys on file
-  ownership, which is.
-- **The lane's review was described as self-served, which `code-quality-review`
-  forbids.** "The lane runs its own adversarial review" read as the author
-  reviewing the author. The skill is explicit that the implementing session is
-  the one context that cannot run it, so the text now says the lane *owns
-  running* it and it dispatches to `code-quality-reviewer` or a fresh session.
+Follow-up work dies in passing observations and session reasoning, not only in deferrals. The lane report carries a required `DEBT + FOLLOW-UPS` slot, filled or visibly empty, because a required slot binds where a reminder does not. Before a wave closes, each originating item links to its destination or disposition, including debt the wave's own fixes created.
 
-Apart from those, the body is verbatim. It arrived with lived-in proof, which is
-the inclusion bar; rewriting field-earned text on arrival would discard the
-reason it qualifies.
+## Authorization claims the PR review gate (2026-09-04)
 
-## Follow-up: actionable work does not live in context (0.36.0)
+Authorization claims `file-pr`'s review gate as satisfied by the lane's completion review, with its evidence, so no second full review runs. The gate returns when blocking dispositions lack reviewer confirmation, later behavior changes lack review, or the integration merge hits a semantic conflict. No dispatcher automates handoff: the operator remains the only link between independent lane sessions.
 
-The first release carried one non-negotiable covering this: "every deferral
-becomes a ticket... nothing lives only in a report." Too narrow on both axes.
-*Deferral* excludes debt a lane notices in passing, follow-ups, and the things
-the orchestrator itself turns up while validating, none of which were deferred
-by anyone. *A report* excludes the chat, the diff, and the session's own
-reasoning, which is where most of it actually dies.
+## The epic closes on a blind re-audit (2026-09-04)
 
-`writing-skills` classifies this failure as omitting a required element from
-something the session already produces, for which the prescribed form is
-structural, not a prose reminder. So the fix has two halves:
+An empty ticket list never closes the epic. A blind auditor starts from the artifact, not the PR list, and attacks the previous round's fixes, since each round has found a defect the last introduced.
 
-- **A required slot.** `DEBT + FOLLOW-UPS` joins the lane report format beside
-  `FORKS/DEVIATIONS`. A lane fills it in or visibly leaves it empty; there is no
-  way to silently not consider it.
-- **A section naming the five surfaces** where such items appear (lane report,
-  the orchestrator's own validation, a ruling, a scoped-out finding, the blind
-  re-audit) and the closing condition: a ticket id, before the wave closes,
-  written back into the record that raised it.
+## Bounded dispatch reading and document retirement (2026-09-10)
 
-The clause that matters most in practice is the last one, because it is the
-only one about the epic's own output: a fix that widened a type, left a shim,
-or pinned a version to get green is debt the moment it merges, and the lane
-that wrote it is the only context that knows why.
+Startup instructions led through stale history. Each dispatch names a complete required reading set that works without tracker access; ticket bodies and supporting material load for a specific question or check. Retirement removes instructions from default reading, grants no deletion, publication or cleanup authority, and preserves holds, unresolved work, final evidence and frozen audit inputs. Completeness, not a word cap, sets size.
 
-## Why `workbench`, after first landing in `toolkit`
+## A local ledger is the recovery record (2026-09-10)
 
-The first call was `toolkit`, on the reasoning that orchestrating a
-hand-dispatched epic is a tier above ordinary work that most repos never reach,
-and therefore optional by definition. That reasoning was about *frequency*, and
-frequency turned out to be the wrong axis.
+A coordinator pushed detailed evidence into tracker descriptions because the skill kept asking for findings on tickets. One local ledger, reusing the scope folder's entry point, holds current actions, decisions, uncertainties, constraints and pointers, updated in place. Shared updates carry what their readers need; continuity alone does not request publication. Confirmed work needing separate assignment gets a deduplicated ticket, while uncorroborated or scoped-out claims keep their evidence and disposition.
 
-The deciding constraint is dependency direction. The skill names
-`code-quality-review` (what a lane runs before handing back) and `file-pr`
-(what authorization files through, and whose review gate the authorization
-block declares already satisfied). Both are `workbench` skills, and `toolkit`
-installs **without** `workbench`. A toolkit-only adopter would get a skill whose
-two load-bearing cross-references point at nothing.
+## Dispatches are files and paste blocks are pointers (2026-09-11)
 
-A skill that links workbench skills belongs in workbench. It stays user-invoked
-(`disable-model-invocation: true`): whether an epic runs this way is the
-operator's call, never a session's, and that is orthogonal to which plugin
-carries it.
-
-## Non-goals
-
-- **No dispatcher.** The operator remains the only wire between sessions. The
-  skill's value is the prompt contract and the validation discipline, not
-  automation of the handoff.
-- **No re-review at the PR.** The authorization block states that
-  `file-pr`'s gate is already satisfied by the lane's `code-quality-review`.
-  This is not a weakening: it is `file-pr`'s own second exemption ("the review
-  already ran on this diff"), claimed explicitly rather than reasoned past.
-  Corrections landing after that review, or a semantic conflict in the dev
-  merge, put the gate back in force.
-- **No overlap with `attic/skills/orchestrate`.** That parked draft dispatches
-  executors itself from inside one session. This one never dispatches anything;
-  the two solve different problems and the parked draft stays parked.
-
-## Packaging
-
-`workbench 0.35.0`, broadened in `0.36.0`. Usage page: `docs/skills/epic-orchestration.md`. Removed from
-the operator's global `~/.claude/skills/` scope in the same change, so there is
-one copy and the plugin is it.
+Several-hundred-line inline briefs were hard to copy precisely from a terminal, while a session reads a file exactly. Each lane prompt, audit brief and authorization is its own file in the epic's scope folder, indexed in the ledger. The paste block carries only role, authority, whether the session is fresh, the absolute path and any required verbatim lines.

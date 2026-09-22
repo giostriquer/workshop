@@ -2,150 +2,109 @@
 
 ## What it does
 
-`fix-ci` watches the current branch's CI through to a verdict and fixes what
-breaks. It resolves the target, reads the check state, pulls the actual
-failing log, decides whether the failure is a flake or a real fault,
-reproduces it locally when feasible, applies a minimal fix in-session,
-commits and pushes per the repo's conventions, and re-watches. It is the
-invocable form of the recurring one-liner "CI is failing, take a look."
+`fix-ci` sees the current branch's CI through to a verdict and fixes what
+breaks: it pulls the failing log, decides flake or fault, fixes in-session,
+pushes, and re-watches. It is the invocable form of "CI is failing, take a
+look."
 
-It is a skill, not an agent, and that distinction is load-bearing. The fix
-happens in your session, under your permissions, with the context of the
-commits that broke the build. The read-only designated `ci-watcher` agent is always
-dispatched for the *waiting*, never for the fixing.
+The fix happens in your session, with the context of the commits that broke the
+build. The waiting happens in the read-only `ci-watcher` agent, which never
+fixes, reruns, commits or pushes.
 
-Its boundaries are what keep it safe to run unattended. It never force-pushes,
-amends, or rewrites published history; fixes land as ordinary commits on the
-current branch. It fixes only the cause of the red check: unrelated failures
-and pre-existing dirty-tree changes are reported, never swept into the fix
-commit. It never deletes, skips, or weakens a failing test or check to get to
-green. And it stops: **two fix attempts maximum**, because "a repeating
-failure is a finding, not an invitation to iterate blindly."
+Fixes land as ordinary commits: no force-push, amend or history rewrite. It
+fixes only the cause of the red check and reports unrelated failures and
+dirty-tree changes rather than sweeping them in. It never deletes, skips or
+weakens a check. It stops after **two fix attempts per failing cause**.
 
 ## When to reach for it
 
-Reach for it when the current branch's CI is red and should be fixed, or right
-after a push when the checks should be seen through to green. It activates on
-phrasings like "CI is failing, take a look," and can be invoked directly.
+When the branch's CI is red and should be fixed, or right after a push when the
+checks should be seen through to green.
 
 | The problem | The skill |
 | --- | --- |
 | CI is red on this branch and should be fixed | `fix-ci` |
 | You want a pass/fail verdict and nothing edited | the `ci-watcher` agent |
-| A finished branch should become a PR and be tended to green | `file-pr` (it runs `fix-ci`'s loop internally) |
-| A persistent or unclear bug in the code itself | `systematic-debugging`; obvious localized fixes use focused reproduction and verification |
-| A failing check is really a question about intended behavior | `fix-ci` reports it as a decision for you to answer |
+| A finished branch should become a PR and be tended to green | `file-pr` (it runs this loop) |
+| A persistent or unclear bug in the code itself | `systematic-debugging` |
+| A failing check is really a question about intended behavior | `fix-ci` reports it as a decision for you |
 
 ## The loop
 
-1. **Resolve the target.** `git branch --show-current`, then `gh pr view
-   --json number,url,headRefName,headRefOid`. Pin the target SHA and expected required checks. A branch with a PR → work its checks. A
-   branch with no PR but CI on push → work the branch's runs via `gh run list
-   --branch <branch> --commit <target-sha> --limit 5`. No branch, no CI, or unauthenticated `gh` →
-   report plainly and stop.
-2. **Read and watch the state through one separate watcher.** Always dispatch `ci-watcher`, one per pinned head: Opus on Claude, `gpt-6-sol` on Codex, never Astra or Fable. This holds even when the parent is idle or already uses Opus/Sol. Give it the target SHA and expected checks. It returns at the **first failed required check** (via `gh pr checks --watch --fail-fast`, or job polling for branch-only runs) with the still-pending checks listed; the fix starts then, not after the rest of CI finishes, and no second watcher is dispatched for those pending checks. Green requires complete required-check coverage for that revision; missing, pending, or superseded checks are not success.
-3. **Red → collect evidence first.** `gh run view <run-id> --log-failed` and
-   read the failing step's actual output. External checks: surface the link;
-   if the cause isn't reachable from the repo, report rather than guess.
-4. **Diagnose in repo context.** "The branch's own recent commits are the
-   prime suspects": check `git log` and the diff against the base before
-   suspecting infrastructure.
-5. **Flake or fault?** An infra failure with no plausible code cause → `gh run
-   rerun <run-id> --failed` **once**, note the flake, return to watching. A
-   real fault → continue.
-6. **Reproduce locally when feasible**: read the workflow, select the focused affected case, and run it before the fix and again after. Run mandatory local gates too; full suites normally run in PR CI unless an explicit requirement or named integration risk calls for them locally.
-7. **Fix in-session.** The cause of the red check; unrelated changes are not
-   bundled into the fix.
-8. **Deliver under existing authority and repo conventions**: pull first when committing/pushing, use the repo's own push skill if it ships one, and stage only files the fix touched. Explicit no-commit/no-push instructions override these defaults; complete the local fix and report the remaining delivery step.
-9. **Re-watch.** Hard cap: two fix attempts per failing cause, plus the single
-   flake rerun. A different check failing on the new head is a new cause with
-   its own attempts; the same check failing after its second fix → stop and
-   report the diagnosis and recommended next step.
+1. **Resolve the target.** Find the branch's PR, or its push-triggered runs if it
+   has none. Pin the target SHA with `git rev-parse HEAD`, confirm it matches the
+   remote head, and identify the required checks. No branch, no CI or no access
+   gets a precise report.
+2. **Dispatch one watcher** for that SHA: a separate `ci-watcher` on Opus on
+   Claude Code or gpt-6-sol on Codex, even when your session is idle. It returns
+   at the **first failed required check**, listing those still pending. Green
+   means every required check passed on the pinned SHA; missing, cancelled or
+   superseded checks are not green.
+3. **Collect evidence.** `gh run view <run-id> --log-failed`, then read the
+   failing step's output. For an external check, surface the link; if the cause
+   isn't reachable from the repo, report rather than guess.
+4. **Diagnose in repo context.** The branch's own recent commits are the prime
+   suspects, ahead of infrastructure.
+5. **Flake or fault?** An infra failure with no plausible code cause gets one
+   `gh run rerun <run-id> --failed`, noted as a flake. A real fault continues.
+6. **Reproduce locally when feasible.** Run the focused failing case before and
+   after the fix, plus mandatory local gates; full suites run in PR CI.
+7. **Fix in-session**, addressing only the cause.
+8. **Commit and push** per the repo's conventions, staging only the fix's files.
+   Just before pushing, your session reads the old head's checks once and folds
+   any new in-scope failure into the same push. No-commit or no-push
+   instructions hold; the report then names the remaining step.
+9. **Re-watch** with a new watcher for the new head. A different check failing
+   there is a new cause with its own two attempts; the same check failing after
+   its second fix ends the loop.
 
 ## Common questions
 
-**It re-ran the job instead of fixing anything.** That is the flake path, and
-it fires once. A failure with no plausible code cause: runner died, network
-timeout, an unrelated job: gets one `--failed` rerun, noted as a flake. If it
-comes back red, the loop treats it as a fault.
+**It re-ran the job instead of fixing anything.** That is the flake path, and it
+fires once. If the rerun comes back red, the loop treats it as a fault.
 
-**It stopped after two attempts and left CI red.** That is the cap working.
-What you get instead of a third attempt is the diagnosis, the failing-log
-excerpt or check link, and a recommended next step. Two consecutive failed
-fixes usually means the diagnosis is wrong, and more iterations spend budget
-without improving it.
+**It stopped after two attempts and left CI red.** That is the cap. Instead of a
+third attempt you get the diagnosis, the failing-log excerpt or check link, and a
+recommended next step.
 
-**Why won't it just skip the flaky test?** Because "a red check that encodes
-an intended-behavior question is reported as a decision for the user, not
-worked around." Deleting, skipping, or weakening a check is out of the skill's
-rules regardless of how obviously convenient it looks.
+**Why won't it just skip the flaky test?** A red check that encodes an
+intended-behavior question is reported as a decision for you, not worked around.
 
-**My branch has no PR.** It still works. Push-triggered runs on a branch (a
-direct-to-main workflow, for instance) are handled through `gh run list` and
-`gh run view` through the designated watcher, pinned to the target commit. The watcher remains read-only; the parent owns any authorized flake rerun.
-([decision](../decisions/fix-ci.md))
+**Why did it start fixing while other checks were still running?** The watcher
+returns at the first failure. Checks still running when the fix is pushed rerun
+on the new head anyway.
 
-**Why not just give `ci-watcher` the ability to fix things?** That was
-considered and rejected for three recorded reasons: the plugin's agents are
-advisory and read-only, and widening the watcher would break that identity for
-one convenience; fix quality lives in the session that pushed the breaking
-commit, whereas a background subagent editing the working tree starts from
-zero and can collide with in-flight work; and the watcher's own design already
-said a tool that retries or pushes is "a different, higher-authority tool."
-`fix-ci` is that tool. ([decision](../decisions/fix-ci.md))
+**My branch has no PR.** It works the branch's push-triggered runs, pinned to the
+target commit. ([decision](../decisions/fix-ci.md))
 
-**Why did the session spawn two watchers?** Two earlier wordings invited it:
-the routing rule sent every `gh` call to the watcher, so the pre-push snapshot
-became a second dispatch, and the first-failure report listed pending checks
-without saying they are not watched further. Since workbench 0.37.5 the rule is
-one watcher per pinned head; reading and watching are one dispatch; the
-pre-push snapshot is a single read the parent runs itself; and the watcher's
-description no longer asks hosts to dispatch it proactively.
+**Can I keep working while it waits?** Yes. The watcher runs separately; your
+session picks up its report and owns the fix. If no watcher can be dispatched, it
+reports the monitoring gap rather than polling in your session.
 
-**Can I keep working while it waits?** Yes. All polling runs through a separate Opus (Claude) or Sol (Codex) watcher, regardless of whether the parent has other work. The parent picks up its report and owns any fixes. If designated dispatch is unavailable, report that capability gap instead of polling in the parent.
+**The watcher came back with checks still pending.** Its watch window is bounded
+(ten minutes unless set otherwise). Pending is reported as pending, with the next
+action, never as green.
 
-**A check failed in the first minute but nothing happened until the whole
-workflow finished. Why?** An earlier revision described the watch step as
-"watch, then report a verdict", so the watcher came back only when the watch
-command exited, and `gh run watch` never exits early. Since workbench 0.37.3
-the watcher returns at the first failed required check and the parent acts on
-it immediately. Checks still running when the fix is pushed rerun on the new
-head anyway. Right before pushing, the loop takes one snapshot of the old head
-so a second failure that appeared meanwhile can be folded into the same push.
+**My unrelated changes didn't get committed.** Correct: it stages only files the
+fix touched and reports the rest.
 
-**My working tree had unrelated changes and they didn't get committed.**
-Correct. It stages only the files the fix touched, and reports the rest rather
-than folding them in.
-
-**Does it manage the PR?** No. It fixes the red check and reports; PR state is
-the caller's business. It is not an auto-merger.
-
-**Non-GitHub CI?** It assumes `gh`. The resolve → watch → evidence → fix →
-re-watch shape is host-agnostic, but the commands are not.
+**Non-GitHub CI?** It assumes `gh`.
 
 ## It's working if
 
-- The diagnosis quotes the failing step's actual output. A diagnosis offered
-  without a log having been pulled is the **negative signal**: evidence comes
-  before the fix, every time.
-- Each attempt is reported with what failed, the root cause, and what changed
-  (files plus commit).
+- The diagnosis quotes the failing step's output. **Negative signal:** a
+  diagnosis offered before any log was pulled.
+- Each attempt reports what failed, the root cause, and what changed (files and
+  commit).
+- The final report names the verdict, target SHA, expected checks, watcher model,
+  and PR or run link.
 - The fix commit touches only what the failure required.
-- **Negative signal:** a force-push, an amended commit, a deleted or skipped
-  test, or a third fix attempt. Any of those means the loop's guardrails were
-  not followed.
-- With complete green required-check coverage for the pinned target SHA, it reports green and stops, without inventing work.
-- Exactly one watcher exists per pinned head. A second watcher on the same head is the **negative signal**.
-- The first fix commit lands while other checks from the same run are still
-  running. Waiting for a full run to finish before touching a check that failed
-  early is the **negative signal**.
+- The first fix lands while other checks from the same run are still running.
+- **Negative signal:** a force-push, an amended commit, a skipped test, a third
+  attempt on one cause, or a second watcher on the same head.
 
 ## Where it fits
 
-`fix-ci` sits in the landing stage of the workbench flow: the flow map lists
-it as the piece that "tends the checks" after `file-pr`, a merge, or a push.
-`file-pr` composes it rather than duplicating it: when a freshly filed PR goes
-red, this loop is what runs. It pairs with the `ci-watcher` agent, which is
-its read-only watch half.
-
-All polling belongs to that separate watcher, even if the parent is idle or already uses Opus/Sol. Never Astra/Fable. If designated dispatch is unavailable, report the gap instead of polling in the parent. Preserve before/after local reproduction with focused tests and mandatory gates; full suites normally run in PR CI. Existing no-commit/no-push instructions remain binding.
+`fix-ci` tends the checks in the landing stage, after `file-pr`, a merge, or a
+push. `file-pr` runs this loop rather than duplicating it. The `ci-watcher` agent
+is its read-only watch half.

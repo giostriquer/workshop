@@ -1,6 +1,6 @@
 {
   "system": "workbench",
-  "description": "Provenance manifest for the method skill set: toolkit skills derived from obra/superpowers, with every upstream piece's disposition recorded. Consumed by the workbench-drift skill via scripts/drift-check.mjs. See docs/decisions/workbench-system.md.",
+  "description": "Provenance manifest for the method skill set: workbench plugin skills and the repo-local writing-skills, derived from obra/superpowers, with every upstream piece's disposition recorded. Consumed by the workbench-drift skill via scripts/drift-check.mjs. See docs/decisions/workbench-system.md.",
   "upstream": {
     "repo": "https://github.com/obra/superpowers",
     "ref": "main",

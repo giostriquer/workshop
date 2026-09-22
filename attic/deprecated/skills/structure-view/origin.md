@@ -7,12 +7,9 @@
 > `docs/decisions/arch-map-skill-draft.md`.
 >
 > Withdrawn from the toolkit plugin on 2026-07-31 (the day it landed)
-> pending more design thought. Historical parked draft:
-> [`docs/decisions/structure-view-skill-draft.md`](../../../../docs/decisions/structure-view-skill-draft.md).
-> Spec of record (historical):
-> [`docs/decisions/structure-view.md`](../../../../docs/decisions/structure-view.md).
-> Current visual + rename decision:
-> [`docs/decisions/arch-map-rename-and-visual.md`](../../../../docs/decisions/arch-map-rename-and-visual.md).
+> pending more design thought. The historical draft and spec of record live
+> in git history; the decisions in force are in
+> [`docs/decisions/arch-map.md`](../../../../docs/decisions/arch-map.md).
 
 ## Origin
 

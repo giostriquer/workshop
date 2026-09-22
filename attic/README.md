@@ -10,7 +10,7 @@ Two tiers, one rule each:
 - **`skills/` and `agents/`**: pieces that are **in-progress or need fixing**:
   drafts and pulled-for-rework specs the operator intends to ship once they're
   right. Promote by moving the spec into the plugin that will ship it and
-  following `CLAUDE.md` § "When adding a new agent or skill".
+  following the maintenance workflow in `AGENTS.md`.
 - **`deprecated/`**: pieces with **no current function, kept as history**:
   retired skills and agents preserved so the record survives. Each retired
   piece gets one folder: `deprecated/skills/<name>/` or
@@ -28,7 +28,7 @@ origin docs of retired pieces, kept with their specs.
 
 | Piece | Since | Notes |
 | --- | --- | --- |
-| `skills/orchestrate` | 2026-08-10 | Pulled from the global `~/.claude/skills/` scope for rework; never shipped in a plugin. Pairs with `skills/codex-implement` below. Carries `model-selection.md` alongside its SKILL.md: the former always-injected `~/.claude/rules/model-selection.md`, parked here with the skill whose doctrine it points at (the routing invariants also live in the shipped `route-work` skill). |
+| `skills/orchestrate` | 2026-08-10 | Pulled from the global `~/.claude/skills/` scope for rework; never shipped in a plugin. Pairs with `skills/codex-implement` below. Carries `model-selection.md` alongside its SKILL.md: the former always-injected `~/.claude/rules/model-selection.md`, parked here with the skill whose doctrine it points at (the routing invariants also live in the shipped `model-reference` skill). |
 | `skills/codex-implement` | 2026-08-10 | Pulled from the global `~/.claude/skills/` scope for rework (SKILL.md + `codex-task.sh` wrapper); never shipped in a plugin. Dispatch mechanics for Codex CLI as executor: the counterpart `skills/orchestrate` discovers it. |
 
 ### Deprecated (history)

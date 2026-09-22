@@ -3,8 +3,7 @@
 Canonical mental model of the **workbench** system's workflow: how work enters,
 gets scoped, gets implemented, and lands. Filled teal boxes are **user gates**
 (the user decides when a choice is still open); existing choices and authorization carry forward. The session drives authorized work. Decisions and rationale:
-[`decisions/workbench-system.md`](decisions/workbench-system.md). Designed
-interactively on a whiteboard artifact (v7, 2026-08-11).
+[`decisions/workbench-system.md`](decisions/workbench-system.md).
 
 **Canonical pair:** this file (mermaid, diffable) and
 [`workbench-flow.html`](workbench-flow.html) (arch-map rendering) are maintained
@@ -46,7 +45,7 @@ flowchart LR
     TDD["test-driven-development<br/>default where a harness exists;<br/>repo conventions take precedence"]:::sat -.- I
     SD["systematic-debugging<br/>persistent or unclear failures"]:::sat -.- I
 
-    I["IMPLEMENT<br/>direct or agentic: user / harness call;<br/>handed the plan / goal if present"]:::stage
+    I["IMPLEMENT<br/>in-session or dispatched: user / harness call;<br/>handed the plan / goal if present"]:::stage
     AR["ADVERSARIAL REVIEW AT READINESS<br/>code quality + comment trim,<br/>per repo rules; test quality in parallel<br/>when logic or tests changed"]:::stage
     OG[["USER: PR or merge?<br/>session outlines what was done first;<br/>repo / user rules may pre-authorize"]]:::gate
     L["LAND<br/>file-pr · merge · push;<br/>fix-ci: separate Opus / Sol watcher"]:::stage
@@ -87,7 +86,7 @@ Historical decisions below are refined by the current flow and the [wording-hard
 | Q11 | "Deemed ready" = verification-before-completion; empirical-proof for runnable surfaces. |
 | Q12 | Flow artifacts are disposable: saved under `.workbench/<work_scope>/` (or `.tmp/workbench/<work_scope>/`), enduring only for the work; durable only on explicit user ask or an established repo pattern. |
 | Q13 | Implementation inherits repo patterns first. A stated repo/user convention that conflicts with a discipline step wins, and the conflict is announced rather than absorbed silently. TDD is the default only where the repo is silent. (2026-08-12) |
-| Q14 | Expensive verification (`empirical-proof`, `qa-sweep`) is user-optioned. It is offered when it fits and run only on explicit ask or standing authorization, never automatically. `verification-before-completion` is the only always-on gate. (2026-08-12) |
+| Q14 | Expensive verification (`empirical-proof`, `qa-sweep`) is user-optioned. It is offered when it fits and run only on explicit ask or standing authorization, never automatically. `verification-before-completion` and the adversarial review at readiness are the always-on gates. (2026-08-12) |
 | Q15 | The adversarial review fires only when the work-stream's implementation is believed complete, right before the PR-or-merge gate, and never mid-implementation (refines Q3). Findings outside the accepted scope become follow-ups unless they prove the change unsafe or incorrect. (2026-08-12) |
-| Q16 | Stop and rescope when a change crosses owner areas the ask never named or grows well past the sized expectation: splitting is the user's call; scope never grows silently. Adjacent defects found along the way are recorded as follow-up work, not folded in. (2026-08-12) |
+| Q16 | Reversed 2026-08-25: scope is the user's to define, and the stop-and-rescope guard is gone. Adjacent defects found along the way are still recorded as follow-up work, not folded in. (2026-08-12) |
 | Q17 | One evidence home per work scope (refines Q12). Everything a work-stream produces, including dispatched agents' evidence, lands in the same `.workbench/<work_scope>/` folder. Agents receive that path in their contract; per-agent temp dirs and the system temp are not used. (2026-08-12) |

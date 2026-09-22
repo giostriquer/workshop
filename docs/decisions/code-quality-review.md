@@ -1,115 +1,19 @@
-# Decision: add the `code-quality-review` skill
+# code-quality-review: decisions in force
 
-**Date:** 2026-06-29
+Rationale for the `code-quality-review` skill and its `code-quality-reviewer` agent, both shipped by the workbench plugin; superseded choices are omitted, and git history keeps the originals.
 
-## Status
+## A strict, structure-first review skill (2026-06-29)
 
-Implemented (2026-06-29). `validate-native-plugin.ps1` passes.
+The flow had reviewers for specs, pattern conformance and tests, but nothing aimed at a diff that works and passes tests while leaving the codebase messier: a file crossing 1000 lines, a special case bolted onto an unrelated flow, feature logic in a shared path, an abstraction that buys nothing. The skill fills that gap with a deep-audit baseline prompt and eight standards, all biased toward deleting complexity through a "code judo" reframe rather than rearranging it. It stays system-agnostic, with no product, framework, path or ticket names, and its one number, the 1000-line threshold, starts a decomposition conversation rather than acting as a mechanical cap. Its target is the maintainability of a bounded change, so it complements `pattern-reviewer`'s conformance check instead of replacing it, and it is not a whole-repo audit. The name is neutral: the supplied spec's "thermo-nuclear" branding was dropped from both skill and agent, and the skill is model-invocable.
 
-## Context
+## The skill is the rubric; the agent applies it (2026-06-29)
 
-The toolkit had review *agents* (`spec-reviewer`, `pattern-reviewer`,
-`test-quality-reviewer`, `vigil`) and a runtime QA *skill* (`qa-sweep`), but no
-direct-use skill for the specific posture of an **unusually strict, structure-first
-maintainability review**: the strict pass that hunts for restructurings
-that delete complexity rather than rearrange it. The recurring pressure it answers
-is the one a correctness-first review can't touch: a diff that works and passes
-tests but leaves the codebase messier: a file crossing 1000 lines, a special-case
-branch bolted onto an unrelated flow, feature logic in a shared path, an
-abstraction that buys nothing: none of it a bug, all of it debt.
+The implementation-review loop always named a code-quality stage ahead of pattern review, but no agent filled it, so every adopting project had to supply its own. `code-quality-reviewer` fills it by loading the `code-quality-review` skill as its complete rubric, reading the bundled SKILL.md directly on hosts that do not auto-load skills, and falling back to a harsh maintainability audit in the same spirit only when the skill is unavailable. One rubric in one place means the agent carries no second copy to drift. The agent is host-agnostic: it reviews the `### Git / diff output` and `### Changed file contents` sections a parent supplies, or gathers the diff against the base itself, so it works both as a dispatched stage and standalone. It is review-only; the implementer owns every fix.
 
-The skill content was **operator-provided as a finalized spec** and adopted
-verbatim. Because the content was supplied rather than designed here, the
-`writing-skills` RED→GREEN→REFACTOR authoring loop (baseline pressure scenarios →
-minimal skill → close loopholes) does not apply: there was no skill to *author*,
-only a fixed artifact to *wire into the scaffold correctly*. This decision records
-the wiring and the two deltas applied to the supplied spec, not a design
-derivation.
+## The review is default-on at completion (2026-08-12)
 
-## The shape
+Sessions finished, verified and went straight to landing, because the flow text called `verification-before-completion` the only always-on piece and framed every skill as a default rather than a gate. The review is now required once the agreed work is complete, with exactly two exits: the user explicitly declines, or the repo's own process supersedes it. A small diff, a confident implementation, a clean-looking change, time pressure, or the session's own sense that this one looks fine do not qualify, because that judgment is exactly what an adversarial pass exists to distrust. The description carries the mandate in one word, "required", and the body carries the exits and non-reasons, since policy in the description taxes every session to serve the few where the skill fires; the description also names "adversarial", the word the rest of the flow uses for this pass. Being mandatory does not widen the review: it never runs mid-implementation, and out-of-scope findings become follow-ups rather than growing the diff.
 
-`code-quality-review` is a **run-it-now review skill** the main session invokes
-against a branch's diff. It layers explicit, non-negotiable standards on top of a
-deep-audit baseline prompt, all biased the same direction: toward *deleting*
-complexity over polishing it:
+## The review is dispatched, never self-served (2026-08-19)
 
-- A baseline prompt framing the pass as a behavior-preserving deep audit aimed at
-  abstractions, modularity, succinctness, and legibility, with explicit license to
-  restructure.
-- Eight non-negotiable standards (rule 0 ambition through rule 7
-  orchestration/atomicity), each naming a specific erosion to fight: the
-  1000-line file crossing, ad-hoc spaghetti growth, "it works" rubber-stamping,
-  magical over direct code, type/boundary muddiness, canonical-layer leaks, and
-  avoidable sequential/non-atomic orchestration.
-- Primary-questions, flag-aggressively, and preferred-remedies lists that all push
-  for the *reframe* over the *rearrangement*.
-- An approval bar with a short set of presumptive blockers, each waivable only with
-  a clear justification, plus a demanding tone section.
-
-It is **system-agnostic**: no product, framework, package, path, or ticket names
-in the body. The one concrete number (the 1000-line threshold) is framed as a
-decomposition-conversation starter, not a mechanical gate.
-
-## Deltas from the supplied spec
-
-The skill content is the operator's supplied spec with three deltas; the rubric
-body (rules 0–7, review questions, remedies, approval bar) is unchanged:
-
-1. **`name`** is `code-quality-review` (the spec's working title was
-   `thermo-nuclear-code-quality-review`).
-2. **`disable-model-invocation` is dropped.** The skill is model-invocable; its
-   description carries the triggering conditions (strict code quality review / deep
-   code quality audit / harsh maintainability review).
-3. **The "thermo-nuclear" branding is removed throughout** (operator follow-up).
-   The H1 is `# Code Quality Review` and the description's trigger phrases drop
-   "thermo-nuclear / thermonuclear," keeping the neutral "strict / deep / harsh"
-   framing. The same scrub was applied to the companion `code-quality-reviewer`
-   agent: see [`docs/decisions/code-quality-reviewer.md`](code-quality-reviewer.md).
-
-## What changed across the scaffold
-
-Followed the `qa-sweep` precedent (the last new skill added to the toolkit):
-
-- Canonical `.claude/skills/code-quality-review/SKILL.md` written and propagated
-  **byte-identical** to all five mirrors (`.codex`, `.gemini`, `plugins/toolkit`,
-  and both onboarding reference roots).
-- Origin doc `docs/skills/code-quality-review.md` written and mirrored to both
-  reference roots.
-- `docs/skills/README.md` roster (count `twelve` → `thirteen`, new row, composition
-  bullet), root `README.md` (toolkit skill count `six` → `seven`, skills line,
-  full-scaffold count `twelve` → `thirteen`), `plugins/toolkit/README.md` (count,
-  two enumerations, intro clause, skills table), and the
-  `docs/marketplace/native-plugin.md` Codex skill enumeration updated; mirrored
-  copies re-synced.
-- Both `$expectedSkills` arrays in `scripts/validate-native-plugin.ps1`
-  (`Assert-ToolkitPlugin`, `Assert-CodexToolkitPlugin`) gain
-  `"code-quality-review"`.
-- `toolkit` `0.8.4` → `0.9.0` (new skill = minor), `agent-workshop` `0.1.15` →
-  `0.1.16` (onboarding payload mirrors grew), consistent across both plugin
-  manifests, both Codex manifests, and the Claude marketplace.
-- `docs/change-log.md`: entry via the `change-log` skill.
-
-## Non-goals
-
-- Not a correctness reviewer. It owns **maintainability and structural ambition**;
-  bug-hunting and behavior verification are other paths' jobs.
-- Not a substitute for `pattern-reviewer` (conformance to documented patterns). The
-  two are complementary strict reviewers with different targets.
-- Not a whole-repo auditor. Its prioritization and approval bar are written for
-  "should this change land," i.e. a bounded branch/PR diff.
-- The 1000-line rule is not a hard cap; it is a strong smell that starts a
-  decomposition conversation.
-
-## Acceptance criteria
-
-- `/code-quality-review` runs the strict, structure-first pass over the current
-  branch's diff, prioritizing structural findings and holding the approval bar's
-  presumptive blockers.
-- The skill body is byte-identical to the supplied spec apart from the two recorded
-  deltas (`name`, dropped `disable-model-invocation`).
-- All mirrors (`.codex`, `.gemini`, `plugins/toolkit`, both onboarding reference
-  roots) are byte-identical to canonical; the origin doc is mirrored to both
-  reference roots.
-- `toolkit` is at `0.9.0` and `agent-workshop` at `0.1.16`, consistent across every
-  manifest and the Claude marketplace entry.
-- `scripts/validate-native-plugin.ps1` passes.
+Sessions reaching the gate ran the rubric over their own diff and reported that as the review, and nothing in the text told them otherwise. The implementing context holds every justification behind the code, so its structure reads as inevitable and the code-judo move the rubric hunts for is exactly what that context cannot see; a self-served pass returns "nothing blocking" on diffs a fresh reviewer takes apart. The review therefore runs in a fresh context handed the diff and the changed files, normally the `code-quality-reviewer` agent, and where the host has no subagent mechanism the diff goes to a fresh session and the report names that route. An author's pass over their own work is reported as what it is, never as the gate. The requirement follows from the review being adversarial, not from a general preference for dispatch, so it does not extend to `pattern-reviewer`; it lives in the skill text alone, with no hook or dispatcher.

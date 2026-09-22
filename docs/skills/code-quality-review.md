@@ -2,120 +2,71 @@
 
 ## What it does
 
-This skill runs a strict maintainability review over a finished change: abstraction quality, structure, pattern drift, file sprawl, and spaghetti growth. Its distinguishing posture is ambition. It is not looking for local cleanup opportunities; it is looking for **"code judo" moves: restructurings that preserve behavior while making the implementation dramatically simpler, smaller, more direct, and more elegant.** Where a normal review says "this could be cleaner," this one asks whether the change can be reframed so whole branches, helpers, modes, or layers disappear.
+A strict maintainability review of a finished change: abstraction quality, structure, pattern drift, file sprawl, and spaghetti growth. Its posture is ambition: it hunts for **"code judo" moves: restructurings that preserve behavior while making the implementation dramatically simpler**, so whole branches, helpers, or layers disappear.
 
-It is **default-on**. Once the full agreed work set is implemented, verified, and about to ship through a PR or the repository's delivery process, **"this review runs whether or not anyone asked for it. Exactly two things stop it: the user explicitly declining, or the repo's own process superseding it."** The skill enumerates the non-reasons directly: a small diff, a confident implementation, a clean-looking change, time pressure, or the session's own sense that this one doesn't need it. That last one is the point: the session's judgment that a change looks fine is precisely what an adversarial pass exists to distrust.
+It is **default-on**. Once the full agreed work set is implemented, verified, and about to ship through a PR or the repository's delivery process, it runs whether or not anyone asked. Only two things stop it: the user explicitly declining, or the repo's own process superseding it. A small diff, a clean-looking change, time pressure, or the session's own judgment are not exits. Edits, subtasks, and checkpoints never trigger it.
 
-It is a gate, not a fixer or bug-hunter. It produces labeled, prioritized findings; blocking findings get fixed and tested, then return to the reviewer for focused closure. At most two automatic follow-up passes cover corrections and their effects; unresolved blockers or unreviewed corrections then hold delivery. Broadly invalidated evidence requires wider review within that same budget. It owns maintainability and structural ambition, while correctness, behavior verification, and pattern conformance belong to other paths. It runs through its companion `code-quality-reviewer` agent, or a fresh reviewer context of some kind, never in the session that wrote the code; it is explicitly review-only, surfacing problems and pushing for a cleaner structure but never patching code.
-
-Completion here is the shipping checkpoint for the full agreed work set.
-Individual edits, subtasks, progress reports, and local checkpoints do not trigger
-review. Finish and verify a correction batch before its review resumes delivery.
+It is a gate, not a fixer or bug-hunter: a reviewer that did not write the code (the `code-quality-reviewer` agent or the host's equivalent) returns labeled, prioritized findings and never edits code.
 
 ## When to reach for it
 
-Mostly you don't. It fires on its own, **"once, only when the implementation is believed complete, immediately before the PR-or-merge question, never mid-implementation."** That timing is load-bearing in both directions: it must not be skipped at completion, and it must not fire in the middle of implementation.
-
-It also keeps an on-request entry point, because asking for a harsh review out of band is a real thing people want. Its description triggers on a strict **or adversarial** code quality review, a deep code quality audit, or an especially harsh maintainability review.
+Mostly you don't: it fires at completion, right before PR-or-merge. You can also invoke it directly for a strict or adversarial code quality review.
 
 | The problem | The skill |
 | --- | --- |
-| A work-stream's implementation is complete and needs its one strict structural pass before landing | `code-quality-review` (fires by default) |
-| You want a harsh maintainability audit right now, outside the flow | `code-quality-review`, invoked directly |
-| Does the change conform to the project's documented implementation patterns? | `pattern-reviewer` agent: a complementary strict reviewer with a different target |
-| Are the tests trustworthy and do they cover the risk? | [test-quality-review](test-quality-review.md) |
-| Does the change actually work? | `verification-before-completion`, and `empirical-proof` if you want proof at the running app |
-| A design spec or plan needs review before anyone implements it | `spec-reviewer` agent |
+| Completed work needs its structural pass before landing | `code-quality-review` (fires by default) |
+| A harsh maintainability audit right now | `code-quality-review`, invoked directly |
+| Conformance to documented project patterns | `pattern-reviewer` agent |
+| Trustworthy tests that cover the risk | [test-quality-review](test-quality-review.md) |
+| Does the change actually work? | `verification-before-completion`, `empirical-proof` |
+| Reviewing a spec or plan before implementation | `spec-reviewer` agent |
 
 ## The rubric
 
-The pass starts from a baseline instruction: a deep audit of the current branch's changes that rethinks how to structure them without impacting behavior, improving abstractions and modularity, reducing spaghetti, with explicit license to restructure surrounding code: **"Be extremely thorough and rigorous. Measure twice, cut once."**
+The baseline is a deep audit that restructures the change without altering behavior: **"Be extremely thorough and rigorous. Measure twice, cut once."** On top sit eight standards. Rule 0 is ambition: delete complexity rather than rearrange it. Rules 1 to 7 fight a file pushed past 1,000 lines, ad-hoc branches bolted into unrelated flows, rubber-stamped "it works" code, magic and thin wrappers, loose types and silent fallbacks, logic in the wrong layer or duplicated helpers, and needless sequential or non-atomic orchestration.
 
-Layered on top are eight non-negotiable standards. Rule 0 is the ambition rule: look for reframings that delete complexity rather than rearrange it, and **"prefer the solution that makes the code feel inevitable in hindsight."** The remaining seven each name a specific erosion:
+**Scope decides what a finding costs** ([decision](../decisions/workbench-operator-decisions.md)). Strictness applies inside the accepted work (ticket, plan, or agreed change), and every finding carries a label:
 
-| Rule | What it fights |
-| --- | --- |
-| 1 | A PR pushing a file from under 1k lines to over 1k without a very strong reason |
-| 2 | Ad-hoc conditionals, scattered special cases, and one-off branches bolted into unrelated flows |
-| 3 | Rubber-stamping "it works" implementations that leave the codebase messier |
-| 4 | Hacky or magical code where direct and boring would do; thin wrappers and identity abstractions |
-| 5 | Unnecessary optionality, `unknown`, `any`, cast-heavy code, and silent fallbacks papering over unclear invariants |
-| 6 | Feature logic leaking into shared paths; bespoke helpers where a canonical one exists |
-| 7 | Needless sequential orchestration and non-atomic updates that leave state half-applied |
+- **In-scope (blocking):** a demonstrated defect or material structural problem in this change.
+- **In-scope (advisory):** a supported improvement without a blocking consequence.
+- **Out-of-scope (follow-up):** adjacent defects, pre-existing mess this diff did not worsen, improvements beyond the accepted work. Recorded in the existing scope record, not folded into the change.
 
-**The scope boundary decides what each finding costs.** All that strictness applies inside the accepted work's boundary: the ticket, plan, or agreed change under review. In-scope findings with a demonstrated correctness or material maintainability consequence block approval; other opportunities are labeled advisory. Findings outside it (adjacent defects, pre-existing mess this diff did not worsen, improvements beyond the accepted work) are **recorded as follow-up work, not folded into this change**. One exception: a finding that proves the change unsafe or incorrect as shipped blocks regardless of where it lives. Every finding must carry a label, and **"an unlabeled finding reads as blocking."**
+A finding that proves the change unsafe or incorrect as shipped blocks wherever it lives. An unlabeled finding reads as blocking. Any structural concern blocks only when the review demonstrates a correctness or material maintainability consequence; file length or an alternative design alone does not.
 
-**The approval bar examines the following risks.** Each blocks when a concrete correctness or material maintainability consequence is demonstrated; size or a plausible alternative alone prompts inspection and explanation: preserving a lot of incidental complexity when a plausible code-judo move would delete it, pushing a file past 1000 lines without a defensible structure and with a concrete maintainability consequence, adding ad-hoc branching that tangles an existing flow, scattering feature checks across shared code, adding an unnecessary abstraction or cast-heavy contract, and duplicating an existing helper or putting logic in the wrong layer.
-
-Findings come out in priority order: structural regressions first, then missed simplification opportunities, then spaghetti growth, then boundary and type-contract problems, then file size, modularity, and legibility. The skill is blunt about noise: **"Do not flood the review with low-value nits if there are larger structural issues."**
+The report opens with `## Verdict: PASS` or `## Verdict: ISSUES_FOUND`, then the reviewed revision, follow-up pass count, and stable finding IDs; a missing verdict line reads as `ISSUES_FOUND`. Findings run structural regressions first and legibility last; few high-conviction comments beat many nits.
 
 ## Common questions
 
 **My diff is three lines. Do I really have to run this?**
-Yes, unless you decline it or your repo has its own mandated review stage that supersedes it. Those are the only two exits, and they are narrow on purpose. Sessions were previously finishing implementations and going straight to the landing gate, not out of defiance but because the flow layer described the review as optional in four separate places. The most damaging instance said that `verification-before-completion` was the *only* always-on piece. All four sites now state the same rule ([decision](../decisions/adversarial-review-is-default-on.md)).
+Yes, unless you decline it or your repo's own review process supersedes it ([decision](../decisions/code-quality-review.md)).
 
-**The review found ten problems that have nothing to do with my change. Do I fix them all?**
-No. Label them out-of-scope and record them as follow-up work. This rule exists because of a specific field failure: a one-ticket persistence change grew into a **52-file workset across six subsystems** through a loop of implement the ticket, find an adjacent defect, treat it as required, add tests and a fix, review the larger implementation, find more defects, repeat. Two weaknesses fed it: the review carried no scope classification distinguishing blocking findings from adjacent ones, and its timing was unpinned, so it ran as an implementation-discovery engine rather than a completion gate ([decision](../decisions/scope-guards-q15-q16.md)).
+**The review found problems unrelated to my change. Do I fix them?**
+No. They become out-of-scope follow-ups, so the diff stays the size the accepted work defined, unless one proves your change unsafe or incorrect as shipped.
 
-**Should I re-run the review after fixing its findings?**
-Yes: return every blocking fix or evidence-based rejection to the same reviewer, with finding IDs, revision, correction diff, and focused test evidence. Follow-up covers those corrections and affected behavior. New blockers need demonstrated consequences; cosmetic preferences and unrelated cleanup do not extend the loop. Code and test stages share at most two automatic follow-up passes. Correction dispatches, lane handbacks and owner validation do not consume those passes.
-
-If blockers or unreviewed corrections remain at the limit, hold delivery and route
-the next review decision to the epic owner for a delegated lane, or the user for
-standalone implementation. That authority can approve a specific correction scope
-and number of extra submissions within its existing authority. Record the decision
-and continue the cumulative count. Corrections and owner validation can continue
-under existing task authority. A reviewer replacement or PR handoff does not reset
-the count; an extension does not waive independent closure of blockers.
+**Can I run it midway through to catch problems early?**
+Not as this gate. Mid-implementation, each round surfaces new work and the diff grows.
 
 **Does "exactly one code-quality review" exclude test-quality review?**
+No. When production logic or tests changed, one initial round includes both stages, dispatched separately in parallel and recorded against the same revision. If the test stage was missed, run it and keep the valid code verdict; the gate stays pending until both return.
 
-No. One initial round includes code-quality review and a separate test-quality
-review when production logic or tests changed. The dispatching session records
-both required verdicts for the same change set and revision. If the test stage
-was missed, run it and retain a valid completed code review; completing the
-unchanged round does not consume a correction pass. The gate stays pending until
-every required stage returns. Explicit user waivers and repository overrides
-still apply.
-
-**Can I run it midway through, to catch problems early?**
-Not as this gate. Its initial pass fires when the implementation is believed complete, right before the PR-or-merge question. Firing mid-implementation is the failure mode that produced the 52-file workset.
+**How do follow-ups work after I fix its findings?**
+Return each blocking fix or evidence-based rejection to the same reviewer with finding IDs, revisions, the correction diff, and focused test evidence; a passing test alone does not close a blocker. Follow-up checks the corrections and what they affect. Code and test stages share at most two automatic follow-up passes. If blockers remain after that, delivery holds and the owning authority (the epic owner for a delegated lane, otherwise the user) decides the next step. An exhausted budget is never PASS, and a new reviewer or handoff does not reset the count.
 
 **Is the 1000-line rule a hard cap?**
-No. It is a strong smell that starts a decomposition conversation, and the skill allows a waiver where there is a compelling structural reason and the resulting file is still clearly organized. What it does not allow is the threshold being crossed silently: if the diff crosses it, the review must explicitly ask whether the code should be decomposed first.
+No. Crossing it makes the review ask whether to decompose first; a compelling structural reason with a clearly organized file waives it.
 
-**Will it catch bugs?**
-Not its job. It owns maintainability and structural ambition; bug-hunting and behavior verification belong to other paths, and it is not a substitute for pattern conformance review either. It is also not a whole-repo auditor: its prioritization and approval bar are written for the question "should this change land."
-
-**I asked for "an adversarial code quality review" and got nothing.**
-That gap is closed. The flow calls this pass adversarial everywhere it names it, but the skill's own description contained the word nowhere, so the request was matching on "code quality review" alone. The on-request clause now reads "a strict **or adversarial** code quality review."
-
-**Should I run the skill inline or dispatch the agent?**
-Dispatch it. The skill is the rubric; the `code-quality-reviewer` agent loads that same `SKILL.md` and treats it as the complete rubric (tone, approval bar, output ordering, and all the structural rules) applying it to a diff in its own subagent context. The agent reviews the labeled sections when a parent supplies them and gathers `git diff <base>...HEAD` itself when they are absent.
-
-Running it inline in the session that wrote the code is not a cheaper version of this gate; it is a different and much weaker thing. That session holds every justification that produced the code, so the structure reads as inevitable rather than as a choice, and the code-judo move the rubric exists to find is exactly what it cannot see. Dispatching also keeps the full diff and file contents out of the main window and lets the code-quality, pattern, and test-quality stages run as separate focused passes. Where a host offers no subagent mechanism, hand the diff to a fresh session and name that route in the report ([decision](../decisions/adversarial-review-is-dispatched.md)).
-
-**Can it edit the code it criticizes?**
-The agent cannot do that. It is review-only, does not edit, commit, or push, and does not spawn nested subagents unless asked. Routing findings into edits is the implementer's step.
+**Can I run it inline in the session that wrote the code?**
+No. That session holds every justification behind the code, so the code-judo move is exactly what it cannot see. Dispatch the `code-quality-reviewer` agent, which loads this skill as its rubric and gathers `git diff <base>...HEAD` itself if needed. With no subagent mechanism, hand the diff to a fresh session and say so in the report. An author's own pass is never this gate.
 
 ## It's working if
 
-- The review fired at completion without anyone requesting it, and the session said so.
-- Every report opens with `## Verdict: PASS` or `## Verdict: ISSUES_FOUND`, so a clean pass is told from a blocked one without reading the prose.
-- Every finding carries a blocking, advisory, or out-of-scope follow-up label, and the out-of-scope ones left the diff alone and became follow-up work.
-- The top findings are structural (a reframing that deletes a layer, a file that should be decomposed) rather than a list of naming suggestions.
-- Approval was withheld on a change that worked and passed its tests, because it left the local architecture messier.
-- The initial review covered the completed change; reviewers confirmed blocking dispositions against the corrected revision, with the follow-up count recorded.
+- The review fired at completion unrequested, and every report opens with a verdict line.
+- Every finding is labeled, and out-of-scope ones became follow-ups without touching the diff.
+- The top findings are structural, and approval was withheld on working code that left the architecture messier.
+- The reviewer confirmed blocking dispositions against the corrected revision.
 
-Negative signals: the skill is being misapplied if:
-
-- It keeps firing during implementation, each round surfacing new work. That is the diff-growth loop the timing rule exists to stop.
-- The diff is expanding because of review findings the accepted work never named.
-- It was skipped because the change looked clean, the diff was small, or time was short. Those are named non-reasons, and the decision to skip is the user's to make, never the session's.
-- The output is a long list of cosmetic nits while a 1,400-line file or a bolted-on special case goes unmentioned.
+It's misapplied if it fires mid-implementation, the diff grows from findings the accepted work never named, or it was skipped because the change looked small.
 
 ## Where it fits
 
-This is the last gate before landing. Once a work-stream's implementation is complete and verified with evidence (`verification-before-completion` satisfied, and `empirical-proof` run if you asked for it) the initial adversarial pass runs. When the diff changes production logic or tests, [test-quality-review](test-quality-review.md) is dispatched in parallel with it, in its own test-scoped prompt. In-scope blocking findings are fixed and re-verified, advisory findings receive a disposition, and out-of-scope findings become follow-ups, and the session proceeds only after reviewer-confirmed closure and review of later behavior changes under the remaining budget. Then outline what was done and carry existing landing authorization forward; ask PR or merge only if that choice is still open.
-
-The full structural rubric, review questions, examples, remedies, and approval bar remain. File length and alternative designs prompt inspection; a blocker needs a demonstrated correctness or material maintainability consequence. A broadly invalidated prior review requires a full pass. Create external follow-up tickets only under existing explicit authority.
+The last gate before landing. After `verification-before-completion` (and `empirical-proof` if asked), the initial round runs, with [test-quality-review](test-quality-review.md) in parallel when production logic or tests changed; `pattern-reviewer` follows. Once blockers close, the session outlines the work and asks PR or merge, unless repo or user rules already settled that.

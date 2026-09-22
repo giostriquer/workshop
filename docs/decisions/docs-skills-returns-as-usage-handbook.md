@@ -4,9 +4,8 @@
 
 ## Status
 
-Implemented. Partially reverses
-[`remove-docs-skills-layer.md`](remove-docs-skills-layer.md), which stays as
-the record of why the previous layer had to go.
+Implemented. Partially reverses the 2026-08-12 removal of the previous
+`docs/skills/` layer (an origin-doc layer; its removal note is in git history).
 
 ## Context
 

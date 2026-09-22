@@ -4,7 +4,7 @@
     "name": "Workshop"
   },
   "metadata": {
-    "description": "Workshop for Cursor: the toolkit of review agents, everyday skills, and the workbench process layer, plus the optional workbench of artifact-making utilities.",
+    "description": "Workshop for Cursor: the workbench of review agents, everyday skills, and the process layer, plus the optional toolkit of artifact-making utilities.",
     "version": "0.1.0",
     "pluginRoot": "plugins"
   },

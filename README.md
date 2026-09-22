@@ -33,7 +33,7 @@ For OpenCode there is no marketplace or manifest to register: opencode loads ski
 { "skills": { "paths": ["<clone>/plugins/workbench/skills", "<clone>/plugins/toolkit/skills"] } }
 ```
 
-or copy individual `plugins/<plugin>/skills/<skill>/` folders into `~/.config/opencode/skill/`. The five review agents are not carried on this surface (opencode's agent format differs; see [the decision note](docs/decisions/opencode-plugin-surface.md)).
+or copy individual `plugins/<plugin>/skills/<skill>/` folders into `~/.config/opencode/skill/`. The five review agents are not carried on this surface (opencode's agent format differs; see [the decision note](docs/decisions/plugin-surfaces.md)).
 
 ### Global Rules Adoption - Optional
 

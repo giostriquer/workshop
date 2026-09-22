@@ -30,7 +30,8 @@ If the dispatch omits it, the lane reads that reference directly.
 **Can the lane just link its report file?**
 
 The reply contains the populated report fields. Evidence links support those
-fields. Missing evidence is stated explicitly; delivery state goes in `CHECKS`.
+fields. Missing checks or evidence are marked explicitly; delivery state (PR,
+CI and merge) goes in `CHECKS`.
 For `blocked`, `need-follow-up` and `need-guidance`, `NEXT STEP` names the needed
 action or decision, owner and recommendation. Omit it for `ready-for-validation`.
 

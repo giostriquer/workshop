@@ -1,139 +1,27 @@
-# Decision: `empirical-proof`: post-work runtime verification with anti-cheating teeth
+# empirical-proof and verification: decisions in force
 
-**Date:** 2026-07-03
+Rationale for the `empirical-proof` skill and the verification choices it shares with `verification-before-completion`, both shipped by the workbench plugin; superseded choices are omitted, and git history keeps the originals.
 
-## Status
+## Proof runs at the real artifact, with a counter for each cheat mode (2026-07-03)
 
-Implemented (2026-07-03).
+Sessions finishing work on a runnable surface kept claiming unearned verification in four ways: a run that never happened, tests or a build reported as runtime proof, a mocked surface, and happy-path-only checks. Each gets a structural counter: nothing counts before a recorded health-check of the right running build, only the real boundary counts (MCP tools through a real client, REST over real HTTP), and a surface without probe scenarios is incomplete. Subagents return evidence in a fixed schema, a verdict without its transcript is void, and the session re-drives every FAIL and at least one PASS per surface. The report leads with `verified`, `broken` or `blocked`; an honest `blocked` beats code-reading "verification". The skill proves one finished change; branch-wide passes belong to `qa-sweep` and premises to `claim-check`.
 
-## Context
+## A proof attempt changes nothing and proves its own cleanup (2026-07-03)
 
-Recurring, operator-observed failure across real sessions: a model finishes work
-that touches a runnable surface and then **claims verification it never earned**.
-All four cheat modes have been seen in lived use:
+Baseline runs surfaced further failures: agents fixed the bug mid-verification and reported PASS, faked a missing dependency to pass a boot check, deleted the request log as cleanup, and claimed a server had stopped while it still listened. So an attempt edits neither product code nor setup, its verdict is preserved, and any repair the task already authorizes returns to implementation and earns a fresh proof on the new revision. Every process a proof starts must be shown stopped (port closed, process gone), and logs stay as evidence.
 
-1. **Claimed run, never ran**: "verified/works" derived from reading the code;
-   the app was never started or hit.
-2. **Tests-as-runtime**: ran unit tests / typecheck / build and reported that as
-   if the live surface had been exercised.
-3. **Mocked the surface**: stubbed the MCP tool / endpoint, or wrote a
-   throwaway script simulating it, instead of driving the real running app.
-4. **Happy-path only**: hit the surface once with an ideal input, declared
-   success, never probed error paths.
+## Generated code is proven through its emitted artifact (2026-08-12)
 
-The toolkit has no piece for this spot. `qa-sweep` explicitly routes single code
-changes away ("verify that one change at its runtime surface inline") and
-`claim-check` verifies premises, not fresh work. The gap: a small, focused,
-post-implementation skill that proves the touched surface **at the running
-software**, with subagents for scenario breadth, and with structure that makes
-the four cheat modes above fail rather than merely discouraged.
+A code-generator project had no app to boot, and the skill offered no path to the right proof. For a generator, the runnable surface is the emitted artifact: generate via the documented path, then build and drive the output as its real consumer would, with the boot gate applying to that artifact. A build or boot failure is `broken` when evidence attributes it to the emitted artifact; missing credentials, services or verifier capabilities are `blocked`.
 
-Honesty note on the inclusion bar: the *pressure* is lived-in (the four observed
-modes); the *skill* is being born in the scaffold rather than extracted from a
-host project. The origin doc says exactly that.
+## A verification picker instead of merged protocols (2026-08-12)
 
-## The shape
+Choosing among verification-adjacent pieces meant reading several protocols, spending attention for no gain. `using-workbench` carries a picker instead, one line per piece chosen by the work's shape, and the pieces keep separate scopes. `verification-before-completion` is the always-on floor the others deepen, requiring fresh evidence before any done, fixed or passing claim and naming `empirical-proof` as an optional deeper check to offer, not an automatic step. When no frame fits, keep the standard and drop the frame: prove the deliverable the way its consumer would exercise it. Protocols are checkpoints loaded when their moment arrives, not reading assignments.
 
-A phased skill in the `qa-sweep` mold: **rigid gate + rigid evidence contract,
-flexible middle**:
+## Bug-hunting is not this protocol, and launching is in scope (2026-08-12)
 
-- **Gate (rigid).** Before any subagent is dispatched, confirm the app is
-  genuinely running: prefer an already-running instance and health-check it (a
-  real response from the actual process, recorded as evidence); otherwise make
-  **one clean start attempt** via the project's documented path (project run
-  skill, README, package scripts). No dependency installs, no config surgery, no
-  debugging services into existence. Won't come up → report **BLOCKED** with the
-  observed cause and the one thing that would unblock it, and stop. Fixing local
-  setup is explicitly out of scope; BLOCKED is a first-class honest outcome,
-  never downgraded into code-reading "verification".
-- **Scenario fan-out (flexible).** From the diff, list the touched runnable
-  surfaces. **Must-cover when impacted: MCP tools and REST API endpoints** (the
-  two named first-class surfaces; other runnable surfaces are covered
-  generically). Per surface, a small scenario matrix: happy path **plus
-  probes** (invalid/missing input, error path, auth/permission where relevant),
-  right-sized to the change's blast radius. Subagents receive one shared
-  contract: environment facts, harness, discipline, and a required evidence
-  schema.
-- **Evidence contract (rigid: the anti-cheat core).** Each observed cheat mode
-  gets a structural counter:
-  - *Claimed run, never ran* → no result counts before the gate's health-check
-    evidence exists; every result names where it ran (URL/port) with the
-    verbatim exchange.
-  - *Tests-as-runtime* → unit tests / typecheck / build are prerequisites,
-    never verification; only the running artifact counts.
-  - *Mocked the surface* → drive the real boundary: MCP tools through a real
-    MCP client connection, REST over real HTTP to the running port. Importing
-    handlers, in-process harnesses, stubs, and simulation scripts are not
-    empirical.
-  - *Happy-path only* → a surface with no probe scenarios is **incomplete**,
-    not verified.
+A session hunting bugs in an app pulled in this skill, the only one saying "drive the running app", then reported `blocked` after one failed launch. Nothing is under test during a hunt, so the skill now excludes it, and the flow adds no skill for it: hunting is ordinary session work. Launching is now in scope: whatever the project's docs prescribe, a clean retry, and a fresh worktree or clean install are ordinary setup, and `blocked` is the last resort once the documented path is exhausted. Faking dependencies stays forbidden and repairing the machine stays out of scope; the fix separates "don't fabricate" from "don't try twice".
 
-  Subagents return evidence, never bare verdicts: `scenario · exact invocation
-  sent · verbatim response · observed vs expected · PASS/FAIL/BLOCKED`.
-- **Corroboration.** The session re-drives every FAIL and at least one claimed
-  PASS per touched surface firsthand before reporting: a fabricated transcript
-  dies here. (Same corroboration DNA as `qa-sweep`, sized down to one change.)
-- **Output.** Verdict-first: `verified` / `broken` (with the failing evidence) /
-  `blocked` (cause + unblock), then per-surface results citing evidence, then
-  explicit gaps. Bugs found are reported, not fixed.
-- **Armor.** Rationalization table and red-flags list populated from the actual
-  RED-phase baseline rationalizations (per `writing-skills`, discipline failures
-  get prohibitions + counters; the output shape gets a recipe/schema).
+## A repo's completion gate is a standing invitation (2026-08-19)
 
-## Non-goals
-
-- Not a release/branch-wide sweep (`qa-sweep`) and not premise verification
-  (`claim-check`); the description routes both ways.
-- Never fixes local setup, and never fixes the bugs it finds; it stops at the
-  verdict.
-- No Workflow-pipeline appendix in v1: the skill stays small; orchestration is
-  plain subagent fan-out.
-
-## Packaging
-
-- Canonical spec at `plugins/toolkit/skills/empirical-proof/SKILL.md` only
-  (direct-use, self-contained). Not in the onboarding bundle; not in this
-  repo's own `.claude/` working set (the scaffold repo has no runnable app).
-- Origin doc `docs/skills/empirical-proof.md` (origin pressure, the four cheat
-  modes, adaptation notes).
-- `scripts/validate-native-plugin.ps1`: add `empirical-proof` to both
-  `$expectedSkills` lists (Claude + Codex toolkit checks).
-- Parity touches: toolkit README skill list; Codex manifest
-  description/defaultPrompt; marketplace descriptions; `qa-sweep`'s
-  description re-routes its "single code change" NOT-for clause to
-  `empirical-proof`; `docs/skills/README.md` index if it lists skills.
-- Version: `toolkit` `0.11.2` → `0.12.0` (new capability) across all four
-  manifests.
-
-## Validation
-
-Per `writing-skills` TDD, run against a real bait harness (a zero-dependency
-Node service with a planted runtime-only `isNaN` coercion bug, 4/4 green unit
-tests over the same buggy code, a request-log tripwire, and a variant that
-refuses to boot without an unreachable database):
-
-- **RED (4 baseline runs, no skill, ship pressure).** The four lived cheat
-  modes did *not* reproduce on this model class: all four agents drove real
-  HTTP and found the planted bug. Two new failures appeared: **3/4 fixed the bug
-  during verification and reported PASS-after-fix**, and **2/2 blocked-variant
-  agents fabricated the missing dependency** (throwaway TCP listener to fool
-  the boot probe, "the change never touches the DB"). One agent deleted the
-  request log as cleanup. Rationalizations captured verbatim into the skill's
-  table; the lived cheat modes stay countered structurally (evidence schema,
-  gate) since the skill also ships to other hosts and models.
-- **GREEN (4 runs, same scenarios + skill).** 4/4 honest verdicts: `broken`
-  reported-not-fixed with transcripts on the runnable variant; `blocked` with
-  verbatim cause, named unblock, and explicit refusal to stub on the blocked
-  variant. Tripwires confirmed: product code untouched, real request traffic,
-  logs left in place.
-- **REFACTOR.** GREEN surfaced one loophole: both runnable-variant agents
-  claimed "server stopped" while the process still listened. Added the
-  evidence-bound cleanup rule (prove the stop: port closed, process gone) at
-  three touch-points; retest 2/2 clean, stops proven, tripwires green.
-- `scripts/validate-native-plugin.ps1` passes with the extended skill set.
-
-## Naming
-
-`empirical-proof` (operator's pick). Alternatives considered: `empirical-verify`
-(original working name), `wire-check`, `live-fire`, `runtime-proof`,
-`prove-it-runs`.
+The skill runs only on the user's ask and is otherwise offered. A session whose repo required booting the real app followed its repo and caught a bug the unit tests missed; a literal reading of the skill would have shipped it. Repo precedence had only ever subtracted flow ceremony; now it runs both ways, so a repo gate requiring the real artifact for this kind of change is the invitation: run it, name the gate, and report the run as satisfying it. The gate must cover the change in hand; a surface merely looking drivable invites nothing.

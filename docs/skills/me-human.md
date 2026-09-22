@@ -12,7 +12,7 @@ Three behaviors carry it:
 
 | Situation | What it does |
 | --- | --- |
-| A question comes up | Tries it first. "Try the task yourself before asking questions the system can answer." |
+| A question comes up | Tries the available controls itself before asking. |
 | A bug blocks progress | Try a supported correction only under existing repair authority, report the result, and continue within scope. Escalate concrete access/sandbox failures under governing rules, not every app bug. |
 | The work drifts past the given scope | Stops and asks, outlining what it was trying to do, what it has done, what it learned. |
 
@@ -49,7 +49,7 @@ Only under existing repair authority. A supported local correction can unblock t
 
 **It stopped and asked instead of pushing through.**
 
-Try a supported correction within already-authorized repair scope, report the result, and continue. Escalation is for a concrete access/sandbox restriction under governing rules, not every application bug. A dogfooding-only request does not authorize code changes.
+That is the scope rule: when the work advances beyond the scope you gave, it stops and asks, outlining what it was trying to do, what it has done, and what it learned. A blocking bug with no authorized correction ends the same way: it describes the failure, its attempts, and the missing decision or capability.
 
 **What does the output look like?**
 

@@ -2,108 +2,124 @@
 
 ## What it does
 
-This skill proves a just-finished change **at the running software**, not on paper. You start the real app, drive the surface your change touched over the boundary a real client uses, record the exchanges verbatim, and return a verdict: `verified`, `broken`, or `blocked`. Every "verified" traces to a recorded exchange with the genuinely running app. Code reading predicts; green unit tests are prerequisites; a mocked call or in-process harness exercises a different artifact. None of those produce a verdict here.
+`empirical-proof` proves a just-finished change **at the running software**.
+It starts the real app, or finds one already running. It drives the surface the
+change touched through the same boundary a real client uses, records each
+exchange word for word, and returns one of three verdicts: `verified`,
+`broken`, or `blocked`. A "verified" must trace back to a recorded exchange.
+Reading the code, passing unit tests, mocks, and in-process harnesses don't
+count.
 
-It is an **expensive tier that is offered, never run uninvited**. It fans out subagents, boots applications, and re-drives results firsthand for corroboration. The rule across the flow is that `verification-before-completion` is the always-on gate and this skill is a user option: the session offers it when a change qualifies and runs it only on your explicit ask, in the moment or by standing rule ([decision](../decisions/expensive-verification-user-optioned.md)). A repo process document that requires driving the real artifact for a change of this kind *is* that standing ask, so the session runs it, names the gate that invited it, and reports the run as part of satisfying the gate.
-
-Each proof attempt keeps its revision, transcript, verdict, and cleanup evidence. A verification-only request ends at the report. When the larger task already authorizes repair, return to implementation, repair the affected change, review as required, then rerun the affected proof as a new attempt. Evidence-gathering subagents remain read-only.
+Each attempt keeps its revision, transcripts, and verdict. An authorized
+repair leads to a new attempt.
 
 ## When to reach for it
 
-Ask for it after finishing work that touched a surface the running software can prove (an MCP tool, a REST endpoint, runnable app behavior, or the artifact a generator emits) and before reporting that work done. If you have a standing rule authorizing it, or your repo's `CLAUDE.md` / `AGENTS.md` / `CONTRIBUTING` requires booting the real app for changes of this kind, it runs on qualifying changes without a fresh ask; otherwise the session should offer and wait.
-
-The exclusion worth memorizing: **driving an app to hunt for unknown bugs is not this skill.** It is ordinary session work with no protocol at all: get the app up, drive it, reproduce what you find, report it.
+Ask for it after finishing a change that touched a surface a real client can
+drive: an MCP tool, a REST endpoint, runnable app behavior, or a generator's
+emitted artifact. It is an expensive tier. The session offers it and runs it
+only when you ask, either now or through a standing rule
+([decision](../decisions/workbench-operator-decisions.md)). A repo process
+document that requires driving the real artifact counts as that standing ask,
+and the session names that gate when it runs the proof.
 
 | The problem | The skill |
 | --- | --- |
-| One finished change touched a drivable surface and you want proof it works live | `empirical-proof` |
-| You want to explore a running surface looking for unknown bugs | No skill. Ordinary session work: no gate, no verdict set |
-| A release, branch, or feature area needs a broad pass that splits into independent slices | `qa-sweep` |
-| A premise, ticket, or hunch needs proving or breaking before you act | `claim-check` |
-| You are about to claim done and just need fresh evidence for the claim | `verification-before-completion` |
-| The diff has no runtime surface at all (docs, pure test changes) | Nothing here applies |
+| One finished change touched a drivable surface | `empirical-proof` |
+| Exploring a running surface for unknown bugs | No skill; ordinary session work |
+| A release, branch, or feature area at team scale | `qa-sweep` |
+| A premise, ticket, or hunch to prove or break | `claim-check` |
+| About to claim done | `verification-before-completion` |
 
 ## The gate, the scenarios, the verdicts
 
-**The gate is rigid and runs before any scenario is dispatched.**
+**The gate (rigid) runs before any scenario.**
 
-1. Find the documented way to run this project: a project run skill, README, package scripts. That documented path defines what "can run here" means.
-2. Prefer an instance already running. Health-check it and record the evidence: the exact endpoint hit and its verbatim response. **"No recorded health-check → nothing downstream counts."**
-3. Confirm that instance carries the change under test. A stale process proves old code.
-4. Otherwise start it yourself via the documented path. **"Everything the project's own docs prescribe is in scope (install dependencies, copy the example env, build first, run the dev server) as is a clean retry when the first attempt fails for a reason the docs let you fix."** A fresh worktree or clean install is ordinary setup, not environment fabrication. What stays out of scope is repairing the *machine*: a broken toolchain, an absent service, local config drift.
-5. **"`blocked` is the last resort, not the first exit. One failed launch is not a blocked verdict; a documented path you have actually exhausted is."**
+1. Find the documented way to run the project: a run skill, the README, or
+   package scripts.
+2. Prefer an instance that is already running. Health-check it, and record the
+   endpoint and its exact response. Without a recorded health-check, nothing
+   downstream counts.
+3. Confirm the instance is running the change. If you're unsure, restart it.
+4. Otherwise start it yourself. Anything the docs prescribe is in scope:
+   installs, env setup, builds, the dev server, and a clean retry. Repairing
+   the *machine* is not in scope, meaning a broken toolchain, a missing
+   service, or config drift.
+5. "One failed launch is not a blocked verdict; a documented path you have
+   actually exhausted is."
 
-Running underneath all of that, unchanged and absolute: **"Do not conjure the environment."** A boot gate needing an unreachable database, credential, or service is a `blocked` verdict. It does not invite you to stub a TCP listener, point an env var at a fake, or edit the boot check.
+**Don't fake the environment.** If the app can't reach a database, credential,
+or service it needs, the verdict is `blocked`. Never stub a listener, fake an
+env var, or edit the boot check to get past it
+([decision](../decisions/empirical-proof.md)).
 
-**Scenarios.** From the diff, list the touched runnable surfaces. Two are must-cover when impacted: MCP tools, driven through a real MCP client connection ("importing the handler and calling it is not MCP"), and REST endpoints, driven over real HTTP against the running port ("an in-process request harness is not the wire"). Per surface you write a small matrix: the happy path, then probes: invalid and missing input, boundary and type-coercion cases, the error path, auth where relevant. Right-size to blast radius. A surface with only its happy path exercised is **incomplete, not verified**.
+**Generated code.** A generator's output is the surface. Run the generator,
+then build, boot, and drive what it emits. A failure the evidence ties to the
+emitted artifact is `broken`. Missing credentials or services are `blocked`.
 
-**Fan-out under an evidence contract.** Every dispatched agent gets the same three things: environment facts including the work scope's single evidence folder (`.workbench/<work_scope>/` or the repo's scratch equivalent), the discipline (real boundary only, probe past the happy path, fix nothing, stop what you start and confirm the stop, leave the workspace and its logs as found), and the schema: scenario, exact invocation sent, verbatim response, observed versus expected, PASS/FAIL/BLOCKED. **"A returned verdict without its transcript is void: redo it, don't argue with it."**
+**Scenarios.** When MCP tools or REST endpoints are touched, they must be
+covered. MCP tools go through a real MCP client, and REST endpoints get real
+HTTP. For each surface, run the happy path and then probe it with invalid
+input, boundary and coercion cases, the error path, and auth. Scale the number
+of scenarios to the blast radius. A surface tested only on the happy path is
+**incomplete**.
 
-**Corroboration before reporting.** Subagent results are leads, not conclusions. You re-drive every FAIL firsthand, plus at least one claimed PASS per touched surface, so a fabricated or mistaken transcript dies cheaply.
+**Fan-out and corroboration.** Every agent gets the same contract: environment
+facts and the single evidence folder; real boundary only, fix nothing, stop
+what it starts and confirm the stop; and a schema of scenario, exact
+invocation, verbatim response, observed vs expected, PASS / FAIL / BLOCKED. A
+verdict without a transcript is void. The session re-drives every FAIL and at
+least one PASS per surface itself.
 
 | Verdict | Means | Carries |
 | --- | --- | --- |
-| `verified` | Every scenario passed | Per-surface results, each citing its transcript |
-| `broken` | Scenarios failed | The failing evidence, expected versus observed. Preserve this proof attempt; an already-authorized repair can follow separately |
-| `blocked` | The app could not honestly be brought up | The gate's observation verbatim, plus the one input that would unblock |
+| `verified` | Every scenario passed | Per-surface transcripts |
+| `broken` | Scenarios failed | Expected vs observed; the attempt is preserved |
+| `blocked` | The app can't honestly come up | The failure verbatim and the one unblock |
 
-The report is verdict-first, then scenarios run per surface so coverage is visible, then gaps left unrun (silence reads as covered), then a cleanup line naming what you started and stopped and citing the check that proved the stop.
+The report opens with the verdict. It then lists the scenarios run per surface
+and any gaps left unrun. It ends with a cleanup line that cites how each stop
+was confirmed.
 
 ## Common questions
 
-**Someone asked me to drive the app and hunt for bugs, and the session invoked this skill, hit a launch failure, and quit. What happened?**
-That is the exact field failure this skill was recently fixed for, and it is worth understanding because two separate defects combined. An operator set out to drive an Electron app and hunt for bugs in a named surface area. The session pulled in `empirical-proof`, hit a launch failure, reported the environment `blocked`, and stopped, when the correct path was a fresh worktree, an install, a dev-server start, and driving the app.
-
-Defect one: this is the only skill in the flow that says "drive the running app," and its `NOT for` list excluded release-wide passes and premise verification but said nothing about exploring a surface for unknown bugs. That work had nowhere else to land, so it got absorbed here and inherited a gate and a verdict set built for proving *one finished change*. Nothing is under test when you are hunting, so `verified`, `broken`, and `blocked` have nothing to attach to.
-
-Defect two: the gate used to read **"make one clean start attempt via the documented path… Anything beyond it is not yours to do… Fixing local setup is out of scope by design."** That calibration is right for verification integrity and wrong as a general rule about starting an app, because it makes one hiccup terminal. Combined, a session that only wanted to explore a surface got a rule that ended the work.
-
-Both are fixed. The exploratory exclusion now appears in both trigger surfaces (the description and the body) and the body explains the misfire rather than merely prohibiting it. Launching is in scope, and `blocked` is demoted to last resort ([decision](../decisions/empirical-proof-stops-absorbing-exploration.md)).
-
-**So does exploratory bug-hunting get its own skill now?**
-No, deliberately. A new hunting skill and a solo-scale `qa-sweep` were both weighed and rejected. The flow already carries the answer for work no protocol fits: keep the standard and drop the frame. Driving an app to hunt bugs is ordinary session work.
+**I asked it to hunt bugs, and it reported `blocked` after a launch failure.**
+The wrong protocol ran. Hunting is ordinary session work: set up, start the
+dev server, drive the app. Even here, one failed launch isn't `blocked`.
 
 **If launching is in scope, why won't it stand up the missing database?**
-Because that fix separated two things the old text conflated: *don't fabricate dependencies* (kept, absolute) from *don't try twice to start the app* (removed, wrong). Stubbing a listener, faking an env var, and editing a boot check remain forbidden. The reasoning that leads there is named in the skill's rationalization table: "The change doesn't touch the DB, a stub gets us past boot." The answer is that you cannot see the blast radius from inside the change, and the artifact that ships boots against the real dependency. During the skill's authoring validation, both agents run against a boot-blocked variant without the skill fabricated the missing dependency (one improvised a throwaway TCP listener to fool the boot probe) each reasoning that the change never touched the DB.
+Starting the app is setup. A stub that stands in for a real dependency is
+fabrication. A service booted against a stub isn't the artifact that ships.
 
-**It found a real bug. Why didn't it just fix it?**
-The proof attempt must preserve the observed failure instead of silently repairing it and reporting PASS-after-fix. Record the verdict first. If repairs are already authorized, continue them as a separate reviewable step, then run a new proof attempt; a review-only request ends with the finding.
+**It found a real bug. Why didn't it fix it?**
+The attempt keeps the failure on record. It never reports a PASS after a silent
+fix. If you authorized repairs, they come next, followed by a new attempt.
 
-**My unit tests are green. Isn't that the same evidence?**
-No. The bait harness used to develop this skill held four of four green unit tests over code with a live runtime-only type-coercion hole. Tests gate; they do not prove.
+**My unit tests are green. Isn't that enough?**
+No. Tests gate the change but don't prove it.
 
-Run the generator, build and boot its emitted artifact, and drive its real surface. Attribute product-caused build/boot failures as broken. Missing credentials, required services, or verifier capabilities are blocked; failure to boot alone does not identify a generator defect.
+**My repo's `AGENTS.md` requires booting the app. Does the session still just
+offer?**
+No. That requirement counts as the invitation, so it runs.
 
-**My repo's `AGENTS.md` already says to boot the app before calling a change done. Does the session still stop and offer?**
-
-No. It runs. That precedence was one-directional at first: a repo process document could supersede a flow gate and remove ceremony, but nothing let one *add* a tier, so "never run it uninvited" read as a prohibition even where the repo's own completion gate demanded exactly this run. A session obeying the skill literally would skip the boot its repo required. The gate itself is the invitation now, and the run is reported as part of satisfying it rather than offered first ([decision](../decisions/repo-gate-invites-empirical-proof.md)).
-
-**Where does the evidence go?**
-Into the work scope's single folder, handed to every dispatched agent in its contract. Agents never pick their own locations. This became explicit after an audit run scattered its evidence across three separate per-agent system-temp directories although all of it belonged to one work scope ([decision](../decisions/evidence-one-home-per-scope.md)). One proof, one folder.
-
-**A subagent came back with a clean PASS. Can I take it?**
-Not on its own. Every FAIL and one PASS per surface get re-driven firsthand, and a verdict arriving without its transcript is void rather than debatable. A subagent's BLOCKED is yours to resolve inside the gate's rules or to report, never wave it through, and never substitute a unit test for the runtime path it could not reach.
-
-**Should it clean up the logs it generated?**
-No. Stop the processes you started and prove the stop (port closed, process gone, because a cleanup claim is a claim like any other) but leave the artifacts. "Cleaning up: removed the request log" is in the rationalization table for a reason; that log is the evidence. One validation-run agent did exactly this.
+**Should it clean up its logs?**
+No. It stops its processes and proves the stop, but it leaves the logs alone.
+They are the evidence.
 
 ## It's working if
 
-- The report leads with a verdict, and every passing surface cites a transcript of a real exchange with the running app.
-- Probes appear alongside happy paths (invalid input, coercion cases, error paths), not just the one ideal call.
-- A `blocked` verdict quotes the observed failure verbatim and names the single thing that would unblock it, after the documented path was actually exhausted.
-- Product code is untouched during each proof attempt; authorized repairs occur between separately recorded attempts, and any bug found appears as a finding rather than a commit.
-
-Negative signals: the skill is being misapplied if:
-
-- It ran without anyone asking for it. This is a user-optioned tier; running it uninvited spends time and budget on ceremony nobody ordered.
-- It was invoked to go looking for unknown bugs. There is nothing under test, so the verdicts have nothing to attach to, and the `blocked` exit will end a hunt that ordinary dev setup would have started.
-- A `blocked` verdict appears after a single failed launch.
-- "Verified" is backed by build output, green tests, or a careful reading of the code path.
-- The environment was helped along with a stub, a fake env var, or an edited boot check.
+- The verdict comes first, and every pass cites a real transcript.
+- Probes run alongside the happy paths.
+- A `blocked` verdict quotes the failure and names the one thing that would
+  unblock it.
+- Product code doesn't change during an attempt.
+- **Not working:** it ran with no ask, rule, or repo gate; it went hunting for
+  bugs; it reported `blocked` after one failed launch; "verified" rests on tests
+  or reading the code; or the environment was stubbed.
 
 ## Where it fits
 
-This is the deep form of the flow's completion gate. `verification-before-completion` is the always-on floor that demands fresh evidence for any done-claim; when the change touched something a real client can drive and you decide the spend is warranted, this skill supplies that evidence from the running software instead of from a command's exit code. Its output feeds the same place: once the work is honestly `verified`, the required adversarial review (`code-quality-review`, plus `test-quality-review` when production logic or tests changed) fires, and then the landing gate asks PR or merge.
-
-Invocation remains explicit: run this protocol on the user's request or a standing real-artifact completion gate. Otherwise offer it. The detailed health-check gate, scenario matrix, exact transcript schema, every-FAIL plus one-PASS-per-surface corroboration, and proven cleanup requirements still apply.
+This is the deep form of the completion gate. `verification-before-completion`
+is the floor for every done-claim; this skill, when asked for, supplies that
+evidence from the running software. Once the work is verified, the required
+adversarial review runs, then the PR-or-merge question.

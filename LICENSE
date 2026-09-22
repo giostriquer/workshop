@@ -26,7 +26,7 @@ Portions of this repository (the `writing-skills` skill at
 `.claude/skills/writing-skills/` and its bundled reference files) are derived
 from "superpowers" (https://github.com/obra/superpowers), Copyright (c) Jesse
 Vincent, and are used under the MIT License. The above permission and warranty
-notices apply to those portions as required by that license. They are mirrored
-from upstream without modification; the provenance and review process are
-documented at
+notices apply to those portions as required by that license. They are adapted
+from upstream, with every local change recorded; the provenance and review
+process are documented at
 https://github.com/giostriquer/workshop/blob/main/docs/decisions/workbench-system.md

@@ -12,8 +12,8 @@
 # everyday skills, and the workbench flow layer) and toolkit (optional
 # artifact-making utilities). The repo's own working set (.claude/, .codex/,
 # .opencode/) and the attic are outside this validator's scope: .claude/ is
-# canonical for the pieces this repo runs (change-log, push, wiki-maintainer,
-# and the repo-only workbench-drift), mirrored nowhere.
+# canonical for the pieces this repo runs (change-log, push, writing-skills,
+# wiki-maintainer, and the repo-only workbench-drift), mirrored nowhere.
 
 set -eu
 

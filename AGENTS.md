@@ -17,7 +17,7 @@ Always use the `writing-skills` when doing or considering doing any changes to a
 
 1. **Identify the change.** Mechanical (typo, link, formatting), substantive (new agent/skill, behavior change, convention shift), or structural (layout reorganization).
 2. **Mechanical changes** apply directly. No spec, no review, no change-log.
-3. **Substantive changes** get a short note in `docs/decisions/<name>.md` describing what's changing and why, then apply.
+3. **Substantive changes** get a short note in `docs/decisions/` describing what's changing and why, then apply. One note per piece: amend the piece's existing note rather than adding a sibling, and delete a note a later decision supersedes (git history keeps it). Notes that the release notes still link stay until they roll off.
 4. **Structural changes** require updating `README.md` and any cross-references. Pause and ask the user before applying: structural changes affect every adopter.
 
 ## No rationale doc layer
@@ -28,7 +28,7 @@ The one per-skill layer is `docs/skills/`, which contains **usage** pages for sh
 
 ## Cross-host parity
 
-Canonical definitions live in the shipped plugins (`workbench` for the process core, `toolkit` for optional utilities). This repo's own host dirs (`.claude/`, `.codex/`, `.opencode/`) carry only the small set the repo runs (`change-log`, `push`, `workbench-drift`, `writing-skills`, `wiki-maintainer`); `.claude/` is canonical for those. Parked pieces live in `attic/` (see `attic/README.md`): in the repo, shipped by no plugin, discovered by no host. Two tiers: `attic/skills/` and `attic/agents/` for in-progress pieces still intended to ship; `attic/deprecated/` for retired pieces kept as history.
+Canonical definitions live in the shipped plugins (`workbench` for the process core, `toolkit` for optional utilities). This repo's own host dirs (`.claude/`, `.codex/`) carry only the small set the repo runs (`change-log`, `push`, `workbench-drift`, `writing-skills`, `wiki-maintainer`); `.claude/` is canonical for those. Parked pieces live in `attic/` (see `attic/README.md`): in the repo, shipped by no plugin, discovered by no host. Two tiers: `attic/skills/` and `attic/agents/` for in-progress pieces still intended to ship; `attic/deprecated/` for retired pieces kept as history.
 
 ## Reviewer sessions
 
@@ -36,7 +36,7 @@ When dispatching a reviewer agent for a substantive scaffold change, continue th
 
 ## Skill self-application
 
-Use the repo's own skills (`change-log`, `push`, etc.) when a change ships in a plugin version bump, use the `change-log` skill to record it in `docs/change-log.md`: the plugins' release notes (plugin releases only, bounded at 15 sections). Repo-only work is recorded in `docs/decisions/`, not the release notes.
+Use the repo's own skills (`change-log`, `push`, etc.). When a change ships in a plugin version bump, the `change-log` skill records it in `docs/change-log.md`, the plugins' release notes (plugin releases only, bounded at 15 sections). Repo-only work is recorded in `docs/decisions/`, not the release notes.
 
 ## What NOT to do
 
