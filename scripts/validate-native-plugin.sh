@@ -181,6 +181,7 @@ brainstorming
 claim-check
 code-quality-review
 empirical-proof
+epic-cleanup
 epic-implementation
 epic-orchestration
 file-pr

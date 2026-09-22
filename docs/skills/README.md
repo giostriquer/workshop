@@ -44,6 +44,7 @@ you want them, and skip to keep sessions lean.
 | Review feedback arrived | [receiving-code-review](receiving-code-review.md) |
 | A multi-ticket epic whose lanes other sessions implement | [epic-orchestration](epic-orchestration.md) |
 | Implementing a lane dispatched through epic-orchestration | [epic-implementation](epic-implementation.md) |
+| Removing obsolete artifacts and owned worktrees after an epic | [epic-cleanup](epic-cleanup.md), user-invoked only |
 | Looking back at how the process itself ran | [self-audit](self-audit.md) |
 
 ## The optional toolkit

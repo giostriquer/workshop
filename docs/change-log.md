@@ -8,6 +8,10 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.41.0: 2026-09-22
+
+- **Clean up a finished epic on request.** Add manual-only `epic-cleanup` to remove obsolete temporary artifacts and account for every epic-owned worktree, including validation and audit checkouts. It preserves useful evidence and unfinished work, proceeds with verified safe removals, and reports any blockers. ([decision](decisions/epic-cleanup.md))
+
 ## workbench 0.40.10: 2026-09-22
 
 - **Run cargo-mutants in place inside the copy.** `test-quality-review` runs `cargo mutants --in-place` in the disposable copy as a single job, with `--copy-target` and `--jobs` unset, so the clone's build cache serves every mutant instead of the tool's cold temporary copy; a clone of a linked worktree has its `.git` pointer deleted before any git command runs there. ([decision](decisions/mutation-scope-and-budget.md#cargo-mutants-runs-in-place-inside-the-copy-2026-09-22))
@@ -76,8 +80,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 
 - **Clarify epic lane readiness.** Dispatches identify shared-contract producers, fixture builders and consumer checks, respect producer/consumer dependencies, and separate local static/build gates from focused tests. Validation uses actual producer output and supported saved artifacts. Completion review runs over the finished implementation; earlier blocked reports do not trigger it. ([decision](decisions/epic-lane-readiness.md))
 - **Preserve delivery state and report formats.** `file-pr` checks for merged PRs before pushing and routes authorized remaining work to a new branch and PR. Its delivery details fit the session's required handback format, with verdict-first output only when no format is required. ([decision](decisions/epic-lane-readiness.md))
-
-## workbench 0.38.0: 2026-09-15
-
-- **Keep epic lane handbacks consistent.** Add `epic-implementation` for implementation lanes dispatched through `epic-orchestration`, including amendments, recovery and delivery rounds. Both skills share one report reference, and each final handback contains a complete copyable report. Blocked, follow-up and guidance states include a `NEXT STEP` with the action or decision, owner and recommendation. ([decision](decisions/epic-implementation.md))
-

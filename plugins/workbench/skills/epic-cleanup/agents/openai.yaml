@@ -1,0 +1,6 @@
+interface:
+  display_name: "Epic Cleanup"
+  short_description: "Clean up completed epic artifacts and worktrees"
+
+policy:
+  allow_implicit_invocation: false
