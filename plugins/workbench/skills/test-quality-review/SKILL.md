@@ -33,7 +33,7 @@ their inputs and assertions, so the gaps between them read as coverage.
 - **Who:** the `test-quality-reviewer` agent, or on a host without that agent type, a
   reviewer context that loads this skill. Give it the test-quality question or
   target, plus the base branch when known, in a separate prompt.
-- **Model:** a separate **Opus (`opus`) agent on Claude Code** or **`gpt-5.6-sol` agent on
+- **Model:** a separate **Opus (`opus`) agent on Claude Code** or **`gpt-6-sol` agent on
   Codex**, and the host's default model on any other host. Select it explicitly; do not
   inherit the parent's model. The reviewer never dispatches another agent.
 

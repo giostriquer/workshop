@@ -215,4 +215,4 @@ gates, `file-pr` and `fix-ci` at landing. Nothing hands off *to* it; it is
 already loaded when the session starts, and it is the thing you re-read when
 you cannot tell which piece owns what is in front of you.
 
-CI polling always uses a separate Opus agent on Claude or gpt-5.6-sol agent on Codex, never Astra/Fable or parent polling. Epic returns require verified acknowledgment and a concrete next action. Completion retains relevant evidence and independent review; changed relevant state invalidates evidence, not a new message alone.
+CI polling always uses a separate Opus agent on Claude or gpt-6-sol agent on Codex, never Astra/Fable or parent polling. Epic returns require verified acknowledgment and a concrete next action. Completion retains relevant evidence and independent review; changed relevant state invalidates evidence, not a new message alone.

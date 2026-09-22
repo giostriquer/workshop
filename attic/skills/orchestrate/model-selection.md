@@ -9,7 +9,7 @@ The invariants (mirrored in the skill; change both places or neither):
 
 - **Never use Haiku or Sonnet: any task, no exceptions.** Bulk/mechanical
   work routes to the GPT ladder via `codex exec`; anything that must be
-  Claude runs on opus-5 or fable-5.
+  Claude runs on opus-5.5 or fable-5.1.
 - **Orchestration stays home.** Decomposing, dispatching, and judging a set
   of work always run on the session's own model (the strongest available)
   never a weaker-model subagent; the `orchestrate` skill carries the

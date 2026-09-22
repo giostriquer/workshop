@@ -8,6 +8,11 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.40.7: 2026-09-22
+
+- **Name the current fleet.** `model-reference`, `fix-ci`, `file-pr`, `using-workbench`, `test-quality-review` and the `ci-watcher` and `test-quality-reviewer` agents name opus-5.5, fable-5.1, gpt-6-sol, gpt-6-luna and grok-4.7 in place of their retired predecessors; the Codex watcher and reviewer assignments now read `gpt-6-sol`. ([decision](decisions/fleet-refresh-2026-09.md))
+- **Re-grade the table.** opus-5.5, luna and grok-4.7 carry new grades; fable-5.1 keeps fable-5's row and the legacy caveat says so. The reading notes follow the numbers: opus-5.5 is the default frontier lane, and grok joins luna below the taste floor. The usage page's table matches the spec again. ([decision](decisions/fleet-refresh-2026-09.md))
+
 ## workbench 0.40.6: 2026-09-21
 
 - **Complete both review stages in one round.** An initial code-quality review also includes the separate test-quality review when logic or tests changed. A missing stage keeps the gate pending and completes the same unchanged submission without repeating a valid completed stage. ([decision](decisions/completion-review-stages.md))
@@ -71,8 +76,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 ## workbench 0.37.4: 2026-09-11
 
 - **Epic dispatches are files; paste blocks are pointers.** `epic-orchestration` writes each lane prompt, audit brief and authorization to a file under the epic's scope folder and hands the operator a few-line block: role and authority, "Read and execute this dispatch:", the path, and any verbatim-required lines. Long inline briefs are gone. ([decision](decisions/epic-orchestration-dispatch-files.md))
-
-## workbench 0.37.3: 2026-09-11
-
-- **Place the PR Architecture section with the change description.** The conditional `## Architecture` section now sits immediately after the template's `Summary` / `What` / `Why` style sections and before verification, testing, checklist, release-note or footer sections, instead of being appended after the whole template. Existing template Architecture sections are still reused in place. ([decision](decisions/file-pr-architecture-section.md))
-- **Act on the first failed check.** The `ci-watcher` returns at the first failed required check with the still-pending checks listed, and `fix-ci` starts the fix then instead of after the whole run finishes. Branch-only CI polls run jobs since `gh run watch` cannot fail fast. One snapshot right before pushing folds in further in-scope failures that appeared meanwhile. The two-attempt cap is now counted per failing cause. ([decision](decisions/fix-ci-act-on-first-failure.md))

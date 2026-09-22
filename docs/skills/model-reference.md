@@ -40,17 +40,18 @@ in its trigger and again in its opening.
 
 ## The table
 
-The numeric table is retained as a legacy illustration without dated calibration; it must not drive current dispatch. Do not transfer fable-5 scores to Fable 5.1. New grades require operator-supplied date, task set, effort, and observed results. Otherwise use available host capabilities and the current session model within standing rules.
+The numeric table is retained as a legacy illustration without dated calibration; it must not drive current dispatch. The fable-5.1 row was renamed from fable-5 without re-grading. New grades require operator-supplied date, task set, effort, and observed results. Otherwise use available host capabilities and the current session model within standing rules.
 
 Scores are 1-10, higher is better.
 
 | model | cost | intelligence | taste | code | speed |
 |---|---|---|---|---|---|
-| gpt-5.6-sol | 6 | 9 | 8.5 | 9 | 6 |
-| gpt-5.6-luna | 10 | 5 | 4 | 4 | 8 |
-| opus-5 | 5 | 8 | 8 | 8 | 8 |
-| fable-5 | 1 | 10 | 9.5 | 9 | 5 |
-| grok-4.6 | 5 | 8 | 8 | 8 | 7 |
+| gpt-6-astra | 3 | 10 | 9 | 8.5 | 6 |
+| gpt-6-sol | 6 | 8 | 8 | 7.5 | 6 |
+| gpt-6-luna | 10 | 3 | 3 | 3 | 9 |
+| opus-5.5 | 6 | 9.5 | 9.5 | 9 | 8.5 |
+| fable-5.1 | 1 | 10 | 9.5 | 9 | 5 |
+| grok-4.7 | 5 | 6 | 6 | 6 | 6 |
 
 There is **one row per model**, "graded at the effort that model is actually
 run at." Effort is not a separate axis, if you change the effort you
@@ -75,10 +76,11 @@ The axes are defined precisely, and two of them are easy to misread:
 
 - Routine, well-specified work goes to the cheap end: "luna only for truly
   mechanical bulk, sol for routine work that still needs judgment."
-- Judgment-heavy, taste-critical, or silent-failure work goes to the frontier.
-  "Putting high-tier judgment at the plan while a cheaper tier implements is
-  often the better spend."
-- "A shipping taste surface needs taste >= 7: luna is not a taste route."
+- Judgment-heavy, taste-critical, or silent-failure work goes to the frontier:
+  opus-5.5 by default, fable-5.1 only where the work loads intelligence past
+  what opus-5.5 carries. "Putting high-tier judgment at the plan while a
+  cheaper tier implements is often the better spend."
+- "A shipping taste surface needs taste >= 7: luna and grok are not taste routes."
 - "Speed breaks ties, never quality": level rows go to the faster one, but speed
   "does not buy a drop on intelligence, taste, or code."
 
@@ -103,7 +105,7 @@ exceptions**," naming specific models from one operator's subscription mix.
 That was replaced by a portable "set a model floor" invariant
 ([decision](../decisions/route-work-model-floor-portable.md)), and the floor
 invariant has since been dropped as well: a floor is fleet policy, and this
-skill carries no general model floor. Routing also stays inside the harness you run in: a row describes a model's performance, not its reachability from this session, and starting another provider's CLI to reach one is the operator's move, not a routing step. The dedicated CI watcher is an explicit exception: separate Opus on Claude or gpt-5.6-sol on Codex, never Astra/Fable or parent polling. The test-quality reviewer is another: separate Opus on Claude Code or gpt-5.6-sol on Codex, and the host's default model elsewhere. Where the floor sits, and which models are banned, belong
+skill carries no general model floor. Routing also stays inside the harness you run in: a row describes a model's performance, not its reachability from this session, and starting another provider's CLI to reach one is the operator's move, not a routing step. The dedicated CI watcher is an explicit exception: separate Opus on Claude or gpt-6-sol on Codex, never Astra/Fable or parent polling. The test-quality reviewer is another: separate Opus on Claude Code or gpt-6-sol on Codex, and the host's default model elsewhere. Where the floor sits, and which models are banned, belong
 in your own always-injected rules file. `adopt-global-rules` ships one such
 file (`model-floor.md`) if you want a worked example.
 

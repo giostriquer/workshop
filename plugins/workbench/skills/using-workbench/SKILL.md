@@ -22,7 +22,7 @@ gates: they fire on relevance, not compulsion.
 **Two completion requirements apply by default:** `verification-before-completion`
 at each done/fixed/passing claim, and independent review before PR-or-merge:
 `code-quality-review`, plus `test-quality-review` (a separate Opus agent on Claude,
-`gpt-5.6-sol` on Codex) when the diff changes production logic or tests. Run unless **the user explicitly declines it**, or **the repo's
+`gpt-6-sol` on Codex) when the diff changes production logic or tests. Run unless **the user explicitly declines it**, or **the repo's
 own process supersedes it**. Those are the only two outs: a small diff, a
 confident implementation, a tidy-looking change, or time pressure are not
 among them, and neither is the session's own judgment that this one looks
@@ -74,7 +74,7 @@ through a PR or the repository's delivery process, not an intermediate checkpoin
   advisory findings dispositioned, out-of-scope → follow-ups →
   USER gate: session outlines what was done, asks PR or merge
   (explicit repo/user rules may pre-authorize) → land: file-pr · merge · push;
-  fix-ci delegates watching to Opus on Claude or gpt-5.6-sol on Codex
+  fix-ci delegates watching to Opus on Claude or gpt-6-sol on Codex
 
 FEEDBACK
   receiving-code-review governs acting on what arrived →
@@ -169,7 +169,7 @@ permission question just to satisfy this map. Skills do not authorize destructiv
 actions or external writes. Missing evidence stays visible and does not become a
 question for the user to certify as true.
 
-CI watching always uses a separate Opus agent on Claude or gpt-5.6-sol agent on
+CI watching always uses a separate Opus agent on Claude or gpt-6-sol agent on
 Codex, even when the parent is idle or already uses that model. Never assign
 watching to Astra/Fable or fall back to parent polling when dispatch is unavailable.
 Epic returns require verified acknowledgment and a concrete next action; see

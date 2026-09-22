@@ -19,7 +19,7 @@ background waits and keeps the diagnose–fix–push cycle in the calling sessio
 The caller selects this agent's model; this watcher never dispatches another agent.
 
 All CI polling and watch commands run in a separate read-only agent, even when
-the parent is idle: **Opus (`opus`) on Claude; `gpt-5.6-sol` on Codex**. Never
+the parent is idle: **Opus (`opus`) on Claude; `gpt-6-sol` on Codex**. Never
 use Astra or Fable for watching, and never inherit those models into the watcher.
 An Opus/Sol parent still dispatches a separate designated-model agent. If the
 host cannot dispatch it, report the monitoring gap rather than polling in the

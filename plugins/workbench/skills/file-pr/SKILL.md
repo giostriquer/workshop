@@ -14,7 +14,7 @@ reviewer contexts that did not write the code:
 2. When the diff changes production logic or tests: the `test-quality-review` skill
    given the PR's base branch in a separate, test-scoped prompt, run
    by the `test-quality-reviewer` agent as a separate Opus (`opus`) agent on Claude
-   Code or `gpt-5.6-sol` agent on Codex (the host's default model elsewhere). On a
+   Code or `gpt-6-sol` agent on Codex (the host's default model elsewhere). On a
    host without that agent type, dispatch a reviewer that loads the skill. It can run
    in parallel with the first.
 
@@ -258,7 +258,7 @@ Reusing the merged head branch requires an explicit instruction.
    the per-cause two-attempt cap, and the never-weaken-a-check rule. The watcher
    returns at the first failed required check; the fix starts then, not after
    the remaining checks finish. Watching always runs in a
-   separate Opus agent on Claude or gpt-5.6-sol agent on Codex, never Astra/Fable or
+   separate Opus agent on Claude or gpt-6-sol agent on Codex, never Astra/Fable or
    the parent; accept only results for the target SHA and required checks. Mergeability comes from
    `gh pr view --json mergeable,mergeStateStatus`.
 10. **If the base moves and conflicts appear**, merge the base in again, resolve,
