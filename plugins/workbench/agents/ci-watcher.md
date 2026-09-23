@@ -35,13 +35,22 @@ returned red gets no second watcher for its remaining checks.
 ## Workflow
 
 1. Determine the current branch: `git branch --show-current`.
-2. Resolve the PR: `gh pr view --json number,url,headRefName`.
+2. Resolve the PR: `gh pr view --json number,url,headRefName,headRefOid,state,mergedAt,closedAt`.
+   A PR whose state is `MERGED` or `CLOSED` gets no watch: report `merged` or
+   `closed` at once, with the merge time and the checks' state at that moment,
+   and stop. The caller owns what follows.
 3. Pin the caller's target SHA and expected checks; confirm run/PR head matches.
    Without a PR, use branch runs filtered to that SHA. Inspect attached checks: `gh pr checks --json name,bucket,state,workflow,link`.
-4. If checks are pending, watch them: `gh pr checks --watch --fail-fast` for a
-   PR, or for branch-only CI poll `gh run view <run-id> --json jobs` every
-   thirty seconds (`gh run watch` has no fail-fast). Use the caller's bounded
-   window, otherwise ten minutes. **Return at the first failed required check.**
+4. If checks are pending, poll every thirty seconds: for a PR, `gh pr view
+   --json state,mergedAt,closedAt` and then `gh pr checks --json
+   name,bucket,state,workflow,link`; for branch-only CI, `gh run view <run-id>
+   --json jobs`. A blocking `gh pr checks --watch` cannot see the PR merge or
+   close, so it is not the watch. Use the caller's bounded window, otherwise
+   ten minutes; the poll count is the window, so no timeout wrapper is needed.
+   **Return at the first failed required check, and return the
+   moment the PR state becomes `MERGED` or `CLOSED`**: report that state, the
+   merge time, and the checks' state at that moment; checks still running on a
+   merged head belong to the base branch, and a closed PR has nothing to fix.
    Do not wait for the remaining checks to finish: report the failed check, the
    checks still pending, and the ones already passed, and let the caller act.
    At the window's end with nothing failed, report pending and the next action.
@@ -53,8 +62,9 @@ returned red gets no second watcher for its remaining checks.
 
 ## Output
 
-- CI status (passed / failed / pending / superseded / blocked), target SHA,
-  observed run SHA, and required-check coverage. Missing/cancelled checks are not passed.
+- CI status (passed / failed / pending / superseded / merged / closed /
+  blocked), target SHA, observed run SHA, and required-check coverage.
+  Missing/cancelled checks are not passed.
 - PR and check metadata (number, URL, check names).
 - If failed: a concise failure excerpt or the external check link, the checks
   still pending at the moment of return, plus the likely next step.

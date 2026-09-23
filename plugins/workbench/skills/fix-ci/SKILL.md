@@ -41,11 +41,15 @@ watching; a single `gh pr checks` read, such as the pre-push snapshot in step
 2. **Dispatch one designated watcher to read and then watch the state.** PR: `gh pr checks --json name,bucket,state,workflow,link`.
    Runs: `gh run list` / `gh run view <run-id>`.
    - All required checks green for the target SHA → report green; done.
-   - Pending → the watcher runs `gh pr checks --watch --fail-fast` (PR) or
-     polls `gh run view <run-id> --json jobs` (branch-only CI, since `gh run
-     watch` has no fail-fast), within its bounded watch window. **The watcher
-     returns at the first failed required check**, naming it and listing the
-     checks still pending. Neither the watcher nor the parent waits for the
+   - Merged or closed (`gh pr view --json state,mergedAt,closedAt`) → the
+     watcher reports `merged` or `closed` at once and the loop ends: a closed
+     PR has nothing to fix, and a merged head's remaining checks belong to the
+     base branch.
+   - Pending → the watcher polls the PR state and its checks every thirty
+     seconds (branch-only CI: `gh run view <run-id> --json jobs`), within its
+     bounded watch window. **The watcher returns at the first failed required
+     check, or the moment the PR merges or closes**, naming the check or the
+     state and listing the checks still pending. Neither the watcher nor the parent waits for the
      remaining checks: any check still running when the fix is pushed reruns
      on the new head anyway, so waiting buys nothing and a failure visible in
      the first minute is acted on in the first minute.

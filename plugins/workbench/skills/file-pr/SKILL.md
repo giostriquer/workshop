@@ -256,8 +256,8 @@ Reusing the merged head branch requires an explicit instruction.
 9. **Watch to a verdict.** Checks run through the **`fix-ci` skill's loop**; it
    owns the failing-log diagnosis, flake-vs-fault triage, minimal in-session fixes,
    the per-cause two-attempt cap, and the never-weaken-a-check rule. The watcher
-   returns at the first failed required check; the fix starts then, not after
-   the remaining checks finish. Watching always runs in a
+   returns at the first failed required check, or the moment the PR merges or
+   closes; the fix starts then, not after the remaining checks finish. Watching always runs in a
    separate Opus agent on Claude or gpt-6-sol agent on Codex, never Astra/Fable or
    the parent; accept only results for the target SHA and required checks. Mergeability comes from
    `gh pr view --json mergeable,mergeStateStatus`.

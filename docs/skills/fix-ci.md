@@ -37,9 +37,9 @@ checks should be seen through to green.
    gets a precise report.
 2. **Dispatch one watcher** for that SHA: a separate `ci-watcher` on Opus on
    Claude Code or gpt-6-sol on Codex, even when your session is idle. It returns
-   at the **first failed required check**, listing those still pending. Green
-   means every required check passed on the pinned SHA; missing, cancelled or
-   superseded checks are not green.
+   at the **first failed required check**, listing those still pending, or the
+   moment the PR **merges or closes**. Green means every required check passed
+   on the pinned SHA; missing, cancelled or superseded checks are not green.
 3. **Collect evidence.** `gh run view <run-id> --log-failed`, then read the
    failing step's output. For an external check, surface the link; if the cause
    isn't reachable from the repo, report rather than guess.
@@ -84,6 +84,11 @@ reports the monitoring gap rather than polling in your session.
 **The watcher came back with checks still pending.** Its watch window is bounded
 (ten minutes unless set otherwise). Pending is reported as pending, with the next
 action, never as green.
+
+**The PR merged while the watcher was running.** It returns right then with
+`merged`, the merge time and the checks' state at that moment; it does not wait
+for checks still running on the merged head. A closed PR returns `closed` the
+same way, and the loop ends.
 
 **My unrelated changes didn't get committed.** Correct: it stages only files the
 fix touched and reports the rest.

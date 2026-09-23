@@ -8,6 +8,10 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.41.2: 2026-09-22
+
+- **The watcher stops when the PR merges or closes.** `ci-watcher` reads the PR state with its checks: a merged or closed PR at dispatch gets an immediate `merged` or `closed` report instead of a watch, and the watch is a thirty-second poll of state plus checks that returns the moment the PR merges or closes; `fix-ci` and `file-pr` end their loop on that report. ([decision](decisions/fix-ci.md#the-watcher-returns-when-the-pr-merges-or-closes-2026-09-22))
+
 ## workbench 0.41.1: 2026-09-22
 
 - **A probe is one hand-applied defect.** `test-driven-development` defines a mutation probe as one named defect applied by hand and one focused test run, the way a test-quality finding's fix is proved; mutation-tool sweeps belong to the test-quality review, never to the implementer. ([decision](decisions/mutation-artifact-boundary.md#a-probe-is-one-hand-applied-defect-never-a-tool-sweep-2026-09-22))
@@ -72,8 +76,4 @@ deletes the oldest (git history keeps everything). Sections from before the
 ## workbench 0.40.1: 2026-09-18
 
 - **Verify blocking corrections with the reviewer.** One initial review is followed by focused verification of every blocking fix or evidence-based rejection. Code and test reviewers share at most two automatic follow-up passes; unresolved findings or unreviewed corrections then hold delivery. Revision-bound closure and the pass count carry through PR preparation and epic handoffs, while advisory preferences and unrelated cleanup do not extend the loop. ([decision](decisions/bounded-correction-review.md))
-
-## workbench 0.40.0: 2026-09-17
-
-- **A code-quality review opens with its verdict.** `code-quality-review` requires the report to start with `## Verdict: PASS | ISSUES_FOUND`, the line `test-quality-review` already emits, where `PASS` is no in-scope (blocking) finding and a report that omits the line reads as `ISSUES_FOUND`. One rule now reads the outcome of either review stage, by a session or by a tool counting reviews off a transcript. ([decision](decisions/a-code-quality-review-states-its-verdict.md))
 
