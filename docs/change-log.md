@@ -8,6 +8,11 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.41.1: 2026-09-22
+
+- **A probe is one hand-applied defect.** `test-driven-development` defines a mutation probe as one named defect applied by hand and one focused test run, the way a test-quality finding's fix is proved; mutation-tool sweeps belong to the test-quality review, never to the implementer. ([decision](decisions/mutation-artifact-boundary.md#a-probe-is-one-hand-applied-defect-never-a-tool-sweep-2026-09-22))
+- **No scope, no run.** `test-quality-review` states that a language with no production line and no test in scope gets no mutation run and no tool setup. ([decision](decisions/mutation-artifact-boundary.md#a-probe-is-one-hand-applied-defect-never-a-tool-sweep-2026-09-22))
+
 ## toolkit 0.11.1: 2026-09-22
 
 - **Open HTML artifacts in dark mode.** `html-artifact` starts with dark colors on the first render, including on systems set to light. Light mode is optional; embedded product UI retains its source appearance and print can use paper-friendly colors. ([decision](decisions/html-artifact.md#dark-initial-theme--2026-09-22))
@@ -72,11 +77,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 
 - **A code-quality review opens with its verdict.** `code-quality-review` requires the report to start with `## Verdict: PASS | ISSUES_FOUND`, the line `test-quality-review` already emits, where `PASS` is no in-scope (blocking) finding and a report that omits the line reads as `ISSUES_FOUND`. One rule now reads the outcome of either review stage, by a session or by a tool counting reviews off a transcript. ([decision](decisions/a-code-quality-review-states-its-verdict.md))
 
-## workbench 0.39.0: 2026-09-17
-
-- **Run the test-quality review with the adversarial review.** `file-pr`, `code-quality-review`, `using-workbench` and `epic-orchestration` require `test-quality-reviewer` (`mode: diff`, given the base branch, in its own prompt) next to `code-quality-review` whenever the diff changes production logic or tests; the two can run in parallel. The epic lane report records both verdicts. ([decision](decisions/test-shape-and-mutation-review.md))
-- **Back test review with a mutation run.** `test-quality-reviewer` runs the project's mutation command, or StrykerJS for JavaScript and TypeScript when the project has a config or runner plugin, over the changed code and reports it on a required `Mutation run` line. Survivors that change consumer-visible behavior and unexplained suppression comments are Issues; the score is not a threshold, the `command` runner is never used, and a missing tool is reported rather than installed. ([decision](decisions/test-shape-and-mutation-review.md))
-- **Pin the test-quality reviewer's model.** `test-quality-reviewer` runs as a separate Opus agent on Claude Code or a `gpt-5.6-sol` agent on Codex, and on the host's default model elsewhere; `model-reference` records the exception. ([decision](decisions/test-shape-and-mutation-review.md))
-- **Add the `test-quality-review` skill.** The test-quality rubric moves from the `test-quality-reviewer` agent into a skill the agent loads, like `code-quality-review`, so hosts that expose skills but not agent files (Codex) can run the review. ([decision](decisions/test-shape-and-mutation-review.md))
-- **Route inside your own harness.** `model-reference` gains a hard invariant: pick from the models the host exposes, treat a table row as performance data rather than reachability, and leave crossing to another provider's CLI or harness to the operator. ([decision](decisions/model-routing-stays-in-harness.md))
-- **Choose the test shape before writing the test.** `writing-good-tests.md` maps behavior to shape: integration tests with real in-process collaborators for cross-module behavior, table-driven unit tests for pure logic, property-based and model-based tests with `fast-check` for invariants and operation sequences, and E2E only for release-blocking journeys. ([decision](decisions/test-shape-and-mutation-review.md))

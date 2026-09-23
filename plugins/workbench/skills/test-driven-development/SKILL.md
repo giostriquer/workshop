@@ -67,7 +67,11 @@ or rewrite valid code merely because it preceded its test.
 ### Mutation probes and delivery
 
 Mutate production code in a disposable checkout; keep the tests and their
-expectations intact. Before probing, record the author's staged, unstaged, and
+expectations intact. A probe is one named defect applied by hand and one
+focused test run: to prove a finding's fix, apply that finding's mutant, watch
+the test fail, revert, watch it pass. Mutation-tool sweeps (cargo-mutants,
+Stryker) belong to the test-quality review, never to the implementer proving a
+fix. Before probing, record the author's staged, unstaged, and
 untracked state. After success, failure, or timeout, stop any remaining probe
 processes and verify that state is preserved. Clean up only artifacts created by
 the probe; preserve pre-existing work and retain useful evidence in the scope's

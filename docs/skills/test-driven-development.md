@@ -64,6 +64,9 @@ No. Constructors, getters, constants, and trivial forwarding earn tests only whe
 **Which parts of mutation probing should I commit?**
 The valid implementation and reusable behavior tests. Run probes in a disposable checkout, verify the author's staged, unstaged, and untracked state afterwards, and keep injected defects, mutant copies, and probe tests out of the commit.
 
+**How do I prove a fix for a test-quality finding?**
+Apply that finding's mutant by hand, watch the focused test fail, revert, watch it pass. A probe is one named defect and one test run; mutation-tool sweeps belong to the test-quality review, not to the implementer.
+
 ## It's working if
 
 - For every test, you can name the production change that would make it fail, and that change is a bug, not a decision.

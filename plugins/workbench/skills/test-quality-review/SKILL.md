@@ -204,8 +204,9 @@ named tests.
 
 - **Set up, then run.** For each required or requested mutation run, cover the
   eligible behavior in scope. Use StrykerJS for `.ts`, `.tsx`, `.js`, and `.jsx` production
-  code, and `cargo-mutants` for Rust. Mixed changes need both. Mutate production
-  behavior exercised by changed tests, not the tests' assertions. The run's test
+  code, and `cargo-mutants` for Rust. Mixed changes need both; a language with
+  no production line and no test in scope gets no run and no setup. Mutate
+  production behavior exercised by changed tests, not the tests' assertions. The run's test
   set is the focused tests that exercise the scope; a test whose own run takes
   longer than 60 seconds stays out of it, and the lines only it exercises get
   one hand-applied defect run once against that test, recorded on the Mutation
