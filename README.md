@@ -108,8 +108,7 @@ installed skill's listing rides in each session's context:
 
 | Skill | Does |
 | --- | --- |
-| `html-report` | report → polished dark HTML page (from a doc, or from session findings) |
-| `arch-map` | visual architecture map when no doc exists |
+| `html-artifact` | HTML reports, plans, architecture explanations, and interactive product targets (user-invoked only) |
 | `ui-demo-video` | Playwright walkthrough video + verification frames |
 | `get-pr-comments` | triages PR feedback into an action list |
 | `adopt-global-rules` | installs the workshop's shipped global CLAUDE.md / AGENTS.md, rules, and Claude output styles onto a machine, additively (user-invoked only) |
@@ -119,6 +118,6 @@ Details in [`plugins/toolkit/README.md`](plugins/toolkit/README.md).
 
 ## Going deeper
 
-- [`docs/workbench-flow.md`](docs/workbench-flow.md): the workbench system's canonical mental model (with an [arch-map rendering](docs/workbench-flow.html)).
+- [`docs/workbench-flow.md`](docs/workbench-flow.md): the workbench system's canonical mental model (with an [HTML rendering](docs/workbench-flow.html)).
 - [`docs/skills/`](docs/skills/) is the usage handbook, with one page per shipped skill covering what it does, when to reach for it, and the questions people actually hit. Start at its [index](docs/skills/README.md).
 - [`docs/decisions/`](docs/decisions/) is the rationale layer, explaining why each agent and skill exists and the calls made along the way. The specs themselves are self-contained.

@@ -1,15 +1,14 @@
 # structure-view (deprecated name)
 
-> **Renamed 2026-08-05 → [`arch-map`](../../../../plugins/toolkit/skills/arch-map/SKILL.md).** Kept here so the
+> **Renamed 2026-08-05 → `arch-map`; consolidated 2026-09-22 → [`html-artifact`](../../../../plugins/toolkit/skills/html-artifact/SKILL.md).** Kept here so the
 > history of the design-first birth and Round 1 field notes stay findable
 > under the old name. Do not resume work under this name: use the live
-> `arch-map` skill (`plugins/toolkit/skills/arch-map/`) and
-> `docs/decisions/arch-map-skill-draft.md`.
+> `html-artifact` skill and its
+> [decision note](../../../../docs/decisions/html-artifact.md).
 >
 > Withdrawn from the toolkit plugin on 2026-07-31 (the day it landed)
 > pending more design thought. The historical draft and spec of record live
-> in git history; the decisions in force are in
-> [`docs/decisions/arch-map.md`](../../../../docs/decisions/arch-map.md).
+> in git history.
 
 ## Origin
 
@@ -181,7 +180,7 @@ tests named as the highest-fidelity edge source in Derive. The field agent
 also confirmed the view-economy discipline in practice: three derived-but-
 unchosen views were named in the page intro rather than drawn.
 
-Record further rounds against the active [`arch-map`](../../../../plugins/toolkit/skills/arch-map/SKILL.md) skill.
+Record further rounds against the active [`html-artifact`](../../../../plugins/toolkit/skills/html-artifact/SKILL.md) skill.
 
 ## Adaptation notes
 

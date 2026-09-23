@@ -17,7 +17,7 @@
     {
       "name": "toolkit",
       "source": "toolkit",
-      "description": "Optional artifact-making utilities: html-report, ui-demo-video, arch-map."
+      "description": "Optional artifact-making utilities: html-artifact, ui-demo-video."
     }
   ]
 }

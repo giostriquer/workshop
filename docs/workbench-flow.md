@@ -6,7 +6,7 @@ gets scoped, gets implemented, and lands. Filled teal boxes are **user gates**
 [`decisions/workbench-system.md`](decisions/workbench-system.md).
 
 **Canonical pair:** this file (mermaid, diffable) and
-[`workbench-flow.html`](workbench-flow.html) (arch-map rendering) are maintained
+[`workbench-flow.html`](workbench-flow.html) (HTML rendering) are maintained
 together: a flow change updates both or neither. Canonical skill definitions live in `plugins/workbench/skills/`.
 
 ## Entry & scoping: two optional doors

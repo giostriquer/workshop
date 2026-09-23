@@ -1,17 +1,17 @@
 #!/usr/bin/env node
-// arch-map layout pressure-test harness.
-// Loads each arch-map HTML page in headless chromium and reports mechanical
+// html-artifact layout pressure-test harness.
+// Loads each html-artifact HTML page in headless chromium and reports mechanical
 // layout defects: SVG text overflowing its box, HTML content overflowing its
 // container, and horizontal page overflow: across several viewport widths.
 //
 // Usage:
-//   node check.mjs <file-or-glob> [more...]   (defaults to skill-shipped specimens)
+//   node check.mjs <file-or-glob> [more...]   (defaults to retained regression fixtures)
 //   node check.mjs --json report.json <files...>
+//   node check.mjs --list-files             (inspect selection without a browser)
 //
 // Workshop-only maintainer tooling; this is not part of the plugin payload.
 // Exit code is non-zero when any ERROR-level finding exists.
 
-import { chromium } from 'playwright';
 import { pathToFileURL, fileURLToPath } from 'node:url';
 import { globSync } from 'node:fs';
 import fs from 'node:fs';
@@ -24,21 +24,27 @@ const HTML_TOL = 1;     // px slack for scrollWidth vs clientWidth
 function parseArgs(argv) {
   const files = [];
   let jsonOut = null;
+  let listFiles = false;
   for (let i = 0; i < argv.length; i++) {
     if (argv[i] === '--json') { jsonOut = argv[++i]; continue; }
+    if (argv[i] === '--list-files') { listFiles = true; continue; }
     files.push(argv[i]);
   }
-  return { files, jsonOut };
+  return { files, jsonOut, listFiles };
 }
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_CORPUS = [
-  path.resolve(HERE, '../../plugins/toolkit/skills/arch-map/references/subsystem-specimen.html'),
-  path.resolve(HERE, '../../plugins/toolkit/skills/arch-map/references/refactor-specimen.html'),
+  path.resolve(HERE, 'fixtures/subsystem-specimen.html'),
+  path.resolve(HERE, 'fixtures/refactor-specimen.html'),
 ];
 
 function resolveFiles(patterns) {
-  if (!patterns.length) return DEFAULT_CORPUS.filter(fs.existsSync);
+  if (!patterns.length) {
+    const missing = DEFAULT_CORPUS.filter((file) => !fs.existsSync(file));
+    if (missing.length) throw new Error(`Missing default fixture(s): ${missing.join(', ')}`);
+    return DEFAULT_CORPUS;
+  }
   const out = [];
   for (const p of patterns) {
     const hits = globSync(p, { windowsPathsNoEscape: true });
@@ -119,10 +125,12 @@ function collectHtmlFindings(tol) {
 }
 
 async function main() {
-  const { files: pats, jsonOut } = parseArgs(process.argv.slice(2));
+  const { files: pats, jsonOut, listFiles } = parseArgs(process.argv.slice(2));
   const files = resolveFiles(pats);
   if (!files.length) { console.error('No files to check.'); process.exit(2); }
+  if (listFiles) { console.log(JSON.stringify(files, null, 2)); return; }
 
+  const { chromium } = await import('playwright');
   const browser = await chromium.launch();
   const report = [];
   let errorCount = 0;

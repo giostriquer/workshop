@@ -204,9 +204,8 @@ spec-reviewer.md
 test-quality-reviewer.md"
 
 TOOLKIT_SKILLS="adopt-global-rules
-arch-map
 get-pr-comments
-html-report
+html-artifact
 me-human
 ui-demo-video"
 

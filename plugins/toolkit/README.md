@@ -32,8 +32,7 @@ codex plugin add toolkit@workshop
 
 | Skill | Does |
 | --- | --- |
-| `html-report` | renders a markdown report or findings reached in-session as a polished standalone dark HTML page |
-| `arch-map` | derives a visual architecture map of a subsystem, refactor, or proposed design when no source doc exists |
+| `html-artifact` | creates HTML reports, plans, architecture explanations, and interactive product targets; user-invoked only |
 | `ui-demo-video` | provides a Playwright walkthrough of the running app, verification frames for the model, and an MP4 for the PR |
 | `get-pr-comments` | triages the PR's conversation, review, and inline comments into a prioritized action list; read-only |
 | `adopt-global-rules` | installs the workshop's shipped global CLAUDE.md / AGENTS.md, rules, and Claude output styles onto this machine additively; user-invoked only |

@@ -8,6 +8,11 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## toolkit 0.11.0: 2026-09-22
+
+- **Use one HTML artifact skill.** `html-artifact` replaces `html-report` and `arch-map` as the manual entry point for reports, plans, architecture explanations, and interactive product targets. Diagram and product-mockup techniques load when needed; usage pages and host discovery metadata follow the new name. ([decision](decisions/html-artifact.md))
+- **Choose the design for the reader.** The skill preserves evidence and claim status while letting the model choose typography, palette, composition, navigation, and useful interaction. Fixed dark/glass templates and one-pass editing rules give way to rendered inspection, defect correction, and coherent revisions. ([decision](decisions/html-artifact.md))
+
 ## workbench 0.41.0: 2026-09-22
 
 - **Clean up a finished epic on request.** Add manual-only `epic-cleanup` to remove obsolete temporary artifacts and account for every epic-owned worktree, including validation and audit checkouts. It preserves useful evidence and unfinished work, proceeds with verified safe removals, and reports any blockers. ([decision](decisions/epic-cleanup.md))
@@ -75,8 +80,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 ## workbench 0.38.2: 2026-09-16
 
 - **Attach screenshots of UI changes to the PR body.** `file-pr` adds a conditional `## Screenshots` section when the diff changes rendered UI, captured from the running branch head and uploaded with `gh`'s native `--attach`. It reuses a template's screenshots-style section in place, otherwise sits right after `## Architecture`, and otherwise takes the Architecture position. The body references each file so `gh` rewrites it in place rather than appending it. Non-visual diffs get no section. ([decision](decisions/file-pr-screenshots-section.md))
-
-## workbench 0.38.1: 2026-09-15
-
-- **Clarify epic lane readiness.** Dispatches identify shared-contract producers, fixture builders and consumer checks, respect producer/consumer dependencies, and separate local static/build gates from focused tests. Validation uses actual producer output and supported saved artifacts. Completion review runs over the finished implementation; earlier blocked reports do not trigger it. ([decision](decisions/epic-lane-readiness.md))
-- **Preserve delivery state and report formats.** `file-pr` checks for merged PRs before pushing and routes authorized remaining work to a new branch and PR. Its delivery details fit the session's required handback format, with verdict-first output only when no format is required. ([decision](decisions/epic-lane-readiness.md))

@@ -1,4 +1,4 @@
-// Minimal static file server for previewing arch-map pages in-app.
+// Minimal static file server for previewing html-artifact pages in-app.
 // Usage: node serve.mjs [rootDir] [port]
 import http from 'node:http';
 import fs from 'node:fs';
