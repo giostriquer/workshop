@@ -40,10 +40,16 @@ extra menus or presentation effects that add steps to routine reading.
 Keep authoring and testing commentary in the delivery note. The artifact itself
 carries the provenance and limitations relevant to its reader.
 
+Start every artifact in dark mode. Set dark colors in the initial HTML/CSS so
+the first frame is dark, including when the operating system prefers light.
+A light-mode option is optional; it starts with dark selected. Keep embedded
+product UI faithful to its source, and use paper-friendly print colors where
+useful.
+
 Choose a short design intent covering hierarchy, typography, palette, density,
 and layout. Explicit user direction and relevant product design systems lead.
 Use a selected reference for its useful principles; an arbitrary recent HTML
-file is not authority. No universal palette, font pairing, card vocabulary,
+file is not authority. No fixed color values, font pairing, card vocabulary,
 hero, sidebar, or diagram count applies to every artifact.
 
 Let interaction earn its place: comparing states, inspecting detail, filtering

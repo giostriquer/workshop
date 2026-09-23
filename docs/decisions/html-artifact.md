@@ -82,3 +82,17 @@ On comparison, the operator preferred direct section access over the interactive
 plan's collapsed navigation menu. Long personal reference documents now favor
 visible navigation at wide reading sizes, reserving collapse for constrained
 space. This is a reading affordance, not a mandatory sidebar for every artifact.
+
+## Dark initial theme — 2026-09-22
+
+After reviewing the regenerated artifacts, the operator requested that every
+artifact start in dark mode. The initial HTML/CSS now carries dark colors even
+when the system prefers light; light mode remains optional. Typography, exact
+colors, composition, and density remain task-specific. Embedded product UI
+retains its source appearance, and print can use paper-friendly colors.
+
+The earlier regenerated light pages are the observed baseline for this change.
+A focused generation scenario checks a dark initial report around a supplied
+light product preview, with a light system preference and an optional theme
+switch. This is regression evidence for the new default, not a reliability
+estimate.

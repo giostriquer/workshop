@@ -26,8 +26,12 @@ The artifact leads with the decision, mechanism, or working surface. Its content
 may combine prose, tables, diagrams, implementation phases, evidence, and
 interactive demonstrations. A short report can remain entirely static.
 
+Every artifact opens in dark mode, including on systems set to light. A light
+theme is optional. Embedded product UI keeps its source appearance, and print
+can use paper-friendly colors.
+
 Design follows your direction and relevant product conventions. There is no
-mandatory dark theme, glass treatment, card grid, sidebar, or diagram count.
+fixed color palette, glass treatment, card grid, sidebar, or diagram count.
 An unrelated HTML file does not automatically become the design reference.
 Long personal reference documents keep section navigation visible when space
 permits, so routine reading does not require opening a menu.

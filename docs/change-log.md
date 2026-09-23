@@ -8,6 +8,10 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## toolkit 0.11.1: 2026-09-22
+
+- **Open HTML artifacts in dark mode.** `html-artifact` starts with dark colors on the first render, including on systems set to light. Light mode is optional; embedded product UI retains its source appearance and print can use paper-friendly colors. ([decision](decisions/html-artifact.md#dark-initial-theme--2026-09-22))
+
 ## toolkit 0.11.0: 2026-09-22
 
 - **Use one HTML artifact skill.** `html-artifact` replaces `html-report` and `arch-map` as the manual entry point for reports, plans, architecture explanations, and interactive product targets. Diagram and product-mockup techniques load when needed; usage pages and host discovery metadata follow the new name. ([decision](decisions/html-artifact.md))
@@ -76,7 +80,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 - **Add the `test-quality-review` skill.** The test-quality rubric moves from the `test-quality-reviewer` agent into a skill the agent loads, like `code-quality-review`, so hosts that expose skills but not agent files (Codex) can run the review. ([decision](decisions/test-shape-and-mutation-review.md))
 - **Route inside your own harness.** `model-reference` gains a hard invariant: pick from the models the host exposes, treat a table row as performance data rather than reachability, and leave crossing to another provider's CLI or harness to the operator. ([decision](decisions/model-routing-stays-in-harness.md))
 - **Choose the test shape before writing the test.** `writing-good-tests.md` maps behavior to shape: integration tests with real in-process collaborators for cross-module behavior, table-driven unit tests for pure logic, property-based and model-based tests with `fast-check` for invariants and operation sequences, and E2E only for release-blocking journeys. ([decision](decisions/test-shape-and-mutation-review.md))
-
-## workbench 0.38.2: 2026-09-16
-
-- **Attach screenshots of UI changes to the PR body.** `file-pr` adds a conditional `## Screenshots` section when the diff changes rendered UI, captured from the running branch head and uploaded with `gh`'s native `--attach`. It reuses a template's screenshots-style section in place, otherwise sits right after `## Architecture`, and otherwise takes the Architecture position. The body references each file so `gh` rewrites it in place rather than appending it. Non-visual diffs get no section. ([decision](decisions/file-pr-screenshots-section.md))
