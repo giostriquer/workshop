@@ -41,3 +41,13 @@ A coordinator pushed detailed evidence into tracker descriptions because the ski
 ## Dispatches are files and paste blocks are pointers (2026-09-11)
 
 Several-hundred-line inline briefs were hard to copy precisely from a terminal, while a session reads a file exactly. Each lane prompt, audit brief and authorization is its own file in the epic's scope folder, indexed in the ledger. The paste block carries only role, authority, whether the session is fresh, the absolute path and any required verbatim lines.
+
+## The owner never rules on mutation evidence (2026-09-23)
+
+A lane's test reviewer asked the epic owner to waive or diagnose nine mutation
+timeouts and two unmutated functions, and the owner spent a fifth of its
+messages that day ruling on them. The reviewer's rubric now bounds its own
+evidence (see the mutation lane's note), and the owner's "lanes stop and ask"
+list says mutation evidence is never a ruling: a partial run or a timeout is not
+a finding, such a request goes back to the lane with the rubric's bounds, and
+only a repository rule or the operator removes a run.

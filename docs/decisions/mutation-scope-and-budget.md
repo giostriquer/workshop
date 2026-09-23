@@ -161,3 +161,49 @@ single job with `--copy-target` and `--jobs` unset, and the copy text says to
 delete the `.git` pointer a clone of a linked worktree carries, since git
 commands in the copy would otherwise reach the author's index.
 
+## Mutation evidence is bounded, never negotiated (2026-09-23)
+
+An epic lane's test review ran Stryker over its scope, judged every survivor,
+and then held `ISSUES_FOUND` through both automatic follow-ups and an
+owner-authorized third pass over two things the rubric had no answer for: nine
+mutants scored `Timeout`, which it carried as "unknown" because the text said
+to "diagnose and repair a timeout, then rerun", and two functions the lane's
+budget had not reached, which the text made a mutation-evidence Issue. Its
+report asked the epic owner for "a bounded diagnostic of those exact nine
+mutants, or an explicit waiver naming them". The owner, a Codex session on
+`epic-orchestration`, spent 28 of its 141 messages that day on mutation and
+waiver rulings, about fifteen thousand tokens, and the lane's handback listed
+mutation timeouts as its blocking debt. A per-mutant timeout is a detection:
+Stryker scores `Timeout` as detected because "your CI build would detect it
+because the tests will never complete", and cargo-mutants' guidance is to skip
+functions that hang when mutated, not to investigate them.
+
+The rubric now says what mutation evidence is and who decides nothing about it.
+A per-mutant timeout counts with the killed and is never diagnosed, rerun or
+carried as unknown; only an invocation exceeding its own limit is a setup
+problem. What the lane ran within its budget is the evidence: a partial run
+records `partial` with the uncovered scope's command under Strategy notes, and
+neither a partial run nor a timeout is an Issue, holds delivery, consumes a
+follow-up pass, or needs a waiver, ruling, extension or diagnosis from anyone;
+the reviewer never returns a mutation question to the caller. The one
+mutation-evidence Issue left is a required run that never happened over parsed
+in-scope content after setup and repair within the budget (`blocked`), which
+the implementer runs or repairs. `waived` records a run a repository rule or the
+user removed in advance, never a decision the reviewer, a caller or an epic
+owner makes, and `epic-orchestration` tells the owner to send any such request
+back to the lane. A plan-only micro-test, three fresh reviewer contexts per arm
+on the lane's own situation, is recorded below.
+
+| Question (follow-up pass 2: three Issues fixed, nine `Timeout` mutants, two functions the budget never reached) | 0.41.3 wording | This wording |
+|---|---|---|
+| Verdict | `ISSUES_FOUND` 3 of 3, held by the uncovered scope as an Issue | `PASS` 3 of 3 |
+| Timeouts counted as detected, not reran or carried as unknown | 3 of 3 | 3 of 3 |
+| Uncovered scope recorded as a note with its command, not an Issue | 0 of 3 | 3 of 3 |
+| A mutation decision sent to the owner | 0 of 3 (the hold itself triggers the extension machinery) | 0 of 3 |
+
+The control reviewers read the timeout rule correctly where the recorded
+Codex reviewer did not; the wording now leaves nothing to read. Their hold on
+the uncovered scope is the mechanism that reached the owner in the recorded
+run: a blocking Issue with no fix available to the lane consumes the follow-up
+passes and lands on the owner's extension authority. Three reps per arm is
+regression evidence for this dispatch shape, not a reliability estimate.

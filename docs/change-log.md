@@ -8,6 +8,11 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.41.4: 2026-09-23
+
+- **Mutation evidence is bounded, never negotiated.** In `test-quality-review` a per-mutant timeout counts as detected, as Stryker and cargo-mutants score it, and is never diagnosed, rerun or carried as unknown; a partial run records `partial` with the uncovered scope's command under Strategy notes. Neither is an Issue, holds delivery, consumes a follow-up pass or needs a waiver, ruling or extension from anyone, and the reviewer never returns a mutation question to the caller. The only mutation-evidence Issue left is a required run that never happened (`blocked`), which the implementer runs or repairs; `waived` records a run a repository rule or the user removed in advance. ([decision](decisions/mutation-scope-and-budget.md#mutation-evidence-is-bounded-never-negotiated-2026-09-23))
+- **The epic owner never rules on mutation.** `epic-orchestration` lists mutation evidence among the things the owner does not decide: a lane's request to waive, scope or diagnose mutation runs goes back to the lane with the rubric's bounds. ([decision](decisions/epic-orchestration.md#the-owner-never-rules-on-mutation-evidence-2026-09-23))
+
 ## workbench 0.41.3: 2026-09-22
 
 - **The watcher waits with one background loop.** `ci-watcher` arms one shell loop that polls every thirty seconds and exits on the first terminal state, with the deadline inside the loop, then ends its turn and reports once the host wakes it; host behavior is labeled (Claude Code: Bash `run_in_background` and the task notification; Codex: re-read the loop's file; elsewhere: foreground calls within the tool's limit). ([decision](decisions/fix-ci.md#the-watchers-wait-is-one-background-loop-the-parent-never-waits-in-its-own-turns-2026-09-22))
@@ -73,8 +78,4 @@ deletes the oldest (git history keeps everything). Sections from before the
 ## workbench 0.40.3: 2026-09-21
 
 - **Keep mutation probes out of commits.** TDD retains useful behavior tests and strengthens existing cases where suitable instead of adding a test per mutant. Every mutation command runs in isolation and verifies preservation after success, failure, or timeout; the test-quality report records workspace preservation and holds delivery on unresolved cleanup. Before committing, inspect staged changes and new files for temporary mutation artifacts. ([decision](decisions/mutation-artifact-boundary.md))
-
-## workbench 0.40.2: 2026-09-19
-
-- **Review at the shipping checkpoint.** Completion means the full agreed work set is implemented, verified, and about to ship through a PR or the repository's delivery process. Individual edits, subtasks, local checkpoints, and validation handbacks do not trigger reviews; correction rounds wait for a complete, verified batch before delivery resumes. ([decision](decisions/bounded-correction-review.md#completion-boundary-clarified-2026-09-19))
 

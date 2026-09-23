@@ -333,6 +333,11 @@ Lanes stop and ask; you decide, with evidence:
   pointer. Preserve the cumulative count and delivery hold until independent
   review closes the blockers. Escalate to the operator when the needed decision
   exceeds your existing scope or authority; routine correction handoffs stay yours.
+- **Mutation evidence is never yours to rule on.** The test reviewer bounds its
+  own run; a partial run or a timeout is not a finding, and no lane may ask you
+  to waive, scope or diagnose mutation runs. Send such a request back to the
+  lane with the rubric's bounds; only a repository rule or the operator removes
+  a run.
 - **Semantic merge conflicts**: which policy wins, and how to compose rather than choose.
 - **Scope boundaries**: before ticketing an audit finding, confirm the flow under audit
   actually reaches that code. Presence in a preserved artifact is the wrong test;

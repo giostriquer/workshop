@@ -272,9 +272,16 @@ named tests.
   Verify a passing, nonempty baseline using the same tests and feature flags.
   Inspect effective config so workspace defaults do not expand the test scope.
   Report caught / missed / timeout / unviable counts; review missed mutants as
-  survivors. Do not infer coverage from cargo-mutants outcomes.
+  survivors and count timeouts with the caught. Do not infer coverage from
+  cargo-mutants outcomes.
+- A per-mutant timeout (Stryker `Timeout`, cargo-mutants `timeout`) is a
+  detected mutant: the mutated program never finished the tests, which a CI
+  run would catch. Count it with the killed; never diagnose, rerun, or carry it
+  as unknown. Only a run that exceeds its own limit (the baseline, or a whole
+  invocation) is a setup problem.
 - Diagnose and repair an unmatched glob, an empty or failing baseline, an
-  instrumentation failure, or a timeout, then rerun. Zero mutants over content
+  instrumentation failure, or an invocation that exceeded its limit, then
+  rerun. Zero mutants over content
   the tool parses is a configuration defect to repair, unless the lines hold no
   expression the tool mutates (an import, a member access): record that count
   and reason on the Mutation run line and cover the lines with mutation
@@ -288,14 +295,21 @@ named tests.
   Split slow scope into focused runs inside that budget, on one disposable copy.
   When the budget ends with in-scope lines uncovered, stop: judge the survivors
   you have, record `partial: <covered scope> / <uncovered scope>` on the Mutation
-  run line, and name the uncovered scope in a mutation-evidence Issue for the
-  implementer to run. Do not open another copy or lane to continue.
-- If execution remains incomplete, report a mutation-evidence Issue: the exact
-  failure, attempted setup or repair, remaining scope, and the
-  next action or owner needed. Record `blocked: <reason>` on the Mutation run line.
-  A change-review verdict remains `ISSUES_FOUND`. Continue qualitative analysis, but
-  it cannot make the required run PASS or a requested run complete. Record
-  an explicit waiver as `waived: <authority and scope>`, never as a successful run.
+  run line, and put the exact command for the uncovered scope under Strategy
+  notes. Do not open another copy or lane to continue.
+- **Mutation evidence is bounded, never negotiated.** What the lane ran within
+  its budget is the evidence: the counts, `partial`, and the judged survivors.
+  A partial run or a timeout is not an Issue, does not hold delivery, and needs
+  no waiver, ruling, extension or diagnosis from anyone; never return a question
+  about mutation scope, survivors, timeouts or waivers to the caller. The one
+  mutation-evidence Issue is a required run that never happened over in-scope
+  content the tool parses, after setup and repair within the budget: record
+  `blocked: <failure, attempted repair, remaining scope>` on the Mutation run
+  line with the exact command, and the implementer runs or repairs it. That
+  verdict is `ISSUES_FOUND`; qualitative analysis cannot make the run PASS.
+  `waived: <rule or user instruction>` records a run a repository rule or the
+  user removed in advance, never a successful run and never a decision the
+  reviewer, a caller or an epic owner makes.
   `not applicable` requires source evidence that the content has no executable
   behavior, or that it is an input the named tool does not parse; zero generated
   mutants alone does not establish either. For other languages, use the
@@ -388,10 +402,11 @@ Follow-up pass: [0 initial / 1 / 2; explicit extension if authorized]
 ```
 
 - `PASS` - no test-trustworthiness issue found that would let a weak or misleading test
-  merge, required mutation execution is complete (or explicitly waived or evidenced
-  as not applicable), and workspace preservation is verified after setup or runs.
-- `ISSUES_FOUND` - at least one such issue, incomplete required mutation execution,
-  or unresolved mutation workspace preservation.
+  merge, the required run happened over the scope within the budget (complete
+  or `partial`) or is `not applicable` or `waived` by rule, and workspace
+  preservation is verified after setup or runs.
+- `ISSUES_FOUND` - at least one such issue, a required run that never happened
+  (`blocked`), or unresolved mutation workspace preservation.
 - Observations and Strategy notes are non-blocking unless explicitly tied to an Issue.
 
 ## Refuse combined-review dispatches

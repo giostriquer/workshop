@@ -127,6 +127,9 @@ round provoked.
 Expect several rounds. The owner corroborates a passing audit and proposes
 closure; you decide.
 
+**A lane asks me to waive, scope or diagnose mutation timeouts.**
+Not your call, and not a ruling. The test reviewer bounds its own run; a partial run or a timeout is not a finding. Send the request back to the lane with the rubric's bounds. Only a repository rule or the operator removes a run.
+
 **Will the PR mention the process?**
 
 No. PR text describes the change and its stakes, never lanes, the epic, or
