@@ -41,16 +41,41 @@ returned red gets no second watcher for its remaining checks.
    and stop. The caller owns what follows.
 3. Pin the caller's target SHA and expected checks; confirm run/PR head matches.
    Without a PR, use branch runs filtered to that SHA. Inspect attached checks: `gh pr checks --json name,bucket,state,workflow,link`.
-4. If checks are pending, poll every thirty seconds: for a PR, `gh pr view
-   --json state,mergedAt,closedAt` and then `gh pr checks --json
-   name,bucket,state,workflow,link`; for branch-only CI, `gh run view <run-id>
-   --json jobs`. A blocking `gh pr checks --watch` cannot see the PR merge or
-   close, so it is not the watch. Use the caller's bounded window, otherwise
-   ten minutes; the poll count is the window, so no timeout wrapper is needed.
-   **Return at the first failed required check, and return the
+4. If checks are pending, the wait is **one shell loop, armed once in the
+   background**, that polls every thirty seconds and exits on the first
+   terminal state: a failed check, the PR state `MERGED` or `CLOSED`, no check
+   pending, the head moved off the pinned SHA, or the deadline. The deadline
+   lives inside the loop (the caller's bounded window, otherwise ten minutes),
+   so no `timeout` wrapper is needed, and macOS has none anyway. Each poll and
+   the exit reason go to a file in the scratch location. Arm it, end the turn,
+   and act when the host reports the loop finished: read the file, take one
+   fresh snapshot, and report. A blocking `gh pr checks --watch` cannot see the
+   PR merge or close and is not the watch; a poll per tool call is not the
+   watch either. **Return at the first failed required check, and return the
    moment the PR state becomes `MERGED` or `CLOSED`**: report that state, the
    merge time, and the checks' state at that moment; checks still running on a
    merged head belong to the base branch, and a closed PR has nothing to fix.
+   A failed optional check with required checks still pending is judged at the
+   snapshot and the loop re-armed for the remaining window.
+
+   ```
+   deadline=$(( $(date +%s) + 600 )); out=<scratch>/watch.log
+   while :; do
+     st=$(gh pr view <n> --json state,headRefOid -q '"\(.state) \(.headRefOid)"')
+     ck=$(gh pr checks <n> --json name,bucket -q '[.[] | "\(.name)=\(.bucket)"] | join(" ")')
+     echo "$(date -u +%FT%TZ) $st $ck" >> "$out"
+     case "$st" in MERGED*|CLOSED*) echo "exit: ${st%% *}" >> "$out"; break;; esac
+     case "${st#* }" in "<pinned sha>"*) ;; *) echo "exit: superseded" >> "$out"; break;; esac
+     case " $ck " in *=fail*) echo "exit: failed" >> "$out"; break;; esac
+     case " $ck " in *=pending*) ;; *) echo "exit: settled" >> "$out"; break;; esac
+     [ $(date +%s) -lt $deadline ] || { echo "exit: deadline" >> "$out"; break; }
+     sleep 30
+   done
+   ```
+
+   `headRefOid` is the full SHA, so the head check is a prefix match against
+   the pinned SHA as given. Branch-only CI polls `gh run view <run-id> --json
+   status,conclusion,jobs` in the same shape.
    Do not wait for the remaining checks to finish: report the failed check, the
    checks still pending, and the ones already passed, and let the caller act.
    At the window's end with nothing failed, report pending and the next action.
@@ -59,6 +84,24 @@ returned red gets no second watcher for its remaining checks.
 5. If a GitHub Actions check failed, fetch its logs with `gh run view <run-id>
    --log-failed` (or `--job <job-id>` while the run is still in progress);
    otherwise return the check link and a concise next step.
+
+## Host notes
+
+Only the first bullet is Claude Code behavior; the others are for the same
+agent on another host.
+
+- **Claude Code only.** Arm the loop with the Bash tool's `run_in_background`
+  and end the turn: the harness re-invokes this agent with a task notification
+  when the loop exits, and the loop's output file is readable with Read. Never
+  run the loop in the foreground: a foreground call stops at the tool's
+  ten-minute limit and is moved to the background anyway. A `sleep` chained
+  before a command is rejected by the tool; a `sleep` inside the loop is fine.
+  The Monitor tool is not in this agent's tool set.
+- **Codex.** The exec tool returns after its yield time while the command keeps
+  running; keep the loop as a background job writing to the file and re-read
+  the file at the interval until the exit line appears.
+- **Other hosts.** Run the loop in foreground calls no longer than the tool's
+  limit, re-entering it with the same deadline until it exits.
 
 ## Output
 

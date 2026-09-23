@@ -35,3 +35,49 @@ with two required checks still running, is recorded below.
 Two control plans also flagged that the resolve step's field list lacked
 `state` and `headRefOid`; both are in the field list now. Three reps per arm is
 regression evidence for this dispatch shape, not a reliability estimate.
+
+## The watcher's wait is one background loop; the parent never waits in its own turns (2026-09-22)
+
+Eleven Claude Code watchers on 2026-09-22 spent 9 to 31 model turns each on
+watches of 5 to 24 minutes: the spec described polling, and an Opus turn per
+poll is what the agents did. Three ran `gh pr checks --watch` in the foreground
+at the Bash tool's ten-minute cap, were moved to the background at exactly the
+window's end, and re-ran the watch, so the "ten-minute window" became twenty to
+thirty minutes; three probed for `timeout` or `gtimeout` first. The one watcher
+that armed the watch with `run_in_background`, ended its turn and was woken by
+the task notification finished in nine minutes with one read. Parents, meanwhile,
+polled `gh pr checks` or `gh run view` 4 to 21 times per session alongside their
+watchers, and two armed Monitor loops on CI jobs.
+
+The watcher's wait is now one shell loop armed once in the background, polling
+every thirty seconds and exiting on the first terminal state (a failed check,
+the PR merged or closed, no check pending, a moved head, or its own deadline),
+with the deadline inside the loop so no `timeout` wrapper is needed; the agent
+ends its turn and acts once when the host reports the loop finished. Host
+behavior is labeled: on Claude Code the loop runs through the Bash tool's
+`run_in_background` and the task notification wakes the agent; on Codex the
+exec tool's yield means re-reading the loop's file; elsewhere the loop runs in
+foreground calls within the tool's limit. The wait stays in the agent on every
+host, including Claude Code where the parent could arm the same loop or a
+Monitor: every parent turn spent waiting, and every Monitor output line, is
+billed at the parent's model, and a Fable or Astra parent is the expensive one,
+while the watcher's Opus turns are the cheap ones. The parent therefore ends its
+turn after dispatching and runs no poll, Monitor or output-file read of its own,
+and passes no model, since the agent file pins it. A plan-only micro-test, three
+fresh contexts per arm on the watcher and on the parent, is recorded below.
+
+| Question | 0.41.2 wording | This wording |
+|---|---|---|
+| Watcher: the wait is one background loop, the turn ends, the notification wakes it | 1 of 3 | 3 of 3 |
+| Watcher: a foreground loop at the Bash tool's 600-second cap (spills to the background at the window's end) | 2 of 3 | 0 of 3 |
+| Watcher: probes for `timeout` or `gtimeout` | 0 of 3 | 0 of 3 |
+| Parent: dispatches `ci-watcher`, ends its turn, runs no poll, Monitor or output-file read | 3 of 3 | 3 of 3 |
+| Parent: passes `model: opus` explicitly | 3 of 3 | 0 of 3 |
+
+The prompts stated the host's tool limits, which the transcripts' watchers had
+to discover, so both arms plan fewer turns than the recorded runs; the
+difference between arms is the wait's shape. Two candidate watcher plans
+caught that the loop template compared a full `headRefOid` with the caller's
+SHA as given, and fifteen of thirty-three dispatches today passed a short SHA,
+so the template's head check is a prefix match. Three reps per arm is
+regression evidence for these dispatch shapes, not a reliability estimate.

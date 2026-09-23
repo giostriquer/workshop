@@ -11,23 +11,38 @@ Use when the current branch's CI is red and should be fixed, or right after a pu
 when the checks should be seen through to green. This is the invocable form of the
 recurring one-liner "CI is failing, take a look."
 
-## CI watcher routing
+## Who waits, and where
 
-All CI polling and watch commands run in a separate read-only agent, even when
-the parent is idle: **Opus (`opus`) on Claude; `gpt-6-sol` on Codex**. Never
-use Astra or Fable for watching, and never inherit those models into the watcher.
-An Opus/Sol parent still dispatches a separate designated-model agent. If the
-host cannot dispatch it, report the monitoring gap rather than polling in the
-parent or choosing a prohibited fallback. Haiku and Sonnet remain prohibited.
-The parent owns diagnosis and repairs; the watcher only gathers CI evidence.
+The wait is one shell loop that polls the PR state and its checks every thirty
+seconds and exits on the first terminal state: a failed check, the PR merged or
+closed, no check pending, a moved head, or its own deadline. The `ci-watcher`
+agent carries that loop on every host, even when the parent is idle: every
+parent turn spent waiting costs the parent model's tokens, and a Fable or
+Astra parent is the expensive one. The agent file pins the watcher's model
+(**Opus on Claude Code; `gpt-6-sol` on Codex**), so the parent passes none;
+never watch inside the parent's own turns, and never route the watcher to
+Haiku or Sonnet. If the host cannot dispatch the agent, report the monitoring
+gap rather than polling in the parent. The parent owns diagnosis and repairs;
+the watcher only gathers CI evidence.
+
+Host notes, of which only the first is Claude Code behavior:
+
+- **Claude Code only.** The dispatch runs in the background and the parent is
+  re-invoked by the watcher's handback notification, so the parent ends its
+  turn after dispatching and runs no `gh pr checks`, `gh run view`, Monitor or
+  read of the watcher's output file in the meantime. Inside the watcher, the
+  loop runs once through the Bash tool's `run_in_background`, which wakes the
+  agent once when the loop exits.
+- **Other hosts.** The parent dispatches the watcher and waits for its return
+  through the host's mechanism; it does not poll `gh` itself.
 
 **One watcher per pinned head.** Reading the state and watching it are one
 dispatch, not two. Never dispatch a second watcher on a head whose watcher is
 still running or has returned red; the checks it listed as pending are not
 watched further, since they rerun on the next head. A re-watch after a push is
-a new head and therefore a new watcher. The routing rule covers polling and
-watching; a single `gh pr checks` read, such as the pre-push snapshot in step
-8, is not polling and the parent runs it itself.
+a new head and therefore a new watcher. The rule covers polling and watching; a
+single `gh pr checks` read, such as the pre-push snapshot in step 8, is not
+polling and the parent runs it itself.
 
 ## Workflow
 
@@ -45,9 +60,9 @@ watching; a single `gh pr checks` read, such as the pre-push snapshot in step
      watcher reports `merged` or `closed` at once and the loop ends: a closed
      PR has nothing to fix, and a merged head's remaining checks belong to the
      base branch.
-   - Pending → the watcher polls the PR state and its checks every thirty
-     seconds (branch-only CI: `gh run view <run-id> --json jobs`), within its
-     bounded watch window. **The watcher returns at the first failed required
+   - Pending → the watcher's loop polls the PR state and its checks every
+     thirty seconds (branch-only CI: `gh run view <run-id> --json jobs`),
+     within its bounded window. **The watcher returns at the first failed required
      check, or the moment the PR merges or closes**, naming the check or the
      state and listing the checks still pending. Neither the watcher nor the parent waits for the
      remaining checks: any check still running when the fix is pushed reruns

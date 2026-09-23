@@ -8,6 +8,11 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.41.3: 2026-09-22
+
+- **The watcher waits with one background loop.** `ci-watcher` arms one shell loop that polls every thirty seconds and exits on the first terminal state, with the deadline inside the loop, then ends its turn and reports once the host wakes it; host behavior is labeled (Claude Code: Bash `run_in_background` and the task notification; Codex: re-read the loop's file; elsewhere: foreground calls within the tool's limit). ([decision](decisions/fix-ci.md#the-watchers-wait-is-one-background-loop-the-parent-never-waits-in-its-own-turns-2026-09-22))
+- **The parent never waits in its own turns.** `fix-ci` says why the wait lives in the watcher on every host (parent turns and Monitor lines are billed at the parent's model), that the agent file pins the watcher's model so the parent passes none, and that after dispatching the parent ends its turn and runs no `gh` poll, Monitor or output-file read of its own; `file-pr` and the usage page match. ([decision](decisions/fix-ci.md#the-watchers-wait-is-one-background-loop-the-parent-never-waits-in-its-own-turns-2026-09-22))
+
 ## workbench 0.41.2: 2026-09-22
 
 - **The watcher stops when the PR merges or closes.** `ci-watcher` reads the PR state with its checks: a merged or closed PR at dispatch gets an immediate `merged` or `closed` report instead of a watch, and the watch is a thirty-second poll of state plus checks that returns the moment the PR merges or closes; `fix-ci` and `file-pr` end their loop on that report. ([decision](decisions/fix-ci.md#the-watcher-returns-when-the-pr-merges-or-closes-2026-09-22))
@@ -72,8 +77,4 @@ deletes the oldest (git history keeps everything). Sections from before the
 ## workbench 0.40.2: 2026-09-19
 
 - **Review at the shipping checkpoint.** Completion means the full agreed work set is implemented, verified, and about to ship through a PR or the repository's delivery process. Individual edits, subtasks, local checkpoints, and validation handbacks do not trigger reviews; correction rounds wait for a complete, verified batch before delivery resumes. ([decision](decisions/bounded-correction-review.md#completion-boundary-clarified-2026-09-19))
-
-## workbench 0.40.1: 2026-09-18
-
-- **Verify blocking corrections with the reviewer.** One initial review is followed by focused verification of every blocking fix or evidence-based rejection. Code and test reviewers share at most two automatic follow-up passes; unresolved findings or unreviewed corrections then hold delivery. Revision-bound closure and the pass count carry through PR preparation and epic handoffs, while advisory preferences and unrelated cleanup do not extend the loop. ([decision](decisions/bounded-correction-review.md))
 

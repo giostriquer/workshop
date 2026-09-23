@@ -47,7 +47,7 @@ They inspect and report; none can edit your files (reviewers use
 | `code-quality-reviewer` | a diff's maintainability and structure; loads the `code-quality-review` rubric |
 | `test-quality-reviewer` | test code for trustworthiness and risk coverage; loads the `test-quality-review` rubric; separate Opus (Claude) or Sol (Codex) reviewer |
 | `pattern-reviewer` | a diff's conformance to the project's implementation patterns |
-| `ci-watcher` | the branch's PR CI: watch and report; separate Opus (Claude) or Sol (Codex) watcher, never Astra or Fable |
+| `ci-watcher` | the branch's PR CI: watch and report through one background loop; separate Opus (Claude) or Sol (Codex) watcher, never the parent's turns |
 
 ## Everyday skills
 

@@ -35,11 +35,13 @@ checks should be seen through to green.
    has none. Pin the target SHA with `git rev-parse HEAD`, confirm it matches the
    remote head, and identify the required checks. No branch, no CI or no access
    gets a precise report.
-2. **Dispatch one watcher** for that SHA: a separate `ci-watcher` on Opus on
-   Claude Code or gpt-6-sol on Codex, even when your session is idle. It returns
-   at the **first failed required check**, listing those still pending, or the
-   moment the PR **merges or closes**. Green means every required check passed
-   on the pinned SHA; missing, cancelled or superseded checks are not green.
+2. **Dispatch one watcher** for that SHA: a separate `ci-watcher` (its agent
+   file pins Opus on Claude Code and gpt-6-sol on Codex; pass no model), even
+   when your session is idle. Inside it the wait is one background shell loop
+   that exits on the first terminal state. It returns at the **first failed
+   required check**, listing those still pending, or the moment the PR **merges
+   or closes**. Green means every required check passed on the pinned SHA;
+   missing, cancelled or superseded checks are not green.
 3. **Collect evidence.** `gh run view <run-id> --log-failed`, then read the
    failing step's output. For an external check, surface the link; if the cause
    isn't reachable from the repo, report rather than guess.
@@ -80,6 +82,14 @@ target commit. ([decision](../decisions/fix-ci.md))
 **Can I keep working while it waits?** Yes. The watcher runs separately; your
 session picks up its report and owns the fix. If no watcher can be dispatched, it
 reports the monitoring gap rather than polling in your session.
+
+**Why not a Monitor or a background loop in my own session?** *(Claude Code
+only.)* Every turn your session spends is billed at its own model, and a Fable
+or Astra session is the expensive one; a Monitor also wakes you once per output
+line. The watcher's Opus turns are the cheap ones, so the loop lives there. After
+dispatching, end your turn: the harness re-invokes you with the watcher's report,
+so you do not poll `gh`, arm a Monitor, or read the watcher's output file in the
+meantime.
 
 **The watcher came back with checks still pending.** Its watch window is bounded
 (ten minutes unless set otherwise). Pending is reported as pending, with the next
