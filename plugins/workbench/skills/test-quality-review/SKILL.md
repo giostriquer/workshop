@@ -170,7 +170,11 @@ A test that would obviously survive a relevant mutant is a test-quality issue.
 content changed (`path:startLine-endLine`) and, behind a changed test file, the
 production functions its added, changed or removed test cases call (Stryker
 `path:start-end` ranges over those functions; cargo-mutants `--re` on their
-names), not the whole file. When the diff removes or relaxes an assertion, the
+names), not the whole file. A test file and the helpers it defines are never a
+mutation target, whatever a dispatch names as scope: gate, oracle or parser
+logic that lives in a test file is reviewed through the checklist (a setup that
+passes trivially, a helper that cannot fail) and at most five hand-applied
+defects for that file. When the diff removes or relaxes an assertion, the
 lines that assertion pinned join the scope. A survivor on a line the diff did
 not change is a pre-existing gap: record it under Strategy notes, not as an
 Issue. Resolve the scope with rename detection (`git diff -M`) and, for content
@@ -244,9 +248,11 @@ named tests.
   Scope both mutation targets and tests; create or adapt a run-specific config in
   the isolated copy when the existing config targets unrelated work. Preserve the
   author's config.
-- Stryker's `command` runner is allowed with `coverageAnalysis: "off"` when an
-  explicit command selects relevant bounded test files and propagates failures,
-  such as `bun test ./tests/parser.test.ts`. Verify a nonempty baseline against
+- Stryker's `command` runner is the fallback when no compatible framework
+  runner works in the copy, with `coverageAnalysis: "off"` and an explicit
+  command that selects relevant bounded test files and propagates failures,
+  such as `bun test ./tests/parser.test.ts`; it is never a second pass over a
+  scope a framework runner completed. Verify a nonempty baseline against
   the isolated source. A bare full-suite command does not qualify. It reruns the
   selected tests per mutant and cannot distinguish unexecuted mutants from other
   survivors. On the Mutation run line, name the runner and test scope and report
@@ -274,11 +280,20 @@ named tests.
   Report caught / missed / timeout / unviable counts; review missed mutants as
   survivors and count timeouts with the caught. Do not infer coverage from
   cargo-mutants outcomes.
-- A per-mutant timeout (Stryker `Timeout`, cargo-mutants `timeout`) is a
-  detected mutant: the mutated program never finished the tests, which a CI
-  run would catch. Count it with the killed; never diagnose, rerun, or carry it
-  as unknown. Only a run that exceeds its own limit (the baseline, or a whole
-  invocation) is a setup problem.
+- **One run per scope, one campaign at a time.** A completed run is the
+  round's evidence for its scope; the same scope does not run again in the
+  round under another runner, coverage setting or test set to confirm or
+  reconcile its counts. A survivor the reviewer wants to check by hand gets
+  one hand-applied defect in the copy. Campaigns run one at a time on the
+  host: a second Stryker or cargo-mutants process never starts while one is
+  running. Timeouts from a run that shared the host with another campaign are
+  load, not detection: record their lines as `partial` with the
+  single-campaign command under Strategy notes.
+- A per-mutant timeout (Stryker `Timeout`, cargo-mutants `timeout`) from a run
+  that had the host to itself is a detected mutant: the mutated program never
+  finished the tests, which a CI run would catch. Count it with the killed;
+  never diagnose, rerun, or carry it as unknown. Only a run that exceeds its
+  own limit (the baseline, or a whole invocation) is a setup problem.
 - Diagnose and repair an unmatched glob, an empty or failing baseline, an
   instrumentation failure, or an invocation that exceeded its limit, then
   rerun. Zero mutants over content
@@ -290,9 +305,18 @@ named tests.
   or drop files to obtain a clean run. Test or production fixes belong to the
   implementer. Stop retrying when there is no actionable repair within
   authority, rather than repeating the same failed command.
+- **Estimate, then bound.** Every run has an estimate before its mutants
+  execute: mutants × baseline seconds ÷ concurrency, from the counts the tool
+  prints first (Stryker's `Instrumented N mutants` and `Initial test run
+  succeeded ... in S seconds`; `cargo mutants --list` and the baseline build).
+  An estimate over 10 minutes ends that run and narrows the scope before the
+  next one starts: the functions behind a changed test shrink to the lines its
+  new assertions pin, then the changed lines are sampled and the rest recorded
+  as `partial`. The estimate and any narrowing go on the Mutation run line.
 - **Time budget.** The mutation lane of one review round has 30 minutes of wall
-  clock in total, setup included, and any single invocation stops at 15 minutes.
-  Split slow scope into focused runs inside that budget, on one disposable copy.
+  clock in total, setup included, and any single invocation stops at 15 minutes;
+  both are ceilings, not targets. Split slow scope into focused runs inside that
+  budget, on one disposable copy.
   When the budget ends with in-scope lines uncovered, stop: judge the survivors
   you have, record `partial: <covered scope> / <uncovered scope>` on the Mutation
   run line, and put the exact command for the uncovered scope under Strategy
@@ -317,8 +341,9 @@ named tests.
   changed lines are the evidence.
 - Hand-applied defects, in any language, cover what the named tool leaves: a
   line it makes no mutant for (a JSX attribute, an `as const` object, a tuple
-  comparison), a test excluded for its run time, or a follow-up round under a
-  project rule that waives the tool. They run one at a time in the one
+  comparison), a test file's own helpers, a survivor checked by hand, a test
+  excluded for its run time, or a follow-up round under a project rule that
+  waives the tool. They run one at a time in the one
   disposable copy, restoring the file between defects and reusing its
   incremental build, at most five per changed file per round, and never in
   parallel copies of the tree. Record each defect and its outcome.
@@ -370,7 +395,8 @@ Follow-up pass: [0 initial / 1 / 2; explicit extension if authorized]
 - Coverage target: [project target or "not declared"]
 - CRAP target: [project target or "default <= 6"] / availability: [artifact summary]
 - Notes: [short metric caveat, or "metrics absent; qualitative review performed"]
-- Mutation run: [tool/version, runner, mutation scope, test scope, setup and run
+- Mutation run: [tool/version, runner, mutation scope, test scope, estimate
+  (mutants × baseline ÷ concurrency) and any narrowing, setup and run
   commands, lane time as minutes of the round's budget, report path and outcome
   counts; Stryker: killed / timeout / survived /
   no coverage (unavailable with the command runner) / errors; cargo-mutants:

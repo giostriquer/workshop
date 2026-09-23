@@ -31,7 +31,9 @@ contents out of the implementing session's window.
 
 When the diff changes production logic or tests, the dispatching session also
 dispatches `test-quality-review` for that change set, with the base branch when known, in a
-separate, test-scoped prompt; the two run in parallel.
+separate, test-scoped prompt; the two run in parallel. Each dispatch names its
+skill, never a plugin version or a cache path: the reviewer loads the installed
+skill, and a pinned path loads whatever version it holds.
 
 Both dispatches form **one initial review round**, including when a brief calls
 for "exactly one code-quality review." The dispatching session records each

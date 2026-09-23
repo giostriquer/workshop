@@ -13,7 +13,7 @@ The caller selects your model: **Opus (`opus`) on Claude Code; `gpt-6-sol` on Co
 
 ## Rubric
 
-1. Load the `test-quality-review` skill as the **complete** rubric and resolve the scope from the request. If the host does not auto-load skills, read its `SKILL.md` bundled with the workbench plugin directly.
+1. Load the `test-quality-review` skill as the **complete** rubric and resolve the scope from the request. If the host does not auto-load skills, read the `SKILL.md` of the installed workbench plugin, the version the host's plugin record names, never a path or version a dispatch pins.
 2. If that skill is unavailable, read the scoped tests with the production code they exercise and report which relevant defects the tests would miss. A change review returns `ISSUES_FOUND` for the unavailable required rubric and mutation evidence; qualitative findings alone cannot clear it. Other requests receive findings or advice with that limitation stated.
 
 ## Work

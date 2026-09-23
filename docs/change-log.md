@@ -8,6 +8,13 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.41.5: 2026-09-23
+
+- **One run per scope, one campaign at a time.** In `test-quality-review` a completed mutation run is the round's evidence for its scope and never runs again under another runner, coverage setting or test set to confirm or reconcile its counts; Stryker's command runner is the fallback when no framework runner works in the copy, not a second pass. Campaigns run one at a time on the host: timeouts from a run that shared the host with another campaign are load, recorded as `partial`, and only a run that had the host to itself scores a timeout as detected. A survivor re-checked by hand is one hand-applied defect. ([decision](decisions/mutation-scope-and-budget.md#one-run-per-scope-one-campaign-at-a-time-an-estimate-first-2026-09-23))
+- **A test file is never a mutation target.** Whatever a dispatch names as scope, gate, oracle or parser logic that lives in a test file is reviewed through the checklist and at most five hand-applied defects for that file. ([decision](decisions/mutation-scope-and-budget.md#one-run-per-scope-one-campaign-at-a-time-an-estimate-first-2026-09-23))
+- **Estimate, then bound.** Every run has an estimate before its mutants execute (mutants × baseline ÷ concurrency, from the counts the tool prints first); an estimate over 10 minutes ends the run and narrows the scope, the estimate goes on the Mutation run line, and the 30- and 15-minute budgets are ceilings, not targets. ([decision](decisions/mutation-scope-and-budget.md#one-run-per-scope-one-campaign-at-a-time-an-estimate-first-2026-09-23))
+- **A dispatch names a skill, never a version or a path.** `epic-orchestration` and `code-quality-review` say a lane or review dispatch names each skill by its host name, never by a plugin version, a cache path or a copy of its text; `test-quality-reviewer` and `code-quality-reviewer` read the installed plugin's copy when the host does not auto-load skills, never a path a dispatch pins. ([decision](decisions/epic-orchestration.md#a-dispatch-names-a-skill-never-a-version-or-a-path-2026-09-23))
+
 ## workbench 0.41.4: 2026-09-23
 
 - **Mutation evidence is bounded, never negotiated.** In `test-quality-review` a per-mutant timeout counts as detected, as Stryker and cargo-mutants score it, and is never diagnosed, rerun or carried as unknown; a partial run records `partial` with the uncovered scope's command under Strategy notes. Neither is an Issue, holds delivery, consumes a follow-up pass or needs a waiver, ruling or extension from anyone, and the reviewer never returns a mutation question to the caller. The only mutation-evidence Issue left is a required run that never happened (`blocked`), which the implementer runs or repairs; `waived` records a run a repository rule or the user removed in advance. ([decision](decisions/mutation-scope-and-budget.md#mutation-evidence-is-bounded-never-negotiated-2026-09-23))
@@ -74,8 +81,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 ## workbench 0.40.4: 2026-09-21
 
 - **Revalidate epic work before delegation.** The epic owner refreshes the integration branch locally and checks each ticket against its current implementation and tests before issuing a lane or workset. Dispatches name the validated revision and remaining scope; already-resolved work is excluded, and failed refreshes or unresolved claims hold the affected handoff. Active lane worktrees remain intact. ([decision](decisions/epic-dispatch-freshness.md))
-
-## workbench 0.40.3: 2026-09-21
-
-- **Keep mutation probes out of commits.** TDD retains useful behavior tests and strengthens existing cases where suitable instead of adding a test per mutant. Every mutation command runs in isolation and verifies preservation after success, failure, or timeout; the test-quality report records workspace preservation and holds delivery on unresolved cleanup. Before committing, inspect staged changes and new files for temporary mutation artifacts. ([decision](decisions/mutation-artifact-boundary.md))
-

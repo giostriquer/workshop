@@ -199,7 +199,10 @@ does not require its own lane.
 Keep lane instructions provider agnostic. For each required skill, name the
 skill, task-specific inputs, required outcome and handback evidence; the lane
 reads and applies it. Do not restate, extend or generalize the skill's procedure
-or model routing in the dispatch.
+or model routing in the dispatch. A skill is named by its host name alone
+(`test-quality-review`), never by a plugin version, a cache path or a copy of
+its text: the reader loads the installed skill, and a pinned path loads
+whatever version that path holds.
 
 Name `workbench:epic-implementation` in every implementation dispatch file,
 including amendments and delivery authorizations. It keeps each final lane
@@ -243,7 +246,8 @@ folder (see Dispatching), containing:
   ship through the repository's delivery process, use `code-quality-review` over
   the implementation range, plus
   `test-quality-review` (given the range's base, routed as
-  `code-quality-review` describes) when the range changes production logic or tests.
+  `code-quality-review` describes) when the range changes production logic or
+  tests; both named, neither pinned to a version or a path.
   Validation handbacks, intermediate reports and requests for a ruling do not
   trigger review. Review completed correction batches only before resuming delivery.
   Record the reviewed revision, reviewer-confirmed blocking dispositions and

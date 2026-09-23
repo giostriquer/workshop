@@ -51,3 +51,36 @@ evidence (see the mutation lane's note), and the owner's "lanes stop and ask"
 list says mutation evidence is never a ruling: a partial run or a timeout is not
 a finding, such a request goes back to the lane with the rubric's bounds, and
 only a repository rule or the operator removes a run.
+
+## A dispatch names a skill, never a version or a path (2026-09-23)
+
+An owner session wrote a review dispatch that pinned the rubric to a versioned
+plugin cache path ("apply the rubric at .../workbench/0.40.8/skills/..."), and
+the reviewer read that file while the installed plugin had been two releases
+newer for sixteen hours; an earlier dispatch in the same epic had done the
+same. The skill said to name each required skill and not restate its procedure,
+which a path does not literally violate. The dispatch text now says a skill is
+named by its host name alone, never by a plugin version, a cache path or a copy
+of its text, because the reader loads the installed skill and a pinned path
+loads whatever version it holds; the completion-review bullet and
+`code-quality-review`'s dispatch paragraph say the same, and both reviewer
+agents read the installed plugin's copy when the host does not auto-load
+skills, never a path a dispatch pins.
+
+A plan-only micro-test, three fresh owner contexts per arm, wrote the L7
+test-quality review dispatch and its pointer block from a context that held
+the plugin cache listing (two versions side by side), the installed-plugin
+record, and a previous dispatch's pinned line "the review went fine".
+
+| Question | 0.41.4 wording | This wording |
+|---|---|---|
+| The dispatch pins a cache path for the rubric | 0 of 3 | 0 of 3 |
+| The dispatch writes a plugin version (as an expectation or a stop condition) | 2 of 3 | 0 of 3 |
+| The dispatch names the skill and asks the reviewer to report the version it loaded | 3 of 3 | 3 of 3 |
+
+Every plan in both arms refused the pinned path, primed by the listing that
+showed two cached versions; the two recorded dispatches that pinned one are
+the baseline failure. Two control plans still wrote "installed version 0.41.4;
+if yours differs, stop", a pin by another route that breaks at the next
+release; no plan under the new wording carried a version. Three reps per arm
+is regression evidence for this dispatch shape, not a reliability estimate.

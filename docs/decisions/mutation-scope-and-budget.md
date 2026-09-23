@@ -207,3 +207,81 @@ the uncovered scope is the mechanism that reached the owner in the recorded
 run: a blocking Issue with no fix available to the lane consumes the follow-up
 passes and lands on the owner's extension authority. Three reps per arm is
 regression evidence for this dispatch shape, not a reliability estimate.
+
+## One run per scope, one campaign at a time, an estimate first (2026-09-23)
+
+A test review of a template-extraction change in a Bun monorepo (three
+producers rewired to read templates, a 1,200-line package gate test that
+gained parsers and grammar contexts) ran 33 minutes on the 0.41.4 rubric. Its
+transcript and Stryker logs show where the time went:
+
+| Phase | Minutes | What ran |
+|---|---|---|
+| Reading and a filesystem clone | 4 | dispatch, rubric, diff, gate file, lane evidence |
+| Producers, framework runner with per-test coverage | 1.5 | 15 line ranges, 108 mutants, 60 killed / 48 survived / 0 timeouts |
+| Gate helpers, same runner | 3 | 6 line ranges inside the test file, 262 mutants, 234 / 25 / 3 no-coverage |
+| Both scopes rerun under the command runner, in parallel | 15 | gate: identical counts; producers: 27 killed / 68 timeout / 13 survived |
+| Hand defects and preservation checks | 3 | |
+
+Both first runs were line-scoped and complete by minute 12. The reviewer then
+rebuilt both configs with `coverageAnalysis: "off"` to confirm the survivors
+and ran the two campaigns at once; the rubric preferred the framework runner
+and allowed the command runner, and said nothing about running both. The rerun
+added no information for the gate and corrupted the producer evidence: under
+twelve concurrent test processes, 68 of the same 108 mutants scored `Timeout`,
+which 0.41.4 counts as detected, turning 48 survivors into 13. The gate test
+file was in the mutation scope because the dispatch named "the new gate logic
+(parsers, contexts, constraints)" as scope; the rubric said to mutate production
+behavior "not the tests' assertions" and never said a test file is not a
+target. Nothing asked for an estimate before a run, so the 30-minute budget was
+the only bound, and an analysis of the run read it as a target.
+
+The rubric now says a completed run is the round's evidence for its scope and
+the same scope never runs again under another runner, coverage setting or test
+set; the command runner is the fallback when no framework runner works, never a
+second pass; campaigns run one at a time on the host, and timeouts from a run
+that shared the host with another campaign are load, recorded as `partial`; a
+survivor re-checked by hand is one hand-applied defect. A test file and its
+helpers are never a mutation target, whatever a dispatch names, and get the
+checklist plus at most five hand-applied defects. Every run has an estimate
+before its mutants execute (mutants × baseline ÷ concurrency, from the counts
+the tool prints first); over 10 minutes ends the run and narrows the scope; the
+estimate goes on the Mutation run line; the 30- and 15-minute budgets are
+ceilings, not targets.
+
+Three of the seven proposals in the analysis that prompted this were not
+adopted. Sampling the lane's own defect ledger instead of running would let the
+lane pick the mutants and saves nothing once the rerun is gone (the reviewer's
+own campaigns cost 4.5 minutes). Reusing a lane-provided checkout and a
+per-test-command time limit were already covered by the clone rule and the
+framework-runner preference, both of which the reviewer followed. Bounding
+reading in the agent definitions waits for the next batch of transcripts.
+
+A plan-only micro-test compared the 0.41.4 wording with this one: three fresh
+reviewer contexts per arm, one Read of the rubric each, on a placeholder
+dispatch shaped like the recorded run (a byte-exact template move, three
+producers with fifteen changed hunks, a 1,200-line gate test whose new parser
+and context helpers the dispatch names as mutation scope, a community Bun
+framework runner with per-test coverage that prints warnings, a dispatch
+saying the command runner "is acceptable", and a Stage 2 that hands the plan
+the framework runner's completed counts with 22 minutes left).
+
+| Question | 0.41.4 wording | This wording |
+|---|---|---|
+| The gate test file's helpers in a Stryker `--mutate` list | 1 of 3 | 0 of 3 |
+| Two campaigns started at the same time | 1 of 3 | 0 of 3 |
+| A command-runner pass over the completed producer scope started in Stage 2 | 0 of 3 (one plan keeps it as a conditional path whose counts "replace that run's numbers") | 0 of 3 |
+| An estimate stated before mutants execute | 3 of 3 (an "ETA", with 10-, 12- and 15-minute thresholds) | 3 of 3 (10 minutes, on the Mutation run line) |
+| The remaining budget called a ceiling, not a target | 1 of 3 | 3 of 3 |
+
+The control plan that mutated the gate helpers is the one that ran its two
+campaigns concurrently, and it read the old text the way the recorded reviewer
+did: "mutate production behavior, not the tests' assertions" left the helpers
+in. The Stage 2 facts (zero timeouts, eighteen tests per mutant) made a rerun
+unattractive under both wordings, where the recorded reviewer reran after
+inspecting three survivors' coverage lists; the recorded transcript is the
+baseline for that question, and the new text removes the conditional path two
+control plans kept. Every plan computed an estimate, so the wording fixes the
+threshold and puts the estimate on the report line rather than introducing
+the habit. Three reps per arm is regression evidence for this dispatch shape,
+not a reliability estimate.

@@ -69,7 +69,8 @@ which keeps handbacks in the shared
 [lane report template](../../plugins/workbench/skills/epic-orchestration/references/lane-report.md).
 When the full agreed work set is ready to ship, the lane runs
 [code-quality-review](code-quality-review.md), plus `test-quality-review` when
-production logic or tests changed. Authorization sends the lane to
+production logic or tests changed; a dispatch names those skills by name, never
+by a plugin version or a cache path. Authorization sends the lane to
 [file-pr](file-pr.md) and states whether that review has run.
 
 **Does the review limit stop the owner returning corrections to a lane?**
