@@ -37,7 +37,7 @@ Scores are 1–10, higher is better.
 | model | cost | intelligence | taste | code | speed |
 |---|---|---|---|---|---|
 | gpt-6-astra | 3 | 10 | 9 | 8.5 | 6 |
-| gpt-6-sol | 7 | 6.5 | 7 | 7 | 7 |
+| gpt-6-sol | 7 | 6 | 6 | 6 | 7 |
 | gpt-6-luna | 10 | 3 | 3 | 3 | 9 |
 | fable-5.1 | 1 | 10 | 9.5 | 9 | 5 |
 | opus-5.5 | 6 | 9.5 | 9.5 | 9 | 7 |
