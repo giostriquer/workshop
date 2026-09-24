@@ -84,15 +84,16 @@ These hold for any fleet ([decision](../decisions/model-routing-stays-in-harness
 
 Not as fleet policy. A floor or ban list belongs in your own always-injected
 rules file; `adopt-global-rules` ships one example, `model-floor.md`. The skill
-names models only in two exceptions, each a separate agent whose model is
+names models only in two exceptions, for separate agents whose model is
 selected explicitly, not inherited:
 
 - **CI watching:** Opus on Claude or gpt-6-sol on Codex, both at `xhigh`
   effort and spawned without the parent's history. Never Astra, Fable, Haiku,
   or Sonnet, and never parent polling. See `fix-ci`.
-- **Test-quality review:** Opus on Claude Code or gpt-6-sol on Codex, both at
-  `xhigh` effort and spawned without the parent's history; the host's default
-  model elsewhere.
+- **Test-quality review and the comment trim:** the `test-quality-reviewer`
+  and `comment-trimmer` agents, at the same tier: Opus on Claude Code or
+  gpt-6-sol on Codex, both at `xhigh` effort and spawned without the parent's
+  history; the host's default model elsewhere.
 
 **The table lists models I don't have.**
 

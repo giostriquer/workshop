@@ -42,3 +42,22 @@ permission and warranty notices apply to those portions as required by that
 license. Adaptations are documented at
 https://github.com/giostriquer/workshop/blob/main/docs/decisions/code-quality-review.md
 and https://github.com/giostriquer/workshop/blob/main/docs/decisions/fix-ci.md
+
+---
+
+Portions of this plugin (the `trim-comments` skill) are derived from OpenClaw
+(https://github.com/openclaw/openclaw): the `.agents/skills/deslop` skill,
+Copyright (c) 2026 OpenClaw Foundation, and are used under the MIT License. The
+above permission and warranty notices apply to those portions as required by
+that license. Adaptations are documented at
+https://github.com/giostriquer/workshop/blob/main/docs/decisions/trim-comments.md
+
+---
+
+Portions of this plugin (the `trim-comments` skill's comment keep-list and
+its constraint-comment and suppression rules) are adapted from Cursor's plugins
+(https://github.com/cursor/plugins): the `pstack` plugin's `no-comments` skill
+and `comment-sicko` agent, Copyright (c) 2026 Lauren Tan, and are used under
+the MIT License. The above permission and warranty notices apply to those
+portions as required by that license. Adaptations are documented at
+https://github.com/giostriquer/workshop/blob/main/docs/decisions/trim-comments.md

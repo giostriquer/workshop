@@ -102,6 +102,6 @@ be fine now" doesn't.
 ## Where it fits
 
 This gate opens the flow's completion block by establishing "deemed ready":
-verified, with evidence. Only after that does the required adversarial review
-run, once, right before the PR-or-merge question. When you ask for it,
+verified, with evidence. Only after that do the comment trim and the required
+adversarial review run, once, right before the PR-or-merge question. When you ask for it,
 `empirical-proof` goes deeper at the running software.

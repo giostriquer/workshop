@@ -1,0 +1,6 @@
+interface:
+  display_name: "Dependency Audit"
+  short_description: "Audit, bump, and prune dependencies, reporting first"
+
+policy:
+  allow_implicit_invocation: false

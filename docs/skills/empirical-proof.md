@@ -121,5 +121,5 @@ They are the evidence.
 
 This is the deep form of the completion gate. `verification-before-completion`
 is the floor for every done-claim; this skill, when asked for, supplies that
-evidence from the running software. Once the work is verified, the required
-adversarial review runs, then the PR-or-merge question.
+evidence from the running software. Once the work is verified, the comment
+trim and the required adversarial review run, then the PR-or-merge question.

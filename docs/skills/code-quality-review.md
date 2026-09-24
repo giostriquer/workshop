@@ -23,7 +23,7 @@ Mostly you don't: it fires at completion, right before PR-or-merge. You can also
 
 ## The rubric
 
-The baseline is a deep audit that restructures the change without altering behavior: **"Be extremely thorough and rigorous. Measure twice, cut once."** On top sit nine standards. Rule 0 is ambition: delete complexity rather than rearrange it. Rules 1 to 7 fight a file pushed past 1,000 lines, ad-hoc branches bolted into unrelated flows, rubber-stamped "it works" code, magic and thin wrappers, loose types and silent fallbacks, logic in the wrong layer or duplicated helpers, and needless sequential or non-atomic orchestration. Rule 8 carries the comment trim: comments your repo's rules say to remove, a lint or type suppression that hides a correctness rule, and a "do not remove" comment a test, type, or lint could enforce.
+The baseline is a deep audit that restructures the change without altering behavior: **"Be extremely thorough and rigorous. Measure twice, cut once."** On top sit nine standards. Rule 0 is ambition: delete complexity rather than rearrange it. Rules 1 to 7 fight a file pushed past 1,000 lines, ad-hoc branches bolted into unrelated flows, rubber-stamped "it works" code, magic and thin wrappers, loose types and silent fallbacks, logic in the wrong layer or duplicated helpers, and needless sequential or non-atomic orchestration. Rule 8 reports what the [comment trim](trim-comments.md) left: comments your repo's rules say to remove, a lint or type suppression that hides a correctness rule, and a "do not remove" comment a test, type, or lint could enforce.
 
 **Scope decides what a finding costs** ([decision](../decisions/workbench-operator-decisions.md)). Strictness applies inside the accepted work (ticket, plan, or agreed change), which the dispatch hands the reviewer as its accepted scope, and every finding carries a label:
 
@@ -33,7 +33,7 @@ The baseline is a deep audit that restructures the change without altering behav
 
 A finding that proves the change unsafe or incorrect as shipped blocks wherever it lives. An unlabeled finding reads as blocking. Any structural concern blocks only when the review demonstrates a correctness or material maintainability consequence; file length or an alternative design alone does not.
 
-The report opens with `## Verdict: PASS` or `## Verdict: ISSUES_FOUND`, then the reviewed revision, follow-up pass count, and stable finding IDs; a missing verdict line reads as `ISSUES_FOUND`. Findings run structural regressions first and legibility last; few high-conviction comments beat many nits.
+The report opens with `## Verdict: PASS` or `## Verdict: ISSUES_FOUND`, then the reviewed revision, follow-up pass number, and stable finding IDs; a missing verdict line reads as `ISSUES_FOUND`. Findings run structural regressions first and legibility last; few high-conviction comments beat many nits.
 
 ## Common questions
 
@@ -50,16 +50,19 @@ Not as this gate. Mid-implementation, each round surfaces new work and the diff 
 No. When production logic or tests changed, one initial round includes both stages, dispatched separately in parallel and recorded against the same revision. If the test stage was missed, run it and keep the valid code verdict; the gate stays pending until both return.
 
 **How do follow-ups work after I fix its findings?**
-Return each blocking fix or evidence-based rejection to the same reviewer with finding IDs, revisions, the correction diff, and focused test evidence; a passing test alone does not close a blocker. Follow-up checks the corrections and what they affect. Code and test stages share at most two automatic follow-up passes. If blockers remain after that, delivery holds and the owning authority (the epic owner for a delegated lane, otherwise the user) decides the next step. An exhausted budget is never PASS, and a new reviewer or handoff does not reset the count.
+Return each blocking fix or evidence-based rejection to the same reviewer with finding IDs, revisions, the correction diff, and focused test evidence; a passing test alone does not close a blocker. Follow-up checks the corrections and what they affect, and code and test stages can share a pass.
+
+**Will the session stop to ask before another follow-up?**
+No. A focused follow-up on a verified correction runs without asking, however many passes came before; the pass number is a record, not a limit ([decision](../decisions/bounded-correction-review.md#convergence-replaces-the-follow-up-pass-count-2026-09-24)). On a follow-up, the reviewer checks the open blockers, the correction and what it affects; anything it finds outside that focus is a follow-up, never a blocker, unless it proves the change unsafe or incorrect as shipped. Review stops only when it stops converging: a follow-up closes or narrows none of the blockers it was sent, a finding the author rejected with evidence comes back without new evidence, or two follow-ups in a row each raise a new blocker and end with at least as many open blockers as they were sent (fixes that keep producing new blockers). Narrowing a finding is progress, never churn. One fix that regresses and gets caught does not stop it. When review does stop, delivery holds and the owning authority (the epic owner for a delegated lane, otherwise you) decides the next step; unless that decision ends review, follow-ups run on their own again from there, and a fix made while review is held waits for it. A held review is never PASS: a blocker closes only on reviewer confirmation or your explicit waiver, and a new reviewer or handoff does not reset the record.
 
 **Is the 1000-line rule a hard cap?**
 No. Crossing it makes the review ask whether to decompose first; it blocks only when the review demonstrates a concrete maintainability consequence, never on the line count alone.
 
 **Who trims the comments?**
-This review flags them, per your repo's rules; the implementer trims. It never deletes a comment itself. With no comment rules in the repo, it still flags a suppression that hides a correctness rule and a constraint comment that a test, type, or lint could enforce. A comment that only restates the code is `pattern-reviewer`'s check, which flags it by default wherever that agent runs.
+The `trim-comments` stage, run by the `comment-trimmer` agent before this round, edits the diff's code comments. This review flags what remains, per your repo's rules, and the implementer acts on it; it never deletes a comment itself. With no comment rules in the repo, it still flags a suppression that hides a correctness rule and a constraint comment that a test, type, or lint could enforce; one the trim already offered to encode waits for your answer at the outline, so the review notes it rather than raising it again. A comment that only restates the code is `pattern-reviewer`'s check, which flags it by default wherever that agent runs.
 
 **Can I run it inline in the session that wrote the code?**
-No. That session holds every justification behind the code, so the code-judo move is exactly what it cannot see. Dispatch the `code-quality-reviewer` agent, which loads this skill as its rubric and gathers `git diff <base>...HEAD` itself if needed. Hand it the accepted scope, the ask as the ticket or plan put it, not your view of the code. It runs on your session's model, without your history. On Codex, spawn it as the agent file's Dispatch line says, which forks none of your history, and paste the file's body into the spawn message ahead of the three inputs, since Codex registers no plugin agents. With no subagent mechanism, hand the diff to a fresh session and say so in the report. An author's own pass is never this gate.
+No. That session holds every justification behind the code, so the code-judo move is exactly what it cannot see. Dispatch the `code-quality-reviewer` agent, which loads this skill as its rubric and, if needed, gathers the diff itself: the working tree against the base's merge base, untracked files included, the same revision `test-quality-review` reads. Hand it the accepted scope, the ask as the ticket or plan put it, not your view of the code. It runs on your session's model, without your history. On Codex, spawn it as the agent file's Dispatch line says, which forks none of your history, and paste the file's body into the spawn message ahead of the three inputs, since Codex registers no plugin agents. With no subagent mechanism, hand the diff to a fresh session and say so in the report. An author's own pass is never this gate.
 
 ## It's working if
 
@@ -67,9 +70,10 @@ No. That session holds every justification behind the code, so the code-judo mov
 - Every finding is labeled, and out-of-scope ones became follow-ups without touching the diff.
 - The top findings are structural, and approval was withheld on working code that left the architecture messier.
 - The reviewer confirmed blocking dispositions against the corrected revision.
+- Focused follow-ups ran without asking you, and the session stopped only when review stopped converging.
 
-It's misapplied if it fires mid-implementation, the diff grows from findings the accepted work never named, or it was skipped because the change looked small.
+It's misapplied if it fires mid-implementation, the diff grows from findings the accepted work never named, it was skipped because the change looked small, the session asked permission for a focused follow-up, a finding outside the follow-up's focus held delivery, or review looped on fixes that kept producing new blockers.
 
 ## Where it fits
 
-The last gate before landing. After `verification-before-completion` (and `empirical-proof` if asked), the initial round runs, with [test-quality-review](test-quality-review.md) in parallel when production logic or tests changed; `pattern-reviewer` follows. Once blockers close, the session outlines the work and asks PR or merge, unless repo or user rules already settled that.
+The last gate before landing. After `verification-before-completion` (and `empirical-proof` if asked) and the [comment trim](trim-comments.md), the initial round runs on the trimmed diff, with [test-quality-review](test-quality-review.md) in parallel when production logic or tests changed; `pattern-reviewer` follows. Once blockers close, the session outlines the work and asks PR or merge, unless repo or user rules already settled that.

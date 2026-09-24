@@ -78,4 +78,4 @@ It's misapplied if a passing test is claimed as regression proof without sensiti
 
 ## Where it fits
 
-It occupies the implementation stage next to [systematic-debugging](systematic-debugging.md) and hands off to `verification-before-completion`, then the initial adversarial review round. Focused local tests and required gates are the default; full suites normally run in PR CI. Expected RED does not activate systematic-debugging.
+It occupies the implementation stage next to [systematic-debugging](systematic-debugging.md) and hands off to `verification-before-completion`, then the comment trim and the initial adversarial review round. Focused local tests and required gates are the default; full suites normally run in PR CI. Expected RED does not activate systematic-debugging.

@@ -5,19 +5,22 @@ description: Always use before or to file/open a PR, including before dispatchin
 
 # File PR
 
-## MUST: the adversarial review runs before the PR is filed
+## MUST: the comment trim and the adversarial review run before the PR is filed
 
-Before filing, the branch diff has had its adversarial review, dispatched to
-reviewer contexts that did not write the code:
+Before filing, the branch diff has had its comment trim and then its
+adversarial review, each dispatched to a context that did not write the code:
 
-1. The `code-quality-review` skill, dispatched as that skill describes.
-2. When the diff changes production logic or tests: the `test-quality-review` skill
+1. The `trim-comments` skill, run by the `comment-trimmer` agent as that skill
+   describes. It goes first, so the review sees the trimmed diff.
+2. The `code-quality-review` skill, dispatched as that skill describes.
+3. When the diff changes production logic or tests: the `test-quality-review` skill
    given the PR's base branch in a separate, test-scoped prompt, run by the
    `test-quality-reviewer` agent, dispatched by name with no model (on Codex, paste
    the agent file and use its Dispatch line, per `using-workbench`'s *Workbench
-   agents on Codex*). It can run in parallel with the first.
+   agents on Codex*). It can run in parallel with the second.
 
-If either has not run, run it now and act on its findings first.
+If any has not run, run it now and act on its result first, carrying the
+trim's encoding offers to the user as `trim-comments` describes.
 
 **Violating the letter of this gate is violating the spirit of it.** The
 review exists to be run by someone who did not write the code; a session that
@@ -32,12 +35,14 @@ following cases do not require a new review:
 - **The review already covers this revision.** Each required dispatch returned,
   and reviewers confirmed every blocking disposition, including direct corrections
   and evidence-based rejections. Record the reviewed revision and closure evidence.
-  Apply `code-quality-review`'s bounded correction review: at most two automatic
-  follow-up passes, with unresolved blockers or unreviewed corrections holding
-  delivery. For a mutation finding, re-run the recorded `Mutation run` command on
-  that file. Loading this skill neither repeats a completed review nor resets its
-  budget. Later behavior, design, or risk changes require affected-delta review;
-  formatting-only changes need ordinary verification.
+  Apply `code-quality-review`'s bounded correction review: unresolved blockers or
+  unreviewed corrections hold delivery, and a focused follow-up pass runs without
+  asking until review stops converging. For a mutation finding, re-run the
+  recorded `Mutation run` command on that file. Loading this skill neither
+  repeats a completed review nor resets its record. Later behavior, design, or
+  risk changes require affected-delta review; formatting-only changes need
+  ordinary verification. A comment trim run after that review keeps its
+  coverage, as `trim-comments` states.
 
 Nothing else is an exemption. Not a deadline, not a reviewer waiting, not a
 branch that has been open a long time, not the user asking for the PR
@@ -53,9 +58,10 @@ mention it afterward.
 | "It's config / a version bump / generated output." | Config that changes behavior is code. If the diff changes what runs, the gate applies. |
 | "I reviewed it carefully as I wrote it." | The author is the one context that cannot run this review. That is stated in `code-quality-review`, not implied. |
 | "I ran the rubric over my own diff and found nothing." | A self-served pass is not this gate. It is reported as an author's pass or not at all. |
-| "The review ran earlier in this work-stream." | Check its revision, reviewer-confirmed blocking dispositions, and later deltas. Apply bounded correction review without resetting its budget. |
+| "The review ran earlier in this work-stream." | Check its revision, reviewer-confirmed blocking dispositions, and later deltas. Apply bounded correction review without resetting its record. |
 | "The user asked for a PR now, so they've accepted the trade." | Asking for a PR is not waiving the gate. If time is the constraint, surface it and let them waive it explicitly. |
 | "CI is green and the tests pass." | Passing tests say the code works. This review asks whether it should be built this way. |
+| "The reviews passed; the trim is only cosmetic." | The trim is a gate stage with the same outs as the review. Run it; `trim-comments` says why the review still covers the revision. |
 | "I'll open it as a draft and get the review after." | A draft PR is a filed PR. The gate is before filing. |
 
 ### Red flags: stop and dispatch the review

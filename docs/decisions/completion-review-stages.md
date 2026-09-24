@@ -21,10 +21,10 @@ logic or tests changed, a separate test-quality review. Counting code reviews do
 not waive the required test stage. The dispatching session records each required
 stage's verdict for the same change set and revision before declaring the gate
 complete. A missing stage keeps the gate pending; run it without repeating valid
-completed reviews or charging a follow-up for an unchanged submission.
+completed reviews or counting a new follow-up pass for an unchanged submission.
 
 Preserve the shipping checkpoint, independent reviewer roles, explicit user
-waivers, repository precedence and cumulative correction-review budget. This
+waivers, repository precedence and the cumulative correction-review record. This
 clarifies the pairing introduced by
 [test shape and mutation review](test-shape-and-mutation-review.md); it adds no
 review stage or intermediate review trigger.

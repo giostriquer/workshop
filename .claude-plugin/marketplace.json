@@ -5,16 +5,16 @@
   "plugins": [
     {
       "name": "workbench",
-      "version": "0.42.0",
+      "version": "0.43.0",
       "source": "./plugins/workbench",
-      "description": "A complete process system for how work starts, gets designed, gets verified, and lands: audits scoped from the request, brainstorming that resolves design and route choices (direct / plan / goal handoff), implementation discipline (TDD, systematic debugging, evidence-gated readiness), adversarial review at readiness, and landing that files the PR and tends CI to green. Backed by five read-only review agents. Core process skills derived from obra/superpowers (MIT): no hooks, no dispatcher; skills fire on relevance. Adds epic-orchestration for multi-ticket epics whose lanes other sessions implement and the operator dispatches by hand.",
+      "description": "A complete process system for how work starts, gets designed, gets verified, and lands: audits scoped from the request, brainstorming that resolves design and route choices (direct / plan / goal handoff), implementation discipline (TDD, systematic debugging, evidence-gated readiness), a comment trim and adversarial review at readiness, and landing that files the PR and tends CI to green. Backed by five read-only review agents and a comment-trimming agent. Core process skills derived from obra/superpowers (MIT): no hooks, no dispatcher; skills fire on relevance. Adds epic-orchestration for multi-ticket epics whose lanes other sessions implement and the operator dispatches by hand.",
       "author": { "name": "Workshop" }
     },
     {
       "name": "toolkit",
-      "version": "0.12.0",
+      "version": "0.13.0",
       "source": "./plugins/toolkit",
-      "description": "Optional utilities for the workshop: html-artifact (reports, plans, architecture explanations, and interactive product targets), ui-demo-video (Playwright walkthroughs with verification frames), get-pr-comments (triages a PR's feedback into a prioritized action list, read-only), adopt-global-rules (installs the workshop's shipped global CLAUDE.md / AGENTS.md and rules onto a machine, additively), me-human (dogfood a system from a human user's perspective), test-audit (gates new tests and audits or prunes low-value ones), trim-comments (removes comment slop from the branch diff before review; offers encodings for constraint comments), grill-me (a relentless interview that sharpens a plan, run by grilling), and improve-codebase-architecture (finds deepening refactors, with codebase-design and domain-modeling). Install alongside workbench when you want them; skip to keep sessions lean.",
+      "description": "Optional utilities for the workshop: html-artifact (reports, plans, architecture explanations, and interactive product targets), ui-demo-video (Playwright walkthroughs with verification frames), get-pr-comments (triages a PR's feedback into a prioritized action list, read-only), adopt-global-rules (installs the workshop's shipped global CLAUDE.md / AGENTS.md and rules onto a machine, additively), me-human (dogfood a system from a human user's perspective), test-audit (gates new tests and audits or prunes low-value ones), dependency-audit (audits dependencies for bumps, caveats, conflicts, advisories and removal candidates, then applies the groups you pick), grill-me (a relentless interview that sharpens a plan, run by grilling), and improve-codebase-architecture (finds deepening refactors, with codebase-design and domain-modeling). Install alongside workbench when you want them; skip to keep sessions lean.",
       "author": { "name": "Workshop" }
     }
   ]

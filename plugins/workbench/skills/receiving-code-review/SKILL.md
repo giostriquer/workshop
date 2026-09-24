@@ -30,7 +30,7 @@ WHEN receiving code review feedback:
 
 For completion-review findings, use `code-quality-review`'s Bounded correction
 review. Passing tests support a fix; reviewer confirmation closes the finding.
-Keep the same review budget through feedback and handoffs.
+Keep the same review record through feedback and handoffs.
 
 ## Forbidden Responses
 

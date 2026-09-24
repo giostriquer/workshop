@@ -1,6 +1,0 @@
-interface:
-  display_name: "Trim Comments"
-  short_description: "Trim comment slop from the branch diff before review"
-
-policy:
-  allow_implicit_invocation: false

@@ -46,12 +46,14 @@ flowchart LR
     SD["systematic-debugging<br/>persistent or unclear failures"]:::sat -.- I
 
     I["IMPLEMENT<br/>in-session or dispatched: user / harness call;<br/>handed the plan / goal if present"]:::stage
-    AR["ADVERSARIAL REVIEW AT READINESS<br/>code quality + comment trim,<br/>per repo rules; test quality in parallel<br/>when logic or tests changed"]:::stage
+    TR["COMMENT TRIM<br/>trim-comments, dispatched to comment-trimmer;<br/>code comments only; encoding offers wait for the user"]:::stage
+    AR["ADVERSARIAL REVIEW ON THE TRIMMED DIFF<br/>code quality; test quality in parallel<br/>when logic or tests changed"]:::stage
     OG[["USER: PR or merge?<br/>session outlines what was done first;<br/>repo / user rules may pre-authorize"]]:::gate
     L["LAND<br/>file-pr · merge · push;<br/>fix-ci: separate Opus / Sol watcher"]:::stage
 
-    I -->|"deemed ready = verified<br/>(verification-before-completion;<br/>empirical-proof offered if runnable)"| AR
-    AR -->|"blocking corrections → reviewer verification<br/>up to 2 follow-ups; unresolved → hold"| OG
+    I -->|"deemed ready = verified<br/>(verification-before-completion;<br/>empirical-proof offered if runnable)"| TR
+    TR --> AR
+    AR -->|"blocking corrections → reviewer verification<br/>automatic follow-ups; not converging → hold"| OG
     OG --> L
     L -.->|"feedback: receiving-code-review;<br/>verified fixes re-enter"| I
 ```
@@ -69,15 +71,15 @@ the user's call.
 
 ## Decisions ledger (operator, 2026-08-11 unless noted)
 
-Historical decisions below are refined by the current flow and the [wording-hardening decision](decisions/skill-wording-hardening.md): no repeated authorization and explicit proof opt-in. The [bounded correction-review decision](decisions/bounded-correction-review.md) supersedes the old no-re-review rule: blocking dispositions require reviewer confirmation, within two automatic follow-up passes. In delegated epics, use focused local checks plus required gates; each verified wave ends with the next dispatch, delivery gate, closing audit, completion proposal, or concrete blocker.
+Historical decisions below are refined by the current flow and the [wording-hardening decision](decisions/skill-wording-hardening.md): no repeated authorization and explicit proof opt-in. The [bounded correction-review decision](decisions/bounded-correction-review.md) supersedes the old no-re-review rule: blocking dispositions require reviewer confirmation, and focused follow-up passes run automatically until review stops converging. In delegated epics, use focused local checks plus required gates; each verified wave ends with the next dispatch, delivery gate, closing audit, completion proposal, or concrete blocker.
 
 | # | Decision |
 |---|---|
 | Q1 | Brainstorming always precedes feature/refactor design; owns what the codebase can't answer about an idea. |
 | Q2 | TDD is the default where a test harness exists; silent skip where none. |
 | Q3 | Initial adversarial review fires at model-deemed readiness. |
-| Q4 | Comment trimming rides that review, per repo rules. |
-| Q5 | Blocking dispositions require reviewer confirmation; at most two automatic follow-ups, then hold if unresolved. |
+| Q4 | Comment trimming rides that review, per repo rules. Refined 2026-09-24: the trim is its own dispatched stage (`trim-comments`, run by `comment-trimmer`) before that review, which runs on the trimmed diff ([decision](decisions/trim-comments.md#moved-into-workbench-as-a-delivery-stage-2026-09-24)). |
+| Q5 | Blocking dispositions require reviewer confirmation; at most two automatic follow-ups, then hold if unresolved. Refined 2026-09-24: follow-ups run automatically with no count, and review holds only when it stops converging ([decision](decisions/bounded-correction-review.md#convergence-replaces-the-follow-up-pass-count-2026-09-24)). |
 | Q6 | Review precedes landing; landing is outline-then-ask, with a rules bypass. |
 | Q7 | The confirm gate pauses only when the audit flagged uncertainty. |
 | Q8 | Audit sizes: quick look (inline) · deep (claim-check) · team sweep (qa-sweep). |

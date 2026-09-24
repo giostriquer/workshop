@@ -12,12 +12,12 @@
     {
       "name": "workbench",
       "source": "workbench",
-      "description": "The process core: review and CI-monitoring agents plus everyday and workbench flow skills, runnable in any repo."
+      "description": "The process core: review, comment-trimming and CI-monitoring agents plus everyday and workbench flow skills, runnable in any repo."
     },
     {
       "name": "toolkit",
       "source": "toolkit",
-      "description": "Optional utilities: html-artifact, ui-demo-video, get-pr-comments, adopt-global-rules, me-human, test-audit, trim-comments, grill-me, improve-codebase-architecture and the skills they load."
+      "description": "Optional utilities: html-artifact, ui-demo-video, get-pr-comments, adopt-global-rules, me-human, test-audit, dependency-audit, grill-me, improve-codebase-architecture and the skills they load."
     }
   ]
 }

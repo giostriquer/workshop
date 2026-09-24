@@ -24,7 +24,7 @@ A parent agent has typically already collected the change set and passes it in y
 
 `### Accepted scope` is the ticket, plan, or agreed change the diff was meant to deliver, stated as the ask. It decides which findings are in scope and which are follow-ups; it does not limit what you read or trace. An assessment of the code that arrives with it is not yours to adopt: judge the code yourself.
 
-If the change set is not supplied, gather it yourself: `git diff <base>...HEAD` (default base `main`) for the diff, then read the full contents of the changed files. If the accepted scope is not supplied, take it from the PR description, the commit messages, or the ticket they reference, and state the scope you used in the report.
+If the change set is not supplied, gather it yourself, from the revision `test-quality-review` reads: the working tree against the base's merge base, untracked files included. Run `git diff $(git merge-base <base> HEAD)` (default base: the remote default branch, `git symbolic-ref --short refs/remotes/origin/HEAD`) for committed, staged and unstaged changes and `git ls-files --others --exclude-standard` for new files, then read the full contents of the changed and new files. If the accepted scope is not supplied, take it from the PR description, the commit messages, or the ticket they reference, and state the scope you used in the report.
 
 ## Work
 
@@ -38,7 +38,7 @@ If the change set is not supplied, gather it yourself: `git diff <base>...HEAD` 
 
 A typical implementation-review flow collects the change set first, then dispatches this agent:
 
-1. Gather `git diff <base>...HEAD` (default base `main`) and the full contents of the changed files: in parallel where the host supports it (e.g. a shell task for the diff and a read/explore task for the contents).
+1. Gather the working tree's diff against the base's merge base, `git diff $(git merge-base <base> HEAD)` (default base: the remote default branch), the untracked files from `git ls-files --others --exclude-standard`, and the full contents of the changed and new files: in parallel where the host supports it (e.g. a shell task for the diff and a read/explore task for the contents). This is the revision `test-quality-review` reads, so both reviewers see the same change set.
 2. State the accepted scope in a short paragraph: the ticket, plan, or agreed change as it was asked for, drawn from the request, plan, ticket, or PR description. It names the ask, not how well the code meets it.
 3. Invoke this agent as its Dispatch line says, with a prompt containing `### Accepted scope`, `### Git / diff output` and `### Changed file contents`.
 

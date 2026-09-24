@@ -1,0 +1,6 @@
+interface:
+  display_name: "Trim Comments"
+  short_description: "Trim code-comment slop from a finished diff before review"
+
+policy:
+  allow_implicit_invocation: true

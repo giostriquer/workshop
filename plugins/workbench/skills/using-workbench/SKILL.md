@@ -21,8 +21,9 @@ gates: they fire on relevance, not compulsion.
 
 **Two completion requirements apply by default:** `verification-before-completion`
 at each done/fixed/passing claim, and independent review before PR-or-merge:
-`code-quality-review`, plus `test-quality-review` (a separate Opus agent on Claude,
-`gpt-6-sol` on Codex) when the diff changes production logic or tests. Run unless **the user explicitly declines it**, or **the repo's
+first the comment trim (`trim-comments`, run by the dispatched `comment-trimmer`
+agent), then, on the trimmed diff, `code-quality-review`, plus `test-quality-review` (a separate Opus agent on Claude,
+`gpt-6-sol` on Codex) when the diff changes production logic or tests. Run each stage unless **the user explicitly declines it**, or **the repo's
 own process supersedes it**. Those are the only two outs: a small diff, a
 confident implementation, a tidy-looking change, or time pressure are not
 among them, and neither is the session's own judgment that this one looks
@@ -62,18 +63,22 @@ COMPLETION (full agreed work set implemented and verified; about to ship
 through a PR or the repository's delivery process, not an intermediate checkpoint)
   deemed ready = verified with evidence
   (verification-before-completion; empirical-proof offered if runnable) →
-  Initial adversarial review round: REQUIRED, not offered (code-quality-review,
-  which carries the comment trim per repo rules; plus test-quality-review in parallel when the
-  diff changes production logic or tests). One round includes both required stages,
-  each dispatched to a context that did not write the code, never self-served.
-  A missing stage keeps the gate pending. Skipped only on an explicit user decline
-  or a superseding repo process; fires here and nowhere else, right before the
-  PR-or-merge ask, never mid-implementation →
+  Comment trim: REQUIRED, not offered (trim-comments, run by the comment-trimmer
+  agent; code comments only; encoding offers wait for the USER gate) →
+  Initial adversarial review round on the trimmed diff: REQUIRED, not offered
+  (code-quality-review; plus test-quality-review in parallel when the
+  diff changes production logic or tests). One round includes both required stages.
+  The trim and each review stage are dispatched to a context that did not write
+  the code, never self-served. A missing stage keeps the gate pending. Each is
+  skipped only on an explicit user decline or a superseding repo process; they
+  fire here and nowhere else, right before the PR-or-merge ask, never
+  mid-implementation →
   completed, verified correction batch returned for focused review before resuming delivery;
-  at most two automatic follow-up passes under code-quality-review; unresolved → hold,
-  advisory findings dispositioned, out-of-scope → follow-ups →
-  USER gate: session outlines what was done, asks PR or merge
-  (explicit repo/user rules may pre-authorize) → land: file-pr · merge · push;
+  follow-up passes run automatically until review stops converging (code-quality-review),
+  then hold and report; advisory findings dispositioned, out-of-scope → follow-ups →
+  USER gate: session outlines what was done, with the trim's open encoding offers,
+  asks PR or merge (explicit repo/user rules may pre-authorize; an approved
+  encoding is a correction batch) → land: file-pr · merge · push;
   fix-ci delegates watching to Opus on Claude or gpt-6-sol on Codex
 
 FEEDBACK
@@ -91,7 +96,8 @@ FEEDBACK
 | Implementing with a test harness | `test-driven-development` |
 | An unresolved failure requiring sustained investigation | `systematic-debugging` |
 | About to claim done / ready | `verification-before-completion` (offer `empirical-proof` if runnable) |
-| The initial adversarial pass: **required** once the work-stream is complete, right before PR-or-merge, **dispatched** to reviewers that did not write the code | `code-quality-review`, run by the `code-quality-reviewer` agent; plus `test-quality-review`, run by the `test-quality-reviewer` agent, when the diff changes production logic or tests |
+| The comment trim: **required** once the work-stream is complete, before the adversarial pass, **dispatched** to an agent that did not write the code | `trim-comments`, run by the `comment-trimmer` agent |
+| The initial adversarial pass: **required** on the trimmed diff, right before PR-or-merge, **dispatched** to reviewers that did not write the code | `code-quality-review`, run by the `code-quality-reviewer` agent; plus `test-quality-review`, run by the `test-quality-reviewer` agent, when the diff changes production logic or tests |
 | Checking existing tests or recommending a testing approach | `test-quality-review`, run by the `test-quality-reviewer` agent; give it the question and target |
 | Landing | outline gate → `file-pr` / merge / push; `fix-ci`. A dispatch that will open a PR names `file-pr` |
 | Review feedback arrives | `receiving-code-review` |
@@ -112,7 +118,8 @@ them all:
   at team scale.
 - `claim-check`: one premise, ticket, or hunch to investigate.
 - `file-pr`: landing, not verification; it assumes the gates already ran,
-  except the adversarial review, which it will not file a code PR without.
+  except the comment trim and the adversarial review, which it will not file a
+  code PR without.
 
 When no frame fits the work's shape, keep the standard and drop the frame:
 prove the deliverable the way its real consumer would exercise it, and
@@ -120,8 +127,8 @@ record the evidence. The protocols are checkpoints, not reading
 assignments: load one when its moment arrives, not preemptively.
 
 **Cost and authority:** two pieces are always-on:
-`verification-before-completion` at every done-claim, and the adversarial
-review (`code-quality-review`, plus `test-quality-review` when production
+`verification-before-completion` at every done-claim, and the comment trim
+followed by the adversarial review (`code-quality-review`, plus `test-quality-review` when production
 logic or tests changed) once the implementation is complete. Both are default-on
 and stop only for an explicit user decline or a superseding repo process.
 `empirical-proof` and `qa-sweep` are the expensive tiers.

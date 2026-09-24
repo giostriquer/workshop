@@ -129,7 +129,7 @@ h2{font:700 24px/1.2 var(--sans);letter-spacing:-.02em;margin:0;color:#f8fafc}
     the curated replacement for the superpowers pipeline. Filled sky boxes are <strong>user gates</strong>: the user decides when a choice remains open. Existing choices and authorization carry forward. Execution agency inside implementation belongs to the user and the
     harness; workbench only hands the implementer the <code>plan</code> or <code>goal</code> when one exists.</p>
   <dl class="facts">
-    <div class="fact"><dt>Skills</dt><dd>17 shipped skills + 5 review agents</dd></div>
+    <div class="fact"><dt>Skills</dt><dd>21 shipped skills + 6 agents</dd></div>
     <div class="fact"><dt>Decisions</dt><dd>Historical ledger + current refinements</dd></div>
     <div class="fact"><dt>Upstream pin</dt><dd><code>5bf4e780</code> (obra/superpowers)</dd></div>
     <div class="fact"><dt>Derived at</dt><dd><code>8e9a2e8</code> + workbench landing</dd></div>
@@ -253,7 +253,7 @@ h2{font:700 24px/1.2 var(--sans);letter-spacing:-.02em;margin:0;color:#f8fafc}
     <g>
       <rect class="box" x="740" y="450" width="250" height="56" rx="9"/>
       <text class="title" text-anchor="middle" x="865" y="472">Adversarial review</text>
-      <text class="sub" text-anchor="middle" x="865" y="490">code + test quality · trim</text>
+      <text class="sub" text-anchor="middle" x="865" y="490">comment trim → code + test quality</text>
     </g>
 
     <path class="wire-accent" d="M190 380 L200 446" marker-end="url(#mA)"/>
@@ -287,7 +287,7 @@ h2{font:700 24px/1.2 var(--sans);letter-spacing:-.02em;margin:0;color:#f8fafc}
 
     <path class="wire" d="M865 506 C 865 570, 620 606, 565 648" marker-end="url(#mN)"/>
     <text class="wire-label" x="740" y="576">blocking fixes → reviewer check</text>
-    <text class="wire-label" x="740" y="590">2 follow-ups; unresolved → hold</text>
+    <text class="wire-label" x="740" y="590">auto follow-ups; stalled → hold</text>
     <path class="wire-accent" d="M670 680 L735 680" marker-end="url(#mA)"/>
     <path class="wire-dash" d="M865 708 C 865 744, 420 748, 235 712" marker-end="url(#mN)"/>
     <text class="wire-label" x="520" y="744">on feedback</text>
@@ -336,6 +336,7 @@ h2{font:700 24px/1.2 var(--sans);letter-spacing:-.02em;margin:0;color:#f8fafc}
       <div class="mod" title="plugins/workbench/skills/claim-check/SKILL.md"><h4>claim-check</h4><div class="path">skills/claim-check/</div><p class="cap">Deep-audit engine.</p></div>
       <div class="mod" title="plugins/workbench/skills/qa-sweep/SKILL.md"><h4>qa-sweep</h4><div class="path">skills/qa-sweep/</div><p class="cap">Team-sweep engine.</p></div>
       <div class="mod" title="plugins/workbench/skills/test-quality-review/SKILL.md"><h4>test-quality-review</h4><div class="path">skills/test-quality-review/</div><p class="cap">The test half of the adversarial review.</p></div>
+      <div class="mod" title="plugins/workbench/skills/trim-comments/SKILL.md"><h4>trim-comments</h4><div class="path">skills/trim-comments/</div><p class="cap">The comment trim before the adversarial pass, run by comment-trimmer.</p></div>
       <div class="mod" title="plugins/workbench/skills/code-quality-review/SKILL.md"><h4>code-quality-review</h4><div class="path">skills/code-quality-review/</div><p class="cap">The adversarial pass.</p></div>
       <div class="mod" title="plugins/workbench/skills/empirical-proof/SKILL.md"><h4>empirical-proof</h4><div class="path">skills/empirical-proof/</div><p class="cap">Real-client proof on request or under a standing gate.</p></div>
       <div class="mod" title="plugins/workbench/skills/handoff-goal/SKILL.md"><h4>handoff-goal</h4><div class="path">skills/handoff-goal/</div><p class="cap">The autonomous route.</p></div>
@@ -358,7 +359,7 @@ h2{font:700 24px/1.2 var(--sans);letter-spacing:-.02em;margin:0;color:#f8fafc}
 </section>
 
 <section id="ledger">
-  <p class="sec-q">Historical decisions are refined by the current flow and <a href="decisions/skill-wording-hardening.md">wording-hardening decision</a>: carry existing authority and run expensive proof only when authorized. The <a href="decisions/bounded-correction-review.md">bounded correction-review decision</a> requires reviewer-confirmed blocking dispositions within two automatic follow-up passes. Epic lanes use focused local tests plus required gates. Every verified wave ends with a next dispatch, delivery gate, closing audit, completion proposal, or concrete blocker.</p>
+  <p class="sec-q">Historical decisions are refined by the current flow and <a href="decisions/skill-wording-hardening.md">wording-hardening decision</a>: carry existing authority and run expensive proof only when authorized. The <a href="decisions/bounded-correction-review.md">bounded correction-review decision</a> requires reviewer-confirmed blocking dispositions, with focused follow-up passes running automatically until review stops converging. Epic lanes use focused local tests plus required gates. Every verified wave ends with a next dispatch, delivery gate, closing audit, completion proposal, or concrete blocker.</p>
   <div class="sec-head"><span class="sec-num">04</span><h2>Decisions ledger</h2></div>
   <p class="sec-q">The eleven operator calls (2026-08-11) the flow encodes.</p>
   <div class="ledger-wrap glass-card">
@@ -366,8 +367,8 @@ h2{font:700 24px/1.2 var(--sans);letter-spacing:-.02em;margin:0;color:#f8fafc}
       <tr><td class="q">Q1</td><td>Brainstorming always precedes feature/refactor design; owns what the codebase can't answer about an idea.</td></tr>
       <tr><td class="q">Q2</td><td>TDD is the default where a test harness exists; silent skip where none.</td></tr>
       <tr><td class="q">Q3</td><td>Initial adversarial review fires at model-deemed readiness.</td></tr>
-      <tr><td class="q">Q4</td><td>Comment trimming rides that review, per repo rules.</td></tr>
-      <tr><td class="q">Q5</td><td>Blocking dispositions require reviewer confirmation; at most two automatic follow-ups, then hold if unresolved.</td></tr>
+      <tr><td class="q">Q4</td><td>Comment trimming rides that review, per repo rules. Refined 2026-09-24: the trim is its own dispatched stage (<code>trim-comments</code>, run by <code>comment-trimmer</code>) before that review, which runs on the trimmed diff (<a href="decisions/trim-comments.md#moved-into-workbench-as-a-delivery-stage-2026-09-24">decision</a>).</td></tr>
+      <tr><td class="q">Q5</td><td>Blocking dispositions require reviewer confirmation; at most two automatic follow-ups, then hold if unresolved. Refined 2026-09-24: follow-ups run automatically with no count, and review holds only when it stops converging (<a href="decisions/bounded-correction-review.md#convergence-replaces-the-follow-up-pass-count-2026-09-24">decision</a>).</td></tr>
       <tr><td class="q">Q6</td><td>Review precedes landing; landing is outline-then-ask, with a rules bypass.</td></tr>
       <tr><td class="q">Q7</td><td>The confirm gate pauses only when the audit flagged uncertainty.</td></tr>
       <tr><td class="q">Q8</td><td>Audit sizes: quick look (inline) · deep (claim-check) · team sweep (qa-sweep).</td></tr>

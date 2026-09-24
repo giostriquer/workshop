@@ -2,8 +2,13 @@
 
 ## What it does
 
-`trim-comments`, in the optional `toolkit` plugin, is a comment pass over the
-current branch's diff before review. It edits comments and nothing else.
+`trim-comments` is workbench's comment-trim stage: a pass over a finished
+diff's code comments that runs after verification and before the adversarial
+review round. It edits code comments (`//`, `#`, `/* */`, doc comments and
+suppression directives in source and config files) and nothing else; PR,
+review and issue comments, commit messages and Markdown docs are out of its
+scope. At completion it runs in the `comment-trimmer` agent, dispatched by the
+session that wrote the code. You can also invoke it directly on a diff.
 
 It removes, when the removal is behavior-neutral:
 
@@ -31,43 +36,83 @@ A comment on neither list stays. When the repository has its own comment rules
 
 Two kinds of comment get special handling. A constraint comment ("do not
 remove", "do not change this wording", "talk to X before changing") is never
-deleted silently: the skill offers a check that could carry the rule and waits
-for your answer. A suppression that silences a correctness or safety rule
-(`eslint-disable`, `@ts-ignore`, `@ts-expect-error`, `noqa` and the like) stays
-in place and goes in the report, with the fix the rule asks for.
+deleted silently: the pass offers a check that could carry the rule and leaves
+the comment until you answer. A suppression that silences a correctness or
+safety rule (`eslint-disable`, `@ts-ignore`, `@ts-expect-error`, `noqa` and the
+like) stays in place and goes in the report, with the fix the rule asks for.
 
-It ends with a report of one to three sentences. It is **user-invoked only**
-(`disable-model-invocation: true`, plus `allow_implicit_invocation: false` for
-Codex). Invoke `/trim-comments`, or `$trim-comments` in Codex, on the branch
-you are about to send for review.
+It ends with a report of one to three sentences; from the agent, a result line
+follows it: `## Trim: DONE`, `NOTHING_TO_TRIM` or `BLOCKED`.
 
 ## When to reach for it
 
-When the branch works and you want its comment noise gone before anyone
-reviews it.
+Mostly you don't. Once the full agreed work set is implemented, verified and
+about to ship through a PR or the repository's delivery process, the session
+dispatches `comment-trimmer`, then runs the review round on the trimmed diff.
+Like that review, it is default-on: only your explicit decline or a repo
+process that supersedes it skips it, and a small diff or time pressure does
+not. It never fires on its own mid-implementation, where tidying the comments
+you are writing is ordinary editing. Invoke `/trim-comments` (or
+`$trim-comments` in Codex) when you want a diff's comments trimmed outside that
+moment.
 
 | The problem | The skill |
 | --- | --- |
-| The branch is done; trim its comments before the review | `trim-comments` |
-| The completion review of a finished diff, structure first. Its standard 8 reports comments a repo rule covers, suppressions that hide a correctness or safety rule, and constraint comments a test, type or lint could enforce | [code-quality-review](code-quality-review.md) (workbench) |
-| Comments that only restate the code, reported as pattern drift with or without a repo rule | `pattern-reviewer` (workbench agent) |
-| Code-level slop: needless defensive checks and `try`/`catch`, type-laundering casts, one-use helpers, unowned shims and fallbacks, style drift | [code-quality-review](code-quality-review.md) (workbench) |
-| Whether the diff's tests protect behavior | [test-quality-review](test-quality-review.md) (workbench) |
-| Which existing tests should exist at all | [test-audit](test-audit.md) |
+| The branch is done; trim its code comments before the review | `trim-comments` (fires by default at completion) |
+| The completion review of a finished diff, structure first. Its standard 8 reports what the trim left: comments a repo rule covers, suppressions that hide a correctness or safety rule, and constraint comments a test, type or lint could enforce | [code-quality-review](code-quality-review.md) |
+| Comments that only restate the code, reported as pattern drift with or without a repo rule | `pattern-reviewer` agent |
+| Code-level slop: needless defensive checks and `try`/`catch`, type-laundering casts, one-use helpers, unowned shims and fallbacks, style drift | [code-quality-review](code-quality-review.md) |
+| Whether the diff's tests protect behavior | [test-quality-review](test-quality-review.md) |
+| Triaging a PR's review comments | [get-pr-comments](get-pr-comments.md) (toolkit) |
+| Which existing tests should exist at all | [test-audit](test-audit.md) (toolkit) |
 
-The line with workbench: `code-quality-review` and `pattern-reviewer` report
-comment findings, and the implementer trims. `trim-comments` is the edit pass
-you run before them, so the review spends its attention on structure and
-correctness instead of comment noise. It never replaces the review gate, and
-code-level slop belongs to `code-quality-review`.
+The line with the review: `trim-comments` edits, then `code-quality-review` and
+`pattern-reviewer` report what remains, and the implementer acts on it. The
+trim lets the review spend its attention on structure and correctness instead
+of comment noise. It never replaces the review, and code-level slop belongs to
+`code-quality-review`.
 
 ## Common questions
 
+**Why an agent, not the session that wrote the code?**
+That session wrote the comments too, so its narration reads as explanation and
+its stale comments read as current. `comment-trimmer` starts without that
+history: Opus at `xhigh` effort on Claude Code, `gpt-6-sol` at `xhigh` on
+Codex.
+
 **Will it touch code outside my branch?**
 No. It scopes to `git diff` against the default branch, or the branch's merge
-base with it, and never runs a repo-wide cleanup. It touches comments on lines
-the branch adds or changes, plus a comment the branch made wrong; slop in
-unrelated lines of a changed file stays where it is.
+base with it, plus untracked files, and never runs a repo-wide cleanup. It
+touches comments on lines the branch adds or changes, plus a comment the branch
+made wrong; slop in unrelated lines of a changed file stays where it is.
+
+**Will it touch my uncommitted code?**
+No. Before its first edit to a file, the agent copies that file, at its own path, into a temporary folder outside
+the repository, and it checks and undoes its own edits against that copy, never
+against git, so unstaged work in the same file stays as you left it. A change
+counts as comment-only when the line differs only in comment text (a trailing
+comment removed from a code line included), a whole-line comment is deleted,
+a line inside a block comment changes, or a blank line goes with the comment
+it set off.
+
+**Does it commit?**
+The agent never commits, stages or pushes. If your work is already delivered
+as commits (an epic lane, or a branch the session committed under its existing
+authority), the session commits the trim's edits as their own comment-only
+commit before the review. Otherwise they stay in your working tree. Either way
+both reviewers read the same revision: the working tree against the merge
+base, untracked files included.
+
+**It ended with `BLOCKED`.**
+It could not resolve the diff, load the skill, or confirm its edits were
+comment-only. It restores every file it edited and says so, and the stage stays
+pending: the session fixes the cause and dispatches it once more, or asks you.
+A report without the `## Trim:` line counts as `BLOCKED`.
+
+**Will it edit my PR description, review threads or docs?**
+No. It works on code comments only. Markdown docs, commit messages, and PR,
+review and issue comments are outside its scope, even when they sit in the
+same diff.
 
 **Why did it leave my pointless `try`/`catch` alone?**
 It edits comments only. Defensive code, casts, helpers and style are
@@ -77,14 +122,18 @@ It edits comments only. Defensive code, casts, helpers and style are
 It removes only what its remove list names; a comment on neither list, such
 as a note on why an internal choice was made, stays. If your repository's
 rules say that kind of comment goes, write that down in `AGENTS.md` or
-`CLAUDE.md` and the skill follows it.
+`CLAUDE.md` and the pass follows it.
 
-**It asked me before removing a "do not remove" comment.**
+**It asked me about a "do not remove" comment.**
 That is the design. A constraint comment records a rule someone needed. The
-skill offers the cheapest check that could carry the rule instead (a type, a
-runtime check, a test, or a lint rule) and waits for your answer. Say yes and
-it adds the check, then deletes the comment. Say no and the comment stays; the
-report lists the constraint as open.
+pass offers the cheapest check that could carry the rule instead (a type, a
+runtime check, a test, or a lint rule) and never applies it on its own. When
+you invoked the trim directly, the session asks you right away. At completion
+the offer arrives with the session's outline, where you choose PR or merge,
+and the review leaves that comment to your answer. Say yes and the check is
+added and the comment deleted, as a correction that takes a follow-up review
+pass under `code-quality-review`'s correction review. Say no and the comment
+stays; the constraint is reported as open.
 
 **It reported my `eslint-disable` instead of removing it.**
 It looked up the rule. When the rule protects correctness or safety (an
@@ -93,18 +142,25 @@ and the fix the rule asks for changes code. So it names the suppression and
 the fix rather than keeping it quietly or deleting it. A suppression of a
 style-only rule stays without comment.
 
-**Does it run the review for me?**
-No. Run it before the review gate, never instead of it. With workbench
-installed, that gate is `code-quality-review`.
+**Does a correction batch get trimmed again?**
+No. Comments a correction adds are the implementer's ordinary editing; the
+focused correction review still reports the kinds standard 8 covers (comments
+a repository rule governs, suppressions hiding a correctness rule, enforceable
+constraint comments). A trim that runs late, after the review round, edits comments
+only, so the round still covers the revision.
 
-**Does it need workbench?**
-No. It runs on its own; the workbench pieces above are neighbours, not
-dependencies.
+**Can I skip it?**
+Say so. Your explicit decline, or a repo process that supersedes it, are the
+only outs. `file-pr` will not file a code PR until the trim and the review
+have run, unless you waived them.
 
 ## It's working if
 
-- Every edit removes or changes a comment inside the branch's changes, and no
-  code line changed.
+- The trim ran at completion before the review round, dispatched, unrequested.
+- Every edit removes or changes a code comment inside the branch's changes,
+  and no code line changed, your uncommitted code included.
+- Committed work gets the trim as its own comment-only commit before the
+  review; otherwise the edits sit in the working tree the reviewers read.
 - Narration, banners, commented-out code and stale comments are gone.
 - License headers, vendor and platform notes with their issue links, public
   API docs and tool directives are still there.
@@ -114,13 +170,16 @@ dependencies.
   with their fix.
 - The report is one to three sentences: what changed, what is left for you,
   and any offer awaiting your answer.
-- Negative signal: a code edit, an edit outside the diff, a deleted constraint
-  comment you never approved, a deleted license header or vendor note, or a
-  long report that restates the diff.
+- Negative signal: a code edit, an edit outside the diff or to a doc, PR or
+  review comment, a deleted constraint comment you never approved, a deleted
+  license header or vendor note, a trim that fired on its own
+  mid-implementation, a commit made by the agent, or a `BLOCKED` run that left
+  its edits in place.
 
 ## Where it fits
 
-Between finishing the work and the review. When workbench is installed,
-`verification-before-completion` backs the done claim, `trim-comments` runs on
-your ask, then `code-quality-review` (plus `test-quality-review` when logic or
-tests changed) reviews the result, and `file-pr` lands it.
+Between verification and the review round. `verification-before-completion`
+backs the done claim, `trim-comments` trims the diff's code comments, then
+`code-quality-review` (plus `test-quality-review` when logic or tests changed)
+reviews the trimmed diff, the session outlines the work with any encoding
+offers and asks PR or merge, and `file-pr` lands it.

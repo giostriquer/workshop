@@ -18,7 +18,9 @@ the same boundary: finish and verify the batch before resuming delivery.
 ## Who runs it: a reviewer that did not write the code
 
 This review is **dispatched, never self-served.** Run it in a fresh reviewer
-context handed the accepted scope, the diff and the changed files' contents:
+context handed the accepted scope, the diff (the working tree against the base's
+merge base, untracked files included: the revision `test-quality-review` reads)
+and the changed files' contents:
 the `code-quality-reviewer` agent, or the host's equivalent subagent mechanism.
 The accepted scope is the ticket, plan or agreed change as it was asked for,
 never the author's account of the code; it sets where in-scope ends, not what
@@ -36,6 +38,10 @@ blindest to. A self-served pass reliably returns "nothing blocking" on a diff a
 fresh reviewer takes apart, and a reviewer forked from the author's history
 inherits the same justifications. Dispatching also keeps the full diff and file
 contents out of the implementing session's window.
+
+The comment trim precedes the round: dispatch `trim-comments` to the
+`comment-trimmer` agent first, as that skill describes, including how its edits
+reach the round's revision, and review the trimmed diff.
 
 When the diff changes production logic or tests, the dispatching session also
 dispatches `test-quality-review` for that change set, with the base branch when known, in a
@@ -102,40 +108,59 @@ fixes and focused tests; the independent reviewer owns closure of blocking findi
    session; if unavailable, give a replacement independent reviewer the prior
    findings and evidence. A one-line correction or passing test does not close a
    blocker without reviewer confirmation.
-2. **Keep follow-up focused.** Check unresolved findings, the correction delta,
-   and affected callers, contracts, and behavior. Trace outside changed lines when
-   needed to assess effects. New blockers need a concrete failure path, violated
-   requirement, or demonstrated material maintainability consequence. Cosmetic
-   preferences, alternative designs alone, and unrelated cleanup remain advisory
-   or follow-up work. A newly discovered defect that proves the change unsafe or
-   incorrect still blocks, even outside this focus.
-3. **Use at most two automatic follow-up passes per work-stream.** A pass is one
+2. **Keep follow-up focused.** A follow-up pass's focus is the open blockers,
+   the correction delta (the change since the last reviewed revision), and the
+   callers, contracts, and behavior it affects, plus the full affected scope
+   when a correction broadly invalidates the initial review. Trace outside
+   changed lines when needed to assess effects. New blockers need a concrete
+   failure path, violated requirement, or demonstrated material maintainability
+   consequence. Cosmetic preferences, alternative designs alone, and unrelated
+   cleanup remain advisory or follow-up work. On a follow-up pass, the reviewer
+   labels a finding outside this focus out-of-scope (follow-up) unless it proves
+   the change unsafe or incorrect as shipped, which still blocks: an
+   out-of-scope finding never makes the verdict ISSUES_FOUND, never justifies
+   another pass, and never holds delivery.
+3. **Run follow-up passes automatically while review converges.** A pass is one
    submission of the revised change to the required reviewers; code and test
-   reviewers may run together and share the same pass count. Correction dispatches,
-   lane handbacks and owner validation do not consume review passes. A missing
-   stage or replacement for a reviewer that never returned completes the same
-   unchanged submission; a new correction submission consumes the next pass. Send each reviewer
-   the findings and changed surfaces it owns; a production fix that changes test
-   adequacy also needs test review. Stop early when all blocking dispositions are
-   confirmed and the current revision is covered. Advisory-only findings do not
-   require another pass. If a correction broadly invalidates the initial review,
-   review the full affected scope within the same budget; do not reset the count.
-4. **At the limit, hold delivery and route the review decision.** If blockers or
-   unreviewed corrections remain after the second follow-up, report them and
-   recommend a bounded next step to the authority that owns the work: the epic
-   owner for a delegated lane, or the user for standalone implementation. That
-   authority may authorize a specific correction scope and number of additional
-   reviewer submissions within its existing authority. Record the decision and
-   retain the cumulative pass count. Corrections and owner validation continue
-   under existing task authority; the limit governs further review submissions.
-   Exhaustion of the budget is never PASS, and the author cannot dismiss a
+   reviewers may run together in one pass. When a verified correction batch is
+   ready for review, submit the next pass without asking anyone: no pass count
+   limits it. Number passes as a record (0 for the initial round), never as a
+   limit. Correction dispatches, lane handbacks and owner validation are not
+   passes. A missing stage or replacement for a reviewer that never
+   returned completes the same unchanged submission. Send each reviewer the
+   findings and changed surfaces it owns; a production fix that changes test
+   adequacy also needs test review. Stop when all blocking dispositions are
+   confirmed and the current revision is covered. Advisory-only findings never
+   trigger another pass.
+4. **Stop only when review stops converging.** Judge each follow-up pass on
+   what changed since the previous pass. Stop submitting passes, hold delivery,
+   and report to the authority that owns the work (the epic owner for a
+   delegated lane, the user for standalone implementation) when:
+   - a follow-up pass sent at least one open blocker closed or narrowed none of
+     them (a finding still Partially resolved on the same gap is no progress);
+   - a finding the author rejected with evidence is raised again without new
+     evidence; or
+   - each of two consecutive follow-up passes raised a new blocker and ended
+     with at least as many open blockers as it was sent (in-delta churn). A
+     pass that only narrows findings is judged by the first condition alone
+     and neither counts toward nor breaks the two-pass run.
+
+   The report names each open finding with both sides' evidence and recommends
+   a next step; that authority decides it within its existing authority, and the
+   decision is recorded. Unless it ends review, the decision restarts automatic
+   passes under rules 3 and 4, with the two-pass churn count starting over.
+   Corrections and owner validation continue under existing task authority, but
+   a correction made while review is held waits for that decision before it is
+   submitted. A held review is never PASS: a blocker closes only on reviewer
+   confirmation or the user's explicit waiver, and the author cannot dismiss a
    disputed blocker to bypass this gate.
 5. **Record closure against the revision.** Each reviewer returns the reviewed
    revision, finding IDs with resolved / unresolved / rejected-with-evidence
    dispositions, supporting evidence, and PASS or ISSUES_FOUND. Later changes to
-   behavior, design, or risk require affected-delta review under the remaining
-   budget. Formatting-only changes need ordinary verification. A new reviewer,
-   PR preparation, or session handoff does not reset the budget for the same work.
+   behavior, design, or risk require affected-delta review under this same
+   convergence rule. Formatting-only changes need ordinary verification. A new
+   reviewer, PR preparation, or session handoff does not reset the record: prior
+   findings, dispositions and rejections carry over.
 
 These rules govern correction review for both code-quality-review and the required
 `test-quality-review` delivery stage. Existing explicit user waivers and superseding
@@ -189,10 +214,10 @@ Apply the baseline prompt above, plus these explicit review rules:
    - If related updates can leave state half-applied, push for a more atomic structure.
    - Do not over-index on micro-optimizations, but do flag avoidable orchestration complexity that makes the implementation more brittle.
 
-8. **Carry the comment trim, per the repository's rules.** Comments are findings like any other; the implementer trims. A comment that only restates the code, with no repository rule against it, is `pattern-reviewer`'s built-in comment-noise check, which applies wherever that agent runs; this review does not flag it.
+8. **Report what the comment trim left, per the repository's rules.** The `trim-comments` stage edits the diff's comments before this round; what remains is findings like any other, and the implementer acts on them. A comment that only restates the code, with no repository rule against it, is `pattern-reviewer`'s built-in comment-noise check, which applies wherever that agent runs; this review does not flag it.
    - Where the repository's rules say which comments to remove, flag the ones the diff adds that those rules cover.
    - Flag a lint or type suppression (`eslint-disable`, `@ts-ignore`, `@ts-expect-error`, `# type: ignore`, `#[allow(...)]`) that silences a rule protecting correctness or safety. Look the rule up and ask for the fix it wants.
-   - Flag a constraint comment (`do not remove`, `keep in sync with`, `do not change this wording`) that a test, type, or lint rule could enforce, and name the cheapest one.
+   - Flag a constraint comment (`do not remove`, `keep in sync with`, `do not change this wording`) that a test, type, or lint rule could enforce, and name the cheapest one. One the trim already returned as an encoding offer waits for the outline gate: note it, and do not raise it again as a finding.
 
 ## Primary Review Questions
 
@@ -289,7 +314,8 @@ Open the report with the verdict, on its own line and before anything else:
 - `ISSUES_FOUND` - at least one in-scope (blocking) finding, judged against the approval bar below.
 
 After the verdict, record the reviewed revision (include a diff fingerprint for
-uncommitted changes), follow-up pass count, and stable finding IDs. On follow-up,
+uncommitted changes), follow-up pass number (0 for the initial round), and
+stable finding IDs. On follow-up,
 include each prior blocker's disposition and supporting evidence.
 
 This is the line `test-quality-review` emits, so one rule reads every review stage. A report

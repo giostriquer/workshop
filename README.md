@@ -33,7 +33,7 @@ For OpenCode there is no marketplace or manifest to register: opencode loads ski
 { "skills": { "paths": ["<clone>/plugins/workbench/skills", "<clone>/plugins/toolkit/skills"] } }
 ```
 
-or copy individual `plugins/<plugin>/skills/<skill>/` folders into `~/.config/opencode/skill/`. The five review agents are not carried on this surface (opencode's agent format differs; see [the decision note](docs/decisions/plugin-surfaces.md)).
+or copy individual `plugins/<plugin>/skills/<skill>/` folders into `~/.config/opencode/skill/`. The workbench agents are not carried on this surface (opencode's agent format differs; see [the decision note](docs/decisions/plugin-surfaces.md)).
 
 ### Global Rules Adoption - Optional
 
@@ -49,18 +49,20 @@ npx github:giostriquer/workshop --dry-run   # plan; drop --dry-run to apply
 
 ### `workbench`: use right away
 
-Five read-only review agents, twelve everyday skills, and the eight-skill **workbench**
-process layer: ready immediately after install, nothing to configure.
+Five read-only review agents, the `comment-trimmer`, thirteen everyday skills, and the
+eight-skill **workbench** process layer: ready immediately after install, nothing to configure.
 
-**Agents**: they inspect and report, never edit your files:
+**Agents**: the reviewers inspect and report, never edit your files; `comment-trimmer`
+edits code comments in the diff and nothing else:
 
-| Agent | Reviews |
+| Agent | Works on |
 | --- | --- |
 | `spec-reviewer` | design specs and plans |
 | `code-quality-reviewer` | a diff's maintainability and structure |
 | `test-quality-reviewer` | test code; loads the `test-quality-review` rubric |
 | `pattern-reviewer` | code-pattern conformance |
 | `ci-watcher` | the branch's PR CI |
+| `comment-trimmer` | a finished diff's code comments, trimmed before the review round; loads the `trim-comments` rubric |
 
 **Everyday skills:**
 
@@ -74,6 +76,7 @@ process layer: ready immediately after install, nothing to configure.
 | `empirical-proof` | proves a finished change at the running app |
 | `code-quality-review` | strict structure-first review of a diff |
 | `test-quality-review` | whether a diff's tests protect behavior, backed by a mutation run |
+| `trim-comments` | the comment trim before the review round: removes code-comment slop from the finished diff and offers encodings for constraint comments |
 | `model-reference` | the model fleet reference table + hard routing invariants |
 | `epic-orchestration` | owns a multi-ticket epic whose lanes other sessions implement (user-invoked only) |
 | `epic-implementation` | uses the shared [lane report template](plugins/workbench/skills/epic-orchestration/references/lane-report.md) in lanes dispatched through epic-orchestration |
@@ -105,6 +108,15 @@ Cursor's [cursor/plugins](https://github.com/cursor/plugins) (`thermos` and
 [`docs/decisions/code-quality-review.md`](docs/decisions/code-quality-review.md)
 and [`docs/decisions/fix-ci.md`](docs/decisions/fix-ci.md).
 
+`trim-comments` derives from OpenClaw's
+[openclaw/openclaw](https://github.com/openclaw/openclaw)
+(`.agents/skills/deslop`, MIT, Copyright (c) 2026 OpenClaw Foundation), with
+its comment keep-list and its constraint-comment and suppression rules from the
+`pstack` plugin in Cursor's [cursor/plugins](https://github.com/cursor/plugins)
+(`no-comments` and `comment-sicko`, MIT, Copyright (c) 2026 Lauren Tan),
+adapted per
+[`docs/decisions/trim-comments.md`](docs/decisions/trim-comments.md).
+
 Details in [`plugins/workbench/README.md`](plugins/workbench/README.md).
 
 ### `toolkit`: optional, install when you want it
@@ -120,7 +132,7 @@ installed skill's listing rides in each session's context:
 | `adopt-global-rules` | installs the workshop's shipped global CLAUDE.md / AGENTS.md, rules, and Claude output styles onto a machine, additively (user-invoked only) |
 | `me-human` | dogfood a system from a human user's perspective (user-invoked only) |
 | `test-audit` | gates a test before it lands, and audits or prunes low-value, duplicative, or implementation-coupled tests (user-invoked only) |
-| `trim-comments` | removes comment slop from the branch diff before review and offers encodings for constraint comments (user-invoked only) |
+| `dependency-audit` | audits dependencies before changing any (bumps with the code they break, conflicts, advisories, removal candidates), then applies the groups you pick through the package manager (user-invoked only) |
 | `grill-me` | interviews you about a plan or idea until every branch is settled (user-invoked only) |
 | `grilling` | the round-based interview behind `grill-me` and `improve-codebase-architecture` |
 | `improve-codebase-architecture` | surveys a codebase for deepening opportunities, then grills the one you pick (user-invoked only) |
@@ -135,15 +147,6 @@ installed skill's listing rides in each session's context:
 [openclaw/openclaw](https://github.com/openclaw/openclaw)
 (`.agents/skills/test-audit`, MIT, Copyright (c) 2026 OpenClaw Foundation),
 adapted per [`docs/decisions/test-audit.md`](docs/decisions/test-audit.md).
-
-`trim-comments` derives from OpenClaw's
-[openclaw/openclaw](https://github.com/openclaw/openclaw)
-(`.agents/skills/deslop`, MIT, Copyright (c) 2026 OpenClaw Foundation), with
-its comment keep-list and its constraint-comment and suppression rules from the
-`pstack` plugin in Cursor's [cursor/plugins](https://github.com/cursor/plugins)
-(`no-comments` and `comment-sicko`, MIT, Copyright (c) 2026 Lauren Tan),
-adapted per
-[`docs/decisions/trim-comments.md`](docs/decisions/trim-comments.md).
 
 `grill-me`, `grilling`, `improve-codebase-architecture`, `codebase-design` and
 `domain-modeling` derive from Matt Pocock's

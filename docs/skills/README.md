@@ -36,6 +36,7 @@ you want them, and skip to keep sessions lean.
 | An unresolved failure requiring sustained investigation | [systematic-debugging](systematic-debugging.md) |
 | About to claim something is done | [verification-before-completion](verification-before-completion.md) |
 | Proving one finished change at the running app | [empirical-proof](empirical-proof.md) |
+| Trimming a finished diff's code comments before the review round | [trim-comments](trim-comments.md), run by the `comment-trimmer` agent |
 | The adversarial pass before PR-or-merge | [code-quality-review](code-quality-review.md), plus [test-quality-review](test-quality-review.md) when production logic or tests changed |
 | Checking whether existing tests protect the behavior they claim to | [test-quality-review](test-quality-review.md) |
 | Picking a model | [model-reference](model-reference.md) |
@@ -57,7 +58,7 @@ you want them, and skip to keep sessions lean.
 | To install the workshop's global CLAUDE.md / AGENTS.md and rules on a machine | [adopt-global-rules](adopt-global-rules.md) |
 | To use a system as a real human user and report what got in the way | [me-human](me-human.md) |
 | To gate a new test, or audit and prune tests that don't earn their keep | [test-audit](test-audit.md), user-invoked only |
-| To trim comment slop from a branch's diff before review | [trim-comments](trim-comments.md), user-invoked only |
+| To bump dependencies knowing what each bump breaks, surface conflicts and advisories, or drop unused ones | [dependency-audit](dependency-audit.md), user-invoked only |
 | To be interviewed about a plan, design, or idea until every branch is settled | [grill-me](grill-me.md), user-invoked only |
 | The round-based interview other skills run | [grilling](grilling.md) |
 | To survey a codebase for refactors that deepen shallow modules | [improve-codebase-architecture](improve-codebase-architecture.md), user-invoked only |
@@ -68,9 +69,10 @@ you want them, and skip to keep sessions lean.
 
 **Almost nothing here is compulsory.** Skills fire on relevance, not on
 obligation. The exceptions are the two default-on completion gates:
-`verification-before-completion` at every done-claim, and the adversarial review
-once an implementation is complete (`code-quality-review`, plus
-`test-quality-review` when production logic or tests changed). Each stops only for an explicit decline or
+`verification-before-completion` at every done-claim, and the comment trim
+followed by the adversarial review once an implementation is complete
+(`trim-comments`, then `code-quality-review`, plus `test-quality-review` when
+production logic or tests changed). Each stops only for an explicit decline or
 a repo process that supersedes it.
 
 **The expensive tiers are offered, never assumed.** `empirical-proof` and

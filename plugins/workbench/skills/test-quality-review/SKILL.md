@@ -69,8 +69,8 @@ their inputs and assertions, so the gaps between them read as coverage.
 ## Revision rounds
 
 Continue the same reviewer session for the same task. For delivery reviews, follow
-`code-quality-review`'s Bounded correction review, including its shared pass count
-and extension authority. Other requests keep their agreed scope.
+`code-quality-review`'s Bounded correction review, including when a follow-up pass
+runs and when review stops converging. Other requests keep their agreed scope.
 
 1. Resolve the current scope again; never review a cached change set.
 2. Re-read only the test and production files that changed between rounds, unless a prior
@@ -87,9 +87,12 @@ and extension authority. Other requests keep their agreed scope.
    contrary evidence that supports the disposition.
 4. Check the correction delta and its effects on test adequacy. New blockers need
    a demonstrated consequence; unrelated cleanup and preferences do not extend the loop.
-5. Record the reviewed revision, cumulative pass count, and Delta walk. Unresolved
-   findings or unreviewed corrections hold delivery; exhausting the review budget
-   never converts them into PASS.
+   A gap outside `code-quality-review`'s follow-up focus that does not prove the
+   change unsafe or incorrect as shipped goes under Strategy notes, never as an
+   Issue.
+5. Record the reviewed revision, the follow-up pass number, and Delta walk.
+   Unresolved findings or unreviewed corrections hold delivery; a review held for
+   not converging never converts them into PASS.
 
 ## Capability lanes
 
@@ -390,7 +393,7 @@ occurred; do not turn advice about existing tests into a delivery verdict.
 ## Verdict: PASS | ISSUES_FOUND
 
 Reviewed revision: [commit; include diff fingerprint for uncommitted changes]
-Follow-up pass: [0 initial / 1 / 2; explicit extension if authorized]
+Follow-up pass: [0 initial, or the follow-up's number]
 
 ### Metrics
 - Coverage target: [project target or "not declared"]

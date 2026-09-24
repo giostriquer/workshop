@@ -183,7 +183,7 @@ A per-mutant timeout counts with the killed and is never diagnosed, rerun or
 carried as unknown; only an invocation exceeding its own limit is a setup
 problem. What the lane ran within its budget is the evidence: a partial run
 records `partial` with the uncovered scope's command under Strategy notes, and
-neither a partial run nor a timeout is an Issue, holds delivery, consumes a
+neither a partial run nor a timeout is an Issue, holds delivery, triggers a
 follow-up pass, or needs a waiver, ruling, extension or diagnosis from anyone;
 the reviewer never returns a mutation question to the caller. The one
 mutation-evidence Issue left is a required run that never happened over parsed

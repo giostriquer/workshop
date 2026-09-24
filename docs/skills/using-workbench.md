@@ -8,9 +8,10 @@ and worktrees go. It runs no loop and reaches no verdict: "**Orientation, not
 compulsion, except for two standing gates.**"
 
 Those two gates are the only parts that bind. `verification-before-completion`
-fires at every done/fixed/passing claim. The adversarial review
+fires at every done/fixed/passing claim. The comment trim (`trim-comments`,
+run by the `comment-trimmer` agent) and then the adversarial review
 (`code-quality-review`, plus `test-quality-review` when the diff changes
-production logic or tests) fires once the implementation is complete, before
+production logic or tests) fire once the implementation is complete, before
 PR-or-merge. Each runs unless the user explicitly declines it or the repo's own
 process supersedes it; a small diff, time pressure, or the session's confidence
 are not reasons to skip. Everything else fires on relevance.
@@ -33,7 +34,7 @@ specific task skips it.
 | Something to verify, hunt, or check | `audit` |
 | Designing a feature or a refactor | `brainstorming` |
 | About to claim done, fixed, or passing | `verification-before-completion` |
-| Implementation complete, before PR-or-merge | `code-quality-review` (+ `test-quality-review`) |
+| Implementation complete, before PR-or-merge | `trim-comments`, then `code-quality-review` (+ `test-quality-review`) |
 | Picking a model | `model-reference` |
 
 ## The map
@@ -48,11 +49,13 @@ specific task skips it.
   unresolved failures. In-session versus dispatched is the user's and the
   harness's call.
 - **Completion**: only when the full agreed work set is implemented, verified,
-  and about to ship, not at a checkpoint. One adversarial round runs both
-  required stages, each dispatched to a context that did not write the code.
-  Blocking corrections get focused re-review (at most two automatic follow-up
-  passes); unresolved blockers hold delivery. Then the session outlines the
-  work and asks PR or merge, unless repo or user rules pre-authorize it.
+  and about to ship, not at a checkpoint. The comment trim runs first, then one
+  adversarial round runs both required stages on the trimmed diff, each
+  dispatched to a context that did not write the code.
+  Blocking corrections get focused re-review, which runs without asking until
+  review stops converging; unresolved blockers hold delivery. Then the session outlines the
+  work, with the trim's open encoding offers, and asks PR or merge, unless repo
+  or user rules pre-authorize it.
 - **Feedback**: `receiving-code-review`; verified fixes re-enter implementation.
 
 **Picking the verification piece** by the work's shape:
@@ -63,7 +66,7 @@ specific task skips it.
 | One just-finished change with a drivable surface | `empirical-proof` |
 | A broad decomposable surface at team scale | `qa-sweep` |
 | One premise, ticket, or hunch | `claim-check` |
-| Landing; refuses a code PR without the adversarial review | `file-pr` |
+| Landing; refuses a code PR without the comment trim and the adversarial review | `file-pr` |
 
 When no frame fits, keep the standard and drop the frame: prove the
 deliverable the way its real consumer would use it.
@@ -105,8 +108,9 @@ owning skill and says so ("Using audit to size this investigation").
 
 **Which parts are actually mandatory?**
 
-Two: `verification-before-completion` and the adversarial review. Both stop
-only for your explicit decline or a superseding repo process
+Two: `verification-before-completion`, and the comment trim followed by the
+adversarial review. Both stop only for your explicit decline or a superseding
+repo process
 ([decision](../decisions/code-quality-review.md)).
 
 **Do dispatched subagents inherit these conventions?**
@@ -142,6 +146,6 @@ No. Skill descriptions and your own rules are the whole activation surface.
 
 `using-workbench` is the frame, not a stage. It points to whichever skill owns
 the moment: `audit` and `brainstorming` at entry, `test-driven-development` and
-`systematic-debugging` in implementation, `verification-before-completion` and
+`systematic-debugging` in implementation, `verification-before-completion`, `trim-comments` and
 `code-quality-review` at completion, `file-pr` and `fix-ci` at landing.
 Re-read it when you cannot tell which piece owns what is in front of you.

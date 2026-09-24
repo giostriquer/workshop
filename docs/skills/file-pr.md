@@ -20,10 +20,12 @@ finishes local preparation and names the delivery step still needed.
 ## When to reach for it
 
 When the branch's work is done and the PR should be filed and seen through. It
-assumes the completion gates ran, except one: it will not file a code PR whose
-diff lacks its adversarial review by reviewers who did not write the code
+assumes the completion gates ran, except these: it will not file a code PR whose
+diff lacks its comment trim (`trim-comments`, run by the `comment-trimmer`
+agent) and then its adversarial review by reviewers who did not write the code
 (`code-quality-review`, plus `test-quality-review` when production logic or
-tests changed). A missing review runs first. The only exemptions: an explicit
+tests changed). A missing stage runs first; a trim run after a finished review
+edits comments only, so the review still covers the revision. The only exemptions: an explicit
 user waiver, a superseding repo process, a diff that changes no code, or a prior
 review that still covers this revision. A draft PR is still a filed PR.
 
@@ -138,6 +140,7 @@ several candidates or the template requires one.
 ## Where it fits
 
 `file-pr` is one of three landing options, with a direct merge and a plain push.
-`verification-before-completion` and the adversarial review come before it; the
-review is the one it checks rather than assumes. After it,
+`verification-before-completion`, the comment trim and the adversarial review
+come before it; the trim and the review are the ones it checks rather than
+assumes. After it,
 `receiving-code-review` governs acting on reviewer feedback.

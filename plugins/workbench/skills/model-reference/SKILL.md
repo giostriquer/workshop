@@ -99,10 +99,11 @@ dispatch is a reported monitoring gap, not permission for parent polling or a
 prohibited fallback. Haiku and Sonnet remain prohibited. See `fix-ci` for the
 workflow.
 
-## Test-quality review exception
+## Test-quality review and comment-trim exception
 
-Every `test-quality-review` dispatch uses a separate **Opus (`opus`) agent at `xhigh`
-effort on Claude Code** or **`gpt-6-sol` agent at `xhigh` reasoning effort on Codex**,
-spawned without the parent's history, and the host's default model on any other
-host. Select the model and effort explicitly; do not inherit the parent's. See
-`test-quality-review` for when it runs.
+Every `test-quality-reviewer` and every `comment-trimmer` dispatch uses a
+separate **Opus (`opus`) agent at `xhigh` effort on Claude Code** or
+**`gpt-6-sol` agent at `xhigh` reasoning effort on Codex**, spawned without the
+parent's history, and the host's default model on any other host. Select the
+model and effort explicitly; do not inherit the parent's. See
+`test-quality-review` and `trim-comments` for when each runs.

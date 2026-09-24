@@ -51,7 +51,7 @@ Only the delta: the lines the correction changed and the lines behind each findi
 Yes, as the fallback when no framework runner works in the copy, with `coverageAnalysis: "off"` and an explicit command that selects the relevant test files and propagates failures; a bare full-suite command does not qualify. The report shows `NoCoverage: unavailable`. It is never a second pass over a scope a framework runner already completed.
 
 **Some mutants timed out, or the lane's budget ended with scope uncovered. Who decides what happens?**
-Nobody. Timeouts from a run that had the host to itself count as detected, exactly as Stryker and cargo-mutants score them. Uncovered scope is recorded as `partial` with the command under Strategy notes. Neither is an Issue, holds delivery, consumes a follow-up pass, or goes to the caller or an epic owner for a waiver; what the lane ran within its budget is the evidence.
+Nobody. Timeouts from a run that had the host to itself count as detected, exactly as Stryker and cargo-mutants score them. Uncovered scope is recorded as `partial` with the command under Strategy notes. Neither is an Issue, holds delivery, triggers a follow-up pass, or goes to the caller or an epic owner for a waiver; what the lane ran within its budget is the evidence.
 
 **Does every mutant need its own committed test?**
 No. One strengthened assertion or table case can kill several. Injected defects, mutant copies, and probe tests stay out of the deliverable.
@@ -73,4 +73,4 @@ It's misapplied if the author's session ran it, missing tools produced a qualita
 
 ## Where it fits
 
-It runs at completion alongside `code-quality-review`. Corrections return as a verified batch; both stages share that skill's two automatic follow-up passes, and a mutation run repeats over the round's delta when its production files or tests changed between rounds.
+It runs at completion alongside `code-quality-review`. Corrections return as a verified batch; both stages follow that skill's correction review, where focused follow-up passes run without asking until review stops converging and a gap outside a follow-up's focus goes under Strategy notes, never as an Issue; a mutation run repeats over the round's delta when its production files or tests changed between rounds.

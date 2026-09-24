@@ -241,17 +241,20 @@ self-audit
 systematic-debugging
 test-driven-development
 test-quality-review
+trim-comments
 using-workbench
 verification-before-completion"
 
 WORKBENCH_AGENTS="ci-watcher.md
 code-quality-reviewer.md
+comment-trimmer.md
 pattern-reviewer.md
 spec-reviewer.md
 test-quality-reviewer.md"
 
 TOOLKIT_SKILLS="adopt-global-rules
 codebase-design
+dependency-audit
 domain-modeling
 get-pr-comments
 grill-me
@@ -260,7 +263,6 @@ html-artifact
 improve-codebase-architecture
 me-human
 test-audit
-trim-comments
 ui-demo-video"
 
 assert_plugin() {
