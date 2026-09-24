@@ -36,7 +36,7 @@ deletes the oldest (git history keeps everything). Sections from before the
 
 ## toolkit 0.11.1: 2026-09-22
 
-- **Open HTML artifacts in dark mode.** `html-artifact` starts with dark colors on the first render, including on systems set to light. Light mode is optional; embedded product UI retains its source appearance and print can use paper-friendly colors. ([decision](decisions/html-artifact.md#dark-initial-theme--2026-09-22))
+- **Open HTML artifacts in dark mode.** `html-artifact` starts with dark colors on the first render, including on systems set to light. Light mode is optional; embedded product UI retains its source appearance and print can use paper-friendly colors. ([decision](decisions/html-artifact.md#dark-initial-theme-2026-09-22))
 
 ## toolkit 0.11.0: 2026-09-22
 

@@ -1,6 +1,6 @@
 # One HTML artifact workflow
 
-## Decision — 2026-09-22
+## Decision (2026-09-22)
 
 Consolidate `html-report` and `arch-map` into the manual-only `html-artifact`
 skill. Reports, plans, architecture explanations, and product targets share a
@@ -83,7 +83,7 @@ plan's collapsed navigation menu. Long personal reference documents now favor
 visible navigation at wide reading sizes, reserving collapse for constrained
 space. This is a reading affordance, not a mandatory sidebar for every artifact.
 
-## Dark initial theme — 2026-09-22
+## Dark initial theme (2026-09-22)
 
 After reviewing the regenerated artifacts, the operator requested that every
 artifact start in dark mode. The initial HTML/CSS now carries dark colors even
