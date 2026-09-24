@@ -8,6 +8,10 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.41.6: 2026-09-24
+
+- **Re-grade sol, opus-5.5 and grok-4.7.** In `model-reference`, gpt-6-sol moves to 7 / 6 / 6 / 6 / 7, opus-5.5's speed to 7, and grok-4.7 to 7.5 on intelligence, taste and code with speed 7; the table stays legacy. The taste-floor note now names luna and sol, not grok, as below 7, and the usage page's table matches the spec. ([decision](decisions/fleet-refresh-2026-09.md#re-grade-sol-opus-55-and-grok-47-2026-09-24))
+
 ## workbench 0.41.5: 2026-09-23
 
 - **One run per scope, one campaign at a time.** In `test-quality-review` a completed mutation run is the round's evidence for its scope and never runs again under another runner, coverage setting or test set to confirm or reconcile its counts; Stryker's command runner is the fallback when no framework runner works in the copy, not a second pass. Campaigns run one at a time on the host: timeouts from a run that shared the host with another campaign are load, recorded as `partial`, and only a run that had the host to itself scores a timeout as detected. A survivor re-checked by hand is one hand-applied defect. ([decision](decisions/mutation-scope-and-budget.md#one-run-per-scope-one-campaign-at-a-time-an-estimate-first-2026-09-23))
@@ -77,7 +81,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 ## workbench 0.40.5: 2026-09-21
 
 - **Keep epic correction decisions with the owner.** The epic owner can return in-scope corrections to a lane and authorize a bounded review extension after the two automatic follow-ups. Correction dispatches, lane handbacks and owner validation do not consume review passes; cumulative counts, independent blocker closure and delivery holds remain. Standalone review extensions still require user authorization. ([decision](decisions/epic-correction-review-authority.md))
-
-## workbench 0.40.4: 2026-09-21
-
-- **Revalidate epic work before delegation.** The epic owner refreshes the integration branch locally and checks each ticket against its current implementation and tests before issuing a lane or workset. Dispatches name the validated revision and remaining scope; already-resolved work is excluded, and failed refreshes or unresolved claims hold the affected handoff. Active lane worktrees remain intact. ([decision](decisions/epic-dispatch-freshness.md))

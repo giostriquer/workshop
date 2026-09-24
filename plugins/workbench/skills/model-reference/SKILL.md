@@ -83,7 +83,7 @@ verified for the current fleet; the legacy rows above do not establish that.
   of the burn; fable-5.1 only where the work loads intelligence past what
   opus-5.5 carries. Putting high-tier judgment at the plan while a cheaper
   tier implements is often the better spend.
-- A shipping taste surface needs taste ≥ 7: luna and grok are not taste routes.
+- A shipping taste surface needs taste ≥ 7: luna and sol are not taste routes.
 - Speed breaks ties, never quality. When two rows are level on the axis the
   work actually loads, take the faster one. It does not buy a drop on
   intelligence, taste, or code.

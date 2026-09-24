@@ -33,3 +33,16 @@ different sol and luna grades.
    work loads intelligence past what opus-5.5 carries. grok-4.7 at taste 6
    joins luna below the taste floor of 7.
 4. **Re-sync the usage page's table to the spec**, row for row.
+
+## Re-grade sol, opus-5.5 and grok-4.7 (2026-09-24)
+
+The operator re-graded three rows: gpt-6-sol to 7 / 6 / 6 / 6 / 7, opus-5.5's
+speed from 8.5 to 7, and grok-4.7 to 7.5 on intelligence, taste and code with
+speed 7. fable-5.1 now sits above opus-5.5 in the table. The grades come
+without a dated method, so the table stays marked legacy.
+
+The reading notes follow the numbers again: grok-4.7 at taste 7.5 clears the
+floor of 7 and sol at taste 6 drops below it, so sol replaces grok beside luna
+as "not a taste route". The CI-watch and test-quality-review exceptions still
+name `gpt-6-sol` on Codex; this release leaves them unchanged. The usage
+page's table is re-synced to the spec.
