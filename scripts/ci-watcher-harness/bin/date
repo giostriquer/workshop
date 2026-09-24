@@ -1,0 +1,5 @@
+#!/bin/bash
+# Fake date on the virtual clock in $FAKE_STATE/clock (epoch seconds, starting at 1000000).
+if [ "$1" = "+%s" ]; then cat "$FAKE_STATE/clock"; exit 0; fi
+if [ "$1" = "-u" ] && [ "$2" = "+%FT%TZ" ]; then echo "T+$(( $(cat "$FAKE_STATE/clock") - 1000000 ))s"; exit 0; fi
+exec /bin/date "$@"

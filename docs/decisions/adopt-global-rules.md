@@ -33,3 +33,7 @@ The BLUF and Simplified Technical English guidance moved from `globals/CLAUDE.md
 ## Output styles install, never activate (2026-08-14)
 
 The installer writes the style but never edits `settings.json` or switches the active style: how a session talks is the user's preference. The run reports it as installed, not activated, and names `/output-style`. An existing unmarked `bluf-ste.md` is a collision the user resolves.
+
+## Shipped globals: GitHub reads free, one authorization per task, focused tests (2026-09-24)
+
+The shipped `globals/CLAUDE.md` and `globals/AGENTS.md` keep the rule that a pull request or tracker comment needs explicit approval, and add three adopter-facing defaults: routine GitHub reads and checks need no approval, a GitHub write the user authorized carries through the rest of that task without a second ask, and local test runs stay focused while the pull request's CI runs the full suite. The operator's own instruction file grants more, including tracker preauthorization, and stays personal: managed blocks are pack-owned and a re-run overwrites a drifted block, so a personal grant in the pack would silently replace every adopter's approval rule on their next run. `AGENTS.md` keeps its GitHub CLI sandbox-escalation section.

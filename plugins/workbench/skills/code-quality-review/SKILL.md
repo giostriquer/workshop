@@ -18,15 +18,23 @@ the same boundary: finish and verify the batch before resuming delivery.
 ## Who runs it: a reviewer that did not write the code
 
 This review is **dispatched, never self-served.** Run it in a fresh reviewer
-context handed the diff and the changed files' contents: the
-`code-quality-reviewer` agent, or the host's equivalent subagent mechanism.
+context handed the accepted scope, the diff and the changed files' contents:
+the `code-quality-reviewer` agent, or the host's equivalent subagent mechanism.
+The accepted scope is the ticket, plan or agreed change as it was asked for,
+never the author's account of the code; it sets where in-scope ends, not what
+the reviewer may read. Dispatch `code-quality-reviewer` by name with no model,
+so it runs on the parent's (on Codex, paste the agent file and use its Dispatch
+line, per `using-workbench`'s *Workbench agents on Codex*), with the three
+inputs as `### Accepted scope`, `### Git / diff output` and `### Changed file
+contents`.
 
 The session that implemented the change is the one context that cannot perform
 this review. It holds every justification that produced the code, so the
 structure reads as inevitable rather than as a choice someone made, and the
 code-judo move this rubric exists to find is precisely what that context is
 blindest to. A self-served pass reliably returns "nothing blocking" on a diff a
-fresh reviewer takes apart. Dispatching also keeps the full diff and file
+fresh reviewer takes apart, and a reviewer forked from the author's history
+inherits the same justifications. Dispatching also keeps the full diff and file
 contents out of the implementing session's window.
 
 When the diff changes production logic or tests, the dispatching session also
@@ -60,8 +68,8 @@ Start from this baseline:
 ## Scope Boundary: strict inside, follow-up outside
 
 All the strictness below applies **within the accepted work's boundary**:
-the ticket, plan, or agreed change under review. Findings outside it are
-classified, not chased:
+the ticket, plan, or agreed change under review, as the dispatch's accepted
+scope states it. Findings outside it are classified, not chased:
 
 - **In scope (blocking):** demonstrated defects and material structural problems
   in this change. Explain the consequence and fix before approval.
@@ -148,7 +156,7 @@ Apply the baseline prompt above, plus these explicit review rules:
    - Treat this as a strong code-quality smell by default.
    - Prefer extracting helpers, subcomponents, modules, or local abstractions instead of letting a file sprawl past 1000 lines.
    - If the diff crosses that threshold, explicitly ask whether the code should be decomposed first.
-   - Only waive this if there is a compelling structural reason and the resulting file is still clearly organized.
+   - The crossing alone is advisory; it blocks only when the review demonstrates a concrete maintainability consequence.
 
 2. **Do not allow random spaghetti growth in existing code.**
    - Be highly suspicious of new ad-hoc conditionals, scattered special cases, or one-off branches inserted into unrelated flows.
@@ -180,6 +188,11 @@ Apply the baseline prompt above, plus these explicit review rules:
    - If independent work is serialized for no good reason, ask whether the flow should run in parallel instead.
    - If related updates can leave state half-applied, push for a more atomic structure.
    - Do not over-index on micro-optimizations, but do flag avoidable orchestration complexity that makes the implementation more brittle.
+
+8. **Carry the comment trim, per the repository's rules.** Comments are findings like any other; the implementer trims. A comment that only restates the code, with no repository rule against it, is `pattern-reviewer`'s built-in comment-noise check, which applies wherever that agent runs; this review does not flag it.
+   - Where the repository's rules say which comments to remove, flag the ones the diff adds that those rules cover.
+   - Flag a lint or type suppression (`eslint-disable`, `@ts-ignore`, `@ts-expect-error`, `# type: ignore`, `#[allow(...)]`) that silences a rule protecting correctness or safety. Look the rule up and ask for the fix it wants.
+   - Flag a constraint comment (`do not remove`, `keep in sync with`, `do not change this wording`) that a test, type, or lint rule could enforce, and name the cheapest one.
 
 ## Primary Review Questions
 

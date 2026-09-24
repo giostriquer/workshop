@@ -14,10 +14,10 @@
     ],
     "trackingNote": "Drift is measured against upstream's published releases, never the branch tip. Unreleased commits on `ref` are work in progress: they get reported as a count and excluded from review and from mirroring. Set track to \"branch\" only if upstream stops tagging releases.",
     "lastReviewed": {
-      "commit": "b36e0829c6d0140e93cfef2ca599b1b07d4a7797",
-      "release": "v6.3.0",
-      "date": "2026-08-12",
-      "note": "First pin landed on a release boundary. Review of v6.2.0+1 → v6.3.0 completed: brainstorming's three-path classifier adopted through the adaptation filter, writing-skills re-mirrored verbatim, the other four adopted pieces unchanged upstream in the range, dropped-piece churn reviewed as FYI with every disposition standing, zero unmapped entries."
+      "commit": "5bf4e78011075bcfc0dc295f0724994cd123ee71",
+      "release": "v6.4.1",
+      "date": "2026-09-24",
+      "note": "Review of v6.3.0 → v6.4.1 completed. Adopted verbatim: upstream's two interpreter-invocation fixes, `bash ./find-polluter.sh` in systematic-debugging and writing-skills' `node ./render-graphs.js` plus its File Organization rule. Not adopted: test-driven-development's whole-suite paragraph, which re-tightens the precedence layer and contradicts the carried focused-checks line; brainstorming's Establish Shared Understanding section, which overlaps the carried purpose/constraints/success-criteria guidance, and its rewritten HARD-GATE and anti-pattern, which tie approval stages to writing-plans (dropped); visual-companion.md, not carried. New upstream skill diagnosing-superpowers recorded as dropped, its transcript method adapted into self-audit. Dropped-piece churn reviewed as FYI with every disposition standing; zero unmapped entries."
     }
   },
   "adaptationFilter": "docs/decisions/workbench-system.md#2-the-adaptation-filter: defang the description; de-pipeline the body; carry only needed references; provenance footer. Applies to every adoption, initial and future. Preserve the targeted wording corrections in docs/decisions/skill-wording-hardening.md; do not reintroduce destructive recovery or repeated authorization.",
@@ -55,21 +55,21 @@
       "localPath": "plugins/workbench/skills/systematic-debugging/",
       "disposition": "adopted",
       "why": "Root-cause discipline before proposing fixes.",
-      "adaptations": "Description defanged; cross-references to dropped pieces scrubbed. Current wording refinements are recorded in docs/decisions/skill-wording-hardening.md and supersede conflicting historical wording here; preserve the original procedures and supporting examples."
+      "adaptations": "Description defanged; cross-references to dropped pieces scrubbed. Current wording refinements are recorded in docs/decisions/skill-wording-hardening.md and supersede conflicting historical wording here; preserve the original procedures and supporting examples. v6.4.1 review: root-cause-tracing.md's `bash ./find-polluter.sh` invocation adopted verbatim, because the script ships without its executable bit and the bare path exited 126; find-polluter.sh stays byte-identical to upstream."
     },
     {
       "upstreamPath": "skills/verification-before-completion/",
       "localPath": "plugins/workbench/skills/verification-before-completion/",
       "disposition": "adopted",
       "why": "Evidence before completion claims: same ethos as toolkit's empirical-proof.",
-      "adaptations": "Description defanged; where the body suggests dispatching reviewers, redirected to code-quality-review / empirical-proof. Current wording refinements are recorded in docs/decisions/skill-wording-hardening.md and supersede conflicting historical wording here; preserve the original procedures and supporting examples."
+      "adaptations": "Description defanged; where the body suggests dispatching reviewers, redirected to code-quality-review / empirical-proof. Current wording refinements are recorded in docs/decisions/skill-wording-hardening.md and supersede conflicting historical wording here; preserve the original procedures and supporting examples. Local addition (2026-09-24), keep through upstream reviews: an \"App or UI state\" row in Common Failures and a matching Key Patterns entry. A claim about what an app shows says it was seen in the running build and how, or was not checked in the running app, naming the evidence it rests on and the user's step to see it (rebuild, reinstall, relaunch, restart). A label, never a gate. See docs/decisions/empirical-proof.md."
     },
     {
       "upstreamPath": "skills/writing-skills/",
       "localPath": ".claude/skills/writing-skills/",
       "disposition": "adopted",
       "why": "The RED→GREEN skill-authoring loop; the operator authors skills constantly. Repo-local, shipped in no plugin.",
-      "adaptations": "Retains the upstream authoring procedure, examples, discovery guidance, and baseline/change/retest loop. Local adaptations preserve existing code, judge outcomes and misapplication as well as compliance, label sample limits, and allow related changes to be tested together. Review upstream changes through the adaptation filter; do not re-mirror away these corrections. See docs/decisions/skill-wording-hardening.md.",
+      "adaptations": "Retains the upstream authoring procedure, examples, discovery guidance, and baseline/change/retest loop. Local adaptations preserve existing code, judge outcomes and misapplication as well as compliance, label sample limits, and allow related changes to be tested together. Review upstream changes through the adaptation filter; do not re-mirror away these corrections. See docs/decisions/skill-wording-hardening.md. v6.4.1 review: the interpreter-invocation fix adopted verbatim, `node ./render-graphs.js` and the File Organization rule that skill text runs bundled scripts through their interpreter, never by bare path.",
       "localDeltas": [
         "Description includes auditing existing skills. Outcome-oriented evaluation and safe recovery are local adaptations to retain."
       ]
@@ -134,6 +134,12 @@
       "localPath": null,
       "disposition": "dropped",
       "why": "Superseded by file-pr (file-and-tend) and the push skill."
+    },
+    {
+      "upstreamPath": "skills/diagnosing-superpowers/",
+      "localPath": null,
+      "disposition": "dropped",
+      "why": "Session diagnosis feeding superpowers bug reports: an intake interview, seven parallel analysts, a scrubbed-bundle export and a GitHub issue pipeline, under a rule that it never diagnoses a skill. Its transcript method was borrowed into workbench self-audit instead (2026-09-24): read the on-disk transcript, pre-compaction history and subagent transcripts included; discover the host's format at run time; cite path:line or drop the finding; read huge JSONL records by line number and small fields. self-audit proposes changes, so the no-diagnosis rule stayed behind with the pipeline. See docs/decisions/self-audit.md."
     }
   ]
 }

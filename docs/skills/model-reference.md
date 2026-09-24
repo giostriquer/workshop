@@ -87,10 +87,12 @@ rules file; `adopt-global-rules` ships one example, `model-floor.md`. The skill
 names models only in two exceptions, each a separate agent whose model is
 selected explicitly, not inherited:
 
-- **CI watching:** Opus on Claude or gpt-6-sol on Codex. Never Astra, Fable,
-  Haiku, or Sonnet, and never parent polling. See `fix-ci`.
-- **Test-quality review:** Opus on Claude Code or gpt-6-sol on Codex; the
-  host's default model elsewhere.
+- **CI watching:** Opus on Claude or gpt-6-sol on Codex, both at `xhigh`
+  effort and spawned without the parent's history. Never Astra, Fable, Haiku,
+  or Sonnet, and never parent polling. See `fix-ci`.
+- **Test-quality review:** Opus on Claude Code or gpt-6-sol on Codex, both at
+  `xhigh` effort and spawned without the parent's history; the host's default
+  model elsewhere.
 
 **The table lists models I don't have.**
 

@@ -18,12 +18,14 @@ seconds and exits on the first terminal state: a failed check, the PR merged or
 closed, no check pending, a moved head, or its own deadline. The `ci-watcher`
 agent carries that loop on every host, even when the parent is idle: every
 parent turn spent waiting costs the parent model's tokens, and a Fable or
-Astra parent is the expensive one. The agent file pins the watcher's model
-(**Opus on Claude Code; `gpt-6-sol` on Codex**), so the parent passes none;
-never watch inside the parent's own turns, and never route the watcher to
-Haiku or Sonnet. If the host cannot dispatch the agent, report the monitoring
-gap rather than polling in the parent. The parent owns diagnosis and repairs;
-the watcher only gathers CI evidence.
+Astra parent is the expensive one. Dispatch `ci-watcher` by name with no model
+(on Codex, paste the agent file, `agents/ci-watcher.md` two directories above
+this `SKILL.md`, and use its Dispatch line, per `using-workbench`'s *Workbench
+agents on Codex*), with the PR, the pinned head SHA and the deadline. Never
+watch inside the parent's own turns, and never route the watcher to Haiku or
+Sonnet. If the host cannot dispatch the agent, report the monitoring gap rather
+than polling in the parent. The parent owns diagnosis and repairs; the watcher
+only gathers CI evidence.
 
 Host notes, of which only the first is Claude Code behavior:
 
@@ -31,8 +33,19 @@ Host notes, of which only the first is Claude Code behavior:
   re-invoked by the watcher's handback notification, so the parent ends its
   turn after dispatching and runs no `gh pr checks`, `gh run view`, Monitor or
   read of the watcher's output file in the meantime. Inside the watcher, the
-  loop runs once through the Bash tool's `run_in_background`, which wakes the
-  agent once when the loop exits.
+  loop runs in foreground Bash calls that each end before the tool's
+  ten-minute limit, so the watcher's turn never ends early and the parent is
+  re-invoked once, by the handback. A host that raises the limit with
+  `BASH_MAX_TIMEOUT_MS` (to eleven minutes or more for the default window)
+  lets one call cover the whole window.
+- **Codex.** After `spawn_agent`, call `wait_agent` with `timeout_ms: 600000`
+  and repeat until the watcher's final answer. Do not end the turn meanwhile:
+  a finished child does not wake the parent. Run no `gh` read or `sleep`
+  between waits, and do not ask the watcher for progress updates. A
+  follow-up to a returned watcher follows `using-workbench`'s *Workbench
+  agents on Codex*: a new pinned head and nothing else. The flake rerun's
+  watcher is therefore a fresh spawn, since its head is not new, and the fix,
+  the commit and the push stay in this session.
 - **Other hosts.** The parent dispatches the watcher and waits for its return
   through the host's mechanism; it does not poll `gh` itself.
 
@@ -40,9 +53,13 @@ Host notes, of which only the first is Claude Code behavior:
 dispatch, not two. Never dispatch a second watcher on a head whose watcher is
 still running or has returned red; the checks it listed as pending are not
 watched further, since they rerun on the next head. A re-watch after a push is
-a new head and therefore a new watcher. The rule covers polling and watching; a
-single `gh pr checks` read, such as the pre-push snapshot in step 8, is not
-polling and the parent runs it itself.
+a new head and therefore a new watcher. The flake rerun is the one same-head
+re-watch: step 5 dispatches one watcher for the head, naming the rerun's run
+id and the attempt that failed, and that watcher waits for the new attempt,
+then watches every check on the head. No other second watcher on a red head.
+The rule covers polling and watching; a single `gh pr checks` or `gh run view`
+read, such as the pre-push snapshot in step 8 or the attempt read in step 5,
+is not polling and the parent runs it itself.
 
 ## Workflow
 
@@ -77,8 +94,9 @@ polling and the parent runs it itself.
    suspects: check `git log` and the diff against the base branch before suspecting
    infrastructure.
 5. **Flake or fault?** An infra failure with no plausible code cause (runner died,
-   network timeout, unrelated job) → `gh run rerun <run-id> --failed` once, note the
-   flake, and return to watching. A real fault → continue.
+   network timeout, unrelated job) → read its attempt (`gh run view <run-id> --json
+   attempt`), `gh run rerun <run-id> --failed` once, note the flake, and dispatch
+   the head's flake watcher with the run id and that attempt. A real fault → continue.
 6. **Reproduce locally when feasible.** Read the failing workflow command and
    run the relevant focused case before the fix and again after it. Keep mandatory
    local gates. Full suites run in PR CI by default; a wider local run needs an
@@ -122,3 +140,7 @@ polling and the parent runs it itself.
   invitation to iterate blindly.
 - The fix stays in the implementing session. The designated `ci-watcher` agent
   always owns watching; it never fixes, reruns workflows, commits, or pushes.
+- When a step goes off this workflow's path (GitHub refuses `gh run rerun --failed`
+  until the whole run completes, a watcher verdict the parent cannot trust, a race
+  the loop cannot see), the main session decides the next step and tells the user
+  plainly what happened and what it chose.

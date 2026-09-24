@@ -85,6 +85,17 @@ confirmed ignored first. Never outside the repository unless the user asks.
 **CI watching** always goes to a separate Opus agent on Claude or `gpt-6-sol`
 agent on Codex, never parent polling.
 
+**Workbench agents on Codex.** Each agent file has a Dispatch line naming how
+it is dispatched, and the calling skills add only the run's inputs. Codex
+registers no plugin agents, so the parent reads the agent's file from the
+installed plugin (`agents/<name>.md`, two directories above the loaded skill's
+`SKILL.md`), spawns with the arguments its Dispatch line names, and pastes its
+body into the spawn message, under `You are the <name>. Your contract:` and
+before the run's inputs. A follow-up to that agent carries only its own next
+job. On Claude Code the registered agent carries its contract and model, so the
+parent passes no model and pastes nothing
+([decision](../decisions/plugin-surfaces.md)).
+
 ## Common questions
 
 **It fired at the start of my session. Is it about to run a process on me?**
@@ -101,13 +112,17 @@ only for your explicit decline or a superseding repo process
 **Do dispatched subagents inherit these conventions?**
 
 No; they skip the orientation. The dispatching session puts the scope
-folder's path in each agent's contract.
+folder's path in each agent's contract, and names `file-pr` in any dispatch
+that will open a PR.
 
 **My one-ticket change turned into a sprawl. Does workbench catch that?**
 
-No. Scope is yours to define and the session's to follow. The adversarial
-review sends out-of-scope findings to follow-ups rather than growing the diff.
-State the boundary in the ask or the repo's rules when it matters.
+At filing. `file-pr` stops and proposes a split when the diff goes beyond the
+agreed PR plan or spans unrelated concerns the plan does not put together.
+Scope is still yours to define and the session's to follow, and the
+adversarial review sends out-of-scope findings to follow-ups rather than
+growing the diff. State the boundary in the ask or the repo's rules when it
+matters.
 
 **Does it enforce anything with hooks?**
 

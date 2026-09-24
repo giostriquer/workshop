@@ -30,3 +30,15 @@ Copyright (c) Jesse Vincent, and are used under the MIT License. The above
 permission and warranty notices apply to those portions as required by that
 license. Adaptations are documented at
 https://github.com/giostriquer/workshop/blob/main/docs/decisions/workbench-system.md
+
+---
+
+Portions of this plugin (the `code-quality-review` skill and the
+`code-quality-reviewer` and `ci-watcher` agents) are derived from Cursor's
+plugins (https://github.com/cursor/plugins): the `thermos` plugin's
+`thermo-nuclear-code-quality-review` skill and the `cursor-team-kit` plugin's
+agents, Copyright (c) 2026 Cursor, and are used under the MIT License. The above
+permission and warranty notices apply to those portions as required by that
+license. Adaptations are documented at
+https://github.com/giostriquer/workshop/blob/main/docs/decisions/code-quality-review.md
+and https://github.com/giostriquer/workshop/blob/main/docs/decisions/fix-ci.md

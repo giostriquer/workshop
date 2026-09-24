@@ -23,9 +23,9 @@ Mostly you don't: it fires at completion, right before PR-or-merge. You can also
 
 ## The rubric
 
-The baseline is a deep audit that restructures the change without altering behavior: **"Be extremely thorough and rigorous. Measure twice, cut once."** On top sit eight standards. Rule 0 is ambition: delete complexity rather than rearrange it. Rules 1 to 7 fight a file pushed past 1,000 lines, ad-hoc branches bolted into unrelated flows, rubber-stamped "it works" code, magic and thin wrappers, loose types and silent fallbacks, logic in the wrong layer or duplicated helpers, and needless sequential or non-atomic orchestration.
+The baseline is a deep audit that restructures the change without altering behavior: **"Be extremely thorough and rigorous. Measure twice, cut once."** On top sit nine standards. Rule 0 is ambition: delete complexity rather than rearrange it. Rules 1 to 7 fight a file pushed past 1,000 lines, ad-hoc branches bolted into unrelated flows, rubber-stamped "it works" code, magic and thin wrappers, loose types and silent fallbacks, logic in the wrong layer or duplicated helpers, and needless sequential or non-atomic orchestration. Rule 8 carries the comment trim: comments your repo's rules say to remove, a lint or type suppression that hides a correctness rule, and a "do not remove" comment a test, type, or lint could enforce.
 
-**Scope decides what a finding costs** ([decision](../decisions/workbench-operator-decisions.md)). Strictness applies inside the accepted work (ticket, plan, or agreed change), and every finding carries a label:
+**Scope decides what a finding costs** ([decision](../decisions/workbench-operator-decisions.md)). Strictness applies inside the accepted work (ticket, plan, or agreed change), which the dispatch hands the reviewer as its accepted scope, and every finding carries a label:
 
 - **In-scope (blocking):** a demonstrated defect or material structural problem in this change.
 - **In-scope (advisory):** a supported improvement without a blocking consequence.
@@ -53,10 +53,13 @@ No. When production logic or tests changed, one initial round includes both stag
 Return each blocking fix or evidence-based rejection to the same reviewer with finding IDs, revisions, the correction diff, and focused test evidence; a passing test alone does not close a blocker. Follow-up checks the corrections and what they affect. Code and test stages share at most two automatic follow-up passes. If blockers remain after that, delivery holds and the owning authority (the epic owner for a delegated lane, otherwise the user) decides the next step. An exhausted budget is never PASS, and a new reviewer or handoff does not reset the count.
 
 **Is the 1000-line rule a hard cap?**
-No. Crossing it makes the review ask whether to decompose first; a compelling structural reason with a clearly organized file waives it.
+No. Crossing it makes the review ask whether to decompose first; it blocks only when the review demonstrates a concrete maintainability consequence, never on the line count alone.
+
+**Who trims the comments?**
+This review flags them, per your repo's rules; the implementer trims. It never deletes a comment itself. With no comment rules in the repo, it still flags a suppression that hides a correctness rule and a constraint comment that a test, type, or lint could enforce. A comment that only restates the code is `pattern-reviewer`'s check, which flags it by default wherever that agent runs.
 
 **Can I run it inline in the session that wrote the code?**
-No. That session holds every justification behind the code, so the code-judo move is exactly what it cannot see. Dispatch the `code-quality-reviewer` agent, which loads this skill as its rubric and gathers `git diff <base>...HEAD` itself if needed. With no subagent mechanism, hand the diff to a fresh session and say so in the report. An author's own pass is never this gate.
+No. That session holds every justification behind the code, so the code-judo move is exactly what it cannot see. Dispatch the `code-quality-reviewer` agent, which loads this skill as its rubric and gathers `git diff <base>...HEAD` itself if needed. Hand it the accepted scope, the ask as the ticket or plan put it, not your view of the code. It runs on your session's model, without your history. On Codex, spawn it as the agent file's Dispatch line says, which forks none of your history, and paste the file's body into the spawn message ahead of the three inputs, since Codex registers no plugin agents. With no subagent mechanism, hand the diff to a fresh session and say so in the report. An author's own pass is never this gate.
 
 ## It's working if
 

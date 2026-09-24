@@ -1,0 +1,6 @@
+interface:
+  display_name: "Adopt Global Rules"
+  short_description: "Install the shipped global agent rules additively"
+
+policy:
+  allow_implicit_invocation: false

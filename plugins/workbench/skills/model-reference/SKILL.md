@@ -90,16 +90,19 @@ verified for the current fleet; the legacy rows above do not establish that.
 
 ## CI monitoring exception
 
-Every CI watch uses a separate **Opus (`opus`) agent on Claude** or
-**`gpt-6-sol` agent on Codex**. Never use Astra or Fable to watch CI. Select the
-model explicitly; do not inherit a more capable parent. Parents already using
-Opus/Sol still delegate to a separate designated agent. Missing dispatch is a
-reported monitoring gap, not permission for parent polling or a prohibited
-fallback. Haiku and Sonnet remain prohibited. See `fix-ci` for the workflow.
+Every CI watch uses a separate **Opus (`opus`) agent at `xhigh` effort on
+Claude** or **`gpt-6-sol` agent at `xhigh` reasoning effort on Codex**, spawned
+without the parent's history. Never use Astra or Fable to watch CI. Select the
+model and effort explicitly; do not inherit a more capable parent. Parents
+already using Opus/Sol still delegate to a separate designated agent. Missing
+dispatch is a reported monitoring gap, not permission for parent polling or a
+prohibited fallback. Haiku and Sonnet remain prohibited. See `fix-ci` for the
+workflow.
 
 ## Test-quality review exception
 
-Every `test-quality-review` dispatch uses a separate **Opus (`opus`) agent on Claude
-Code** or **`gpt-6-sol` agent on Codex**, and the host's default model on any other
-host. Select the model explicitly; do not inherit the parent's model. See
+Every `test-quality-review` dispatch uses a separate **Opus (`opus`) agent at `xhigh`
+effort on Claude Code** or **`gpt-6-sol` agent at `xhigh` reasoning effort on Codex**,
+spawned without the parent's history, and the host's default model on any other
+host. Select the model and effort explicitly; do not inherit the parent's. See
 `test-quality-review` for when it runs.

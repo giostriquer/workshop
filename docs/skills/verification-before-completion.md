@@ -47,6 +47,7 @@ the required local gates. Full suites normally run in PR CI.
 | Linter clean | Linter output, 0 errors | Partial check, extrapolation |
 | Build succeeds | Build exits 0 | Linter passing, logs look fine |
 | Bug fixed | Original symptom retested, passing | Code changed, fix assumed |
+| App or UI state ("the button appears") | Seen in the running build, saying how; or not checked in the running app, naming the evidence and your step to see it (rebuild, reinstall, relaunch, restart) | Tests, fixtures or mock screens reported as what the app shows |
 | Regression test works | Verified red-green cycle | Test passes once |
 | Agent completed | Diff inspected, acceptance evidence corroborated | Agent says "success" |
 | Requirements met | Line-by-line checklist | Tests passing |
@@ -71,6 +72,12 @@ No. It's an expensive tier. The session offers it and runs it only on your
 ask, a standing rule, or a repo gate that requires it
 ([decision](../decisions/workbench-operator-decisions.md)).
 
+**A UI fix was checked only with tests and a mock screen. Must the session launch the app?**
+No. The claim says so instead: "Not checked in the running app: the unit test
+and the mock screen show the fix. To see it, rebuild and relaunch." That label
+is the whole requirement. Having the session launch and drive the app is
+`empirical-proof`, which still runs only on your ask.
+
 **What if no command can prove the claim?**
 Prove the deliverable the way its real consumer would use it, and record the
 evidence.
@@ -85,6 +92,8 @@ be fine now" doesn't.
   evidence covers.
 - Failures show up as failures, with the output attached.
 - Claims about agent work rest on the diff, not on the agent's summary.
+- A claim about what the app shows says whether it was seen in the running
+  build, and if not, tells you what to rebuild or relaunch to see it.
 - Regression tests were seen failing before anyone trusted them.
 - **Not working:** the gate gets named but no evidence is cited, it's used as a
   reason to run an expensive protocol nobody asked for, or stale evidence gets

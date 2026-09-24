@@ -52,6 +52,7 @@ Use focused local checks and required local gates. Full suites normally run in P
 | Linter clean | Linter output: 0 errors | Partial check, extrapolation |
 | Build succeeds | Build command: exit 0 | Linter passing, logs look good |
 | Bug fixed | Test original symptom: passes | Code changed, assumed fixed |
+| App or UI state ("the button appears", "the crash is fixed in the app") | Say which: **seen in the running build** (how: screenshot, live look, driven flow), or **not checked in the running app** (the tests, fixtures, mock screens or build it rests on, plus the user's step to see it: rebuild, reinstall, relaunch, restart X) | Tests, fixtures or mock screens reported as what the app shows |
 | Regression test works | Red-green cycle verified | Test passes once |
 | Agent completed | Inspect VCS diff and corroborate acceptance evidence | Agent reports "success" |
 | Requirements met | Line-by-line checklist | Tests passing |
@@ -99,6 +100,13 @@ Use focused local checks and required local gates. Full suites normally run in P
 ```
 ✅ [Run build] [See: exit 0] "Build passes"
 ❌ "Linter passed" (linter doesn't check compilation)
+```
+
+**App or UI state:**
+```
+✅ [Drove the flow in the running build] [Screenshot: Export visible] "Seen in the running build: admins get the Export button (screenshot)"
+✅ "Not checked in the running app: a unit test and the mock-screen harness show the Export button. To see it, rebuild and relaunch the app."
+❌ "Admins now get the Export button" (from a unit test and a mock screen)
 ```
 
 **Requirements:**

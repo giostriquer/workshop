@@ -4,7 +4,7 @@
 
 This skill reviews implemented test code for **trustworthiness**: whether each test protects the behavior it claims to protect. It reads the tests with the production code they exercise, because **"a test that compiles, runs green, and asserts almost nothing passes every other review gate."**
 
-It is the test half of the adversarial review, **dispatched, never self-served**: the `test-quality-reviewer` agent runs it as a separate Opus agent on Claude Code or `gpt-6-sol` on Codex (the host's default model elsewhere). A change review returns `PASS` or `ISSUES_FOUND`; other requests get prioritized findings or a testing recommendation. The implementer owns fixes and permanent tooling changes.
+It is the test half of the adversarial review, **dispatched, never self-served**: the `test-quality-reviewer` agent runs it as a separate Opus agent at `xhigh` effort on Claude Code or `gpt-6-sol` at `xhigh` reasoning effort on Codex, spawned without your session's history (the host's default model elsewhere). A change review returns `PASS` or `ISSUES_FOUND`; other requests get prioritized findings or a testing recommendation. The implementer owns fixes and permanent tooling changes.
 
 ## When to reach for it
 
@@ -55,6 +55,9 @@ Nobody. Timeouts from a run that had the host to itself count as detected, exact
 
 **Does every mutant need its own committed test?**
 No. One strengthened assertion or table case can kill several. Injected defects, mutant copies, and probe tests stay out of the deliverable.
+
+**Why does the Codex spawn name the effort and fork no history?**
+A spawn that names a model but no effort runs at that model's default effort, and a forked history hands the reviewer the author's reasoning about the tests. The `test-quality-reviewer` agent file's Dispatch line names the spawn's model, effort and `fork_turns: "none"`, and since Codex registers no plugin agents, the spawn message pastes that file's body ahead of the question or target and the base branch. On Claude Code the agent file pins the model and effort, so pass no model. Which model and effort, and why, is `model-reference`'s test-quality review exception.
 
 **Can one prompt ask for code and test quality together?**
 No. The reviewer answers `## Verdict: REFUSED - out-of-scope dispatch`; each stage is a separate dispatch.

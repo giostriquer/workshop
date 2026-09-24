@@ -77,7 +77,7 @@ process layer: ready immediately after install, nothing to configure.
 | `model-reference` | the model fleet reference table + hard routing invariants |
 | `epic-orchestration` | owns a multi-ticket epic whose lanes other sessions implement (user-invoked only) |
 | `epic-implementation` | uses the shared [lane report template](plugins/workbench/skills/epic-orchestration/references/lane-report.md) in lanes dispatched through epic-orchestration |
-| `epic-cleanup` | removes obsolete artifacts and owned worktrees after an epic (user-invoked only) |
+| `epic-cleanup` | on your explicit ask: lists a repo's stale worktrees, branches, caches and stray processes for you to pick from, or removes an epic's leftovers; keeps active worktrees |
 
 **Workbench**: the process layer, implementing [the workbench flow](docs/workbench-flow.md):
 
@@ -90,7 +90,7 @@ process layer: ready immediately after install, nothing to configure.
 | `verification-before-completion` | evidence before any "done" claim |
 | `receiving-code-review` | rigor on arriving review feedback |
 | `using-workbench` | on-demand flow orientation |
-| `self-audit` | retrospective on the process that ran the session (user-invoked only) |
+| `self-audit` | on your explicit ask: retrospective on the process that ran the session, read from its transcript, ending in a paste-ready defect note |
 
 Five workbench skills derive from [obra/superpowers](https://github.com/obra/superpowers)
 by Jesse Vincent (MIT), adapted per
@@ -98,6 +98,12 @@ by Jesse Vincent (MIT), adapted per
 no dispatcher, descriptions as honest triggers. Upstream drift tracking
 (`workbench-drift`, `.claude/skills/`) is repo-local maintenance tooling, not
 shipped in the plugin.
+
+`code-quality-review`, `code-quality-reviewer` and `ci-watcher` derive from
+Cursor's [cursor/plugins](https://github.com/cursor/plugins) (`thermos` and
+`cursor-team-kit`, MIT), adapted per
+[`docs/decisions/code-quality-review.md`](docs/decisions/code-quality-review.md)
+and [`docs/decisions/fix-ci.md`](docs/decisions/fix-ci.md).
 
 Details in [`plugins/workbench/README.md`](plugins/workbench/README.md).
 
@@ -113,6 +119,39 @@ installed skill's listing rides in each session's context:
 | `get-pr-comments` | triages PR feedback into an action list |
 | `adopt-global-rules` | installs the workshop's shipped global CLAUDE.md / AGENTS.md, rules, and Claude output styles onto a machine, additively (user-invoked only) |
 | `me-human` | dogfood a system from a human user's perspective (user-invoked only) |
+| `test-audit` | gates a test before it lands, and audits or prunes low-value, duplicative, or implementation-coupled tests (user-invoked only) |
+| `trim-comments` | removes comment slop from the branch diff before review and offers encodings for constraint comments (user-invoked only) |
+| `grill-me` | interviews you about a plan or idea until every branch is settled (user-invoked only) |
+| `grilling` | the round-based interview behind `grill-me` and `improve-codebase-architecture` |
+| `improve-codebase-architecture` | surveys a codebase for deepening opportunities, then grills the one you pick (user-invoked only) |
+| `codebase-design` | the deep-module design vocabulary |
+| `domain-modeling` | keeps a project's `CONTEXT.md` glossary and ADRs current |
+
+`get-pr-comments` derives from `cursor-team-kit` in Cursor's
+[cursor/plugins](https://github.com/cursor/plugins) (MIT), adapted per
+[`docs/decisions/get-pr-comments.md`](docs/decisions/get-pr-comments.md).
+
+`test-audit` derives from OpenClaw's
+[openclaw/openclaw](https://github.com/openclaw/openclaw)
+(`.agents/skills/test-audit`, MIT, Copyright (c) 2026 OpenClaw Foundation),
+adapted per [`docs/decisions/test-audit.md`](docs/decisions/test-audit.md).
+
+`trim-comments` derives from OpenClaw's
+[openclaw/openclaw](https://github.com/openclaw/openclaw)
+(`.agents/skills/deslop`, MIT, Copyright (c) 2026 OpenClaw Foundation), with
+its comment keep-list and its constraint-comment and suppression rules from the
+`pstack` plugin in Cursor's [cursor/plugins](https://github.com/cursor/plugins)
+(`no-comments` and `comment-sicko`, MIT, Copyright (c) 2026 Lauren Tan),
+adapted per
+[`docs/decisions/trim-comments.md`](docs/decisions/trim-comments.md).
+
+`grill-me`, `grilling`, `improve-codebase-architecture`, `codebase-design` and
+`domain-modeling` derive from Matt Pocock's
+[mattpocock/skills](https://github.com/mattpocock/skills) (MIT, Copyright (c)
+2026 Matt Pocock), with improvements from the `pstack` plugin in Cursor's
+[cursor/plugins](https://github.com/cursor/plugins) (MIT, Copyright (c) 2026
+Lauren Tan), adapted per
+[`docs/decisions/mattpocock-skills.md`](docs/decisions/mattpocock-skills.md).
 
 Details in [`plugins/toolkit/README.md`](plugins/toolkit/README.md).
 

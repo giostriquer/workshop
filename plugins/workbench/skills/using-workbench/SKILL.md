@@ -62,8 +62,8 @@ COMPLETION (full agreed work set implemented and verified; about to ship
 through a PR or the repository's delivery process, not an intermediate checkpoint)
   deemed ready = verified with evidence
   (verification-before-completion; empirical-proof offered if runnable) →
-  Initial adversarial review round: REQUIRED, not offered (code-quality-review +
-  comment trim, per repo rules; plus test-quality-review in parallel when the
+  Initial adversarial review round: REQUIRED, not offered (code-quality-review,
+  which carries the comment trim per repo rules; plus test-quality-review in parallel when the
   diff changes production logic or tests). One round includes both required stages,
   each dispatched to a context that did not write the code, never self-served.
   A missing stage keeps the gate pending. Skipped only on an explicit user decline
@@ -93,8 +93,9 @@ FEEDBACK
 | About to claim done / ready | `verification-before-completion` (offer `empirical-proof` if runnable) |
 | The initial adversarial pass: **required** once the work-stream is complete, right before PR-or-merge, **dispatched** to reviewers that did not write the code | `code-quality-review`, run by the `code-quality-reviewer` agent; plus `test-quality-review`, run by the `test-quality-reviewer` agent, when the diff changes production logic or tests |
 | Checking existing tests or recommending a testing approach | `test-quality-review`, run by the `test-quality-reviewer` agent; give it the question and target |
-| Landing | outline gate → `file-pr` / merge / push; `fix-ci` |
+| Landing | outline gate → `file-pr` / merge / push; `fix-ci`. A dispatch that will open a PR names `file-pr` |
 | Review feedback arrives | `receiving-code-review` |
+| The user asks to clean up worktrees, branches, caches, temp files or processes, or an epic's leftovers | `epic-cleanup`; never on the session's own initiative |
 
 ## Picking the verification piece
 
@@ -174,6 +175,24 @@ Codex, even when the parent is idle or already uses that model. Never assign
 watching to Astra/Fable or fall back to parent polling when dispatch is unavailable.
 Epic returns require verified acknowledgment and a concrete next action; see
 `epic-orchestration` for lane, delivery, audit, and closure handoffs.
+
+## Workbench agents on Codex
+
+Each workbench agent file carries a **Dispatch** line near its top that names
+how to dispatch it; the calling skill supplies only the run's inputs. On
+Claude Code the registered agent carries its contract and its frontmatter sets
+the model: dispatch it by name, pass no model, and paste nothing. Codex
+registers no plugin agents, so a workbench agent's contract reaches a Codex
+child only in its spawn message; a child handed only the file's location
+usually reads the calling skill instead. Read the agent's file from the plugin
+your current skill was loaded from: `agents/<name>.md` at the plugin root, two
+directories above that skill's `SKILL.md`. Call `spawn_agent` with the
+arguments its Dispatch line names. The message is `You are the <name>. Your
+contract:`, then the file's body after its frontmatter, verbatim, then the
+run's inputs. A follow-up to that agent (`followup_task` or the host's
+equivalent) carries only its own next job, such as a new pinned head for a
+watcher. Any other job goes where its skill puts it, and a job for another
+workbench agent gets a new spawn with that agent's contract.
 
 ## Boundaries
 

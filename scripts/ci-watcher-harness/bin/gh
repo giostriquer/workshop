@@ -1,0 +1,62 @@
+#!/bin/bash
+# Fake gh for the ci-watcher matrix. It serves scenario $FAKE_SCENARIO from the state in
+# $FAKE_STATE: the virtual clock (clock), which each call advances $FAKE_LATENCY seconds, and
+# the count of state polls (p), which each `gh pr view --json state,headRefOid` bumps.
+c=$(cat "$FAKE_STATE/clock"); echo $(( c + ${FAKE_LATENCY:-2} )) > "$FAKE_STATE/clock"
+echo "$*" >> "$FAKE_STATE/calls"
+p=$(cat "$FAKE_STATE/p" 2>/dev/null || echo 0)
+args="$*"
+fail() { echo "$1" >&2; exit "${2:-1}"; }
+OK="OPEN abc123fullsha"
+# Clock-keyed flake worlds: at T1 the new attempt appears, at T1+LAGC its check runs replace
+# the old failure, at T2 they pass.
+T1=0 T2=0 LAGC=0
+case "$FAKE_SCENARIO" in
+  flakerace) T1=1000045 T2=1000150;;
+  flakelag) T1=1000070 LAGC=20 T2=1000150;;
+  flakeslice) T1=1000530 T2=1000560;;
+esac
+flakeck() { if [ $c -lt $(( T1 + LAGC )) ]; then echo "lint=pass unit tests=fail e2e=pass"; elif [ $c -lt $T2 ]; then echo "lint=pass unit tests=pending e2e=pass"; else echo "lint=pass unit tests=pass e2e=pass"; fi; }
+case "$args" in
+  *"--json number,url"*) echo '{"number":1,"url":"https://example.com/acme/webapp/pull/1","state":"OPEN"}'; exit 0;;
+  *"--required --json name"*) echo "required: lint, unit tests"; exit 0;;
+  *'select(.bucket=="fail")'*) echo "unit tests https://example.com/acme/webapp/actions/runs/111/job/222"; exit 0;;
+  *"--json name,bucket,link"*) echo "pending unit tests https://example.com/acme/webapp/actions/runs/111/job/222"; exit 0;;
+  *"--json state,headRefOid"*)
+    p=$((p+1)); echo $p > "$FAKE_STATE/p"
+    case "$FAKE_SCENARIO" in
+      merged) [ $p -ge 2 ] && echo "MERGED abc123fullsha" || echo "$OK";;
+      closed) [ $p -ge 2 ] && echo "CLOSED abc123fullsha" || echo "$OK";;
+      merged0) echo "MERGED abc123fullsha";;
+      moved) [ $p -ge 2 ] && echo "OPEN def456fullsha" || echo "$OK";;
+      noviewcont) [ $p -le 2 ] && fail "HTTP 502: Bad Gateway (https://api.github.com/graphql)" || echo "$OK";;
+      blocked) fail "To get started with GitHub CLI, please run:  gh auth login" 4;;
+      flakyview) case $p in 1|2|3|5|6|7) fail "error connecting to api.github.com";; *) echo "$OK";; esac;;
+      noviewpass) fail "HTTP 502: Bad Gateway (https://api.github.com/graphql)";;
+      noviewmoved) [ $p -le 2 ] && fail "HTTP 502: Bad Gateway (https://api.github.com/graphql)" || echo "OPEN def456fullsha";;
+      noviewfail) [ $p -le 2 ] && fail "HTTP 502: Bad Gateway (https://api.github.com/graphql)" || echo "$OK";;
+      *) echo "$OK";;
+    esac; exit 0;;
+  *"--json name,bucket -q"*)
+    case "$FAKE_SCENARIO" in
+      fail) [ $p -ge 2 ] && echo "lint=pass unit tests=fail e2e=pending" || echo "lint=pass unit tests=pending e2e=pending";;
+      settled) [ $p -ge 2 ] && echo "lint=pass unit=pass" || echo "lint=pass unit=pending";;
+      noviewcont) [ $p -ge 4 ] && echo "lint=pass unit=pass" || echo "lint=pass unit=pending";;
+      nochecks) [ $p -ge 4 ] && echo "lint=pass unit=pass" || true;;
+      blocked) fail "To get started with GitHub CLI, please run:  gh auth login" 4;;
+      flakyview) [ $p -ge 9 ] && echo "lint=pass unit=pass" || echo "lint=pass unit=pending";;
+      noviewpass|noviewmoved) echo "lint=pass unit=pass";;
+      noviewfail) echo "lint=pass unit tests=fail e2e=pending";;
+      flakerace|flakelag|flakeslice) flakeck;;
+      flake|flakegherr) if [ $p -le 2 ]; then echo "lint=pass unit tests=fail e2e=pending"; elif [ $p -le 4 ]; then echo "lint=pass unit tests=pending e2e=pending"; else echo "lint=pass unit tests=pass e2e=pass"; fi;;
+      flakerefail) if [ $p -le 2 ]; then echo "lint=pass unit tests=fail e2e=pending"; elif [ $p -le 4 ]; then echo "lint=pass unit tests=pending e2e=pending"; else echo "lint=pass unit tests=fail e2e=pass"; fi;;
+      *) echo "lint=pass unit=pending";;
+    esac; exit 0;;
+  *"run view"*"--json attempt"*)
+    case "$FAKE_SCENARIO" in
+      flakegherr) [ $p -le 2 ] && fail "HTTP 502" || echo 2;;
+      flakerace|flakelag|flakeslice) [ $c -lt $T1 ] && echo 1 || echo 2;;
+      *) [ $p -le 2 ] && echo 1 || echo 2;;
+    esac; exit 0;;
+esac
+echo "fake gh: unhandled: $args" >&2; exit 99

@@ -1,6 +1,6 @@
 ---
 name: file-pr
-description: Always use before or to file/open a PR.
+description: Always use before or to file/open a PR, including before dispatching an agent that will open one.
 ---
 
 # File PR
@@ -12,11 +12,10 @@ reviewer contexts that did not write the code:
 
 1. The `code-quality-review` skill, dispatched as that skill describes.
 2. When the diff changes production logic or tests: the `test-quality-review` skill
-   given the PR's base branch in a separate, test-scoped prompt, run
-   by the `test-quality-reviewer` agent as a separate Opus (`opus`) agent on Claude
-   Code or `gpt-6-sol` agent on Codex (the host's default model elsewhere). On a
-   host without that agent type, dispatch a reviewer that loads the skill. It can run
-   in parallel with the first.
+   given the PR's base branch in a separate, test-scoped prompt, run by the
+   `test-quality-reviewer` agent, dispatched by name with no model (on Codex, paste
+   the agent file and use its Dispatch line, per `using-workbench`'s *Workbench
+   agents on Codex*). It can run in parallel with the first.
 
 If either has not run, run it now and act on its findings first.
 
@@ -81,11 +80,18 @@ push and open one. Missing authorization and missing access are different gaps.
 Finish local reviewable preparation, then report the exact delivery step needing
 permission or access; do not ask again for authority already given.
 
+**Delegated filing.** Every dispatch that will open a PR, to a subagent, fork,
+workflow agent or epic lane, names `file-pr` as the skill the agent loads before
+filing, plus the agreed PR plan entry that PR carries when a plan exists.
+
 ## The two rules that make the body right
 
 1. **The body must stand alone.** Reviewers arrive with no access to this session,
-   so the summary and every field are derived from the **branch diff and the
-   ticket**, never from "what we discussed this session."
+   so every field is derived from evidence they can check: what changed from the
+   **branch diff**, and why from the **problem that prompted it**: the observed
+   defect or need and how it surfaced (a bug report, a failing check, a
+   reproduction, a measurement, the ticket). A problem first seen in this session
+   is stated as that evidence, not as the session's story.
 2. **The PR body belongs to the repo, not to this skill: follow its template, never
    replace it.** If the repo ships a PR template, the body **is** that template
    filled in: its exact headings, order, checkboxes, and hidden `<!-- markers -->`,
@@ -186,8 +192,16 @@ finished. Changes awaiting delivery authority retain an owner and pending action
 Reusing the merged head branch requires an explicit instruction.
 
 1. **Detect branch and base.** `git branch --show-current`; base defaults to `main`
-   unless the repo says otherwise. Summarize the change from `git diff
-   <base>...HEAD` and the commit list rather than session memory.
+   unless the repo says otherwise. Summarize what changed from `git diff
+   <base>...HEAD` and the commit list rather than session memory; the why follows
+   the first body rule above.
+   **Stop and propose a split, instead of filing,** when the diff goes beyond the
+   agreed PR plan (a PR the plan does not name, or changes outside this PR's
+   entry), or spans unrelated concerns (groups of changes with different
+   motivations, none needed by another) that the plan does not assign to this PR.
+   List each concern with its files and the PR it becomes, and file once the
+   split is decided. A diff whose changes all serve one concern files normally,
+   whatever its size.
 2. **Sync with the base before filing.** Fetch the latest base. If the branch is
    behind and conflicts, **merge the base into the branch** and resolve. Mechanical
    conflicts (imports, adjacent edits, formatting) resolve confidently; a
@@ -220,7 +234,8 @@ Reusing the merged head branch requires an explicit instruction.
    search.
 6. **Build the body.** If a template was found, fill it **verbatim** with the same headings, order,
    every checkbox, comment markers preserved; map content into the fields it already
-   has; tick `[x]` only what was actually verified; leave unfillable fields blank
+   has, the why into its motivation or description field; tick `[x]` only what was
+   actually verified; leave unfillable fields blank
    rather than fabricating. Before finalizing, check your headings against the
    template's: every original heading remains in order and is not renamed. The
    conditional `## Architecture` and `## Screenshots` sections are the only
@@ -231,14 +246,16 @@ Reusing the merged head branch requires an explicit instruction.
    minimal fallback:
 
    > ## Summary
-   > `<what changed and why, grounded in the diff>`
+   > `<what changed, grounded in the diff, and why: the evidenced problem and how it surfaced>`
    >
    > ## Ticket
    > `<ticket link(s), or omit the section if none>`
    >
    > ## Caveats / follow-ups
    > `<anything the reviewer should know; "none" if none>`
-7. **Conform to enforced conventions.** If the repo enforces PR-title or branch-name
+7. **Title the change and conform to enforced conventions.** The title names what
+   the change does ("Retry webhook delivery on 5xx responses"); tracker, lane and
+   ticket bookkeeping are not the change. If the repo enforces PR-title or branch-name
    patterns (a title linter, commit-lint, a branch rule), discover the pattern from
    the linter / CI config and conform: don't guess a prefix that gets the PR
    rejected.
@@ -258,7 +275,7 @@ Reusing the merged head branch requires an explicit instruction.
    the per-cause two-attempt cap, and the never-weaken-a-check rule. The watcher
    returns at the first failed required check, or the moment the PR merges or
    closes; the fix starts then, not after the remaining checks finish. Watching always runs in the
-   `ci-watcher` agent (Opus on Claude Code, gpt-6-sol on Codex), never in the
+   `ci-watcher` agent, dispatched as `fix-ci` says, never in the
    parent's own turns; accept only results for the target SHA and required checks. Mergeability comes from
    `gh pr view --json mergeable,mergeStateStatus`.
 10. **If the base moves and conflicts appear**, merge the base in again, resolve,

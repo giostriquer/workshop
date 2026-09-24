@@ -33,8 +33,9 @@ Plugins → Team Marketplaces → Add Marketplace → Import from Repo**
 **OpenCode:** No marketplace file exists on this surface; opencode loads skills by scanning directories. Point your global config's `"skills": { "paths": [...] }` at this folder's `skills/` directory in a clone of the repo, or copy individual skill folders into `~/.config/opencode/skill/`. The review agents are not carried on this surface.
 
 After install: agents resolve as `workbench:<agent>`; skills are invoked by name.
-Codex exposes all twenty skills; the agent files ride inertly (Codex custom
-agents need repo-local `.codex/agents/` wrappers). Antigravity discovers and progressively loads the skills from `skills/`. OpenCode loads the same twenty from its `skills.paths` scan roots.
+Codex exposes all twenty skills but registers no plugin agents, so a Codex
+parent reads an agent file from the installed plugin and pastes its body into
+the spawn message (`using-workbench`, *Workbench agents on Codex*). Antigravity discovers and progressively loads the skills from `skills/`. OpenCode loads the same twenty from its `skills.paths` scan roots.
 
 ## Agents: read-only reviewers
 
@@ -47,7 +48,7 @@ They inspect and report; none can edit your files (reviewers use
 | `code-quality-reviewer` | a diff's maintainability and structure; loads the `code-quality-review` rubric |
 | `test-quality-reviewer` | test code for trustworthiness and risk coverage; loads the `test-quality-review` rubric; separate Opus (Claude) or Sol (Codex) reviewer |
 | `pattern-reviewer` | a diff's conformance to the project's implementation patterns |
-| `ci-watcher` | the branch's PR CI: watch and report through one background loop; separate Opus (Claude) or Sol (Codex) watcher, never the parent's turns |
+| `ci-watcher` | the branch's PR CI: watch and report through one polling loop in long foreground calls; separate Opus (Claude) or Sol (Codex) watcher, never the parent's turns |
 
 ## Everyday skills
 
@@ -63,7 +64,7 @@ They inspect and report; none can edit your files (reviewers use
 | `test-quality-review` | test trustworthiness review: whether tests protect the behavior they claim, backed by a mutation run over the changed code; runs with the adversarial review when logic or tests changed |
 | `epic-orchestration` | owns a multi-ticket epic: writes the lane prompts the operator dispatches by hand, validates each report against the repo, authorizes the PR; never implements; user-invoked only |
 | `epic-implementation` | uses the shared [lane report template](skills/epic-orchestration/references/lane-report.md) across amendments, recovery and delivery; only for lanes dispatched through epic-orchestration |
-| `epic-cleanup` | removes obsolete epic artifacts and owned worktrees, preserving useful work and evidence; user-invoked only |
+| `epic-cleanup` | on an explicit cleanup request: lists a repository's stale worktrees, merged or gone branches, caches, temp files and stray processes with evidence and removes only what you pick, or removes an epic's obsolete artifacts and owned worktrees; never removes a dirty, unmerged or in-use worktree on its own judgment |
 | `model-reference` | reference table for the model fleet across cost, intelligence, taste, code, and speed, plus the hard routing invariants; a lookup, not a dispatch step |
 
 ## Workbench: the process layer
@@ -82,10 +83,12 @@ surface, and `using-workbench` answers "how does this flow work?" on demand.
 | `verification-before-completion` | the "deemed ready" gate: fresh evidence before any done / fixed / passing claim |
 | `receiving-code-review` | verify feedback against the codebase before implementing; reasoned pushback, no performative agreement |
 | `using-workbench` | on-demand orientation map of the flow; orients, never coerces |
-| `self-audit` | retrospective on the process that ran the session: trace, classify, propose; reports, never edits a skill |
+| `self-audit` | retrospective on the process that ran the session, read from its transcript: trace, classify, propose, close with a paste-ready defect note; reports, never edits a skill |
 
 
 > **Attribution:** five of the workbench skills (`brainstorming`, `test-driven-development`, `systematic-debugging`, `verification-before-completion`, `receiving-code-review`) are derived from [obra/superpowers](https://github.com/obra/superpowers) by **Jesse Vincent** (MIT): adapted per the [workbench-system decision](https://github.com/giostriquer/workshop/blob/main/docs/decisions/workbench-system.md): descriptions rewritten as honest triggers, pipeline coupling removed, no hooks. The lineage of every piece, including what was deliberately dropped and why, lives in the [workbench manifest](https://github.com/giostriquer/workshop/blob/main/.claude/skills/workbench-drift/manifest.json).
+
+> **Attribution:** `code-quality-review` and the `code-quality-reviewer` and `ci-watcher` agents are derived from Cursor's [cursor/plugins](https://github.com/cursor/plugins) (the `thermos` and `cursor-team-kit` plugins, MIT, Copyright (c) 2026 Cursor): adapted per the [code-quality-review](https://github.com/giostriquer/workshop/blob/main/docs/decisions/code-quality-review.md) and [fix-ci](https://github.com/giostriquer/workshop/blob/main/docs/decisions/fix-ci.md) decisions.
 
 ## Not included
 

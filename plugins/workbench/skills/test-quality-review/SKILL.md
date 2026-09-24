@@ -30,12 +30,13 @@ their inputs and assertions, so the gaps between them read as coverage.
   asked to inspect existing tests or recommend a testing approach. Automatic rounds
   use code-quality-review's shipping boundary: the full work set or correction
   batch is verified and ready for delivery, not merely an edit or subtask done.
-- **Who:** the `test-quality-reviewer` agent, or on a host without that agent type, a
-  reviewer context that loads this skill. Give it the test-quality question or
-  target, plus the base branch when known, in a separate prompt.
-- **Model:** a separate **Opus (`opus`) agent on Claude Code** or **`gpt-6-sol` agent on
-  Codex**, and the host's default model on any other host. Select it explicitly; do not
-  inherit the parent's model. The reviewer never dispatches another agent.
+- **Who:** the `test-quality-reviewer` agent, dispatched by name with no model (on
+  Codex, paste the agent file and use its Dispatch line, per `using-workbench`'s
+  *Workbench agents on Codex*); on another host without that agent type, a reviewer
+  context that loads this skill, on the host's default model. Give it the
+  test-quality question or target, plus the base branch when known, in a separate
+  prompt. Never let it inherit the parent's model, effort, or history; the reviewer
+  never dispatches another agent.
 
 ## Workflow
 

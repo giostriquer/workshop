@@ -13,7 +13,10 @@
 # artifact-making utilities). The repo's own working set (.claude/, .codex/,
 # .opencode/) and the attic are outside this validator's scope: .claude/ is
 # canonical for the pieces this repo runs (change-log, push, writing-skills,
-# wiki-maintainer, and the repo-only workbench-drift), mirrored nowhere.
+# wiki-maintainer, and the repo-only workbench-drift and mine-transcripts),
+# mirrored nowhere.
+# One check reaches past that scope: no git-tracked text file anywhere in the
+# repo may contain an em dash (U+2014).
 
 set -eu
 
@@ -133,31 +136,75 @@ assert_frontmatter() {
     _out=$(awk -v FILE="$1" "$FM_AWK" "$1") || fail "$_out"
 }
 
-# opencode's skill loader keys a skill on its SKILL.md frontmatter name, which
-# must be lowercase-hyphenated, at most 64 chars, and match the folder name.
-# Claude Code wants the same folder parity, so the rule is enforced across
-# hosts from one place.
-NAME_AWK=$(cat <<'AWK'
+# fm_value <file> <key> : the value of a top-level frontmatter key, or empty
+FM_VALUE_AWK=$(cat <<'AWK'
 { sub(/\r$/, "") }
 NR == 1 { next }
 $0 == "---" { exit }
-/^name:([ \t]+.*)?$/ {
-    v = $0; sub(/^name:[ \t]*/, "", v); sub(/[ \t]+$/, "", v)
+index($0, KEY ":") == 1 {
+    v = substr($0, length(KEY) + 2)
+    if (v != "" && v !~ /^[ \t]/) next
+    sub(/^[ \t]+/, "", v); sub(/[ \t]+$/, "", v)
     print v; exit
 }
 AWK
 )
 
+fm_value() { awk -v KEY="$2" "$FM_VALUE_AWK" "$1"; }
+
+# opencode's skill loader keys a skill on its SKILL.md frontmatter name, which
+# must be lowercase-hyphenated, at most 64 chars, and match the folder name.
+# Claude Code wants the same folder parity, so the rule is enforced across
+# hosts from one place.
 assert_skill_name() {
     _path=$1
     _folder=$2
-    _name=$(awk "$NAME_AWK" "$_path")
+    _name=$(fm_value "$_path" name)
     [ -n "$_name" ] || fail "$_path: frontmatter 'name' has no value"
     printf '%s' "$_name" | grep -Eq '^[a-z0-9]+(-[a-z0-9]+)*$' \
         || fail "$_path: skill name '$_name' must be lowercase hyphen-separated"
     [ "${#_name}" -le 64 ] || fail "$_path: skill name exceeds 64 characters"
     [ "$_name" = "$_folder" ] \
         || fail "$_path: skill name '$_name' must match its folder '$_folder'"
+}
+
+# Codex ignores the `disable-model-invocation` frontmatter key and reads a
+# skill's implicit-invocation policy from its agents/openai.yaml, so a
+# user-invoked-only skill must carry both (docs/decisions/plugin-surfaces.md).
+# The key must be spelled literally true or false: hosts read other spellings
+# differently (a quoted "true" is a string), and this check would skip them.
+# Only a direct child of `policy:` counts: its indentation is that of the first
+# indented line beneath `policy:`, so a key nested deeper is ignored. The direct
+# child must be `false`; any other value, even beside a `false`, fails.
+OPENAI_POLICY_AWK=$(cat <<'AWK'
+{ sub(/\r$/, "") }
+/^[^ \t#]/ { in_policy = ($0 ~ /^policy:[ \t]*$/); child = ""; next }
+!in_policy || /^[ \t]*(#.*)?$/ { next }
+{
+    indent = $0; sub(/[^ \t].*$/, "", indent)
+    if (child == "") child = indent
+}
+indent == child && /^[ \t]+allow_implicit_invocation:/ {
+    v = $0; sub(/^[ \t]+allow_implicit_invocation:[ \t]*/, "", v); sub(/[ \t]+$/, "", v)
+    if (v == "false") found = 1; else other = 1
+}
+END { exit !(found && !other) }
+AWK
+)
+
+assert_invocation_parity() {
+    _dir=$1
+    _dmi=$(fm_value "$_dir/SKILL.md" disable-model-invocation)
+    case $_dmi in
+        "" | false) return 0 ;;
+        true) ;;
+        *) fail "$_dir/SKILL.md: disable-model-invocation must be the literal true or false, not '$_dmi'" ;;
+    esac
+    _yaml="$_dir/agents/openai.yaml"
+    [ -f "$_yaml" ] \
+        || fail "$_dir/SKILL.md sets disable-model-invocation: true, which Codex ignores; add $_yaml with policy.allow_implicit_invocation: false"
+    awk "$OPENAI_POLICY_AWK" "$_yaml" \
+        || fail "$_yaml must set policy.allow_implicit_invocation: false to match disable-model-invocation: true in $_dir/SKILL.md"
 }
 
 # ── list comparison ───────────────────────────────────────────────────────
@@ -204,9 +251,16 @@ spec-reviewer.md
 test-quality-reviewer.md"
 
 TOOLKIT_SKILLS="adopt-global-rules
+codebase-design
+domain-modeling
 get-pr-comments
+grill-me
+grilling
 html-artifact
+improve-codebase-architecture
 me-human
+test-audit
+trim-comments
 ui-demo-video"
 
 assert_plugin() {
@@ -255,6 +309,7 @@ assert_plugin() {
         [ -f "$skills_dir/$skill/SKILL.md" ] || fail "$name skill missing SKILL.md: $skill"
         assert_frontmatter "$skills_dir/$skill/SKILL.md"
         assert_skill_name "$skills_dir/$skill/SKILL.md" "$skill"
+        assert_invocation_parity "$skills_dir/$skill"
         IFS='
 '
     done
@@ -351,5 +406,15 @@ for name in workbench toolkit; do
     [ ! -d "plugins/$name/.opencode-plugin" ] \
         || fail "plugins/$name/.opencode-plugin must not exist: opencode has no manifest convention; adoption is skills.paths or copying into a scanned directory"
 done
+
+# ── em dash ban ───────────────────────────────────────────────────────────
+# The repo bans U+2014 everywhere. Sweeps kept finding em dashes re-added
+# between them, so the ban is a gate over every tracked text file (-I skips
+# binaries). printf builds the UTF-8 bytes so this file stays clean itself.
+EM_DASH=$(printf '\342\200\224')
+_hits=$(git grep --no-color -n -I -F -e "$EM_DASH") || [ $? -eq 1 ] \
+    || fail "git grep could not scan the tracked files for em dashes"
+[ -z "$_hits" ] || fail "em dash (U+2014) in tracked files; reword with a colon, comma, parentheses, or a new sentence:
+$(printf '%s\n' "$_hits" | cut -d: -f1,2)"
 
 echo "native plugin validation ok"

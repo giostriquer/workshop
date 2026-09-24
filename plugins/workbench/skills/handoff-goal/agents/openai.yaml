@@ -1,0 +1,6 @@
+interface:
+  display_name: "Handoff Goal"
+  short_description: "Hand a long-running goal to a fresh autonomous session"
+
+policy:
+  allow_implicit_invocation: false

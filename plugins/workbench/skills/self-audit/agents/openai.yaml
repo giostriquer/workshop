@@ -1,0 +1,6 @@
+interface:
+  display_name: "Self Audit"
+  short_description: "Look back at how the workbench process itself ran"
+
+policy:
+  allow_implicit_invocation: true

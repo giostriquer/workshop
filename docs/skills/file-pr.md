@@ -5,11 +5,13 @@
 `file-pr` turns a finished branch into a pull request, then tends it until it
 is **green and mergeable**, or reports precisely why it stopped.
 
-The body comes from the branch diff and the ticket, never from session
-discussion: "The body must stand alone." If the repo ships a PR template, the
-body *is* that template filled in, with headings, order, checkboxes and hidden
-`<!-- markers -->` intact. The skill adds only two conditional sections:
-`## Architecture` and `## Screenshots`.
+"The body must stand alone": what changed comes from the branch diff, and why
+from the problem that prompted it, the observed defect or need and how it
+surfaced, stated as evidence rather than as the session's story. The title
+names what the change does, not the ticket or lane. If the repo ships a PR
+template, the body *is* that template filled in, with headings, order,
+checkboxes and hidden `<!-- markers -->` intact. The skill adds only two
+conditional sections: `## Architecture` and `## Screenshots`.
 
 It never merges, enables auto-merge, closes or re-targets the PR, force-pushes,
 or rewrites published history. Without publishing authority or access, it
@@ -25,6 +27,10 @@ tests changed). A missing review runs first. The only exemptions: an explicit
 user waiver, a superseding repo process, a diff that changes no code, or a prior
 review that still covers this revision. A draft PR is still a filed PR.
 
+When another agent will open the PR (a subagent, fork, workflow agent or epic
+lane), the dispatch names `file-pr`, plus the agreed PR plan entry when there
+is a plan, so that agent loads it.
+
 | The problem | The skill |
 | --- | --- |
 | A finished branch should become a PR and be tended to green | `file-pr` |
@@ -38,14 +44,15 @@ review that still covers this revision. A draft PR is still a filed PR.
 At entry and before each push, it refreshes the PR's state. A PR that already
 merged ends tending; authorized remaining changes go on a new branch.
 
-**Prepare.** Summarize from `git diff <base>...HEAD` and the commits. Merge the
-base in if the branch is behind and conflicts. Discover the repo's PR gates (CI
-workflows, hooks, build scripts, contributor docs), run format, lint and
-type-check, then the affected tests; full suites run in PR CI. Find the ticket
-link. Search for the PR template case-insensitively in `.github/`, the repo root
-and `docs/`, and record the result; the Summary / Ticket / Caveats fallback is
-allowed only after an empty search. Conform to enforced title or branch
-patterns.
+**Prepare.** Summarize from `git diff <base>...HEAD` and the commits. If the
+diff goes beyond the agreed PR plan, or spans unrelated concerns the plan does
+not put together, stop and propose a split instead of filing. Merge the base in if the branch is behind
+and conflicts. Discover the repo's PR gates (CI workflows, hooks, build
+scripts, contributor docs), run format, lint and type-check, then the affected
+tests; full suites run in PR CI. Find the ticket link. Search for the PR
+template case-insensitively in `.github/`, the repo root and `docs/`, and
+record the result; the Summary / Ticket / Caveats fallback is allowed only
+after an empty search. Conform to enforced title or branch patterns.
 
 **File.** Push per the repo's conventions, then open or update the PR, with one
 `--attach` per screenshot. The PR URL is reported as soon as it exists.
@@ -86,6 +93,17 @@ checks to fail, and `--no-verify` commits skipped them. Known failures are fixed
 before filing so the tend loop's attempts go to new ones.
 ([decision](../decisions/file-pr.md))
 
+**It stopped and proposed a split.** The diff went beyond the agreed PR plan (a
+PR the plan never named, or changes outside this PR's entry), or held changes
+with different motivations, none needed by another, that the plan did not put
+in this PR. Decide the split, or fold the work into the plan, and it files. A
+large diff serving one concern files normally.
+
+**What goes in the why?** The problem that prompted the change and how it
+surfaced: a bug report, a failing check, a reproduction, a measurement, the
+ticket. A problem first seen in the session is stated as that evidence;
+reviewers never see the session.
+
 **It stopped and handed me a conflict.** Mechanical conflicts it resolves. A
 semantic collision, where both sides changed the same logic with different
 intent, is your decision. So is a red check that encodes an intended-behavior
@@ -105,6 +123,11 @@ several candidates or the template requires one.
   template path, or "none: fallback" after a real search.
 - **Negative signal:** screenshots on an API-only PR, or a UI PR whose report
   says nothing about them.
+- The body's why names the problem and how it surfaced; the title names the
+  change.
+- **Negative signal:** a PR mixing unrelated concerns, or more PRs than the
+  agreed plan, filed without a split proposal; a delegated agent opening a PR
+  without loading `file-pr`.
 - The PR URL arrives before the tending report.
 - The report, in the session's required handback format or verdict-first, gives
   the end state (green and mergeable, merged, still red, conflicted, or blocked),

@@ -1,0 +1,6 @@
+interface:
+  display_name: "Me Human"
+  short_description: "Dogfood the system as a human user and report friction"
+
+policy:
+  allow_implicit_invocation: false

@@ -17,7 +17,7 @@
     {
       "name": "toolkit",
       "source": "toolkit",
-      "description": "Optional artifact-making utilities: html-artifact, ui-demo-video."
+      "description": "Optional utilities: html-artifact, ui-demo-video, get-pr-comments, adopt-global-rules, me-human, test-audit, trim-comments, grill-me, improve-codebase-architecture and the skills they load."
     }
   ]
 }

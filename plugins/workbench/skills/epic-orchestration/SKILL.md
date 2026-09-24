@@ -304,7 +304,8 @@ yourself, and issue it in its own dispatch block when it fires.
 Authorization is its own file and paste-ready pointer block under existing operator
 authority:
 merge the actual integration branch (never rebase; stop and report on a semantic
-conflict), run affected checks and mandatory local gates, then use `file-pr` and report
+conflict), run affected checks and mandatory local gates, then use `file-pr` for the
+PR this authorization scopes (its tickets and implementation range) and report
 back. That skill writes the body from the repo's own template and tends the PR to green
 and mergeable.
 

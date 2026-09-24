@@ -19,7 +19,7 @@ wrong.
 and lands. Start with [using-workbench](using-workbench.md), which maps the
 whole flow and tells you which piece owns which moment.
 
-**`toolkit`** is optional. Five utilities you install alongside workbench when
+**`toolkit`** is optional. Twelve utilities you install alongside workbench when
 you want them, and skip to keep sessions lean.
 
 ## Find the skill by the moment
@@ -44,7 +44,7 @@ you want them, and skip to keep sessions lean.
 | Review feedback arrived | [receiving-code-review](receiving-code-review.md) |
 | A multi-ticket epic whose lanes other sessions implement | [epic-orchestration](epic-orchestration.md) |
 | Implementing a lane dispatched through epic-orchestration | [epic-implementation](epic-implementation.md) |
-| Removing obsolete artifacts and owned worktrees after an epic | [epic-cleanup](epic-cleanup.md), user-invoked only |
+| Cleaning up a repo's stale worktrees, branches, caches or processes, or an epic's leftovers, when you ask | [epic-cleanup](epic-cleanup.md) |
 | Looking back at how the process itself ran | [self-audit](self-audit.md) |
 
 ## The optional toolkit
@@ -56,6 +56,13 @@ you want them, and skip to keep sessions lean.
 | To triage a PR's scattered feedback into one action list | [get-pr-comments](get-pr-comments.md) |
 | To install the workshop's global CLAUDE.md / AGENTS.md and rules on a machine | [adopt-global-rules](adopt-global-rules.md) |
 | To use a system as a real human user and report what got in the way | [me-human](me-human.md) |
+| To gate a new test, or audit and prune tests that don't earn their keep | [test-audit](test-audit.md), user-invoked only |
+| To trim comment slop from a branch's diff before review | [trim-comments](trim-comments.md), user-invoked only |
+| To be interviewed about a plan, design, or idea until every branch is settled | [grill-me](grill-me.md), user-invoked only |
+| The round-based interview other skills run | [grilling](grilling.md) |
+| To survey a codebase for refactors that deepen shallow modules | [improve-codebase-architecture](improve-codebase-architecture.md), user-invoked only |
+| Shared words for a module's interface, seam, and depth | [codebase-design](codebase-design.md) |
+| To settle a project's domain terms in `CONTEXT.md`, or record an ADR | [domain-modeling](domain-modeling.md) |
 
 ## Two things worth knowing up front
 
@@ -72,7 +79,7 @@ standing rule, not because a session decided the work deserved them.
 
 ## Not documented here
 
-Four skills run only inside this repository and ship in no plugin:
-`change-log`, `push`, `workbench-drift`, and `writing-skills`. They live in `.claude/skills/` and
+Five skills run only inside this repository and ship in no plugin:
+`change-log`, `mine-transcripts`, `push`, `workbench-drift`, and `writing-skills`. They live in `.claude/skills/` and
 are maintenance tooling for the scaffold itself, not part of what adopters
 install.

@@ -1,0 +1,6 @@
+interface:
+  display_name: "Epic Orchestration"
+  short_description: "Own a multi-ticket epic whose lanes other sessions implement"
+
+policy:
+  allow_implicit_invocation: false

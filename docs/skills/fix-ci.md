@@ -35,20 +35,30 @@ checks should be seen through to green.
    has none. Pin the target SHA with `git rev-parse HEAD`, confirm it matches the
    remote head, and identify the required checks. No branch, no CI or no access
    gets a precise report.
-2. **Dispatch one watcher** for that SHA: a separate `ci-watcher` (its agent
-   file pins Opus on Claude Code and gpt-6-sol on Codex; pass no model), even
-   when your session is idle. Inside it the wait is one background shell loop
-   that exits on the first terminal state. It returns at the **first failed
-   required check**, listing those still pending, or the moment the PR **merges
-   or closes**. Green means every required check passed on the pinned SHA;
-   missing, cancelled or superseded checks are not green.
+2. **Dispatch one watcher** for that SHA: a separate `ci-watcher`, even when
+   your session is idle, with the PR, the pinned head SHA and the deadline. On
+   Claude Code it is dispatched by name with no model, since its agent file
+   pins the model. Codex registers no agents, so the spawn uses the arguments
+   the agent file's Dispatch line names, and its message pastes that file's
+   body ahead of the inputs.
+   Inside it the wait is one shell loop that exits on the first terminal
+   state; on Claude Code it runs in long foreground calls, on Codex in one
+   call. On Codex, wait for it with `wait_agent`
+   at `timeout_ms: 600000`, repeated until its final answer. It returns at the
+   **first failed required check**, listing those still pending, or the moment
+   the PR **merges or closes**. Green means every required check passed on the
+   pinned SHA; missing, cancelled or superseded checks are not green.
 3. **Collect evidence.** `gh run view <run-id> --log-failed`, then read the
    failing step's output. For an external check, surface the link; if the cause
    isn't reachable from the repo, report rather than guess.
 4. **Diagnose in repo context.** The branch's own recent commits are the prime
    suspects, ahead of infrastructure.
 5. **Flake or fault?** An infra failure with no plausible code cause gets one
-   `gh run rerun <run-id> --failed`, noted as a flake. A real fault continues.
+   `gh run rerun <run-id> --failed`, noted as a flake, and one more watcher
+   for the head, given the run and the attempt that failed. It waits for the
+   rerun's new attempt, so the old failure cannot end it, then watches every
+   check on the head. On Codex that watcher is a fresh spawn. A real fault
+   continues.
 6. **Reproduce locally when feasible.** Run the focused failing case before and
    after the fix, plus mandatory local gates; full suites run in PR CI.
 7. **Fix in-session**, addressing only the cause.
@@ -91,9 +101,31 @@ dispatching, end your turn: the harness re-invokes you with the watcher's report
 so you do not poll `gh`, arm a Monitor, or read the watcher's output file in the
 meantime.
 
+**Why does the watcher run its loop in the foreground?** *(Claude Code only.)*
+A background loop lets the watcher end its turn, and Claude Code wakes your
+session at that turn end with an interim notice, re-reading your whole context
+for nothing. Foreground calls keep the watcher's turn open, so your session
+wakes once, for the report.
+
+**On Codex, my session sits in `wait_agent`.** That is the wait. A finished
+watcher does not wake your session, so it waits in ten-minute calls until the
+watcher's final answer, and the watcher sends no progress messages, since each
+one would cost your session a turn.
+
+**On Codex, why does the spawn message carry the whole watcher contract?**
+Codex registers no plugin agents, and a watcher told only where its file is
+tends to read this skill instead, with its fix, commit and push steps. The
+pasted contract keeps the watcher read-only. A follow-up to that watcher
+carries only a new pinned head; the fix stays in your session.
+([decision](../decisions/plugin-surfaces.md))
+
 **The watcher came back with checks still pending.** Its watch window is bounded
 (ten minutes unless set otherwise). Pending is reported as pending, with the next
 action, never as green.
+
+**The watcher came back `blocked`.** Four polls in a row could not read the PR,
+as when `gh` auth has expired or the network is down. The report carries the
+last `gh` error; fix access, then dispatch a watcher again.
 
 **The PR merged while the watcher was running.** It returns right then with
 `merged`, the merge time and the checks' state at that moment; it does not wait
@@ -102,6 +134,10 @@ same way, and the loop ends.
 
 **My unrelated changes didn't get committed.** Correct: it stages only files the
 fix touched and reports the rest.
+
+**GitHub refused the rerun, or the verdict looks wrong.** The session you are
+working in decides the next step, such as waiting for the run to finish before
+rerunning, and tells you plainly what happened and what it chose.
 
 **Non-GitHub CI?** It assumes `gh`.
 
@@ -115,8 +151,12 @@ fix touched and reports the rest.
   and PR or run link.
 - The fix commit touches only what the failure required.
 - The first fix lands while other checks from the same run are still running.
+- On Claude Code your session wakes once per watcher, for its report. On Codex
+  each `wait_agent` call returns only at the report or its ten-minute timeout.
 - **Negative signal:** a force-push, an amended commit, a skipped test, a third
-  attempt on one cause, or a second watcher on the same head.
+  attempt on one cause, a second watcher on the same head other than the
+  one after a flake rerun, or a Codex watcher handed anything but a head to
+  watch.
 
 ## Where it fits
 
