@@ -102,7 +102,12 @@ is not polling and the parent runs it itself.
    local gates. Full suites run in PR CI by default; a wider local run needs an
    explicit repo/user requirement or a named unresolved integration risk.
 7. **Fix in-session.** Address the cause of the red check; do not bundle
-   unrelated changes into the fix.
+   unrelated changes into the fix. After completed review, a bounded CI repair
+   proceeds from focused verification to push and re-watch, without another
+   review or mutation round. Preserve any open reviewer findings; a CI repair
+   does not close them. If the cause requires new scope or a different design,
+   report that decision before expanding the repair. Existing user and repository
+   requirements still apply.
 8. **Commit and push per the repo's conventions**: pull first, use the repo's own
    push skill if it ships one, and stage only the files the fix touched. Right
    before pushing, the parent runs one `gh pr checks` read of the old head (a

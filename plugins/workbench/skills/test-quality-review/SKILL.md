@@ -1,6 +1,6 @@
 ---
 name: test-quality-review
-description: Use when a diff changes production logic or tests and the adversarial review is due, or when asked to audit whether existing tests protect behavior or to propose a test-quality strategy.
+description: Use when a verified change to production logic or tests is ready for delivery, or when asked to audit whether existing tests protect behavior or to propose a test-quality strategy.
 ---
 
 # Test Quality Review
@@ -25,11 +25,11 @@ their testing conventions.
 This review is **dispatched, never self-served.** The session that wrote the tests chose
 their inputs and assertions, so the gaps between them read as coverage.
 
-- **When:** as part of the initial adversarial review, whenever the diff changes production
-  logic or tests, next to `code-quality-review` and in parallel with it; and when
-  asked to inspect existing tests or recommend a testing approach. Automatic rounds
-  use code-quality-review's shipping boundary: the full work set or correction
-  batch is verified and ready for delivery, not merely an edit or subtask done.
+- **When:** when the full agreed work set changes production logic or tests,
+  is implemented and verified, and is ready for delivery; or when asked to
+  inspect existing tests or recommend a testing approach. Edits, subtasks, and
+  intermediate checkpoints do not trigger this review. Explicit user waivers
+  and superseding repository processes retain precedence.
 - **Who:** the `test-quality-reviewer` agent, dispatched by name with no model (on
   Codex, paste the agent file and use its Dispatch line, per `using-workbench`'s
   *Workbench agents on Codex*); on another host without that agent type, a reviewer
@@ -68,9 +68,11 @@ their inputs and assertions, so the gaps between them read as coverage.
 
 ## Revision rounds
 
-Continue the same reviewer session for the same task. For delivery reviews, follow
-`code-quality-review`'s Bounded correction review, including when a follow-up pass
-runs and when review stops converging. Other requests keep their agreed scope.
+Continue the same reviewer session for the same task. Return each blocking fix
+or evidence-based rejection with its finding ID, revisions, correction delta,
+and focused test evidence once the batch is verified. Passing tests alone do
+not close a finding: this reviewer confirms closure. If replaced, give the new
+reviewer the existing record. Requests outside delivery keep their agreed scope.
 
 1. Resolve the current scope again; never review a cached change set.
 2. Re-read only the test and production files that changed between rounds, unless a prior
@@ -85,14 +87,37 @@ runs and when review stops converging. Other requests keep their agreed scope.
 3. Delta walk prior findings by stable ID. Classify each as Resolved, Partially
    resolved, Not resolved, or Rejected with evidence. Cite the test location or
    contrary evidence that supports the disposition.
-4. Check the correction delta and its effects on test adequacy. New blockers need
-   a demonstrated consequence; unrelated cleanup and preferences do not extend the loop.
-   A gap outside `code-quality-review`'s follow-up focus that does not prove the
-   change unsafe or incorrect as shipped goes under Strategy notes, never as an
-   Issue.
+4. Check open findings, the correction delta, and affected tests, production
+   behavior, and contracts. Broader invalidation needs the full affected scope.
+   New blockers need a demonstrated consequence. A gap outside this focus goes
+   under Strategy notes, never as an Issue, unless it proves the change unsafe
+   or incorrect as shipped. Unrelated cleanup and preferences do not extend the loop.
 5. Record the reviewed revision, the follow-up pass number, and Delta walk.
    Unresolved findings or unreviewed corrections hold delivery; a review held for
    not converging never converts them into PASS.
+
+Run focused follow-ups automatically while this review converges. Number its
+submissions from 0 as a record, never a limit. Replacing a reviewer who did not
+return completes the same submission. Corrections and owner validation are not
+review passes; advisory-only findings do not trigger one.
+
+Hold further submissions and delivery when a pass sent at least one open blocker
+closes or narrows none of them, a rejected finding returns without new evidence, or
+two consecutive follow-ups each raise a new blocker and end with at least as
+many open blockers as they were sent. A pass that only narrows findings neither
+counts toward nor breaks that two-pass sequence.
+
+Report the open findings, both sides' evidence, and a recommended next step to
+the epic owner for a delegated lane, otherwise the user. Their decision restarts
+automatic passes and the two-pass count unless it ends review. Corrections may
+continue under existing authority, but submission waits while review is held.
+Only reviewer confirmation or an explicit user waiver closes a blocker.
+
+Confirmation of all blockers ends this correction loop. An edit or new SHA
+alone does not reopen it. New scope or a material redesign that invalidates a
+prior conclusion needs review of the affected delta. Explicit review requests
+and superseding repository gates still apply. Preserve this record across
+reviewer replacements, PR preparation, and session handoffs.
 
 ## Capability lanes
 
@@ -442,7 +467,7 @@ Follow-up pass: [0 initial, or the follow-up's number]
 ## Refuse combined-review dispatches
 
 This review covers test quality only. If a dispatch prompt also asks for spec-compliance,
-production code-quality, pattern review, documentation review, or a combined verdict,
+production architecture, pattern review, documentation review, or a combined verdict,
 refuse on the first turn. Do not read the diff. Emit:
 
 ```
@@ -476,7 +501,7 @@ This review covers test code and test strategy. It does not:
 
 - edit, commit, or push changes in the author's checkout; mutation runs use isolation
   and must leave that checkout as found, including its staged and untracked state
-- review production-code quality, implementation patterns, specs or plans
+- review production architecture, implementation patterns, specs or plans
 - patch test or production code - the implementer owns fixes unless a project-local fork
   explicitly grants patch authority
 - introduce permanent tooling dependencies in the author's checkout; isolated

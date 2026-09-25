@@ -4,15 +4,15 @@
 
 This skill reviews implemented test code for **trustworthiness**: whether each test protects the behavior it claims to protect. It reads the tests with the production code they exercise, because **"a test that compiles, runs green, and asserts almost nothing passes every other review gate."**
 
-It is the test half of the adversarial review, **dispatched, never self-served**: the `test-quality-reviewer` agent runs it as a separate Opus agent at `xhigh` effort on Claude Code or `gpt-6-sol` at `xhigh` reasoning effort on Codex, spawned without your session's history (the host's default model elsewhere). A change review returns `PASS` or `ISSUES_FOUND`; other requests get prioritized findings or a testing recommendation. The implementer owns fixes and permanent tooling changes.
+It is **dispatched, never self-served**: the `test-quality-reviewer` agent runs it as a separate Opus agent at `xhigh` effort on Claude Code or `gpt-6-sol` at `xhigh` reasoning effort on Codex, spawned without your session's history (the host's default model elsewhere). A change review returns `PASS` or `ISSUES_FOUND`; other requests get prioritized findings or a testing recommendation. The implementer owns fixes and permanent tooling changes.
 
 ## When to reach for it
 
-Mostly you don't. When a diff changes production logic or tests, it fires in parallel with `code-quality-review` at completion, in its own test-scoped prompt; `file-pr` will not file the PR until it has run. Reach for it directly to audit existing tests or get a testing recommendation: give it the question or target, plus the base branch when known.
+It runs when a full change to production logic or tests is implemented, verified, and ready for delivery, in its own test-scoped prompt. Edits and intermediate checkpoints do not trigger it. Reach for it directly to audit existing tests or get a testing recommendation: give it the question or target, plus the base branch when known.
 
 | The problem | The skill |
 | --- | --- |
-| A finished diff changes logic or tests | `code-quality-review` plus `test-quality-review`, in parallel |
+| A finished diff changes logic or tests | `test-quality-review` |
 | Do the tests in this folder catch regressions? | `test-quality-review`, with the folder and question |
 | What testing posture should this project adopt? | `test-quality-review`, with the project's risks |
 | How should I write the tests in the first place? | [test-driven-development](test-driven-development.md) |
@@ -47,6 +47,9 @@ The functions the changed test cases call, selected by name or line range, not t
 **What does a follow-up round rerun?**
 Only the delta: the lines the correction changed and the lines behind each finding it claims to close, in the initial round's copy brought to the new revision, within 15 minutes.
 
+**Who owns follow-ups and when do they stop?**
+This skill does. Return verified fixes or evidence-based rejections to the same reviewer for confirmation. Follow-ups run automatically while findings close or narrow. Delivery holds on no progress, a rejection repeated without new evidence, or two consecutive passes that each add a blocker without reducing the open count. The owning authority decides the next step; a hold is never PASS. Once all blockers are confirmed closed, a later edit or SHA alone does not reopen review.
+
 **Can it use Bun through Stryker's command runner?**
 Yes, as the fallback when no framework runner works in the copy, with `coverageAnalysis: "off"` and an explicit command that selects the relevant test files and propagates failures; a bare full-suite command does not qualify. The report shows `NoCoverage: unavailable`. It is never a second pass over a scope a framework runner already completed.
 
@@ -73,4 +76,4 @@ It's misapplied if the author's session ran it, missing tools produced a qualita
 
 ## Where it fits
 
-It runs at completion alongside `code-quality-review`. Corrections return as a verified batch; both stages follow that skill's correction review, where focused follow-up passes run without asking until review stops converging and a gap outside a follow-up's focus goes under Strategy notes, never as an Issue; a mutation run repeats over the round's delta when its production files or tests changed between rounds.
+It returns an independent verdict on test trustworthiness, with its own findings, follow-ups, mutation evidence, and pass record. [using-workbench](using-workbench.md) and [file-pr](file-pr.md) coordinate delivery stages. A gap outside a follow-up's focus goes under Strategy notes unless it proves the change unsafe or incorrect as shipped.

@@ -1,6 +1,6 @@
 {
   "name": "workbench",
-  "version": "0.43.4",
+  "version": "0.43.5",
   "description": "A complete process system for how work starts, gets designed, gets verified, and lands: audits scoped from the request, brainstorming that resolves design and route choices (direct / plan / goal handoff), implementation discipline (TDD, systematic debugging, evidence-gated readiness), a comment trim and adversarial review at readiness, and landing that files the PR and tends CI to green. Backed by five read-only review agents and a comment-trimming agent. Core process skills derived from obra/superpowers (MIT): no hooks, no dispatcher; skills fire on relevance. Adds epic-orchestration for multi-ticket epics whose lanes other sessions implement and the operator dispatches by hand.",
   "author": {
     "name": "Workshop",
@@ -28,7 +28,6 @@
       "Run a strict code quality review on the current branch.",
       "Run a team-scale QA sweep over a release and corroborate the findings.",
       "Empirically prove a just-finished change at the running app.",
-      "Summarize the active PR's review comments into a prioritized action list.",
       "Watch the current branch's CI and fix whatever breaks.",
       "File the branch's PR and see it through to green and mergeable.",
       "Look back over this session and audit the workbench process that ran it.",

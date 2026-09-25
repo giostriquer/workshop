@@ -114,7 +114,7 @@ to the lane as a correction.
 
 Only when it stops converging. Corrections and owner validation are not review
 passes, and the lane's focused follow-ups run without the owner. When a lane
-reports that review stopped converging under `code-quality-review`, the owner
+reports that its owning review skill stopped further follow-ups, the owner
 decides and records the next step, and unless that decision ends review the
 lane's follow-ups run on their own again. Delivery waits until independent
 reviewers close the blockers or you explicitly waive them.

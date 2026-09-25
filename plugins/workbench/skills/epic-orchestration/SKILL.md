@@ -204,11 +204,10 @@ reports and requests for rulings do not trigger review.
 
 Retain the reviewed revision and the review record: finding IDs, dispositions,
 reviewer confirmations, evidence for rejections and correction pass number.
-Use `code-quality-review`'s correction rules; focused follow-ups run within the
-lane until review stops converging. Review completed correction batches before
-resuming delivery. A pending required review or unconfirmed blocking disposition
-holds delivery unless the operator explicitly waives it or repository rules
-supersede the gate.
+Return findings to their owning reviewer under that discipline's follow-up
+rules; preserve the other review's result. A pending required review or
+unconfirmed blocking disposition holds delivery unless the operator explicitly
+waives it or repository rules supersede the gate.
 
 **You decide routine lane delivery authorization within the approved epic.**
 Once independent acceptance and required pre-publication gates are satisfied,
@@ -242,8 +241,8 @@ completed delivery.
 ## Rulings and findings
 
 - **Corrections:** return confirmed in-scope defects to the owning lane. Routine
-  fixes within its contract proceed there. If review stops converging under
-  `code-quality-review`, record the next-step decision and reason, then dispatch
+  fixes within its contract proceed there. If a review stops converging under
+  its own discipline's rules, record the next-step decision and reason, then dispatch
   it. Unless that decision ends review, lane follow-ups resume autonomously.
   Keep unresolved delivery holds visible.
 - **Mutation evidence:** the test reviewer bounds its own run. Partial runs or

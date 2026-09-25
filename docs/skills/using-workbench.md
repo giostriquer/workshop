@@ -51,9 +51,11 @@ specific task skips it.
 - **Completion**: only when the full agreed work set is implemented, verified,
   and about to ship, not at a checkpoint. The comment trim runs first, then one
   adversarial round runs both required stages on the trimmed diff, each
-  dispatched to a context that did not write the code.
-  Blocking corrections get focused re-review, which runs without asking until
-  review stops converging; unresolved blockers hold delivery. Then the session outlines the
+  dispatched to a context that did not write the code, with the same scope and
+  revision. Each discipline owns its verdict, findings, follow-ups, and pass
+  record. A missing stage runs without repeating a completed one. Counting one
+  code review does not waive required test review. Verified fixes return to
+  their owning reviewer; unresolved blockers hold delivery. Then the session outlines the
   work, with the trim's open encoding offers, and asks PR or merge, unless repo
   or user rules pre-authorize it.
 - **Feedback**: `receiving-code-review`; verified fixes re-enter implementation.

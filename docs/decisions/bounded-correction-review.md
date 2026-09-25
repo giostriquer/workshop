@@ -19,17 +19,17 @@ reviewer session when available. Review unresolved findings, correction deltas,
 and affected behavior; new blockers need a demonstrated consequence. Advisory
 preferences and unrelated cleanup do not extend the loop.
 
-Follow-up passes run automatically while review converges; a pass may include
-both reviewers. When review stops converging, unresolved blockers stop delivery
+Follow-up passes run automatically while each discipline's review converges.
+Each keeps its own pass record. When review stops converging, unresolved blockers stop delivery
 and require a concrete next-step decision from the authority that owns the work.
 The stop never lowers the approval bar. Broader invalidation requires a full
 review of the affected scope, not a reset. (This note first set a limit of two
 automatic follow-up passes; the dated section below replaced it.)
 
-Bind closure to the reviewed revision, finding dispositions, and evidence. Later
-behavior changes receive delta review; formatting-only changes receive ordinary
-verification. Existing explicit user waivers and superseding repository processes
-retain precedence.
+Bind closure to the reviewed revision, finding dispositions, and evidence. A
+completed review reopens for new scope or a material redesign that invalidates
+its conclusions, not merely because another edit or commit exists. Existing
+explicit user waivers and superseding repository processes retain precedence.
 
 This refines the initial-review-only language in earlier workbench decisions.
 Ships in workbench 0.40.1 with synchronized host manifests and release notes.
@@ -160,3 +160,40 @@ out-of-focus finding blocking anyway (the author cannot dismiss it, so it goes
 into the hold report). Reps per cell are regression evidence on Opus only, not
 a reliability estimate, and no probe ran on Codex, where the reported session
 was.
+
+## CI repairs do not reopen completed review (2026-09-25)
+
+The 0.40.1 rule made later behavior, design, or risk changes a review trigger;
+0.43.0 made follow-up passes automatic while converging. Together they let a
+bounded CI repair restart code and test review after both stages had passed.
+The completion clarification in 0.40.2 did not distinguish this landing work
+from a correction to an open reviewer finding.
+
+`fix-ci` owns the bounded repair loop and its stopping conditions. Once the
+change has completed review, focused verification leads to authorized push and
+watching the new head, without another review or mutation round. A repair that
+requires new scope or a different design leaves that loop for a scope decision.
+
+The review skill owns closure of its findings and when its completed review
+becomes invalid. It does not describe CI steps. `file-pr` consumes the review
+result and delegates CI tending without repeating either skill's procedure.
+The first patch repeated the CI exception across six skills and made CI refer
+back to review for exceptions; this revision removes those additions. No new
+coordinator skill or shared process layer is needed.
+
+A baseline planning probe reproduced both reviews and delta mutation testing
+after a verified fallback fix. Probes of the replacement through the CI skill
+alone and with the delivery skills loaded kept bounded fixes in the CI loop.
+Controls preserved open findings, explicit user gates, scope decisions, review
+of an authorized redesign, and the initial gate on an unreviewed branch. These
+nine simulated cases are bounded regression evidence, not live delivery or
+cross-model reliability evidence.
+
+## Discipline ownership (2026-09-25)
+
+The code-quality and test-quality skills each own their correction rules and
+records. The earlier single-owner arrangement in this note is superseded by
+[independent disciplines](completion-review-stages.md#independent-disciplines-2026-09-25).
+Delivery callers combine verdicts, not review procedures. Stop conditions,
+reviewer-confirmed closure, and the rule against reopening review for a changed
+SHA remain unchanged within each discipline.

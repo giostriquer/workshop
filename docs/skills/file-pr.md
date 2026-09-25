@@ -27,7 +27,10 @@ agent) and then its adversarial review by reviewers who did not write the code
 tests changed). A missing stage runs first; a trim run after a finished review
 edits comments only, so the review still covers the revision. The only exemptions: an explicit
 user waiver, a superseding repo process, a diff that changes no code, or a prior
-review that still covers this revision. A draft PR is still a filed PR.
+completed review covering the agreed scope. It retains each stage's result;
+pending findings return to the owning review skill. Filing or updating the PR
+does not itself restart a completed stage. Both receive the same trimmed scope
+and revision, and keep separate verdicts and pass records. A draft PR is still a filed PR.
 
 When another agent will open the PR (a subagent, fork, workflow agent or epic
 lane), the dispatch names `file-pr`, plus the agreed PR plan entry when there

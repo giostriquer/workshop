@@ -117,12 +117,11 @@ the skill was invoked directly outside the completion stage, that session asks
 the user right away. At completion, it names the open offers in the
 `code-quality-review` dispatch, whose standard 8 then leaves them to the user,
 and carries them into the PR-or-merge outline the user already sees, saying
-that an approved encoding takes a follow-up review pass under
-`code-quality-review`'s bounded correction review.
+that an approved encoding returns to the affected reviewer for follow-up.
 
 If approved, encode it, then delete the comment; once the review round has
-run, that encoding is a correction and goes through `code-quality-review`'s
-bounded correction review. Otherwise leave the comment and report the
+run, that encoding is a correction handled by the affected review's own
+follow-up rules. Otherwise leave the comment and report the
 constraint as open.
 
 ## Suppressions

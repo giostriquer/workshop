@@ -7,20 +7,22 @@ description: Use for a strict or adversarial code quality review; required when 
 
 Use this skill for a strict review focused on implementation quality, maintainability, abstraction quality, pattern drift, and codebase health.
 
+Judge implementation structure and maintainability. Coverage and assertion-strength
+verdicts are outside this review's scope.
+
 Above all, this skill should push the reviewer to be **ambitious** about code structure. Do not merely identify local cleanup opportunities. Actively search for "code judo" moves: restructurings that preserve behavior while making the implementation dramatically simpler, smaller, more direct, and more elegant.
 
 Completion for this gate means the full agreed work set is implemented and
 verified, and the session is about to ship it through a PR or the repository's
 established delivery process. Individual edits, finished subtasks, progress
-reports, and local checkpoints do not trigger review. Correction rounds follow
-the same boundary: finish and verify the batch before resuming delivery.
+reports, and local checkpoints do not trigger review. Fixes to reviewer findings
+follow the same boundary: finish and verify the batch before resuming delivery.
 
 ## Who runs it: a reviewer that did not write the code
 
 This review is **dispatched, never self-served.** Run it in a fresh reviewer
 context handed the accepted scope, the diff (the working tree against the base's
-merge base, untracked files included: the revision `test-quality-review` reads)
-and the changed files' contents:
+merge base, untracked files included), and the changed files' contents:
 the `code-quality-reviewer` agent, or the host's equivalent subagent mechanism.
 The accepted scope is the ticket, plan or agreed change as it was asked for,
 never the author's account of the code; it sets where in-scope ends, not what
@@ -43,18 +45,9 @@ The comment trim precedes the round: dispatch `trim-comments` to the
 `comment-trimmer` agent first, as that skill describes, including how its edits
 reach the round's revision, and review the trimmed diff.
 
-When the diff changes production logic or tests, the dispatching session also
-dispatches `test-quality-review` for that change set, with the base branch when known, in a
-separate, test-scoped prompt; the two run in parallel. Each dispatch names its
-skill, never a plugin version or a cache path: the reviewer loads the installed
-skill, and a pinned path loads whatever version it holds.
-
-Both dispatches form **one initial review round**, including when a brief calls
-for "exactly one code-quality review." The dispatching session records each
-required stage's verdict against the same change set and revision. A missing
-stage keeps the gate pending; dispatch it to complete that unchanged round
-without repeating a valid completed stage. Explicit user waivers and superseding
-repository processes retain precedence.
+The dispatch names this skill, never a plugin version or a cache path: the
+reviewer loads the installed skill. Record this review's verdict against the
+accepted scope and revision.
 
 Where the host offers no subagent mechanism, the review still does not run
 inside the implementing context: hand the diff to a fresh session and name that
@@ -121,16 +114,14 @@ fixes and focused tests; the independent reviewer owns closure of blocking findi
    out-of-scope finding never makes the verdict ISSUES_FOUND, never justifies
    another pass, and never holds delivery.
 3. **Run follow-up passes automatically while review converges.** A pass is one
-   submission of the revised change to the required reviewers; code and test
-   reviewers may run together in one pass. When a verified correction batch is
-   ready for review, submit the next pass without asking anyone: no pass count
+   submission of the revised change to this reviewer. When a verified correction
+   batch is ready for review, submit the next pass without asking anyone: no pass count
    limits it. Number passes as a record (0 for the initial round), never as a
    limit. Correction dispatches, lane handbacks and owner validation are not
-   passes. A missing stage or replacement for a reviewer that never
-   returned completes the same unchanged submission. Send each reviewer the
-   findings and changed surfaces it owns; a production fix that changes test
-   adequacy also needs test review. Stop when all blocking dispositions are
-   confirmed and the current revision is covered. Advisory-only findings never
+   passes. A replacement for a reviewer that never returned completes the same
+   unchanged submission. Send this reviewer's findings and the changed surfaces
+   they concern. Stop when all blocking dispositions are confirmed and the
+   current revision is covered. Advisory-only findings never
    trigger another pass.
 4. **Stop only when review stops converging.** Judge each follow-up pass on
    what changed since the previous pass. Stop submitting passes, hold delivery,
@@ -154,17 +145,18 @@ fixes and focused tests; the independent reviewer owns closure of blocking findi
    submitted. A held review is never PASS: a blocker closes only on reviewer
    confirmation or the user's explicit waiver, and the author cannot dismiss a
    disputed blocker to bypass this gate.
-5. **Record closure against the revision.** Each reviewer returns the reviewed
+5. **Record closure against the revision.** The reviewer returns the reviewed
    revision, finding IDs with resolved / unresolved / rejected-with-evidence
-   dispositions, supporting evidence, and PASS or ISSUES_FOUND. Later changes to
-   behavior, design, or risk require affected-delta review under this same
-   convergence rule. Formatting-only changes need ordinary verification. A new
+   dispositions, supporting evidence, and PASS or ISSUES_FOUND. Confirmation of
+   all blockers ends the correction loop. Further edits or a new SHA alone do
+   not reopen it. New scope or a material redesign that invalidates a prior
+   conclusion needs review of the affected delta by its owning reviewer.
+   Explicit review requests and superseding repository gates still apply. A new
    reviewer, PR preparation, or session handoff does not reset the record: prior
    findings, dispositions and rejections carry over.
 
-These rules govern correction review for both code-quality-review and the required
-`test-quality-review` delivery stage. Existing explicit user waivers and superseding
-repository processes retain precedence.
+Existing explicit user waivers and superseding repository processes retain
+precedence.
 
 ## Non-Negotiable Additional Standards
 
@@ -318,8 +310,7 @@ uncommitted changes), follow-up pass number (0 for the initial round), and
 stable finding IDs. On follow-up,
 include each prior blocker's disposition and supporting evidence.
 
-This is the line `test-quality-review` emits, so one rule reads every review stage. A report
-that omits it reads as `ISSUES_FOUND`.
+A report that omits the verdict line reads as `ISSUES_FOUND`.
 
 Prioritize findings in this order:
 

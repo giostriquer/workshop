@@ -61,7 +61,12 @@ checks should be seen through to green.
    continues.
 6. **Reproduce locally when feasible.** Run the focused failing case before and
    after the fix, plus mandatory local gates; full suites run in PR CI.
-7. **Fix in-session**, addressing only the cause.
+7. **Fix in-session**, addressing only the cause. After completed review, a
+   bounded CI repair goes straight from focused verification to push and
+   re-watch, without another review or mutation round. Open reviewer findings
+   remain open. A fix that requires new scope or a different design is reported
+   as a decision before the repair expands; user and repository requirements
+   still apply.
 8. **Commit and push** per the repo's conventions, staging only the fix's files.
    Just before pushing, your session reads the old head's checks once and folds
    any new in-scope failure into the same push. No-commit or no-push

@@ -8,6 +8,17 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+
+## workbench 0.43.5: 2026-09-25
+
+- **Bounded CI repairs preserve completed reviews.** After review closes, a correction within the accepted scope and design continues through focused verification, push, and CI watching without restarting review or mutation rounds. `fix-ci` owns this delivery loop. ([decision](decisions/bounded-correction-review.md))
+- **Each review discipline owns its process.** Code-quality and test-quality reviews keep separate findings, follow-ups, convergence decisions, and closure records. A missing stage runs without repeating a completed stage, and delivery callers preserve each result. ([decision](decisions/completion-review-stages.md))
+- **Codex prompts match the plugin's skills.** PR-comment summarization is advertised by Toolkit, which ships that skill. ([decision](decisions/plugin-surfaces.md#codex-submission-export-2026-09-25))
+
+## toolkit 0.13.1: 2026-09-25
+
+- **Codex starter prompts describe shipped utilities.** PR-comment summarization replaces the obsolete skill-authoring prompt. All host manifests replace the stale skill-authoring keyword with PR review. ([decision](decisions/plugin-surfaces.md#codex-submission-export-2026-09-25))
+
 ## workbench 0.43.4: 2026-09-25
 
 - **The coordinator owns routine lane publication decisions.** After independent acceptance and required pre-publication gates, it authorizes branch push, PR creation or update, and CI work through the copyable lane handoff. Holds identify who can release them and their governing source; an owner-written dispatch or ledger cannot invent another operator approval requirement. Explicit operator or repository reservations remain binding, and merges remain operator decisions. ([decision](decisions/epic-orchestration.md#authorization-claims-the-pr-review-gate-2026-09-04))
@@ -88,12 +99,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 ## workbench 0.41.2: 2026-09-22
 
 - **The watcher stops when the PR merges or closes.** `ci-watcher` reads the PR state with its checks: a merged or closed PR at dispatch gets an immediate `merged` or `closed` report instead of a watch, and the watch is a thirty-second poll of state plus checks that returns the moment the PR merges or closes; `fix-ci` and `file-pr` end their loop on that report. ([decision](decisions/fix-ci.md#the-watcher-returns-when-the-pr-merges-or-closes-2026-09-22))
-
-## workbench 0.41.1: 2026-09-22
-
-- **A probe is one hand-applied defect.** `test-driven-development` defines a mutation probe as one named defect applied by hand and one focused test run, the way a test-quality finding's fix is proved; mutation-tool sweeps belong to the test-quality review, never to the implementer. ([decision](decisions/mutation-artifact-boundary.md#a-probe-is-one-hand-applied-defect-never-a-tool-sweep-2026-09-22))
-- **No scope, no run.** `test-quality-review` states that a language with no production line and no test in scope gets no mutation run and no tool setup. ([decision](decisions/mutation-artifact-boundary.md#a-probe-is-one-hand-applied-defect-never-a-tool-sweep-2026-09-22))
-
-## toolkit 0.11.1: 2026-09-22
-
-- **Open HTML artifacts in dark mode.** `html-artifact` starts with dark colors on the first render, including on systems set to light. Light mode is optional; embedded product UI retains its source appearance and print can use paper-friendly colors. ([decision](decisions/html-artifact.md#dark-initial-theme-2026-09-22))

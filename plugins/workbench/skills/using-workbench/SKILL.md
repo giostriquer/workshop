@@ -68,14 +68,16 @@ through a PR or the repository's delivery process, not an intermediate checkpoin
   Initial adversarial review round on the trimmed diff: REQUIRED, not offered
   (code-quality-review; plus test-quality-review in parallel when the
   diff changes production logic or tests). One round includes both required stages.
+  Give each the same accepted scope and revision in a separate prompt. Each owns
+  its findings, verdict, follow-ups, and pass record. A missing stage runs without
+  repeating a completed one; counting one code review does not waive test review.
   The trim and each review stage are dispatched to a context that did not write
   the code, never self-served. A missing stage keeps the gate pending. Each is
   skipped only on an explicit user decline or a superseding repo process; they
   fire here and nowhere else, right before the PR-or-merge ask, never
   mid-implementation →
-  completed, verified correction batch returned for focused review before resuming delivery;
-  follow-up passes run automatically until review stops converging (code-quality-review),
-  then hold and report; advisory findings dispositioned, out-of-scope → follow-ups →
+  verified fixes returned to the reviewer who owns the findings, under that
+  discipline's follow-up rules; preserve unaffected review results →
   USER gate: session outlines what was done, with the trim's open encoding offers,
   asks PR or merge (explicit repo/user rules may pre-authorize; an approved
   encoding is a correction batch) → land: file-pr · merge · push;

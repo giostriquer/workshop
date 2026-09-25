@@ -32,3 +32,26 @@ review stage or intermediate review trigger.
 The focused baseline probe followed the existing pairing correctly. The reported
 failure motivates clearer wording; the probe does not establish that the current
 wording always fails or that the correction guarantees future compliance.
+
+## Independent disciplines (2026-09-25)
+
+The delivery workflow owns pairing. `using-workbench` and `file-pr` dispatch the
+required reviews against the same scope and revision, retain each verdict, and
+run a missing stage without repeating a completed one. Neither discipline
+loads, dispatches, or defines the other. Each skill and its companion agent
+are self-contained for their own rubric, scope, findings, and follow-ups.
+
+Previously the code-quality skill dispatched test review and supplied its
+correction rules; the test-quality skill imported that policy. Each now owns
+its review record and convergence decisions. Equivalent stop conditions are
+stated locally, without a shared runtime policy or a new coordinator skill.
+Callers return findings to the owning discipline rather than treating one
+review skill as the authority over all reviews. The initial delivery gate and
+bounded CI repair behavior remain in force.
+
+Validation used fresh contexts with only one discipline's skill and agent:
+six code-review cases and nine test-review cases retained scope, closure, and
+convergence behavior. Seven delivery cases retained pairing, missing-stage
+completion, separate pass records, and bounded CI repair without reopening
+review. Static checks found no peer-discipline references in either skill or
+companion agent. These are bounded planning probes, not a reliability estimate.

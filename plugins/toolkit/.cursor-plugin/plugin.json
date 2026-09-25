@@ -1,7 +1,7 @@
 {
   "name": "toolkit",
   "displayName": "Toolkit",
-  "version": "0.13.0",
+  "version": "0.13.1",
   "description": "Optional utilities for the workshop: html-artifact (reports, plans, architecture explanations, and interactive product targets), ui-demo-video (Playwright walkthroughs with verification frames), get-pr-comments (triages a PR's feedback into a prioritized action list, read-only), adopt-global-rules (installs the workshop's shipped global CLAUDE.md / AGENTS.md, rules, and Claude output styles onto a machine, additively), me-human (dogfood a system from a human user's perspective), test-audit (gates new tests and audits or prunes low-value ones), dependency-audit (audits dependencies for bumps, caveats, conflicts, advisories and removal candidates, then applies the groups you pick), grill-me (a relentless interview that sharpens a plan, run by grilling), and improve-codebase-architecture (finds deepening refactors, with codebase-design and domain-modeling). Install alongside workbench when you want them; skip to keep sessions lean.",
   "author": {
     "name": "Workshop"
@@ -9,7 +9,7 @@
   "homepage": "https://github.com/giostriquer/workshop",
   "repository": "https://github.com/giostriquer/workshop",
   "license": "MIT",
-  "keywords": ["skills", "reports", "diagrams", "video", "skill-authoring"],
+  "keywords": ["skills", "reports", "diagrams", "video", "pr-review"],
   "category": "developer-tools",
   "tags": ["reports", "diagrams", "video", "authoring"]
 }

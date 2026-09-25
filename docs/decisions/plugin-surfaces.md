@@ -18,6 +18,27 @@ OpenCode has no marketplace or content manifest: its `plugin` config takes npm o
 
 Codex ignores the `disable-model-invocation` frontmatter key. It reads a skill's invocation policy only from a sibling `agents/openai.yaml`, where `policy.allow_implicit_invocation` defaults to true. A 30-day Codex usage audit found `handoff-goal` loaded implicitly in 12 of 24 `/goal` sessions with no explicit invocation, and users typing "don't use handoff-goal" into continuation prompts; `self-audit` and `epic-orchestration` loaded the same way. Every skill that sets `disable-model-invocation: true` therefore also ships `agents/openai.yaml` with an `interface` display name and short description and `policy.allow_implicit_invocation: false`. That keeps the skill out of Codex's model context, while `$skill` still invokes it explicitly. `codex debug prompt-input` (CLI 0.155.1) confirms the effect: a skill with only the frontmatter key appears in the model-visible skill list, and the same skill with the sidecar does not. The validator fails a skill that sets the frontmatter key without that sidecar policy, so a new user-invoked skill cannot ship implicit on Codex again. Only a direct child of `policy:` counts, at the indentation of the first indented line beneath it: a `false` nested deeper does not satisfy the check, and a direct child set to anything but `false`, even beside a `false`, fails it.
 
+## Codex submission export (2026-09-25)
+
+The bundled OpenAI plugin-ingestion validator rejects
+`disable-model-invocation: true`, although Codex's runtime ignores that Claude
+frontmatter field and reads `agents/openai.yaml`. Removing the field from shared
+sources would enable automatic invocation on Claude. Keep both host policies in
+the canonical skills and export a Codex-only package with
+`scripts/export-codex-plugin.py` when preparing an OpenAI submission. The export
+removes only that frontmatter field after checking the corresponding Codex policy
+is the boolean `false`. It accepts the canonical inline `true` or `false` spelling
+and rejects unsupported YAML forms before writing output. Skill bodies, sidecars, supporting files, and agent
+contracts stay intact. Other hosts' manifests are excluded from the export.
+
+The export refuses an existing destination and any destination inside its source.
+Validate the generated package with OpenAI's bundled validator; the native
+validator continues to check shared-source parity. Marketplace installs keep
+using the shared sources. This is an export boundary, not a second maintained
+skill tree or a validator exception. Codex starter prompts describe only skills
+shipped by their own plugin: PR-comment triage belongs to Toolkit, and repository
+skill-authoring tools are not advertised by either plugin.
+
 ## Codex agents: the parent pastes the contract (2026-09-24)
 
 Workbench ships its subagents as Claude Code agent files, which Claude Code registers with their frontmatter and body. A Codex plugin manifest has no agents field: its parser reads skills, MCP servers, apps, hooks and interface metadata ([manifest.rs](https://github.com/openai/codex/blob/main/codex-rs/core-plugins/src/manifest.rs)), and plugin agents are open requests ([openai/codex#18308](https://github.com/openai/codex/issues/18308), [#18988](https://github.com/openai/codex/issues/18988)). The Codex dispatch lines therefore spawned a generic agent with pinned `model`, `reasoning_effort` and `fork_turns: "none"`, and a message telling the child to follow the agent file from the installed plugin. A 30-day study of Codex CI watchers found the pointer failing: 43 of 46 watchers never read `agents/ci-watcher.md`, 36 of them read `fix-ci`'s `SKILL.md` instead, the parent workflow with its fix, commit and push steps, and one watcher, reused through a follow-up task, edited four source and test files and ran `git commit` and `git push`.

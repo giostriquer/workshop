@@ -35,6 +35,24 @@ For OpenCode there is no marketplace or manifest to register: opencode loads ski
 
 or copy individual `plugins/<plugin>/skills/<skill>/` folders into `~/.config/opencode/skill/`. The workbench agents are not carried on this surface (opencode's agent format differs; see [the decision note](docs/decisions/plugin-surfaces.md)).
 
+### Codex submission packages
+
+Marketplace installs use the shared plugin sources. For an OpenAI submission,
+export a Codex-only directory first (requires [uv](https://docs.astral.sh/uv/)):
+
+```sh
+uv run scripts/export-codex-plugin.py plugins/workbench tmp/codex-export/workbench
+uv run scripts/export-codex-plugin.py plugins/toolkit tmp/codex-export/toolkit
+```
+
+Each destination must be new. The exporter keeps skill content and Codex policies,
+and removes Claude's invocation field only after checking the equivalent Codex
+policy. It leaves the shared sources intact. Run the bundled `plugin-creator`
+skill's `scripts/validate_plugin.py` against these exported directories before
+packaging them for submission. Repository-source checks still use
+`sh scripts/validate-native-plugin.sh`; the reason for the separate export is in
+[plugin surfaces](docs/decisions/plugin-surfaces.md#codex-submission-export-2026-09-25).
+
 ### Global Rules Adoption - Optional
 
 To install the workshop's shipped global agent configuration (its CLAUDE.md, AGENTS.md, rules, and Claude output styles) on a machine, additively, without overwriting what

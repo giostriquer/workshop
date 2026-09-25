@@ -8,8 +8,8 @@ Each item is checked against the codebase before it is implemented,
 questioned, or pushed back on.
 
 Blocking completion-review findings close only when the independent reviewer
-confirms the fix or an evidence-based rejection, under `code-quality-review`'s
-bounded correction review. Passing tests support a fix; they do not close it.
+confirms the fix or an evidence-based rejection, under the owning review skill's
+follow-up rules. Passing tests support a fix; they do not close it.
 
 ## When to reach for it
 
@@ -83,5 +83,5 @@ a top-level comment.
 ## Where it fits
 
 The feedback stage of the workbench flow: verified fixes re-enter
-implementation and its usual gates. It mirrors `code-quality-review`: one
-gives a hard review, this one takes it.
+implementation and its usual gates. Each finding returns to the review
+discipline that owns it.

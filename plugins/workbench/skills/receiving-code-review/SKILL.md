@@ -28,8 +28,8 @@ WHEN receiving code review feedback:
 7. CLOSE: Return blocking fixes or evidence-based rejections to the independent reviewer
 ```
 
-For completion-review findings, use `code-quality-review`'s Bounded correction
-review. Passing tests support a fix; reviewer confirmation closes the finding.
+For completion-review findings, use the owning review skill's follow-up rules.
+Passing tests support a fix; that reviewer confirms closure of the finding.
 Keep the same review record through feedback and handoffs.
 
 ## Forbidden Responses

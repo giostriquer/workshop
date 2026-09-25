@@ -132,7 +132,7 @@ you invoked the trim directly, the session asks you right away. At completion
 the offer arrives with the session's outline, where you choose PR or merge,
 and the review leaves that comment to your answer. Say yes and the check is
 added and the comment deleted, as a correction that takes a follow-up review
-pass under `code-quality-review`'s correction review. Say no and the comment
+pass under the affected review's own follow-up rules. Say no and the comment
 stays; the constraint is reported as open.
 
 **It reported my `eslint-disable` instead of removing it.**

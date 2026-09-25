@@ -21,6 +21,8 @@ adversarial review, each dispatched to a context that did not write the code:
 
 If any has not run, run it now and act on its result first, carrying the
 trim's encoding offers to the user as `trim-comments` describes.
+Record each required verdict against the same trimmed scope and revision;
+each review skill owns its own findings, follow-ups, and pass record.
 
 **Violating the letter of this gate is violating the spirit of it.** The
 review exists to be run by someone who did not write the code; a session that
@@ -32,17 +34,12 @@ following cases do not require a new review:
 - **The branch changes no code.** Documentation, comments, and config-only
   edits with no behavior change. Measured on the diff, not on how routine the
   work felt.
-- **The review already covers this revision.** Each required dispatch returned,
-  and reviewers confirmed every blocking disposition, including direct corrections
-  and evidence-based rejections. Record the reviewed revision and closure evidence.
-  Apply `code-quality-review`'s bounded correction review: unresolved blockers or
-  unreviewed corrections hold delivery, and a focused follow-up pass runs without
-  asking until review stops converging. For a mutation finding, re-run the
-  recorded `Mutation run` command on that file. Loading this skill neither
-  repeats a completed review nor resets its record. Later behavior, design, or
-  risk changes require affected-delta review; formatting-only changes need
-  ordinary verification. A comment trim run after that review keeps its
-  coverage, as `trim-comments` states.
+- **The agreed scope already has completed review.** Each required stage returned
+  and its reviewer confirmed every blocking disposition. Preserve the reviewed
+  scope, revision, and closure evidence. Pending findings return to their owning
+  review skill, which owns follow-up and closure. Filing or updating the PR does
+  not itself repeat a completed stage. A later comment trim preserves review
+  coverage as its skill states.
 
 Nothing else is an exemption. Not a deadline, not a reviewer waiting, not a
 branch that has been open a long time, not the user asking for the PR
@@ -58,7 +55,7 @@ mention it afterward.
 | "It's config / a version bump / generated output." | Config that changes behavior is code. If the diff changes what runs, the gate applies. |
 | "I reviewed it carefully as I wrote it." | The author is the one context that cannot run this review. That is stated in `code-quality-review`, not implied. |
 | "I ran the rubric over my own diff and found nothing." | A self-served pass is not this gate. It is reported as an author's pass or not at all. |
-| "The review ran earlier in this work-stream." | Check its revision, reviewer-confirmed blocking dispositions, and later deltas. Apply bounded correction review without resetting its record. |
+| "The review ran earlier in this work-stream." | Check that its scope and reviewer-confirmed closure cover the work being filed; preserve completed stages. |
 | "The user asked for a PR now, so they've accepted the trade." | Asking for a PR is not waiving the gate. If time is the constraint, surface it and let them waive it explicitly. |
 | "CI is green and the tests pass." | Passing tests say the code works. This review asks whether it should be built this way. |
 | "The reviews passed; the trim is only cosmetic." | The trim is a gate stage with the same outs as the review. Run it; `trim-comments` says why the review still covers the revision. |
