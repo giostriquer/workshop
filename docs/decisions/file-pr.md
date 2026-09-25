@@ -62,3 +62,23 @@ The MUST gate lists the comment trim (`trim-comments`, run by `comment-trimmer`)
 ## Settled contracts govern merge resolution (2026-09-24)
 
 The epic contract lets a lane resolve conflicts within settled scope, but `file-pr` stopped on every semantic collision. The delivery skill now uses the existing governing contract or decision when it determines the resolution. A collision that needs a new scope, product, policy or authority decision still stops for a ruling. Both the initial sync and later re-syncs use this boundary and retain affected validation and review before delivery. This aligns the two skills without granting the lane new scope or delivery authority.
+
+## Always pull latest before filing (2026-09-25)
+
+The preparation step required a base merge only when the branch was behind and
+conflicted. That allowed a PR to open without cleanly mergeable base updates.
+Always fetch and merge the latest remote base before validation and filing;
+fetching alone is insufficient, and a failed sync blocks filing. Preserve local
+work and the existing merge-based conflict boundary. The final push also pulls
+the remote head when it exists; a first push skips only that nonexistent-head
+pull. Incoming head changes require a refreshed diff and body, affected checks,
+and any affected review before delivery.
+
+A read-only baseline pressure probe followed the old condition and left three
+cleanly mergeable base commits out of the PR: "The stated clean merge does not
+meet that condition." It correctly handled a first push and a late incoming
+behavior change, so those are preservation checks for the revised wording.
+One fresh context using the revised skill integrated the base in both the
+existing-head and first-push cases, revalidated the late behavior change, and
+blocked a draft after a failed fetch. These four plan-only scenarios check the
+wording; they do not establish live Git behavior or cross-model reliability.

@@ -208,9 +208,12 @@ Reusing the merged head branch requires an explicit instruction.
    List each concern with its files and the PR it becomes, and file once the
    split is decided. A diff whose changes all serve one concern files normally,
    whatever its size.
-2. **Sync with the base before filing.** Fetch the latest base. If the branch is
-   behind and conflicts, **merge the base into the branch** and resolve. Mechanical
-   conflicts (imports, adjacent edits, formatting) resolve confidently. For a
+2. **Always pull the latest base before filing.** Fetch the PR's base from its
+   remote and **merge it into the working branch** whenever it has commits the
+   branch lacks, even when there are no conflicts. Fetching alone does not satisfy
+   this step. Preserve uncommitted work before syncing; a failed fetch or merge
+   blocks filing. Mechanical conflicts (imports, adjacent edits, formatting)
+   resolve confidently. For a
    **semantic collision**, where both sides changed the same logic with different
    intent, resolve it when an existing governing contract or decision determines
    the result. Stop and report when resolution needs a new scope, product, policy
@@ -270,8 +273,11 @@ Reusing the merged head branch requires an explicit instruction.
 
 ### File
 
-8. **Push and open or update.** Push the branch per the repo's conventions (pull
-   first; use its push skill if it ships one). Update an associated open PR in
+8. **Push and open or update.** Pull the latest remote head before pushing; a
+   first push with no remote head skips only that pull, never step 2's base sync.
+   If the pull changes HEAD, refresh the scope check, diff and body, then run
+   affected validation and review before delivery. Push per the repo's conventions
+   (use its push skill if it ships one). Update an associated open PR in
    place; otherwise use `gh pr create --base <base> --head <branch>` with the title
    and body, adding one `--attach` per screenshot when the Screenshots rule holds.
    Report the PR URL as soon as it exists: the tending continues after.

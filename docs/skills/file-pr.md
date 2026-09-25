@@ -48,15 +48,20 @@ merged ends tending; authorized remaining changes go on a new branch.
 
 **Prepare.** Summarize from `git diff <base>...HEAD` and the commits. If the
 diff goes beyond the agreed PR plan, or spans unrelated concerns the plan does
-not put together, stop and propose a split instead of filing. Merge the base in if the branch is behind
-and conflicts. Discover the repo's PR gates (CI workflows, hooks, build
-scripts, contributor docs), run format, lint and type-check, then the affected
+not put together, stop and propose a split instead of filing. Always pull the
+latest base: fetch it from the remote and merge any commits the branch lacks,
+even without conflicts. Preserve uncommitted work; a failed sync blocks filing.
+Discover the repo's PR gates (CI workflows, hooks, build scripts, contributor
+docs), run format, lint and type-check, then the affected
 tests; full suites run in PR CI. Find the ticket link. Search for the PR
 template case-insensitively in `.github/`, the repo root and `docs/`, and
 record the result; the Summary / Ticket / Caveats fallback is allowed only
 after an empty search. Conform to enforced title or branch patterns.
 
-**File.** Push per the repo's conventions, then open or update the PR, with one
+**File.** Pull the latest remote head before pushing. A first push skips that
+pull when no remote head exists, but still syncs the base. If the pull changes
+HEAD, refresh the scope check, diff and body, and run affected validation and
+review. Push per the repo's conventions, then open or update the PR, with one
 `--attach` per screenshot. The PR URL is reported as soon as it exists.
 
 **See it through.** CI runs through `fix-ci`'s loop. A separate watcher (Opus on

@@ -8,6 +8,10 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.43.3: 2026-09-25
+
+- **Always pull latest before opening a PR.** `file-pr` integrates missing commits from the latest remote base even when they merge cleanly. The final push pulls the remote head when it exists; incoming changes refresh the diff and body and run affected validation and review. Failed synchronization blocks filing. ([decision](decisions/file-pr.md#always-pull-latest-before-filing-2026-09-25))
+
 ## workbench 0.43.2: 2026-09-25
 
 - **Lane-facing owner returns include a copyable handoff.** Accepting or rejecting a report, returning a correction or ruling, and authorizing delivery require a dispatch file and a separate fenced pointer for each affected lane. Accepted corrections still receive a handoff when only approval remains; status-only answers can stay brief prose. Pending delivery approval preserves the hold without creating correction work or merge authority. ([decision](decisions/epic-orchestration.md#dispatches-are-files-and-paste-blocks-are-pointers-2026-09-11))
@@ -94,7 +98,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 
 - **Use one HTML artifact skill.** `html-artifact` replaces `html-report` and `arch-map` as the manual entry point for reports, plans, architecture explanations, and interactive product targets. Diagram and product-mockup techniques load when needed; usage pages and host discovery metadata follow the new name. ([decision](decisions/html-artifact.md))
 - **Choose the design for the reader.** The skill preserves evidence and claim status while letting the model choose typography, palette, composition, navigation, and useful interaction. Fixed dark/glass templates and one-pass editing rules give way to rendered inspection, defect correction, and coherent revisions. ([decision](decisions/html-artifact.md))
-
-## workbench 0.41.0: 2026-09-22
-
-- **Clean up a finished epic on request.** Add manual-only `epic-cleanup` to remove obsolete temporary artifacts and account for every epic-owned worktree, including validation and audit checkouts. It preserves useful evidence and unfinished work, proceeds with verified safe removals, and reports any blockers. ([decision](decisions/epic-cleanup.md))
