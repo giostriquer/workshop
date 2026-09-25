@@ -106,10 +106,11 @@ surfaced: a bug report, a failing check, a reproduction, a measurement, the
 ticket. A problem first seen in the session is stated as that evidence;
 reviewers never see the session.
 
-**It stopped and handed me a conflict.** Mechanical conflicts it resolves. A
-semantic collision, where both sides changed the same logic with different
-intent, is your decision. So is a red check that encodes an intended-behavior
-question.
+**It stopped and handed me a conflict.** It resolves mechanical conflicts and
+semantic collisions whose result is settled by an existing governing contract
+or decision, then runs affected validation and review. A conflict that needs a
+new scope, product, policy or authority decision comes back to you. So does a
+red check that leaves an intended-behavior question unresolved.
 
 **How long will it keep trying?** Two fix attempts per CI cause and two base
 re-syncs, then it reports.

@@ -18,14 +18,24 @@ standalone implementation, the epic owner or a blind auditor.
 
 **Does it add another implementation process?**
 
-No. The dispatch and its amendments govern scope, method and authority. This
-skill carries the reporting contract through the lane's lifetime.
+No. The dispatch and its amendments govern scope, outcomes and authority.
+The lane chooses implementation and verification methods under repository rules
+and the skills that own the work. This skill carries the reporting contract
+through the lane's lifetime.
 
 **Where is the template?**
 
-In the lane dispatch. Both skills share one
+The initial contract includes or links the shared
 [lane report template](../../plugins/workbench/skills/epic-orchestration/references/lane-report.md).
-If the dispatch omits it, the lane reads that reference directly.
+Amendments reference the active contract without copying its template. If a
+dispatch omits it, the lane reads that reference directly.
+
+**Does every change need RED evidence?**
+
+Regression fixes need evidence that a check detects the intended defect.
+Behavior-preserving work may use passing characterization or equivalence checks;
+mark RED `not applicable` with the reason. Applicable checks that were not run
+remain explicit evidence gaps.
 
 **Can the lane just link its report file?**
 

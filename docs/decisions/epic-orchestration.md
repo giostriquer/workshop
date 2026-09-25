@@ -12,7 +12,7 @@ Its load-bearing references, `code-quality-review` and `file-pr`, are workbench 
 
 ## Validation is the job (2026-09-04)
 
-A lane report is a claim the owner verifies against the repository; each check exists because skipping it let a real defect through. The lane's completion review, which the lane runs through an independent reviewer, does not discharge this: it asks whether the code is well built, validation whether the claim is true. Skipping checks is a discipline failure, so the section carries a rationalization table and red flags, not bare imperatives.
+A lane report is a claim the owner verifies against the repository. The lane's independent completion review asks whether the code is well built; owner validation asks whether the acceptance claim is true. The owner chooses checks appropriate to consequential claims. Regression fixes need sensitivity to the intended defect; behavior preservation can use equivalence and characterization. Whole-diff reverts that break setup do not prove sensitivity. The skill keeps operative evidence requirements and isolation safeguards without repeating them as anecdotes, rationalizations and red flags.
 
 ## Handoffs are dispatchable when written (2026-09-04)
 
@@ -24,11 +24,11 @@ Follow-up work dies in passing observations and session reasoning, not only in d
 
 ## Authorization claims the PR review gate (2026-09-04)
 
-Authorization claims `file-pr`'s review gate as satisfied by the lane's completion review, with its evidence, so no second full review runs. The gate returns when blocking dispositions lack reviewer confirmation, later behavior changes lack review, or the integration merge hits a semantic conflict. No dispatcher automates handoff: the operator remains the only link between independent lane sessions.
+Authorization claims `file-pr`'s review gate as satisfied by the lane's completion review, with its evidence, so no second full review runs. Blocking dispositions without reviewer confirmation or later behavior changes without review keep delivery pending. A lane may resolve merge conflicts within settled contracts and chooses the PR title under repository conventions; unresolved policy or product choices return for a ruling. Changed behavior still needs affected validation and review. The operator remains the link between independent implementation sessions.
 
 ## The epic closes on a blind re-audit (2026-09-04)
 
-An empty ticket list never closes the epic. A blind auditor starts from the artifact, not the PR list, and attacks the previous round's fixes, since each round has found a defect the last introduced.
+An empty ticket list never closes the epic. A blind auditor starts from the artifact, not the PR list, and probes declared criteria and regression families. Closure requires acceptance evidence, dispositioned findings, verified delivery and owner corroboration of the audit before the operator decides. Further rounds address findings or evidence gaps; their count does not establish completion.
 
 ## Bounded dispatch reading and document retirement (2026-09-10)
 
@@ -41,6 +41,8 @@ A coordinator pushed detailed evidence into tracker descriptions because the ski
 ## Dispatches are files and paste blocks are pointers (2026-09-11)
 
 Several-hundred-line inline briefs were hard to copy precisely from a terminal, while a session reads a file exactly. Each lane prompt, audit brief and authorization is its own file in the epic's scope folder, indexed in the ledger. The paste block carries only role, authority, whether the session is fresh, the absolute path and any required verbatim lines.
+
+The initial lane contract is complete. Amendments reference its revision and carry only changed scope, inputs, evidence, gates or authority. A recovered session reads the active contract and amendments. The report template can be referenced directly instead of copied into every dispatch; every final handback still contains the complete populated block.
 
 ## The owner never rules on mutation evidence (2026-09-23)
 
@@ -84,3 +86,81 @@ the baseline failure. Two control plans still wrote "installed version 0.41.4;
 if yours differs, stop", a pin by another route that breaks at the next
 release; no plan under the new wording carried a version. Three reps per arm
 is regression evidence for this dispatch shape, not a reliability estimate.
+
+## Lanes trim before their completion review (2026-09-24)
+
+A lane's completion review starts with `trim-comments` over the implementation range, then reviews the trimmed range, and the authorization's gate claim covers the trim with the reviews. A lane delivers commits, so the lane commits the trim's edits as their own comment-only commit before the round, and its RANGE and pinned head include it: otherwise the owner would validate, and the PR would carry, a head without the edits the review saw. `trim-comments`' *Who runs it* states that once, and the completion-review section and the lane report point there. The shared lane report's `REVIEW` field records the trim's result line, its commit, and any open encoding offers. Those offers go to the operator with the authorization, and an approved one returns to the lane as a correction dispatch, as the delivery section requires. Rationale: [trim-comments](trim-comments.md#moved-into-workbench-as-a-delivery-stage-2026-09-24).
+
+## Scope membership precedes technical validity (2026-09-24)
+
+An assets qualification lane accumulated private-session adoption, credential
+isolation and unrelated execution checks across repeated continuation packets.
+The owner verified technical details but treated reachable code and newly merged
+dependencies as additional epic obligations. Its own ledger and ticket updates
+then carried those obligations forward. The operator had to withdraw the work.
+
+The scope check now traces assignments to the operator-approved objective,
+acceptance criteria, exclusions and explicit amendments. A real defect or a
+reachable dependency does not establish epic ownership. Conditional criteria
+retain their conditions, and permission to use a resource does not add a
+deliverable. The dispatch carries this scope basis and a finish line; recovery
+checks the governing sources rather than promoting an owner-written backlog
+into authority. The same boundary governs helpers, findings and closing audits.
+
+Integration freshness still precedes new dispatches. Reading a refreshed base
+does not itself require merging it into an active lane or qualifying unrelated
+changes. The owner records the impact on the contracted work and evidence;
+required integration and checks still run. An external defect that blocks a
+required criterion remains a named blocker, with no repair mandate or passing
+claim invented to remove it. Routine authorized corrections continue under the
+existing contract, with a new ruling only when its scope or authority changes.
+
+Recovery wording now calls the index the tracker backlog, with membership
+determined by governing scope sources. Routine continuation is conditional on
+the contract's assignment tracing to operator-approved scope. Neither a backlog
+label nor a previously issued continuation packet establishes that authority.
+These clarify the existing boundary without adding approval for routine work.
+The automatic review-resumption instruction already exists and is unchanged.
+
+A later operator-run probe tested both versions through continuation and fresh
+recovery contexts with phase-isolated inputs. All 16 responses met the declared
+criteria, with no decision difference between versions. A post-hoc ledger-label
+pattern was suggestive only. The clarifications retain their provenance
+rationale; these results do not establish prevention of naturally occurring
+scope drift or justify another skill rule.
+
+Seven instruction-consumption cases passed: a polluted backlog, recovery from
+its ledger, an external blocker, an authorized correction, relevant upstream
+drift, mixed audit findings and missing scope authority. Two old-wording controls
+also stayed in scope. The recorded session supplies the observed failure; these
+small scenario checks establish regression coverage, not a reliability estimate.
+
+## Contracts leave implementation choices to the lane (2026-09-24)
+
+The owner skill repeated other skills' procedures, prescribed regression RED for
+behavior-preserving work, and required owner decisions for routine delivery
+details. The operator approved replacing those constraints with a smaller
+contract: required outcomes, scope and authority, affected interfaces and
+evidence. Lanes choose their implementation and verification methods under the
+repository and owning skills; they return decisions those sources do not settle.
+
+Independent owner validation remains mandatory, with checks chosen for the
+claim. Regression fixes require defect sensitivity; preservation claims can use
+equivalence and characterization. Initial dispatches carry the complete contract;
+amendments carry changes and link the active contract. Complete lane handbacks
+remain required. Lanes choose conforming PR titles and resolve merge conflicts
+within settled contracts, with affected validation and review before delivery.
+Unsettled product or policy conflicts still return for a ruling.
+
+The operative rules now appear once, without historical anecdotes or predicted
+round counts. Closure depends on acceptance evidence, regression checks,
+dispositioned findings, verified delivery and a corroborated blind audit before
+the operator's close decision. These changes retain scope provenance, workspace
+preservation, review convergence and publication authority.
+
+Fourteen instruction-consumption cases passed: six delegation and acceptance
+cases, seven scope and recovery cases, and a resumed lane's complete handback.
+The six-case control using prior wording still required a RED demonstration for
+preservation and owner selection of a PR title; it already handled closure and
+the policy boundary correctly. These small simulations establish regression
+coverage, not a measured reliability improvement or live epic execution proof.

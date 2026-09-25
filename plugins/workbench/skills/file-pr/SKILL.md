@@ -210,10 +210,12 @@ Reusing the merged head branch requires an explicit instruction.
    whatever its size.
 2. **Sync with the base before filing.** Fetch the latest base. If the branch is
    behind and conflicts, **merge the base into the branch** and resolve. Mechanical
-   conflicts (imports, adjacent edits, formatting) resolve confidently; a
-   **semantic collision**, where both sides changed the same logic with different intent,
-   stops the skill. Report it as a decision; do not guess. Never rebase published
-   commits and never force-push.
+   conflicts (imports, adjacent edits, formatting) resolve confidently. For a
+   **semantic collision**, where both sides changed the same logic with different
+   intent, resolve it when an existing governing contract or decision determines
+   the result. Stop and report when resolution needs a new scope, product, policy
+   or authority decision. Run affected validation and review before delivery.
+   Never rebase published commits and never force-push.
 3. **Run focused local checks and required local gates.** *Discover* what this repo gates a PR on
    rather than assuming a toolchain: read its CI workflow definitions, hook config,
    build/package script targets, and contributor docs. Run the **fast static
@@ -284,9 +286,10 @@ Reusing the merged head branch requires an explicit instruction.
    `ci-watcher` agent, dispatched as `fix-ci` says, never in the
    parent's own turns; accept only results for the target SHA and required checks. Mergeability comes from
    `gh pr view --json mergeable,mergeStateStatus`.
-10. **If the base moves and conflicts appear**, merge the base in again, resolve,
-    and push: at most **two** re-syncs; a base that keeps moving is reported, not
-    chased. Semantic collisions stop the loop here too.
+10. **If the base moves and conflicts appear**, merge the base in again and resolve
+    under step 2's governing-contract boundary. Run affected validation and review
+    before pushing. Allow at most **two** re-syncs; a base that keeps moving is
+    reported, not chased.
 11. **Stop when the PR is green and mergeable, or when a cap is hit**, and report
     either way.
 
@@ -317,5 +320,5 @@ in its existing fields. If no format is required, use a verdict-first report.
   by governing host/user/repository instructions; do not invent extra footers.
 - Hard caps: `fix-ci`'s two fix attempts for CI, two base re-syncs for conflicts;
   after that, report rather than thrash.
-- Semantic merge collisions and product decisions are never resolved by guessing.
-  They end the loop with a plain report.
+- Semantic merge collisions follow step 2's boundary; unresolved decisions end
+  the loop with a plain report.

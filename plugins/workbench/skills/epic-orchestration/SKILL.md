@@ -6,481 +6,307 @@ disable-model-invocation: true
 
 # Epic Orchestration
 
-You are the epic owner. You do not implement. You write prompts, verify what comes back
-against the repository itself, rule on the questions lanes cannot answer, and decide
-whether a PR may be opened. The operator connects the independent lane sessions:
-they paste your prompts out and paste reports back.
+You own the epic's scope, independent acceptance and coordination. The operator
+carries your dispatches to implementation sessions and their reports back.
+Within the agreed scope and authority, lanes choose implementation and
+verification methods under repository rules and the skills that own the work.
+A lane returns for a ruling when the existing contract does not settle a decision.
 
-Four roles, and they do not blur:
-
-| Role | Owns | Never |
+| Role | Owns | Boundary |
 | --- | --- | --- |
-| **Orchestrator** (you) | tickets, lane prompts, independent validation, rulings, authorization | implements, commits, pushes, opens PRs, merges |
-| **Implementer lane** | one worktree, one report; owns the completion review over its implementation range | pushes or opens a PR before authorization |
-| **Auditor** | blind empirical audit of the artifact; findings with repro + anchor | reads the PR list or fixes anything |
-| **Operator** | lane dispatch, merges, product rulings | (is the link between independent lanes) |
-
-## Helpers within this session
-
-You may spawn subagents for bounded support, including parallel evidence checks
-when several reports arrive. Delegate when the saved context or time justifies
-dispatch and verification overhead; handle quick checks directly and reuse
-helpers for related work. Helpers share your role boundaries. You retain
-synthesis, rulings and authorization; implementation lanes still go through the
-operator.
-
-For these helpers, use `model: inherit` or the host equivalent. You may choose a
-smaller model within your own provider/harness for **trivial work**: explicit
-inputs, mechanical steps and an objective result you can cheaply verify, such
-as extracting revisions and check counts. Assessing evidence, resolving policy
-conflicts and accepting a lane are not trivial, even when the report is short.
-Work owned by another skill follows that skill's routing.
+| **Orchestrator** (you) | tickets, dispatches, independent validation, rulings, authorization | Never implements, commits, pushes, opens PRs or merges. |
+| **Implementer lane** | one worktree, implementation, completion review and report | Publishes only under delivery authorization. |
+| **Auditor** | blind empirical audit of the artifact, findings with repro and source anchor | Does not read the PR list or implement fixes. |
+| **Operator** | lane dispatch, merges, product decisions and epic closure | Grants scope and authority. |
 
 ## When this is the right seat
 
-All three must hold:
+Use this for an epic too large for one session, with implementation in other
+sessions dispatched by hand. For one goal use `handoff-goal`; for one premise or
+ticket use `claim-check`; for broad verification use `qa-sweep`; for one finished
+change at a running artifact use `empirical-proof`. To implement yourself, have
+the operator recast the role first.
 
-- The epic spans more tickets than one session can carry.
-- Implementation runs in **other** sessions, dispatched by hand.
-- Someone has to verify what comes back and own the close decision.
-
-| Instead of this skill | Use |
-| --- | --- |
-| One long-running goal for one fresh session | `handoff-goal` |
-| A single ticket, premise, or hunch | `claim-check` |
-| A broad surface to cover at team scale | `qa-sweep` |
-| One finished change to prove at the running app | `empirical-proof` |
-
-**You have left this seat the moment you open an editor on the implementation.** A fix
-small enough that writing it yourself is tempting is still a ticket for a lane. Wanting to
-implement is the signal to say so and let the operator re-cast the role, not to quietly
-take both.
+You may use subagents for bounded support when saved context or time justifies
+the overhead. Helpers inherit the assigned workset's scope and your role
+boundaries; you retain synthesis and decisions. Reuse helpers for related work.
+Use the inherited model, or a smaller model in the same harness only for trivial,
+mechanical work with cheaply verifiable results. Evidence assessment and lane
+acceptance are not trivial. Work owned by another skill follows its routing.
 
 ## The loop
 
-```
-audit → tickets → refresh integration branch + revalidate → lane prompt → [operator dispatches] → report
-   → YOU validate independently → authorize | correct
-   → PR → [operator merges] → close tickets with fixing-PR notes
-   → repeat until the tree is clear → blind re-audit
-   → HOLDS closes the epic; DEFECTS FOUND starts the next wave
-```
+Establish scope → refresh and revalidate → dispatch ready lanes → independently
+validate reports → correct or authorize delivery → verify delivery → blind
+audit → resolve findings or propose closure to the operator.
 
 ## Revalidate before delegation
 
-Before handing off any implementation lane or workset, including reopened work
-and scope-changing amendments, refresh the integration branch locally and check
-each ticket yourself. The lane's setup fetch does not replace this check.
+Before a new implementation workset, reopened work or scope-changing amendment:
 
-1. **Refresh the base.** Use `origin/dev` unless the repo or operator explicitly
-   names another integration target. In a clean checkout of that branch, pull
-   fast-forward-only (`git pull --ff-only origin dev` for `origin/dev`) and verify
-   that HEAD equals the refreshed remote-tracking SHA. Otherwise fetch the target
-   and inspect its exact SHA in an isolated local checkout, following the repo's
-   and `using-workbench`'s worktree-location rules. A local branch ahead of the
-   remote is not that snapshot. Use explicit worktree paths; preserve active
-   lanes and user changes. Never pull into a feature branch, reset, or stash work
-   to pass this gate. A missing target or failed refresh holds the dispatch;
-   cached refs are not evidence of the latest code.
-2. **Revalidate each ticket at that SHA.** Compare its defect or objective,
-   current source anchor, and behavioral completion bar with the implementation
-   and tests. Use focused repro evidence when needed to settle validity. Remove
-   already-fixed or obsolete work from the dispatch, narrow partially resolved
-   work, and hold unresolved claims. Record evidence and disposition; tracker
-   status alone proves neither validity nor completion. Update tickets only
-   under existing ownership and write authority.
-3. **Bind the handoff.** Record the integration ref, refreshed SHA, and each
-   ticket's remaining scope and evidence in the ledger and dispatch. One
-   simultaneous batch of independent lanes may share a refresh. Refresh and
-   revalidate again for a later batch, a postponed handoff, or an intervening
-   merge before handing over the prompt.
+1. **Establish membership.** Read the operator-approved objective, acceptance
+   criteria, exclusions and explicit amendments from the ledger's governing
+   sources. Bind each assignment to the criterion it serves and why it is
+   necessary. Owner-written tickets, dispatches, reports and summaries cannot
+   grant scope. Conditional criteria stay conditional; permission to use a
+   resource does not add a deliverable. Missing or conflicting authority holds
+   the affected assignment until its source or the operator's ruling resolves it.
+   Helpers and audits inherit this boundary; a helper does not need a separate
+   scope argument for every check within its assigned workset.
+2. **Refresh the base.** Use `origin/dev` unless the repository or operator names
+   another target. In a clean checkout of that branch, pull fast-forward-only
+   and verify HEAD equals the refreshed remote SHA. Otherwise fetch the target
+   and inspect that exact SHA in an isolated checkout under repository and
+   `using-workbench` worktree rules. A local branch ahead of the remote is not
+   that snapshot. Preserve active lanes and user changes: never pull into a
+   feature branch, reset or stash work to pass this gate. Missing targets or
+   failed refreshes hold dispatch; cached refs do not prove freshness.
+3. **Revalidate at that SHA.** Check each ticket's objective, source anchor,
+   completion bar and dependencies against current implementation and tests.
+   Reproduce disputed claims as needed. Remove fixed or obsolete work, narrow
+   partially resolved work and hold unresolved claims. Record evidence and
+   disposition; tracker status proves neither validity nor completion.
+4. **Bind the handoff.** Record the ref, SHA, remaining scope and evidence in the
+   ledger and dispatch. A simultaneous independent batch may share a refresh.
+   Refresh again for a later batch, postponed handoff or intervening merge.
+   A lane whose setup finds a different integration head returns it for owner
+   revalidation before implementing against that base.
 
-## Validation is the job, and it is where the failures live
+Routine work continues without a new packet under an active contract whose
+assignment traces to operator-approved scope. Refreshing is inspection, not an
+automatic merge into active lanes.
+Integrate and recheck when a relevant change invalidates work or evidence, or a
+repository/delivery rule requires it. Unrelated churn creates no qualification
+work. Reuse valid evidence with its original revision and input attribution.
 
-A report is a claim. Verify it against the repo.
+## Validate the claim independently
 
-The lane's `code-quality-review` does not discharge this and never could: it asks whether
-the code is well built, and you are asking whether the claim is true. Only you hold the
-ticket's bar, the epic's rules, and the audit's repro material. Every check below exists
-because skipping it let a real defect through.
+A lane report and its completion review do not replace owner acceptance. Inspect
+the reported base/head, diff and relevant evidence, then choose checks that can
+confirm or refute consequential claims against the acceptance criteria. Record
+what you independently verified, what remains reported and what is unverified.
 
-**Run every command in an explicit worktree directory** using the tool's working
-directory argument or an explicit shell `cd`. Check the resolved path before
-mutation; do not rely on the previous call's directory.
+Match evidence to the claim:
 
-**Red-flip properly, in isolation.** Create a disposable validation checkout of
-the reported commit. Preserve the lane's active/dirty worktree and all relevant
-tests and fixtures. Identify changed production files from the repository's
-actual conventions; do not classify tests using a single filename suffix.
+- **Regression fix:** establish sensitivity to the intended defect using the old
+  implementation or a controlled mutation, then confirm the fixed behavior.
+  Preserve tests and expectations. A missing import, dependency or setup failure
+  is not valid RED. Reverting the entire production diff is useful only when it
+  recreates the defect without breaking the test setup.
+- **Behavior preservation:** use equivalence, characterization and affected
+  consumer checks. Correct baseline behavior may remain green; do not invent a
+  regression or a failing test for it.
+- **New behavior or interfaces:** exercise the required observable contract and
+  relevant boundaries. **Docs or configuration:** check the actual consumers,
+  examples or constraints affected. Apply repository and owning-skill gates.
+- **Gates and infrastructure:** inspect the design and exercise what it accepts
+  and rejects, including legitimate work the fix might now refuse.
+- **Artifact acceptance or derived authority:** use output from the actual
+  producer, including disposable copies of saved versions covered by
+  compatibility requirements.
+  Distinguish expected refusals from crashes and verify recovery is available.
+  A handwritten fixture alone does not prove the product supplies the input.
 
-1. Pin the reported base/head and inspect their production/test diff.
-2. In the disposable checkout only, revert modified production files to base and
-   remove newly added production files. Preserve tests, fixtures, and setup.
-3. Run the focused regression cases. Require the intended behavioral assertion
-   to fail; missing imports/tests/dependencies are not a valid RED.
-4. Restore the fix in that isolated checkout and require those cases to pass.
-5. Restore or discard only the isolated fixture after checking its resolved path.
-   Never use a broad restore on the implementer's working tree.
+Investigate source-anchor mismatches; a fix elsewhere may leave another live
+instance. Enforce applicable diff rules, including bans on comments or skipped
+tests. Independently reproduce findings that would change a decision, reverse a
+prior fix or establish a regression. Unavailable evidence remains a named gap.
 
-Use focused local tests for validation and correction rounds. Full CI suites run
-in PR CI by default. Broader local verification needs an explicit repo/user gate
-or a specific unresolved integration risk; name it and choose the smallest check.
+Use explicit worktree directories for every command. Run mutation or revert
+probes only in disposable validation checkouts after checking the resolved path.
+Preserve the lane's staged, unstaged and untracked work, tests and fixtures; stop
+probe processes and restore or discard only probe-owned state. Never broadly
+restore the implementer's checkout. Keep injected defects and probe artifacts
+out of delivery.
 
-**Grep the diff for banned content** (comments, TODO/FIXME/HACK, skipped tests) if the
-epic carries such rules. Enforce them on every lane or they erode: one doc-comment sent a
-lane back, and that consistency is why later lanes stopped adding them.
+Use focused local checks and mandatory local gates. Completion evidence covers
+affected test files and identified shared consumers, not only an iteration's
+name filter. Full suites normally run in PR CI; broader local checks require an
+explicit repository/user gate or a named unresolved integration risk. Choose
+the smallest check that addresses it and disclose unavailable coverage.
 
-**Design-read anything infrastructure-shaped**: locks, process spawning, filesystem
-lifecycles, gates. Tests written by the author cannot tell you the design is wrong. A
-PID-based lock passed its own tests while being defeated by PID reuse; the fix was to
-delete it, because the process topology it defended against could not occur.
+## Write the lane contract
 
-**When validating a gate, test what it ACCEPTS.** The most expensive miss in this pattern:
-a boot check was reviewed for process safety (ephemeral port, group teardown) and shipped
-while its acceptance criterion was `fetch()` resolving, at any status. A server answering
-404 to every route passed every repair, validation, and finalization path for days. Ask
-what the gate lets through, not whether it runs cleanly.
+Group lanes by file ownership so concurrent work does not compete over a shared
+contract. Name affected producers, fixture builders and consumer checks for
+shared-interface changes. Parallel lanes must have neither conflicting file
+ownership nor unmet producer/consumer dependencies; record readiness conditions.
+Coordinate an ownership overlap before concurrent edits and record the agreement
+under `FORKS/DEVIATIONS`. Coordination cannot override epic exclusions.
 
-For artifact-acceptance or authority-derivation changes, including your own rulings,
-exercise representative output from the actual producer through the changed path.
-Include saved versions covered by compatibility requirements, using disposable
-copies. Confirm required inputs are produced; distinguish expected refusals from
-crashes and verify the proposed recovery is available in the product. If actual
-producer output is unavailable, report the specific proof gap; a handwritten
-fixture does not establish that the product can supply the input.
+The initial dispatch is a complete brief that works without tracker access:
 
-**Chase anchor mismatches.** If a ticket's cited file is not in the diff yet the lane
-claims the fix, find out why. Once, the auditor's anchor was imprecise and the lane fixed
-the right place, and the cited line turned out to be a *second*, still-live instance of
-the same defect that four audits had missed.
+- **Scope:** governing epic source and amendments, assigned criteria, ticket
+  objectives and source anchors, finish line, exclusions, and decisions the
+  lane can make or must return.
+- **Setup:** validated integration ref/SHA, worktree and branch, repository setup
+  and toolchain, applicable repository rules and existing publication authority.
+- **Inputs:** contract revision and smallest complete reading set, including
+  exact required sections. Separate supporting evidence from startup reading;
+  state which checks need it. Resolve conflicting contracts before dispatch.
+- **Outcomes and evidence:** affected contracts, required behavior and checks,
+  compatibility obligations and handback evidence. Let the lane choose design,
+  sequencing and test techniques within repository and owning-skill rules.
+- **Coordination and handback:** other lanes' ownership/dependencies, required
+  completion gates, and `workbench:epic-implementation` for the complete
+  [lane report](references/lane-report.md).
 
-**Verify what would change a decision.** You cannot reproduce every finding; say so
-plainly rather than implying you did. Reproduce anything that would alter scope, reverse a
-prior fix, or claim a regression. The compensating control is that each lane must write a
-failing test first, so a phantom finding surfaces as "cannot write a red test", but that
-is downstream and costs a lane its time.
+Name required skills by host name, task inputs, outcome and evidence. Do not
+copy their procedures or model routing, pin plugin versions/cache paths, or add
+method mandates unrelated to this work. Link the shared report template or
+include it once in the initial contract; every final handback must still contain
+the populated copyable report.
 
-### Rationalizations
-
-Every one of these has been used to skip a check above.
-
-| Excuse | Reality |
-| --- | --- |
-| "`code-quality-review` already ran on this diff." | It did, and it asked a different question. That review asks whether the code is well built; validation asks whether the lane's claim is true. A reviewer handed a diff does not know the ticket's bar, cannot tell a real red-flip from a no-op, and has no reason to ask what a gate accepts. Both run; neither substitutes. |
-| "The report is complete and in the exact format." | The format is a claim about the work, not evidence of it. A well-formed report is the ordinary shape of a wrong one. |
-| "CHECKS says the suite is green." | Green proves the tests ran, not that they would fail without the fix. That is the entire point of the red-flip. |
-| "This lane's last three reports were clean." | Track record is not evidence about this diff. The lane you stopped checking is the one that lands the defect. |
-| "The focused red-flip costs time and the epic is behind." | The cheapest defect is the one that never merged. A wave that ships a phantom fix costs an extra audit round and every lane in it. |
-| "I read the diff and it looks right." | Reading confirms the code says what the lane says it says. It cannot tell you the test would fail without it. |
-| "The anchor moved, but the fix is obviously in the right place." | Chase it anyway. That is how a second live instance of the same defect surfaced after four audits had missed it. |
-| "It is infrastructure, and its tests pass." | Tests written by the author cannot tell you the design is wrong. Design-read it. |
-
-### Red flags: stop and open the worktree
-
-- You are about to write "authorized" without verifying the reported revision in its isolated validation checkout.
-- You are repeating the lane's own numbers as if they were your findings.
-- You caught yourself thinking "the review already covered that."
-- You are about to describe coverage you did not reproduce.
-- A check felt like ceremony because the last several lanes passed it.
-
-**Every one of these means: run the checks before you authorize.**
-
-## Writing a lane prompt
-
-Group lanes **by file ownership, not by topic**. Every semantic merge conflict in practice
-came from two lanes touching one contract from different directions. Put all changes to a
-hot file in one lane even if the tickets look unrelated.
-
-For shared-contract version or required-field changes, name affected producers,
-shared fixture builders and consumer checks in the dispatch. Split work when the
-pieces can be implemented and validated independently; a contract change alone
-does not require its own lane.
-
-Keep lane instructions provider agnostic. For each required skill, name the
-skill, task-specific inputs, required outcome and handback evidence; the lane
-reads and applies it. Do not restate, extend or generalize the skill's procedure
-or model routing in the dispatch. A skill is named by its host name alone
-(`test-quality-review`), never by a plugin version, a cache path or a copy of
-its text: the reader loads the installed skill, and a pinned path loads
-whatever version that path holds.
-
-Name `workbench:epic-implementation` in every implementation dispatch file,
-including amendments and delivery authorizations. It keeps each final lane
-handback in the shared report format across rounds.
-
-The prompt is one self-contained document, written to a file under the epic's scope
-folder (see Dispatching), containing:
-
-- **Setup**: validated integration ref and SHA from the pre-dispatch check,
-  fetch, worktree path, branch name carrying the ticket ids, install. If the
-  integration head changed before lane setup, return the change to the owner for
-  revalidation before implementing; do not silently use a different base.
-- **Tickets and required reading**: give each ticket's defect, source anchor
-  (`file:line`) and behavioral completion bar. Use this dispatch as the lane's
-  brief. Name the smallest complete required reading set, including exact sections
-  of any necessary design contract. Identify the governing decisions and contract
-  revision; resolve conflicts before dispatch. The brief and named contract
-  sections suffice without tracker access. Full ticket bodies and historical
-  reports are loaded read-only to resolve a specific question.
-- **Evidence**: read-only paths to the audit's repro material, and the repo's existing
-  integration-test pattern to reuse rather than reinvent. List supporting material
-  separately from startup reading, with when it must be consulted. Evidence needed
-  for a required validation check must be inspected.
-- **Method**: TDD red-first; assertions on the **emitted artifact and runtime behavior**,
-  not internals; controls that pin required prior behavior. Name required local
-  gates and applicable locally runnable static/build checks separately from focused
-  tests. Name filters serve iteration; completion checks run affected test files
-  in full and the identified shared-consumer checks. State unavailable coverage.
-  Full suites normally run in
-  PR CI; broader local runs require an explicit requirement or named unresolved
-  integration risk.
-- **Rules**: the epic's standing rules verbatim (comments, debt, naming, read-only
-  trackers), including that debt and follow-ups noticed in passing get reported rather
-  than fixed or dropped, plus the actual repository toolchain, formatting gates,
-  commit conventions, and existing publishing authority.
-- **Advisory coordination, never hard exclusions**: name what other lanes own and say
-  "coordinate an ownership overlap before concurrent edits, then record the
-  agreed change under FORKS/DEVIATIONS." Hard
-  DO-NOT-TOUCH walls caused a lane to halt three tickets over one advisory conflict.
-- **Completion review**: when the full agreed work set is verified and ready to
-  ship through the repository's delivery process, use `code-quality-review` over
-  the implementation range, plus
-  `test-quality-review` (given the range's base, routed as
-  `code-quality-review` describes) when the range changes production logic or
-  tests; both named, neither pinned to a version or a path.
-  Validation handbacks, intermediate reports and requests for a ruling do not
-  trigger review. Review completed correction batches only before resuming delivery.
-  Record the reviewed revision, reviewer-confirmed blocking dispositions and
-  correction evidence. Apply code-quality-review's bounded correction review;
-  preserve its follow-up count through lane handoffs and delivery.
-- **The exact report format**: read the shared
-  [lane report template](references/lane-report.md) and include its block in the
-  dispatch. Ranges, not file lists: you read the diff yourself.
+**Amendments carry deltas.** Reference the active contract and revision, state
+what changes, its scope basis, refreshed base/evidence where required, and any
+changed gates or authority. Retain unchanged terms by reference instead of
+repeating setup, standing rules, review instructions and the report template.
+Name `workbench:epic-implementation` in each amendment and delivery authorization.
+For a recovered session, make the current contract and amendments directly
+readable; reconcile conflicting revisions before continuing.
 
 ## Dispatching
 
-Complete **Revalidate before delegation** before issuing an implementation
-dispatch file and its pointer block. A ready ticket list or a previous wave's
-refresh does not satisfy the gate.
+Write each ready lane prompt, amendment, audit brief or authorization to its own
+file in the epic's scope folder, indexed by the ledger. Do not issue work whose
+trigger has not fired. Every handed-over file is executable now.
 
-Everything you hand over is dispatchable the moment you write it. The operator is a wire,
-not a queue: they are pasting into worker sessions, and a prompt they have to hold until
-some later trigger is one that gets pasted at the wrong moment or not at all.
-
-Write each lane prompt, audit brief or authorization to its own file under the epic's
-scope folder, next to the ledger (for example `dispatches/<lane>-<date>.md`), and
-index it there. What the operator pastes is a pointer, never the document: a session
-reads a file exactly; a long inline block gets copied imprecisely. Every handoff takes
-this form, one block per destination:
+Provide one paste-ready pointer per destination:
 
 ```
 Paste this into <LANE>:
 
-<one or two lines: role, what is authorized, and whether this is a fresh or an
-existing session>. Read and execute this dispatch:
-
-<absolute path to the dispatch file>
-
-<lines governing instructions require verbatim in every dispatch, if any>
-
-Paste this into <ANOTHER LANE>:
-
-...
+<Role, what is authorized, fresh or existing session>. Read and execute:
+<absolute dispatch path>
+<lines governing instructions require verbatim, if any>
 ```
 
-The block carries nothing else: no summary of the file, no rules restated from it.
-Decisions and questions for the operator go outside the blocks, after them.
+The pointer contains no repeated brief. Put operator decisions outside it.
+Implementation sessions still go through the operator; helpers do not replace
+that handoff.
 
-Dispatch together lanes with no file-ownership overlap and no unmet producer/consumer
-dependency on another lane in flight. Disjoint files alone do not establish
-independence. Record each dependency's readiness condition in the ledger.
-Authorization blocks carry the same envelope and name their destination the same way.
+## Completion review and delivery
 
-A prompt whose trigger has not fired is not written yet. Hold it, watch for the trigger
-yourself, and issue it in its own dispatch block when it fires.
+When the full agreed work set is verified and ready to ship, the lane uses
+`trim-comments`, then `code-quality-review` over the trimmed range, plus
+`test-quality-review` when production logic or tests changed. Trim edits belong
+in RANGE as `trim-comments`' *Who runs it* requires. Intermediate validation
+reports and requests for rulings do not trigger review.
 
-## Authorizing
+Retain the reviewed revision and the review record: finding IDs, dispositions,
+reviewer confirmations, evidence for rejections and correction pass number.
+Use `code-quality-review`'s correction rules; focused follow-ups run within the
+lane until review stops converging. Review completed correction batches before
+resuming delivery. A pending required review or unconfirmed blocking disposition
+holds delivery unless the operator explicitly waives it or repository rules
+supersede the gate.
 
-Authorization is its own file and paste-ready pointer block under existing operator
-authority:
-merge the actual integration branch (never rebase; stop and report on a semantic
-conflict), run affected checks and mandatory local gates, then use `file-pr` for the
-PR this authorization scopes (its tickets and implementation range) and report
-back. That skill writes the body from the repo's own template and tends the PR to green
-and mergeable.
+Authorize delivery only within existing operator authority. The authorization
+references the active contract, scopes the tickets and range, and states which
+gates are satisfied with evidence or still pending. Require the actual
+integration branch to be merged, never rebased, affected checks/local gates to
+run, and `file-pr` to prepare the PR and tend it to green and mergeable.
 
-**State whether the completion review has run; if pending, require it before delivery.** Say the gate is satisfied only with the evidence below. The gate requires
-an adversarial review that ran on this diff, and the lane's completion review
-(`code-quality-review`, plus `test-quality-review` when required) is exactly that:
-dispatched, returned, findings acted on. Record the reviewed revision
-and reviewer confirmation of every blocking disposition, plus the follow-up count. Left unsaid, the lane loads `file-pr`, reads the MUST, and burns a second
-full review pass on a diff that already had one. Two cases where the gate is **not**
-satisfied, and you say so instead: blocking dispositions lack reviewer confirmation or later behavior changes lack review,
-or the integration merge hit a semantic conflict. The second is why a semantic conflict stops the lane rather than
-being resolved into new code.
+The lane chooses a title under repository conventions and `file-pr`. It may
+resolve merge conflicts within settled contracts; a new scope, product, policy
+or authority choice returns for a ruling. Conflict resolution that changes
+behavior requires affected validation and review before delivery. Reuse still
+valid review evidence instead of restarting a satisfied gate.
 
-What stays yours: the exact title, and a terminal CI verdict before you call the wave
-done. Never end a turn on a watcher's promise.
+Present open encoding offers from `REVIEW` to the operator with authorization;
+an approved offer returns to the lane as a correction. PR text describes the
+change and its stakes, with ticket links in the repository's template fields;
+omit lane names and process history. Verify terminal CI and delivery state
+before calling the wave done. A watcher's promise or an opened PR is not a
+completed delivery.
 
-PR text describes the **change and its stakes**, never the process. No lane names, no
-"epic", no "follow-up", no review mechanics unless they matter to the change;
-follow the repo's title convention and place ticket links in its template fields.
+## Rulings and findings
 
-## Rulings you own
-
-Lanes stop and ask; you decide, with evidence:
-
-- **Lane corrections and review extensions**: return confirmed in-scope defects
-  to the owning lane through a correction dispatch. When its two automatic review
-  follow-ups are consumed, you own the bounded next-step decision under
-  `code-quality-review`: record the correction scope, additional submission count
-  and reason in the ledger and dispatch, then provide the operator's paste-ready
-  pointer. Preserve the cumulative count and delivery hold until independent
-  review closes the blockers. Escalate to the operator when the needed decision
-  exceeds your existing scope or authority; routine correction handoffs stay yours.
-- **Mutation evidence is never yours to rule on.** The test reviewer bounds its
-  own run; a partial run or a timeout is not a finding, and no lane may ask you
-  to waive, scope or diagnose mutation runs. Send such a request back to the
-  lane with the rubric's bounds; only a repository rule or the operator removes
-  a run.
-- **Semantic merge conflicts**: which policy wins, and how to compose rather than choose.
-- **Scope boundaries**: before ticketing an audit finding, confirm the flow under audit
-  actually reaches that code. Presence in a preserved artifact is the wrong test;
-  reachable from the tool chain is the right one.
-- **Over-strictness from your own fixes**: every wave produced at least one. A fix that
-  refuses legitimate work is a defect of the same severity as the one it replaced.
-- **Product forks**: when a lane surfaces a real choice (fail closed vs. widen a type vs.
-  document a limit), recommend one and let the operator rule. Record the operative
-  decision and its source in the local epic ledger. Update the shared task when
-  its scope or acceptance changes, under existing write authority.
+- **Corrections:** return confirmed in-scope defects to the owning lane. Routine
+  fixes within its contract proceed there. If review stops converging under
+  `code-quality-review`, record the next-step decision and reason, then dispatch
+  it. Unless that decision ends review, lane follow-ups resume autonomously.
+  Keep unresolved delivery holds visible.
+- **Mutation evidence:** the test reviewer bounds its own run. Partial runs or
+  timeouts are not findings. Return requests to waive, scope or diagnose them
+  to the lane under that rubric; only repository rules or the operator remove
+  a run. This does not waive required sensitivity evidence for regression claims.
+- **External findings:** technical validity and reachability do not establish
+  epic membership. Route unrelated findings to separate follow-ups under
+  existing write authority. If an external defect blocks an epic criterion,
+  record the criterion, evidence, external owner and unblock; advance independent
+  work. Do not absorb its repair or waive the criterion. Scope expansion needs
+  an explicit operator amendment.
+- **Unsettled decisions:** resolve coordination within your authority; recommend
+  product/policy choices and let the operator rule. Record the operative
+  decision and source. A fix that refuses required legitimate work is itself
+  an in-scope defect, not a reason to narrow acceptance silently.
 
 ## Keep a local epic ledger
 
-A session ends and its context dies with it. Use one local ledger for this epic's
-recovery state in its existing scope folder. Reuse its current README or CURRENT
-entry point; otherwise create `LEDGER.md`. Other startup indexes point there.
-The ledger is disposable working material under `using-workbench`'s **Artifacts
-are disposable** guidance, not a second tracker or a committed documentation layer.
+Reuse the epic scope folder's README or CURRENT entry point; otherwise create
+`LEDGER.md`. Other indexes point there. This is disposable working state under
+`using-workbench`, not a second tracker or committed documentation layer.
 
-**Contents:** goal and full closure bar; active or pending lanes with owner,
-contract/revision and worktree references, dependencies, holds and next action;
-operative decisions with sources; unresolved questions with their consequence and
-next verification or disposition; pointers to briefs, evidence, recovery material
-and the authoritative backlog. Distinguish reported claims from verified outcomes;
-bind verification to its revision and source. Refresh volatile facts before a
-decision relies on them. An entry belongs here when it changes the next action,
-preserves a consequential constraint, or locates information needed to verify it.
+Keep the approved goal, closure bar, exclusions and scope sources distinct from
+discovered follow-ups. Track active lanes and contract revisions, worktrees,
+dependencies, holds, decisions and their sources, owners and next actions.
+Index briefs, evidence, recovery material and the tracker backlog; governing
+scope sources determine membership.
+Distinguish reported claims from verified results and bind evidence to revisions.
 
-**Update loop:** start from the ledger, then load the brief and sources needed for
-the next action. After a meaningful handback, ruling, validation or delivery
-transition, replace the affected entry in place. Before compaction or coordinator
-handoff, check that a successor can recover the next action, its authority,
-constraints and evidence without the conversation. Resolved entries become a brief
-outcome/reference or leave the view once their remaining obligations have a home.
+Start from the ledger and load sources needed for the next decision. Refresh
+volatile facts before relying on them. After meaningful handbacks, rulings or
+state changes, replace affected entries in place. Before compaction or handoff,
+ensure a successor can recover the next action, authority, constraints and
+proof without the conversation. Keep detailed reports beside the ledger instead
+of copying them into a growing session history.
 
-**Keep useful detail locally:** create and retain dispatches, reports, investigation
-notes and repro material when they support actual work. The ledger indexes them;
-required validation still reads and exercises the relevant evidence. Avoid copying
-those records into the ledger, prepending session histories, repeating standing
-instructions or retaining completed lanes merely to recount progress. Size follows
-current coordination needs; a word target never removes obligations or evidence.
+Confirmed in-scope work needing separate assignment gets a deduplicated ticket
+under existing write authority. Never modify tickets the operator does not own;
+reference them as context. Active-lane corrections remain in that contract.
+Uncorroborated, disproved or scoped-out claims retain evidence and disposition.
+Before wave closeout, give every finding and debt item a destination or explicit
+disposition. Close fixed tickets with the fixing PR and resulting behavior.
 
-**Shared tracker updates:** publish the task, decision or outcome that other readers
-need: defect/objective, behavioral bar, owner, dependencies, delivery state and
-relevant evidence summary. Detailed working records stay local by default; a need
-for compaction recovery alone does not request publication. References in shared
-updates must be usable by their intended readers; keep local retrieval paths in
-the ledger rather than exporting its evidence inventory.
+Shared tracker updates carry what readers need: objective, behavioral bar,
+owner, dependencies, delivery and a concise evidence summary. Local recovery
+alone does not authorize publication; references must work for their readers.
+Without write authority, retain the item locally with an owner and pending action.
 
-Confirmed work requiring separate assignment gets a deduplicated ticket under
-existing write authority. Corrections within an active lane stay in that lane's
-contract, amended explicitly when necessary. Without needed publication authority,
-retain the work locally with its owner and named pending action. Uncorroborated,
-disproved or scoped-out claims retain evidence and their disposition, not automatic
-implementation tickets. Link each originating finding to its current destination
-or disposition before wave closeout, including debt created by the wave.
-
-Apply the document lifecycle at lane state changes, coordinator handoffs, and wave
-or epic closeout:
-
-- **Active:** preserve the dispatched contract and its revision. Contract changes
-  require an explicit amendment communicated to affected lanes.
-- **Accepted / pending delivery:** retain the accepted revision, validation and
-  review evidence, remaining gates, holds, owner and next action.
-- **Closed:** required delivery is verified or the operator explicitly accepts
-  another disposition; unresolved work has a durable owner and destination.
-- **Retired:** temporary instructions leave default reading after their consumers
-  no longer need them. Retained evidence remains addressable.
-
-Before retirement, preserve unresolved work, lasting decisions, final evidence
-and its limits, frozen audit inputs, and recovery material in their established
-homes. In-flight contracts, dependent consumers, held delivery and explicit
-retention requirements prevent retirement of material they still need. Preserve
-stable references; archive superseded material outside default reading. Delete
-redundant or reproducible scratch only under existing cleanup authority after
-checking references and recovery needs. Document retirement changes no ticket
-status, worktree, publication hold, validation requirement or audit scope.
-After the operator accepts epic closure and remaining obligations have durable
-homes, retire the ledger from startup and archive or delete it under the applicable
-retention and cleanup authority.
-
-## Non-negotiables
-
-- **Never modify a ticket the operator does not own.** Create your own under the epic and
-  reference theirs as context and check for duplicates first; absorbing their scope is not.
-- **Nothing actionable lives only in context.** The local ledger preserves unresolved
-  work, owners, next actions and evidence references. Shared tasks use deduplicated
-  tickets under existing write authority; uncertain claims retain their disposition.
-- **Close each ticket with its fixing PR and what the behavior is now**, including
-  corrections to the ticket's own anchor when the fix landed elsewhere.
-- **State what you did not verify.** Coverage claims that outrun the evidence are the one
-  failure this whole pattern exists to prevent.
+Retain active contracts; accepted revisions and validation/review evidence while
+delivery is pending; and final evidence, limits and durable follow-ups after
+closure. Retire superseded instructions from startup only when active lanes,
+dependent consumers and held delivery no longer need them. Preserve stable
+references, frozen audit inputs and required recovery material. Retirement grants
+no ticket, worktree, publication or deletion authority. Archive or delete only
+under applicable retention and cleanup authority; epic closure is not a cleanup
+request.
 
 ## Close every handoff with a next step
 
-Acknowledge only what was actually verified. Say, for example, “This set of work
-is verified complete,” followed by the accepted revision, checks, and remaining
-delivery gates. “Ready for PR” is distinct from merged or epic-complete.
-
-Then evaluate the epic's current state and choose exactly one immediate next step:
-
-1. **More ready work:** refresh the integration branch and revalidate the next
-   workset, then name the ready lanes and provide their dispatch blocks now.
-2. **Delivery still pending:** name the owner and next action for review, CI, PR,
-   or merge. Keep that gate visible instead of acknowledging the wave as finished.
-3. **Implementation complete, closing audit owed:** state the audit stopping point
-   and write the blind audit's scope, regression families and evidence contract to
-   its dispatch file, with its pointer block. Do not manufacture more implementation to avoid this gate.
-4. **Audit holds and closure criteria are met:** summarize the corroborated result,
-   remaining accepted limits, and propose the epic as done for the operator's
-   close decision. Do not close it silently.
-5. **Blocked:** name the missing decision/capability, owner, and concrete unblock;
-   advance independent ready work if available.
-
-A bare acknowledgment, “waiting for instructions,” or a list of finished tickets
-without this next-step decision is an incomplete orchestration response. Do not
-ask the user to choose a routine next lane when the agreed plan already determines it.
+State verified results, revision and remaining gates. Distinguish validation,
+PR readiness, merge and epic completion. Give a concrete immediate next action:
+continue authorized work or dispatch a revalidated workset; advance pending
+delivery; issue the closing audit; propose closure; or name a blocker, owner and
+unblock while advancing independent work. Do not ask the operator to select a
+routine next lane already determined by the plan.
 
 ## Closing the epic
 
-The epic closes on a **blind re-audit**, not on an empty ticket list. The auditor starts
-from the artifact, never the PR list, and its mandate has two parts: probe the surfaces
-generally, and **attack the fixes the previous audit provoked**, because they are the
-least weathered code and each round has found at least one defect introduced by the last
-round's fixes. Require a regression-check section (per fix family: held or broken, with
-evidence) and per-finding repro plus current-code anchor; findings that cannot be
-reproduced remain uncorroborated or blocked; contrary evidence is required to call
-them disproved. Preserve their evidence and limits in the report.
+Closure requires acceptance evidence, regression checks for relevant fix
+families, dispositioned findings, verified required delivery and a **blind audit**.
+The auditor starts from the artifact, not PR history, probes declared epic
+surfaces against approved criteria and attacks prior fixes. Require each fix
+family's held/broken result with evidence, and each finding's repro and current
+source anchor. An unreproduced finding stays uncorroborated or blocked; calling
+it disproved requires contrary evidence. Successful-run-only corpora cannot
+establish absence of failures.
 
-Expect several rounds. Convergence looks like this: earlier fixes hold under attack while
-each audit has to cut deeper to find anything, and the newest finds cluster around policy
-that was never implemented rather than artifacts that contradict each other. When a round
-returns HOLDS, corroborate its verdict-movers yourself. Preserve the detailed report
-locally; under existing write authority, update the epic's shared record with the
-concise verdict, coverage, accepted limits and evidence references usable by its
-readers. Publishing supporting material follows existing publication authority and
-the needs of that closure decision. Hand the close decision to the operator, then
-apply the ledger's retirement conditions.
-
-One caution learned the hard way: a corpus of *preserved successful runs* contains no
-failure signal. Silence there is selection bias, not evidence of health.
+Corroborate the audit's verdict-moving claims yourself. A HOLDS label does not
+replace missing required evidence. When the conditions above are met, summarize
+coverage, accepted limits and remaining dispositions, and propose closure to
+the operator. Another round needs an unresolved finding, changed behavior or an
+evidence gap; round count is not a closure criterion. Preserve the audit report
+locally, publish a concise verdict under existing authority, and retire working
+instructions only when their ledger obligations are satisfied.
