@@ -44,6 +44,21 @@ Several-hundred-line inline briefs were hard to copy precisely from a terminal, 
 
 The initial lane contract is complete. Amendments reference its revision and carry only changed scope, inputs, evidence, gates or authority. A recovered session reads the active contract and amendments. The report template can be referenced directly instead of copied into every dispatch; every final handback still contains the complete populated block.
 
+An owner accepted a correction in prose and recommended approval and merge,
+but omitted the paste-ready return to the implementation lane. The operator
+had to ask for the handoff again. The dispatch format existed, but the final
+response rule required only verified results and a next step, leaving
+acceptance-only returns ambiguous.
+
+Owner returns now have an explicit required lane-handoff slot. Accepting or
+rejecting a lane report, issuing a ruling and authorizing delivery all produce
+a file and one fenced pointer per affected lane, including correction acceptance
+with no further implementation. An acceptance notice records the revision and
+current action or hold under the existing contract; pending operator approval
+does not authorize a future merge or create another correction round. Prose
+progress updates remain available. This is an output-contract correction based
+on the operator's reported failure; no new behavioral probe has run.
+
 ## The owner never rules on mutation evidence (2026-09-23)
 
 A lane's test reviewer asked the epic owner to waive or diagnose nine mutation

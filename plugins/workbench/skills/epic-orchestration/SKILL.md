@@ -167,11 +167,15 @@ readable; reconcile conflicting revisions before continuing.
 
 ## Dispatching
 
-Write each ready lane prompt, amendment, audit brief or authorization to its own
-file in the epic's scope folder, indexed by the ledger. Do not issue work whose
-trigger has not fired. Every handed-over file is executable now.
+Write each ready lane prompt, amendment, acceptance, ruling, audit brief or
+authorization to its own file in the epic's scope folder, indexed by the ledger.
+Acceptance and hold notices reference the active contract, identify the revision
+and disposition, and state the lane's current authorized action or hold.
+Pending delivery approval remains a delivery hold, not a future merge instruction
+or another correction round. Do not issue work whose trigger has not fired.
 
-Provide one paste-ready pointer per destination:
+The final reply contains one separate fenced, paste-ready pointer per destination,
+including returns to an existing lane after accepting its correction:
 
 ```
 Paste this into <LANE>:
@@ -182,8 +186,9 @@ Paste this into <LANE>:
 ```
 
 The pointer contains no repeated brief. Put operator decisions outside it.
-Implementation sessions still go through the operator; helpers do not replace
-that handoff.
+The file and its populated pointer together complete the handoff; a saved file,
+ledger update, link or prose recap alone does not. Implementation sessions still
+go through the operator; helpers do not replace that handoff.
 
 ## Completion review and delivery
 
@@ -285,12 +290,24 @@ request.
 
 ## Close every handoff with a next step
 
-State verified results, revision and remaining gates. Distinguish validation,
-PR readiness, merge and epic completion. Give a concrete immediate next action:
-continue authorized work or dispatch a revalidated workset; advance pending
-delivery; issue the closing audit; propose closure; or name a blocker, owner and
-unblock while advancing independent work. Do not ask the operator to select a
-routine next lane already determined by the plan.
+An owner return has these parts, in order:
+
+1. **Verified disposition:** results, revision and remaining gates. Distinguish
+   validation, PR readiness, merge and epic completion.
+2. **Required lane handoff:** the populated fenced pointer from **Dispatching**
+   for each affected lane. Include it when accepting or rejecting a report,
+   returning a correction or ruling, or authorizing delivery, including after
+   recovery and when no more implementation is needed. If only an operator
+   decision remains, return the lane's disposition and current hold.
+3. **Immediate next action:** continue authorized work or dispatch a revalidated
+   workset; advance pending delivery; issue the closing audit; propose closure;
+   or name a blocker, owner and unblock while advancing independent work. Put
+   operator decisions here, outside the paste blocks. Do not ask the operator
+   to select a routine next lane already determined by the plan.
+
+Before sending the final reply, check that every lane-facing disposition has
+its actual file and fenced pointer in the reply. Progress updates and answers
+that carry no lane-facing disposition can stay brief prose.
 
 ## Closing the epic
 

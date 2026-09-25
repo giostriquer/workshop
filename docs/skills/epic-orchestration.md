@@ -37,14 +37,15 @@ Not for implementing a change yourself, and not for a single ticket.
 
 **What does it produce?**
 
-Dispatch files and paste-ready pointer blocks. Each lane prompt, audit brief, or
-authorization is its own file under the epic's scope folder. The initial lane
-contract carries scope, setup, tickets with anchors and behavioral bars,
-required reading, outcomes, evidence, rules and authority. It includes or links
-the shared report template. Amendments state only what changed and reference
-the active contract. Every final handback still contains the complete populated
+Dispatch files and paste-ready pointer blocks. Each lane prompt, acceptance,
+ruling, audit brief or authorization is its own file under the epic's scope
+folder. The initial lane contract carries scope, setup, tickets with anchors and
+behavioral bars, required reading, outcomes, evidence, rules and authority. It
+includes or links the shared report template. Amendments state only what changed
+and reference the active contract. Every final handback still contains the complete populated
 report. You paste a short `Paste this into <LANE>:` block naming the role,
-authority and file path.
+authority and file path. Each destination gets its own fenced block in the
+owner's final reply, including a return to an existing lane after a correction.
 
 Everything is dispatchable the moment it is written. A prompt whose trigger has
 not fired is not written yet; the session watches for the trigger.
@@ -167,9 +168,19 @@ addressable.
 
 **How does each reply end?**
 
-With what was verified and a concrete next step: continue authorized work, dispatch ready
-lanes, name a pending delivery gate, dispatch the closing audit, propose
-closure, or name a blocker.
+An owner return gives the verified result and revision, the required copyable
+handoff for each affected lane, then a concrete next action with its owner.
+Accepting or rejecting a report, issuing a ruling and authorizing delivery all
+require the file and fenced pointer. A prose recap or ledger update alone does
+not complete the handoff. Progress updates can stay brief prose.
+
+**Does an accepted correction still need a lane handoff?**
+
+Yes, even when no more implementation is needed. The return file names the
+accepted revision, references the active contract and states the lane's current
+authorized action or hold. If approval or a merge decision belongs to you, the
+lane receives the acceptance and hold. That creates no new correction work or
+merge authority.
 
 **When is the epic done?**
 
@@ -192,6 +203,8 @@ review mechanics.
 ## It's working if
 
 - Every prompt you receive is dispatchable as-is.
+- Every acceptance, correction, ruling and delivery return includes a copyable
+  pointer for the affected lane, including when approval is the only next step.
 - Every implementation dispatch names a freshly validated revision and only work
   remaining at it, tied to an approved epic criterion.
 - Amendments reference the active contract; lanes can make decisions it already settles.
