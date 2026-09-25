@@ -4,9 +4,9 @@
 
 `epic-orchestration` makes the session the **epic owner**: it holds the tickets,
 writes the prompts other sessions execute, verifies what comes back against the
-repository, rules on open questions, and decides whether a PR may be opened. It
-never implements, commits, pushes, or merges. You carry prompts out and
-reports back.
+repository, rules on open questions, and authorizes lanes to push, open or update
+PRs, and monitor/fix CI. It never implements, commits, pushes, or merges. You
+carry prompts out and reports back, and retain merge decisions.
 
 | Role | Owns |
 | --- | --- |
@@ -119,6 +119,18 @@ decides and records the next step, and unless that decision ends review the
 lane's follow-ups run on their own again. Delivery waits until independent
 reviewers close the blockers or you explicitly waive them.
 
+**Who authorizes a ready lane to push and open its PR?**
+
+The coordinator does, after independent acceptance and required pre-publication
+gates. It sends the authorization file and copyable pointer without asking you
+to repeat that decision. "Await delivery authorization" in its own dispatch is
+the coordinator's gate to release. Holds name their decision owner and source.
+
+An operator or repository instruction can explicitly reserve a publication
+decision for you. The coordinator identifies that instruction when asking; its
+own dispatch or ledger cannot invent the reservation. Publication stays within
+approved scope, and merge decisions remain yours.
+
 **Can it use subagents?**
 
 Yes, for bounded support such as checking evidence. Helpers inherit the
@@ -178,9 +190,10 @@ not complete the handoff. Progress updates can stay brief prose.
 
 Yes, even when no more implementation is needed. The return file names the
 accepted revision, references the active contract and states the lane's current
-authorized action or hold. If approval or a merge decision belongs to you, the
-lane receives the acceptance and hold. That creates no new correction work or
-merge authority.
+authorized action or hold. The coordinator resolves its own delivery gate. If a
+governing instruction reserves approval for you, or a merge decision remains,
+the lane receives the acceptance and that specific hold. That creates no new
+correction work or merge authority.
 
 **When is the epic done?**
 

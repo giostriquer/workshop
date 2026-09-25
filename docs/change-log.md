@@ -8,6 +8,10 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.43.4: 2026-09-25
+
+- **The coordinator owns routine lane publication decisions.** After independent acceptance and required pre-publication gates, it authorizes branch push, PR creation or update, and CI work through the copyable lane handoff. Holds identify who can release them and their governing source; an owner-written dispatch or ledger cannot invent another operator approval requirement. Explicit operator or repository reservations remain binding, and merges remain operator decisions. ([decision](decisions/epic-orchestration.md#authorization-claims-the-pr-review-gate-2026-09-04))
+
 ## workbench 0.43.3: 2026-09-25
 
 - **Always pull latest before opening a PR.** `file-pr` integrates missing commits from the latest remote base even when they merge cleanly. The final push pulls the remote head when it exists; incoming changes refresh the diff and body and run affected validation and review. Failed synchronization blocks filing. ([decision](decisions/file-pr.md#always-pull-latest-before-filing-2026-09-25))
@@ -93,8 +97,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 ## toolkit 0.11.1: 2026-09-22
 
 - **Open HTML artifacts in dark mode.** `html-artifact` starts with dark colors on the first render, including on systems set to light. Light mode is optional; embedded product UI retains its source appearance and print can use paper-friendly colors. ([decision](decisions/html-artifact.md#dark-initial-theme-2026-09-22))
-
-## toolkit 0.11.0: 2026-09-22
-
-- **Use one HTML artifact skill.** `html-artifact` replaces `html-report` and `arch-map` as the manual entry point for reports, plans, architecture explanations, and interactive product targets. Diagram and product-mockup techniques load when needed; usage pages and host discovery metadata follow the new name. ([decision](decisions/html-artifact.md))
-- **Choose the design for the reader.** The skill preserves evidence and claim status while letting the model choose typography, palette, composition, navigation, and useful interaction. Fixed dark/glass templates and one-pass editing rules give way to rendered inspection, defect correction, and coherent revisions. ([decision](decisions/html-artifact.md))

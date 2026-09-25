@@ -26,6 +26,24 @@ Follow-up work dies in passing observations and session reasoning, not only in d
 
 Authorization claims `file-pr`'s review gate as satisfied by the lane's completion review, with its evidence, so no second full review runs. Blocking dispositions without reviewer confirmation or later behavior changes without review keep delivery pending. A lane may resolve merge conflicts within settled contracts and chooses the PR title under repository conventions; unresolved policy or product choices return for a ruling. Changed behavior still needs affected validation and review. The operator remains the link between independent implementation sessions.
 
+A coordinator asked the operator to authorize publication because its own
+implementation dispatch deferred push and PR creation to a later delivery
+authorization. That dispatch called for owner acceptance; it did not reserve
+the decision for the operator. The phrase "within existing operator authority"
+left the owner treating its staged delivery gate as missing delegation.
+
+The assigned coordinator role owns routine lane publication decisions within
+approved epic scope: branch push, PR creation or update, and monitoring/fixing
+CI. After independent acceptance and required pre-publication gates, the owner
+issues that authorization and its copyable lane handoff. The initial contract
+and hold notices distinguish this coordinator gate from publication decisions
+explicitly reserved by operator or repository instructions, with the source of
+any reservation. Owner-written dispatches, ledgers and recovery notes cannot
+invent an operator approval requirement. Merge decisions remain with the
+operator, and publication authority neither expands scope nor waives gates.
+This correction is grounded in the reported failure and original dispatch;
+no new behavioral probe has run.
+
 ## The epic closes on a blind re-audit (2026-09-04)
 
 An empty ticket list never closes the epic. A blind auditor starts from the artifact, not the PR list, and probes declared criteria and regression families. Closure requires acceptance evidence, dispositioned findings, verified delivery and owner corroboration of the audit before the operator decides. Further rounds address findings or evidence gaps; their count does not establish completion.

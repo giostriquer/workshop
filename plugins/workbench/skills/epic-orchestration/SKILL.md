@@ -14,8 +14,8 @@ A lane returns for a ruling when the existing contract does not settle a decisio
 
 | Role | Owns | Boundary |
 | --- | --- | --- |
-| **Orchestrator** (you) | tickets, dispatches, independent validation, rulings, authorization | Never implements, commits, pushes, opens PRs or merges. |
-| **Implementer lane** | one worktree, implementation, completion review and report | Publishes only under delivery authorization. |
+| **Orchestrator** (you) | tickets, dispatches, independent validation, rulings, lane publication authorization | Never implements, commits, pushes, opens PRs or merges. |
+| **Implementer lane** | one worktree, implementation, completion review and report | Publishes only under your delivery authorization. |
 | **Auditor** | blind empirical audit of the artifact, findings with repro and source anchor | Does not read the PR list or implement fixes. |
 | **Operator** | lane dispatch, merges, product decisions and epic closure | Grants scope and authority. |
 
@@ -140,7 +140,9 @@ The initial dispatch is a complete brief that works without tracker access:
   objectives and source anchors, finish line, exclusions, and decisions the
   lane can make or must return.
 - **Setup:** validated integration ref/SHA, worktree and branch, repository setup
-  and toolchain, applicable repository rules and existing publication authority.
+  and toolchain, applicable repository rules and publication state. Name your
+  delivery gate separately from any operator-reserved publication decision and
+  cite the governing instruction for that reservation.
 - **Inputs:** contract revision and smallest complete reading set, including
   exact required sections. Separate supporting evidence from startup reading;
   state which checks need it. Resolve conflicting contracts before dispatch.
@@ -171,8 +173,10 @@ Write each ready lane prompt, amendment, acceptance, ruling, audit brief or
 authorization to its own file in the epic's scope folder, indexed by the ledger.
 Acceptance and hold notices reference the active contract, identify the revision
 and disposition, and state the lane's current authorized action or hold.
-Pending delivery approval remains a delivery hold, not a future merge instruction
-or another correction round. Do not issue work whose trigger has not fired.
+Each hold names who can release it and its governing source. Resolve your own
+delivery gate under **Completion review and delivery**; preserve gates explicitly
+reserved to the operator. A hold creates no merge authority or new correction
+round. Do not issue work whose trigger has not fired.
 
 The final reply contains one separate fenced, paste-ready pointer per destination,
 including returns to an existing lane after accepting its correction:
@@ -206,11 +210,21 @@ resuming delivery. A pending required review or unconfirmed blocking disposition
 holds delivery unless the operator explicitly waives it or repository rules
 supersede the gate.
 
-Authorize delivery only within existing operator authority. The authorization
-references the active contract, scopes the tickets and range, and states which
-gates are satisfied with evidence or still pending. Require the actual
-integration branch to be merged, never rebased, affected checks/local gates to
-run, and `file-pr` to prepare the PR and tend it to green and mergeable.
+**You decide routine lane delivery authorization within the approved epic.**
+Once independent acceptance and required pre-publication gates are satisfied,
+authorize the lane to push its branch, open or update its PR, and monitor/fix CI.
+A dispatch's "not yet authorized" or "await delivery authorization" is your
+staged gate to release, not a request for another operator approval. Ask the
+operator only when a governing instruction explicitly reserves that publication
+decision or the action exceeds delegated scope or authority; identify that
+source or boundary. Your own dispatch, ledger or recovery note cannot create
+such a reservation. Merge decisions remain with the operator.
+
+Issue the authorization file and copyable pointer now. Reference the active
+contract, scope the tickets and range, and state which gates are satisfied with
+evidence or still pending. Require the actual integration branch to be merged,
+never rebased, affected checks/local gates to run, and `file-pr` to prepare the
+PR and tend it to green and mergeable.
 
 The lane chooses a title under repository conventions and `file-pr`. It may
 resolve merge conflicts within settled contracts; a new scope, product, policy
