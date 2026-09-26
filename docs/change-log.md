@@ -9,6 +9,10 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-12 reformat.
 
 
+## workbench 0.44.1: 2026-09-26
+
+- **Audit acceptance and assignment completion are explicit.** The orchestrator states report acceptance, the auditor's remaining work or completion, and epic closure separately. A completed auditor assignment ends with an acknowledgment instead of another validation report; findings, evidence gaps and the operator's closure authority remain intact. ([decision](decisions/epic-auditor.md#explicit-audit-acceptance-and-assignment-completion-2026-09-26))
+
 ## workbench 0.44.0: 2026-09-25
 
 - **Epic auditors return complete, copyable reports.** The new `epic-auditor` skill keeps verdicts, coverage, fix-family results, findings, gaps and next actions together across audit follow-ups, amendments and recovery. `epic-orchestration` requires it in auditor dispatches and links the shared audit report template; implementation lanes retain their own reporting skill. ([decision](decisions/epic-auditor.md))
@@ -94,8 +98,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 
 - **Mutation evidence is bounded, never negotiated.** In `test-quality-review` a per-mutant timeout counts as detected, as Stryker and cargo-mutants score it, and is never diagnosed, rerun or carried as unknown; a partial run records `partial` with the uncovered scope's command under Strategy notes. Neither is an Issue, holds delivery, consumes a follow-up pass or needs a waiver, ruling or extension from anyone, and the reviewer never returns a mutation question to the caller. The only mutation-evidence Issue left is a required run that never happened (`blocked`), which the implementer runs or repairs; `waived` records a run a repository rule or the user removed in advance. ([decision](decisions/mutation-scope-and-budget.md#mutation-evidence-is-bounded-never-negotiated-2026-09-23))
 - **The epic owner never rules on mutation.** `epic-orchestration` lists mutation evidence among the things the owner does not decide: a lane's request to waive, scope or diagnose mutation runs goes back to the lane with the rubric's bounds. ([decision](decisions/epic-orchestration.md#the-owner-never-rules-on-mutation-evidence-2026-09-23))
-
-## workbench 0.41.3: 2026-09-22
-
-- **The watcher waits with one background loop.** `ci-watcher` arms one shell loop that polls every thirty seconds and exits on the first terminal state, with the deadline inside the loop, then ends its turn and reports once the host wakes it; host behavior is labeled (Claude Code: Bash `run_in_background` and the task notification; Codex: re-read the loop's file; elsewhere: foreground calls within the tool's limit). ([decision](decisions/fix-ci.md#the-watchers-wait-is-one-background-loop-the-parent-never-waits-in-its-own-turns-2026-09-22))
-- **The parent never waits in its own turns.** `fix-ci` says why the wait lives in the watcher on every host (parent turns and Monitor lines are billed at the parent's model), that the agent file pins the watcher's model so the parent passes none, and that after dispatching the parent ends its turn and runs no `gh` poll, Monitor or output-file read of its own; `file-pr` and the usage page match. ([decision](decisions/fix-ci.md#the-watchers-wait-is-one-background-loop-the-parent-never-waits-in-its-own-turns-2026-09-22))

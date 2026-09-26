@@ -42,8 +42,8 @@ ruling, audit brief or authorization is its own file under the epic's scope
 folder. The initial lane contract carries scope, setup, tickets with anchors and
 behavioral bars, required reading, outcomes, evidence, rules and authority. It
 includes or links the shared report template. Amendments state only what changed
-and reference the active contract. Every final handback still contains the complete populated
-report. You paste a short `Paste this into <LANE>:` block naming the role,
+and reference the active contract. Every handback of implementation or audit work
+still contains the complete populated report. You paste a short `Paste this into <LANE>:` block naming the role,
 authority and file path. Each destination gets its own fenced block in the
 owner's final reply, including a return to an existing lane after a correction.
 
@@ -98,12 +98,12 @@ in-flight lane's output.
 
 **How does it connect to the rest of the workbench?**
 
-Every auditor brief, follow-up, amendment and recovery prompt requires
+Every auditor brief, follow-up, amendment, acceptance, closeout and recovery prompt requires
 [epic-auditor](epic-auditor.md). Its initial contract supplies approved criteria,
 the artifact revision, setup, neutral fix-family targets and required evidence,
 and includes or links the shared
 [audit report template](../../plugins/workbench/skills/epic-orchestration/references/audit-report.md).
-Auditors start without PR history or implementer conclusions. Each final return
+Auditors start without PR history or implementer conclusions. Each audit result
 contains the complete audit report for owner corroboration, including blockers.
 
 Every implementation dispatch names [epic-implementation](epic-implementation.md),
@@ -212,6 +212,17 @@ and checks acceptance evidence, regression families, finding dispositions and
 required delivery before proposing closure. You decide. Another round needs an
 unresolved finding, changed behavior or missing evidence; the number of rounds
 does not establish completion.
+
+**What does an accepted audit mean for the auditor?**
+
+The owner's return states three things: whether the report is accepted, whether
+the auditor's assignment is complete or has specific remaining work, and whether
+the epic is open, proposed for closure or closed by your decision. It names the
+audit contract and artifact revision. A completed assignment gets an explicit
+"your audit assignment is complete; acknowledge only" notice and copyable pointer.
+The auditor acknowledges it without repeating the audit or submitting another
+report for validation. Findings and gaps keep their recorded dispositions.
+Fixes can remain with implementation lanes, and epic closure remains your decision.
 
 **A lane asks me to waive, scope or diagnose mutation timeouts.**
 Not your call, and not a ruling. The test reviewer bounds its own run; a partial run or a timeout is not a finding. Send the request back to the lane with the rubric's bounds. Only a repository rule or the operator removes a run.

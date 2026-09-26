@@ -60,7 +60,7 @@ A coordinator pushed detailed evidence into tracker descriptions because the ski
 
 Several-hundred-line inline briefs were hard to copy precisely from a terminal, while a session reads a file exactly. Each lane prompt, audit brief and authorization is its own file in the epic's scope folder, indexed in the ledger. The paste block carries only role, authority, whether the session is fresh, the absolute path and any required verbatim lines.
 
-The initial lane contract is complete. Amendments reference its revision and carry only changed scope, inputs, evidence, gates or authority. A recovered session reads the active contract and amendments. The report template can be referenced directly instead of copied into every dispatch; every final handback still contains the complete populated block.
+The initial lane contract is complete. Amendments reference its revision and carry only changed scope, inputs, evidence, gates or authority. A recovered session reads the active contract and amendments. The report template can be referenced directly instead of copied into every dispatch; every handback of implementation or audit work still contains the complete populated block.
 
 An owner accepted a correction in prose and recommended approval and merge,
 but omitted the paste-ready return to the implementation lane. The operator
@@ -204,3 +204,8 @@ Auditor briefs, follow-ups, amendments and recovery prompts now require
 `workbench:epic-auditor` and share an audit report template. Implementation
 contracts retain `epic-implementation`. The reporting gap, role boundaries and
 scenario evidence are recorded in [epic-auditor](epic-auditor.md).
+
+Audit returns now state report acceptance, auditor assignment completion or
+remaining work, and epic closure separately in both the notice and its visible
+handoff. The matching auditor closeout acknowledgment and rationale are in
+[epic-auditor](epic-auditor.md#explicit-audit-acceptance-and-assignment-completion-2026-09-26).

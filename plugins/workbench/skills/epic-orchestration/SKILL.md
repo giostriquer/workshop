@@ -158,8 +158,8 @@ The initial dispatch is a complete brief that works without tracker access:
 Name required skills by host name, task inputs, outcome and evidence. Do not
 copy their procedures or model routing, pin plugin versions/cache paths, or add
 method mandates unrelated to this work. Link the shared report template or
-include it once in the initial contract; every final handback must still contain
-the populated copyable report.
+include it once in the initial contract; every handback of implementation or
+audit work must still contain the populated copyable report.
 
 **Amendments carry deltas.** Reference the active contract and revision, state
 what changes, its scope basis, refreshed base/evidence where required, and any
@@ -171,12 +171,15 @@ For a recovered session, make the current contract and amendments directly
 readable; reconcile conflicting revisions before continuing.
 
 **Auditor dispatches.** Require `workbench:epic-auditor` in every audit brief,
-follow-up, amendment and recovery prompt. Supply approved criteria and exclusions,
-the artifact revision and access/setup, neutral fix-family targets, required
+follow-up, amendment, acceptance, closeout and recovery prompt. When requesting
+audit work, state whether it is an initial audit, a bounded follow-up or the
+final closure audit. Supply approved criteria and exclusions, the artifact
+revision and access/setup, neutral fix-family targets, required
 evidence and the epic's scope folder. Keep PR history and implementer conclusions
 out of the auditor's starting brief. Include or link the shared audit report in
 the initial contract; later prompts reference that contract and carry deltas.
-The auditor returns a populated report for your independent corroboration.
+The auditor returns audit results in a populated report for your independent
+corroboration; assignment closeout follows **Audit returns name what is finished**.
 
 ## Dispatching
 
@@ -332,6 +335,25 @@ An owner return has these parts, in order:
 Before sending the final reply, check that every lane-facing disposition has
 its actual file and fenced pointer in the reply. Progress updates and answers
 that carry no lane-facing disposition can stay brief prose.
+
+**Audit returns name what is finished.** In the return file and the operator-facing
+disposition, state these separately:
+
+- **Audit report:** accepted after owner corroboration, follow-up required, or
+  blocked, with the contract and audited revision.
+- **Auditor assignment:** complete with no further action, or the specific
+  remaining check/hold and who owns the next action. Accepting findings does
+  not assign their fixes to the auditor.
+- **Epic:** open, closure proposed to the operator, or closed with the operator's
+  decision source. Report acceptance and assignment completion do not close it.
+
+When the report is accepted and no assigned audit work remains, explicitly tell
+the auditor its assignment is complete; request acknowledgment only. Lead its
+fenced pointer with that disposition, for example: "Auditor A2, audit-r2 at
+c0ffee1 accepted; your audit assignment is complete. Acknowledge only. Epic
+closure awaits the operator." Keep the dispatch path and reporting skill in
+the pointer. Use the same explicit nouns when saying "validated", "done" or
+"closed" in the ledger and final reply.
 
 ## Closing the epic
 

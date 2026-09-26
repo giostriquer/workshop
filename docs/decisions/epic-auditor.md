@@ -51,3 +51,32 @@ not live audit execution or a reliability estimate.
 
 Native plugin validation, skill validation, changed Markdown link checks,
 the local leak scan and whitespace checks passed.
+
+## Explicit audit acceptance and assignment completion (2026-09-26)
+
+The operator reported that the owner's validation and closeout language did
+not make clear what was done. The owner already distinguished audit evidence
+from epic closure, but did not require a separate disposition for the auditor's
+assignment. The auditor's unconditional final-report rule also had no way to
+acknowledge a completed assignment without another validation handback.
+
+Owner audit returns now state report acceptance, the auditor's remaining action
+or assignment completion, and epic closure state separately. A completed audit
+assignment can finish while fixes or the operator's closure decision remain.
+An explicit owner closeout for the matching contract and artifact gets a short
+auditor acknowledgment that preserves the existing report and verdict. Audit
+work still uses the complete report; closeout does not authorize another audit,
+change its evidence or close the epic.
+
+The baseline owner scenario already produced a clear acceptance and stand-down
+notice. The baseline auditor nevertheless replied with `STATUS: ready-for-validation`
+after saying "Owner validation is complete and HOLDS is accepted." That
+contradiction reproduced the unnecessary validation handback.
+
+Six revised instruction-consumption cases covered owner acceptance, an unrun
+required check, auditor acknowledgment, accepted findings with implementation
+still pending, a blocked audit follow-up, and a closeout for the wrong revision.
+All retained the applicable evidence and authority boundaries. These are small
+scenario checks, including a reused-context follow-up, not live epic execution
+or a reliability estimate. Native plugin validation, changed Markdown links,
+the local leak scan and whitespace checks passed.

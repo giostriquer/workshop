@@ -1,7 +1,7 @@
 # Audit report template
 
-Use the same field names and order in every auditor handback. `STATUS` describes
-the lane's handoff state; `VERDICT` describes the evidence from the assigned
+Use the same field names and order in every handback of audit results. `STATUS`
+describes the lane's handoff state; `VERDICT` describes the evidence from the assigned
 audit. `ready-for-validation` means the owner can validate the completed audit,
 including one that found defects. It does not mean the epic passed.
 
