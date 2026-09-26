@@ -228,6 +228,7 @@ brainstorming
 claim-check
 code-quality-review
 empirical-proof
+epic-auditor
 epic-cleanup
 epic-implementation
 epic-orchestration

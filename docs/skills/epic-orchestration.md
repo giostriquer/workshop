@@ -98,6 +98,14 @@ in-flight lane's output.
 
 **How does it connect to the rest of the workbench?**
 
+Every auditor brief, follow-up, amendment and recovery prompt requires
+[epic-auditor](epic-auditor.md). Its initial contract supplies approved criteria,
+the artifact revision, setup, neutral fix-family targets and required evidence,
+and includes or links the shared
+[audit report template](../../plugins/workbench/skills/epic-orchestration/references/audit-report.md).
+Auditors start without PR history or implementer conclusions. Each final return
+contains the complete audit report for owner corroboration, including blockers.
+
 Every implementation dispatch names [epic-implementation](epic-implementation.md),
 which keeps handbacks in the shared
 [lane report template](../../plugins/workbench/skills/epic-orchestration/references/lane-report.md).
@@ -220,6 +228,8 @@ review mechanics.
   pointer for the affected lane, including when approval is the only next step.
 - Every implementation dispatch names a freshly validated revision and only work
   remaining at it, tied to an approved epic criterion.
+- Every auditor dispatch requires `epic-auditor`; audit handbacks remain complete
+  copyable reports across follow-ups and recovery.
 - Amendments reference the active contract; lanes can make decisions it already settles.
 - Reports come back validated against the repo, with unverified parts stated.
 - Lanes that touch the same file arrive in the same prompt.

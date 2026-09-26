@@ -197,3 +197,10 @@ The six-case control using prior wording still required a RED demonstration for
 preservation and owner selection of a PR title; it already handled closure and
 the policy boundary correctly. These small simulations establish regression
 coverage, not a measured reliability improvement or live epic execution proof.
+
+## Auditor handbacks use their own skill (2026-09-25)
+
+Auditor briefs, follow-ups, amendments and recovery prompts now require
+`workbench:epic-auditor` and share an audit report template. Implementation
+contracts retain `epic-implementation`. The reporting gap, role boundaries and
+scenario evidence are recorded in [epic-auditor](epic-auditor.md).

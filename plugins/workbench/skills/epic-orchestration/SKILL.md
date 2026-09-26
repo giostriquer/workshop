@@ -150,8 +150,10 @@ The initial dispatch is a complete brief that works without tracker access:
   compatibility obligations and handback evidence. Let the lane choose design,
   sequencing and test techniques within repository and owning-skill rules.
 - **Coordination and handback:** other lanes' ownership/dependencies, required
-  completion gates, and `workbench:epic-implementation` for the complete
-  [lane report](references/lane-report.md).
+  gates, and the role's reporting skill: `workbench:epic-implementation` for the
+  complete [lane report](references/lane-report.md), or
+  `workbench:epic-auditor` for the complete
+  [audit report](references/audit-report.md).
 
 Name required skills by host name, task inputs, outcome and evidence. Do not
 copy their procedures or model routing, pin plugin versions/cache paths, or add
@@ -163,9 +165,18 @@ the populated copyable report.
 what changes, its scope basis, refreshed base/evidence where required, and any
 changed gates or authority. Retain unchanged terms by reference instead of
 repeating setup, standing rules, review instructions and the report template.
-Name `workbench:epic-implementation` in each amendment and delivery authorization.
+Name the role's reporting skill in each amendment; implementation delivery
+authorizations name `workbench:epic-implementation`.
 For a recovered session, make the current contract and amendments directly
 readable; reconcile conflicting revisions before continuing.
+
+**Auditor dispatches.** Require `workbench:epic-auditor` in every audit brief,
+follow-up, amendment and recovery prompt. Supply approved criteria and exclusions,
+the artifact revision and access/setup, neutral fix-family targets, required
+evidence and the epic's scope folder. Keep PR history and implementer conclusions
+out of the auditor's starting brief. Include or link the shared audit report in
+the initial contract; later prompts reference that contract and carry deltas.
+The auditor returns a populated report for your independent corroboration.
 
 ## Dispatching
 

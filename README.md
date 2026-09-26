@@ -67,7 +67,7 @@ npx github:giostriquer/workshop --dry-run   # plan; drop --dry-run to apply
 
 ### `workbench`: use right away
 
-Five read-only review agents, the `comment-trimmer`, thirteen everyday skills, and the
+Five read-only review agents, the `comment-trimmer`, fourteen everyday skills, and the
 eight-skill **workbench** process layer: ready immediately after install, nothing to configure.
 
 **Agents**: the reviewers inspect and report, never edit your files; `comment-trimmer`
@@ -98,6 +98,7 @@ edits code comments in the diff and nothing else:
 | `model-reference` | the model fleet reference table + hard routing invariants |
 | `epic-orchestration` | owns a multi-ticket epic whose lanes other sessions implement (user-invoked only) |
 | `epic-implementation` | uses the shared [lane report template](plugins/workbench/skills/epic-orchestration/references/lane-report.md) in lanes dispatched through epic-orchestration |
+| `epic-auditor` | uses the shared [audit report template](plugins/workbench/skills/epic-orchestration/references/audit-report.md) in auditor lanes dispatched through epic-orchestration |
 | `epic-cleanup` | on your explicit ask: lists a repo's stale worktrees, branches, caches and stray processes for you to pick from, or removes an epic's leftovers; keeps active worktrees |
 
 **Workbench**: the process layer, implementing [the workbench flow](docs/workbench-flow.md):

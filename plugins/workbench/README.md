@@ -1,7 +1,7 @@
 # workbench
 
 A direct-use plugin from [Workshop](https://github.com/giostriquer/workshop):
-five read-only review agents, the `comment-trimmer`, thirteen everyday skills, and the
+five read-only review agents, the `comment-trimmer`, fourteen everyday skills, and the
 eight-skill **workbench** process layer. No setup: works in any repo. Optional artifact-making utilities
 (doc pages, demo videos, architecture maps) live in the sibling
 [`toolkit`](../toolkit/README.md) plugin: install it only if you want them.
@@ -28,14 +28,14 @@ codex plugin add workbench@workshop
 Plugins → Team Marketplaces → Add Marketplace → Import from Repo**
 (`giostriquer/workshop`), then install `workbench` from **Customize**.
 
-**Google Antigravity:** Copy or link this folder into your workspace's `.agents/plugins/workbench/` (that workspace only) or into `~/.gemini/config/plugins/workbench/` (every workspace). Antigravity scans both; there is no registry file to edit. All twenty-one skills are discovered and loaded on demand; the review agents are not: Antigravity's plugin format covers skills, rules, MCP servers, and hooks.
+**Google Antigravity:** Copy or link this folder into your workspace's `.agents/plugins/workbench/` (that workspace only) or into `~/.gemini/config/plugins/workbench/` (every workspace). Antigravity scans both; there is no registry file to edit. All twenty-two skills are discovered and loaded on demand; the review agents are not: Antigravity's plugin format covers skills, rules, MCP servers, and hooks.
 
 **OpenCode:** No marketplace file exists on this surface; opencode loads skills by scanning directories. Point your global config's `"skills": { "paths": [...] }` at this folder's `skills/` directory in a clone of the repo, or copy individual skill folders into `~/.config/opencode/skill/`. The agents are not carried on this surface.
 
 After install: agents resolve as `workbench:<agent>`; skills are invoked by name.
-Codex exposes all twenty-one skills but registers no plugin agents, so a Codex
+Codex exposes all twenty-two skills but registers no plugin agents, so a Codex
 parent reads an agent file from the installed plugin and pastes its body into
-the spawn message (`using-workbench`, *Workbench agents on Codex*). Antigravity discovers and progressively loads the skills from `skills/`. OpenCode loads the same twenty-one from its `skills.paths` scan roots.
+the spawn message (`using-workbench`, *Workbench agents on Codex*). Antigravity discovers and progressively loads the skills from `skills/`. OpenCode loads the same twenty-two from its `skills.paths` scan roots.
 
 ## Agents: read-only reviewers and the comment-trimmer
 
@@ -68,6 +68,7 @@ commits.
 | `trim-comments` | the comment trim at completion, before the review round: removes code-comment slop (narration, banners, commented-out code, stale comments, workaround sermons) from the finished diff, keeps comments that carry what the code can't, offers encodings for constraint comments, and reports correctness-hiding suppressions; dispatched to `comment-trimmer` |
 | `epic-orchestration` | owns a multi-ticket epic: writes the lane prompts the operator dispatches by hand, validates each report against the repo, authorizes the PR; never implements; user-invoked only |
 | `epic-implementation` | uses the shared [lane report template](skills/epic-orchestration/references/lane-report.md) across amendments, recovery and delivery; only for lanes dispatched through epic-orchestration |
+| `epic-auditor` | uses the shared [audit report template](skills/epic-orchestration/references/audit-report.md) across audit follow-ups, amendments and recovery; only for auditor lanes dispatched through epic-orchestration |
 | `epic-cleanup` | on an explicit cleanup request: lists a repository's stale worktrees, merged or gone branches, caches, temp files and stray processes with evidence and removes only what you pick, or removes an epic's obsolete artifacts and owned worktrees; never removes a dirty, unmerged or in-use worktree on its own judgment |
 | `model-reference` | reference table for the model fleet across cost, intelligence, taste, code, and speed, plus the hard routing invariants; a lookup, not a dispatch step |
 
