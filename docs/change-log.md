@@ -9,6 +9,11 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-12 reformat.
 
 
+## workbench 0.44.2: 2026-09-28
+
+- **Epic coordination and verification tooling stays local.** Sessions may create progress scripts and qualification harnesses, but keep them and their supporting CI or package integration out of delivery unless explicitly approved as maintained deliverables. Dispatches, recovery notes and delivery checks carry that boundary; normal product regression tests still ship. ([decision](decisions/epic-orchestration.md#coordination-and-verification-tooling-stays-local-2026-09-28))
+- **Every lane gets its own paste label.** Each destination has a visible `Paste this into <LANE>:` label directly above its fenced pointer, including returns to existing sessions. Multiple ready lanes still go out in one reply. ([decision](decisions/epic-orchestration.md#dispatches-are-files-and-paste-blocks-are-pointers-2026-09-11))
+
 ## workbench 0.44.1: 2026-09-26
 
 - **Audit acceptance and assignment completion are explicit.** The orchestrator states report acceptance, the auditor's remaining work or completion, and epic closure separately. A completed auditor assignment ends with an acknowledgment instead of another validation report; findings, evidence gaps and the operator's closure authority remain intact. ([decision](decisions/epic-auditor.md#explicit-audit-acceptance-and-assignment-completion-2026-09-26))
@@ -93,8 +98,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 - **A test file is never a mutation target.** Whatever a dispatch names as scope, gate, oracle or parser logic that lives in a test file is reviewed through the checklist and at most five hand-applied defects for that file. ([decision](decisions/mutation-scope-and-budget.md#one-run-per-scope-one-campaign-at-a-time-an-estimate-first-2026-09-23))
 - **Estimate, then bound.** Every run has an estimate before its mutants execute (mutants × baseline ÷ concurrency, from the counts the tool prints first); an estimate over 10 minutes ends the run and narrows the scope, the estimate goes on the Mutation run line, and the 30- and 15-minute budgets are ceilings, not targets. ([decision](decisions/mutation-scope-and-budget.md#one-run-per-scope-one-campaign-at-a-time-an-estimate-first-2026-09-23))
 - **A dispatch names a skill, never a version or a path.** `epic-orchestration` and `code-quality-review` say a lane or review dispatch names each skill by its host name, never by a plugin version, a cache path or a copy of its text; `test-quality-reviewer` and `code-quality-reviewer` read the installed plugin's copy when the host does not auto-load skills, never a path a dispatch pins. ([decision](decisions/epic-orchestration.md#a-dispatch-names-a-skill-never-a-version-or-a-path-2026-09-23))
-
-## workbench 0.41.4: 2026-09-23
-
-- **Mutation evidence is bounded, never negotiated.** In `test-quality-review` a per-mutant timeout counts as detected, as Stryker and cargo-mutants score it, and is never diagnosed, rerun or carried as unknown; a partial run records `partial` with the uncovered scope's command under Strategy notes. Neither is an Issue, holds delivery, consumes a follow-up pass or needs a waiver, ruling or extension from anyone, and the reviewer never returns a mutation question to the caller. The only mutation-evidence Issue left is a required run that never happened (`blocked`), which the implementer runs or repairs; `waived` records a run a repository rule or the user removed in advance. ([decision](decisions/mutation-scope-and-budget.md#mutation-evidence-is-bounded-never-negotiated-2026-09-23))
-- **The epic owner never rules on mutation.** `epic-orchestration` lists mutation evidence among the things the owner does not decide: a lane's request to waive, scope or diagnose mutation runs goes back to the lane with the rubric's bounds. ([decision](decisions/epic-orchestration.md#the-owner-never-rules-on-mutation-evidence-2026-09-23))

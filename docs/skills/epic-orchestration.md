@@ -5,8 +5,8 @@
 `epic-orchestration` makes the session the **epic owner**: it holds the tickets,
 writes the prompts other sessions execute, verifies what comes back against the
 repository, rules on open questions, and authorizes lanes to push, open or update
-PRs, and monitor/fix CI. It never implements, commits, pushes, or merges. You
-carry prompts out and reports back, and retain merge decisions.
+PRs, and monitor/fix CI. It never implements deliverables, commits, pushes, or
+merges. You carry prompts out and reports back, and retain merge decisions.
 
 | Role | Owns |
 | --- | --- |
@@ -43,9 +43,11 @@ folder. The initial lane contract carries scope, setup, tickets with anchors and
 behavioral bars, required reading, outcomes, evidence, rules and authority. It
 includes or links the shared report template. Amendments state only what changed
 and reference the active contract. Every handback of implementation or audit work
-still contains the complete populated report. You paste a short `Paste this into <LANE>:` block naming the role,
-authority and file path. Each destination gets its own fenced block in the
-owner's final reply, including a return to an existing lane after a correction.
+still contains the complete populated report. Each destination gets its own
+`Paste this into <LANE>:` label immediately above a fenced pointer naming the
+role, authority, fresh or existing session, and file path. When several lanes
+are ready, the owner repeats that complete label-and-block pair for each lane
+in one reply. Returns to existing lanes after corrections use the same format.
 
 Everything is dispatchable the moment it is written. A prompt whose trigger has
 not fired is not written yet; the session watches for the trigger.
@@ -79,6 +81,28 @@ Unrelated findings get separate follow-ups. If one blocks a required epic check,
 that check stays visibly blocked until the dependency is resolved or you amend
 the scope. The owner continues independent work without claiming the missing
 proof passed.
+
+**Can sessions build tooling to organize and verify the epic?**
+
+Yes. The owner, implementation lanes, helpers and auditors may create local
+scripts and harnesses for inventories, migration progress and required checks.
+Keep them, their inputs and their results in the shared epic scope folder,
+verified to be ignored or locally excluded and untracked. Creating and using
+these tools needs no separate approval.
+
+This tooling stays out of commits, pushes and PRs to `dev` or another integration
+branch, including CI jobs, package commands and shared dependencies added only
+to run it. Passing checks or making evidence reproducible does not turn the
+harness into a required merge. Its creation does not count as migration progress.
+Normal reusable product regression tests still ship under repository rules;
+renaming a qualification harness as a test does not change its purpose.
+
+Each dispatch carries the local tooling boundary. Before delivery, the owner
+checks the full proposed range and returns accidental inclusion to the lane,
+preserving the tools and evidence locally. The ledger keeps that boundary for
+recovery. Publishing maintained tooling requires an explicit deliverable in your
+approved scope or amendment; an existing authorization remains valid. Routine
+epic delivery authority alone does not grant that promotion.
 
 **Does every handback require another merge and dispatch?**
 
@@ -235,14 +259,17 @@ review mechanics.
 ## It's working if
 
 - Every prompt you receive is dispatchable as-is.
-- Every acceptance, correction, ruling and delivery return includes a copyable
-  pointer for the affected lane, including when approval is the only next step.
+- Every acceptance, correction, ruling and delivery return includes its own
+  lane-specific paste label and copyable pointer, including in a batch and when
+  approval is the only next step.
 - Every implementation dispatch names a freshly validated revision and only work
   remaining at it, tied to an approved epic criterion.
 - Every auditor dispatch requires `epic-auditor`; audit handbacks remain complete
   copyable reports across follow-ups and recovery.
 - Amendments reference the active contract; lanes can make decisions it already settles.
 - Reports come back validated against the repo, with unverified parts stated.
+- Coordination and verification tooling stays local unless explicitly scoped for
+  delivery; required evidence and normal product regression tests remain intact.
 - Lanes that touch the same file arrive in the same prompt.
 - Negative signal: a lane report accepted because it looked complete.
 

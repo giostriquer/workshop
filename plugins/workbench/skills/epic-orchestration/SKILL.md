@@ -1,6 +1,6 @@
 ---
 name: epic-orchestration
-description: Use when running a multi-ticket epic whose implementation you delegate to other sessions the operator dispatches by hand, and when closing such an epic on a blind re-audit rather than an empty ticket list. This session owns the epic and never implements, commits, or opens the PR itself. Not for implementing a change yourself, and not for a single ticket.
+description: Use when running a multi-ticket epic whose implementation you delegate to other sessions the operator dispatches by hand, and when closing such an epic on a blind re-audit rather than an empty ticket list. This session owns the epic and never implements deliverables, commits, or opens the PR itself. Not for implementing a change yourself, and not for a single ticket.
 disable-model-invocation: true
 ---
 
@@ -14,7 +14,7 @@ A lane returns for a ruling when the existing contract does not settle a decisio
 
 | Role | Owns | Boundary |
 | --- | --- | --- |
-| **Orchestrator** (you) | tickets, dispatches, independent validation, rulings, lane publication authorization | Never implements, commits, pushes, opens PRs or merges. |
+| **Orchestrator** (you) | tickets, dispatches, independent validation, rulings, lane publication authorization | Never implements deliverables, commits, pushes, opens PRs or merges. |
 | **Implementer lane** | one worktree, implementation, completion review and report | Publishes only under your delivery authorization. |
 | **Auditor** | blind empirical audit of the artifact, findings with repro and source anchor | Does not read the PR list or implement fixes. |
 | **Operator** | lane dispatch, merges, product decisions and epic closure | Grants scope and authority. |
@@ -25,7 +25,8 @@ Use this for an epic too large for one session, with implementation in other
 sessions dispatched by hand. For one goal use `handoff-goal`; for one premise or
 ticket use `claim-check`; for broad verification use `qa-sweep`; for one finished
 change at a running artifact use `empirical-proof`. To implement yourself, have
-the operator recast the role first.
+the operator recast the role first. Local support tooling below remains part of
+coordination and validation.
 
 You may use subagents for bounded support when saved context or time justifies
 the overhead. Helpers inherit the assigned workset's scope and your role
@@ -39,6 +40,34 @@ acceptance are not trivial. Work owned by another skill follows its routing.
 Establish scope → refresh and revalidate → dispatch ready lanes → independently
 validate reports → correct or authorize delivery → verify delivery → blind
 audit → resolve findings or propose closure to the operator.
+
+## Keep coordination and verification tooling local
+
+You, lanes, helpers and auditors may create and use scripts or harnesses to
+organize work, measure migration progress and verify approved criteria. These
+are local support tools, not repository deliverables. Keep them and their
+generated inventories, snapshots and reports in the epic's shared scope folder
+under `using-workbench`'s artifact convention. Verify that location is ignored
+or locally excluded and that the files are not already tracked.
+
+Keep this tooling out of commits, pushes and PRs to `dev` or any other integration
+target. Do not add CI jobs, package commands or shared dependencies solely to
+install or run it. Reproducible evidence does not require shipping its harness;
+retain the local commands, inputs and results and share concise evidence under
+existing authority. A green check, reviewer approval or owner-written ticket
+cannot turn the harness into a prerequisite merge or count its construction as
+migration progress.
+
+Normal reusable product regression tests required by the implementation remain
+part of delivery under repository rules. Classify by purpose: calling an epic
+progress or qualification harness a test does not make it a product test.
+
+If the operator-approved scope explicitly includes that tooling as a maintained
+repository deliverable, record its source and publication boundary in the
+contract and use the normal lane delivery gates. Honor an existing explicit
+authorization; otherwise promotion needs an operator scope amendment. Routine
+epic publication authority does not grant promotion. Local creation and use
+need no separate approval.
 
 ## Revalidate before delegation
 
@@ -140,7 +169,9 @@ The initial dispatch is a complete brief that works without tracker access:
   objectives and source anchors, finish line, exclusions, and decisions the
   lane can make or must return.
 - **Setup:** validated integration ref/SHA, worktree and branch, repository setup
-  and toolchain, applicable repository rules and publication state. Name your
+  and toolchain, applicable repository rules and publication state. Include the
+  shared scope folder and the local tooling boundary above; identify any tooling
+  explicitly approved for delivery and its authority source. Name your
   delivery gate separately from any operator-reserved publication decision and
   cite the governing instruction for that reservation.
 - **Inputs:** contract revision and smallest complete reading set, including
@@ -192,12 +223,15 @@ delivery gate under **Completion review and delivery**; preserve gates explicitl
 reserved to the operator. A hold creates no merge authority or new correction
 round. Do not issue work whose trigger has not fired.
 
-The final reply contains one separate fenced, paste-ready pointer per destination,
-including returns to an existing lane after accepting its correction:
+The final reply contains one complete handoff unit per destination, including
+returns to an existing lane after accepting its correction. Each unit has its
+own `Paste this into <LANE>:` label immediately above its fenced, paste-ready
+pointer. Multiple ready lanes may go out in one reply: repeat the complete
+label-and-block pair for each destination.
+
+`Paste this into <LANE>:`
 
 ```
-Paste this into <LANE>:
-
 <Role, what is authorized, fresh or existing session>. Read and execute:
 <absolute dispatch path>
 <lines governing instructions require verbatim, if any>
@@ -209,6 +243,12 @@ ledger update, link or prose recap alone does not. Implementation sessions still
 go through the operator; helpers do not replace that handoff.
 
 ## Completion review and delivery
+
+Before accepting a delivery range, inspect its full diff and proposed new files
+for local support tooling and its integration changes, not only the current
+working tree. Return accidental inclusion to the lane to separate from delivery
+while preserving the tools and evidence locally. Required verification still
+runs; excluding its harness does not waive the evidence.
 
 When the full agreed work set is verified and ready to ship, the lane uses
 `trim-comments`, then `code-quality-review` over the trimmed range, plus
@@ -284,7 +324,9 @@ Keep the approved goal, closure bar, exclusions and scope sources distinct from
 discovered follow-ups. Track active lanes and contract revisions, worktrees,
 dependencies, holds, decisions and their sources, owners and next actions.
 Index briefs, evidence, recovery material and the tracker backlog; governing
-scope sources determine membership.
+scope sources determine membership. Record local tooling locations and their
+publication boundary, including the source of any explicit promotion, so recovery
+does not turn local verification into a delivery obligation.
 Distinguish reported claims from verified results and bind evidence to revisions.
 
 Start from the ledger and load sources needed for the next decision. Refresh
@@ -321,9 +363,9 @@ An owner return has these parts, in order:
 
 1. **Verified disposition:** results, revision and remaining gates. Distinguish
    validation, PR readiness, merge and epic completion.
-2. **Required lane handoff:** the populated fenced pointer from **Dispatching**
-   for each affected lane. Include it when accepting or rejecting a report,
-   returning a correction or ruling, or authorizing delivery, including after
+2. **Required lane handoff:** the lane-specific label and populated fenced pointer
+   from **Dispatching** for each affected lane. Include it when accepting or
+   rejecting a report, returning a correction or ruling, or authorizing delivery, including after
    recovery and when no more implementation is needed. If only an operator
    decision remains, return the lane's disposition and current hold.
 3. **Immediate next action:** continue authorized work or dispatch a revalidated
@@ -333,8 +375,9 @@ An owner return has these parts, in order:
    to select a routine next lane already determined by the plan.
 
 Before sending the final reply, check that every lane-facing disposition has
-its actual file and fenced pointer in the reply. Progress updates and answers
-that carry no lane-facing disposition can stay brief prose.
+its actual file, its own `Paste this into <LANE>:` label and its fenced pointer
+in the reply. Progress updates and answers that carry no lane-facing disposition
+can stay brief prose.
 
 **Audit returns name what is finished.** In the return file and the operator-facing
 disposition, state these separately:

@@ -2,6 +2,29 @@
 
 This note is the rationale for the `epic-orchestration` skill, shipped in the `workbench` plugin; superseded choices are omitted and git history keeps the originals.
 
+## Coordination and verification tooling stays local (2026-09-28)
+
+Migration sessions created useful inventory scripts, progress reports and
+verification harnesses, then treated that support work as a prerequisite PR to
+the integration branch. Permission to verify the migration had become permission
+to ship maintained tooling. Review and passing checks did not establish that
+the tooling belonged in the approved deliverables.
+
+The owner, lanes and helpers may create and use these tools locally. They live
+with the epic's working evidence, outside commits, pushes, PRs and CI integration.
+Dispatches carry that boundary, and delivery checks inspect the complete proposed
+range for accidental inclusion. An explicit operator-approved tooling deliverable
+can authorize publication; routine epic delivery authority cannot promote it.
+Normal product regression tests still ship under repository rules. Building a
+verification tool does not itself satisfy a migration criterion.
+
+Five instruction-consumption scenarios passed: a mixed delivery under deadline
+and sunk-cost pressure, recovery with tooling already committed, owner-created
+local helpers, product tests versus a renamed progress harness, and an explicitly
+approved maintained checker. The old wording also kept the mixed delivery in
+scope in one control. The operator's reported sessions supply the failure; these
+checks establish regression coverage, not a measured reliability improvement.
+
 ## The epic owner is a role, shipped as a skill (2026-09-04)
 
 Nothing covered an epic too large for one session whose lanes the operator dispatches by hand. The owning session becomes a persona that owns tickets, lane prompts, independent validation, rulings and authorization, and never implements, commits, pushes, opens PRs or merges; opening an editor on the implementation means leaving the seat. It was renamed from `epic-relay`: relaying prompts is one line of the job.
@@ -76,6 +99,20 @@ current action or hold under the existing contract; pending operator approval
 does not authorize a future merge or create another correction round. Prose
 progress updates remain available. This is an output-contract correction based
 on the operator's reported failure; no new behavioral probe has run.
+
+The operator later received several separate lane blocks beneath one shared
+"Paste each block" instruction. The destinations were in the blocks, but the
+visible handoff units lacked their own paste labels. Each destination now gets
+`Paste this into <LANE>:` immediately above its fenced pointer. A batch repeats
+that complete pair for every lane, including returns to existing sessions.
+Multiple ready lanes still go out in one reply; this changes their presentation,
+not dispatch timing or authority.
+
+Two focused output scenarios passed: six fresh implementation lanes in one reply,
+and a batch combining an existing delivery lane, a fresh lane and an auditor
+closeout. All nine destinations had separate labels directly above their fenced
+pointers, with session reuse and authority intact. These are bounded formatting
+checks, not a reliability estimate.
 
 ## The owner never rules on mutation evidence (2026-09-23)
 
