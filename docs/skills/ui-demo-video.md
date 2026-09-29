@@ -1,116 +1,111 @@
 # ui-demo-video
 
-## What it does
+Records a real browser walkthrough with a reusable capture helper and
+Microsoft's Playwright CLI. Claude Code and Codex use the same capture commands;
+each host uses its own terminal, image viewer, and permission mechanism.
 
-Drives your running app with Playwright through a short scripted walkthrough
-and records a video for sharing. It also emits **one PNG frame per scene**, and
-those frames are the point for the model: it reads them, checks the rendered UI,
-and fixes and re-records until they show the expected result.
+The skill ships a recorder interface instead of requiring a copied harness or
+a new JavaScript scenario for each demo. Native browser actions drive the flow.
+The helper allocates fresh outputs, captures scene PNGs, retains error evidence,
+and finalizes only its own isolated browser session.
 
-It is **not a test suite**. Scenes demonstrate and verify visually; they do not
-assert.
+## When to use it
 
-## When to reach for it
+Use it after a browser-driven UI change when a recorded walkthrough is useful,
+requested, or required by the repo. Small visual checks can use available
+browser tools without installing a recorder. Use the project test suite for
+regression protection, `empirical-proof` for non-visual runnable surfaces, and
+`qa-sweep` for a broad verification pass.
 
-After UI work a browser can drive and show: a new element, a layout change, a
-user flow. Not for API-only or non-visual changes. Record when asked, when the
-repo requires it, or when it helps an authorized UI task; a small visual check
-needs no recording toolchain ([decision](../decisions/ui-demo-video.md)).
+## The workflow
 
-| The problem | The skill |
+1. Discover the app's documented launch path and short walkthrough. Verify the
+   server uses the changed checkout. Reuse project verification instructions
+   and prepare realistic placeholder data through a supported surface.
+2. Run the installed helper's `doctor` for CLI capabilities and HTTP readiness.
+   Reuse an existing `@playwright/cli`, or install it once in an authorized,
+   separate tool directory. The app's package and lockfiles need no edits.
+3. `start` a fresh recording, then use `act` for ordinary CLI browser actions.
+   Drive stable controls or refs from a fresh snapshot. Capture each named
+   scene with `frame`; wait for rendered state or a loading indicator to
+   disappear instead of waiting for network idle.
+4. `finish`, including after failure. It gathers console/request evidence,
+   flushes and checks the video, optionally converts MP4, and closes only the
+   owned browser.
+5. View every named scene and failure PNG and inspect error evidence. A wrong
+   scene gets an in-scope fix and a new run. Preserve the failed attempt.
+6. Remove only demo entities and servers this run created. Keep the artifacts
+   and deliver the recording, reviewed frame paths, and remaining gaps.
+
+The skill's [command reference](../../plugins/toolkit/skills/ui-demo-video/references/commands.md)
+contains the complete setup, authentication, flags, and a concrete form flow.
+
+## What the outputs mean
+
+Each run gets a unique directory under `tmp/ui-demo-video/` by default.
+
+| Artifact | Purpose |
 | --- | --- |
-| A visual change you want to *see* rendered | `ui-demo-video` |
-| A drivable non-visual surface (endpoint, MCP tool) | `empirical-proof` (workbench) |
-| A broad release or branch surface | `qa-sweep` (workbench) |
-| Behavior that must *fail* when it regresses | Your test suite |
-| About to claim the work is done | `verification-before-completion` (workbench) |
+| `scene-NN-<name>.png` | Viewport image for each named checkpoint. |
+| `scene-N.json` | Structured UI snapshot at that checkpoint. |
+| `failure-NN.png` | Best-effort frame when an action or capture fails. |
+| `<name>.webm`, `<name>-N.webm` | Finalized recording for each tab; checked for a nonempty WebM signature. |
+| Matching `.mp4` parts | With ffmpeg; padded for odd viewport dimensions. |
+| `manifest.json` | Scene paths, capture status, diagnostics, conversion, and cleanup. |
+| `browser-evidence.json` | Run-wide console/page errors and request events, including navigation and closed tabs. |
+| `console.json`, `requests.json` | Unfiltered native summaries for the current tab at finish. |
+| `activity.jsonl` | Browser tool replies, retained for diagnosis. |
 
-## Prerequisites
-
-- The app runs locally through its documented run path.
-- Playwright with Chromium, installed in the project. If it's missing, the skill
-  uses an available browser tool and reports the gap; it installs only when
-  setup is in the authorized scope, never editing package or lock files for a demo.
-- `ffmpeg` on PATH for the mp4 (optional).
-
-## The run
-
-1. **App running first.** Start and health-check the dev server, backing up a
-   local dev database that booting could reseed. Seed data through the app's
-   **real surface**, never direct DB writes.
-2. **Copy the harness, then write a scenario.** Copy `scripts/harness.mjs` into
-   the project's `tmp/` and write `tmp/<scenario>.mjs` beside it. Name short
-   scenes for what they prove; `highlight()` marks the element under test;
-   `prewarm` lists every visited route.
-3. **Run it:** `node tmp/<scenario>.mjs`.
-4. **Feedback loop (mandatory).** Read every `scene-*.png`: element present,
-   states right, no hidden runtime errors or half-loaded skeletons. Wrong → fix
-   in scope and re-record. "Only a frame-verified recording counts as
-   evidence."
-5. **Cleanup.** Delete seeded entities through the same surface, stop the dev
-   server you started, and confirm the port is closed.
-6. **Delivery.** Hand over the local recording and frames.
-
-### What lands in `tmp/<name>/`
-
-| File | What it's for |
-| --- | --- |
-| `scene-NN-<slug>.png` | One per scene; the model reads these. |
-| `<name>.webm` | Always produced. |
-| `<name>.mp4` | With `ffmpeg` only; the PR attachment. |
-| `manifest.json` | Scenes, timings, files, and an `ok` flag. |
-| `scene-FAIL.png` | Page state when the scenario throws. |
-
-### Knobs on `recordUiDemo`
-
-`name` and `baseUrl` are required; `name` becomes the folder and file
-basename. Optional: `prewarm` (routes visited off-camera first), `viewport`
-(1280×720), `outDir` (`"tmp"`), `defaultTimeoutMs` (60000), `scenePauseMs`
-(1200, settle time before each frame), and the presentation-only
-`hideNextDevOverlay` (`false`) and `hideSelectors` (`[]`).
+`captureStatus: captured` reports completed capture, while
+`visualReview: pending` deliberately remains. The helper cannot claim that an
+agent inspected pixels. Media signature checks do not prove playback or visual
+correctness. Only viewed images support a visual correctness claim.
+Each scene names its video part. Deliver all `files.videos` entries, or all
+converted `files.mp4s` entries when MP4 is required; the helper does not edit
+multiple tabs into one movie.
 
 ## Common questions
 
-**Why copy the harness into the project?** Node resolves Playwright relative to
-the importing file, so the harness must sit inside the project.
+**Does the app need Playwright?** No. The agent CLI can live in a reusable tool
+directory. The helper resolves it from `--cli`, `UI_DEMO_VIDEO_CLI`, an existing
+project `@playwright/cli`, or PATH. An ordinary project Playwright library is not
+the agent CLI. The tested CLI version is `0.1.22`.
 
-**The scenario failed. Is the output garbage?** No. The video and
-`scene-FAIL.png` are still saved as debugging evidence.
+**Does it use my personal browser session?** No. It launches a fresh, isolated
+profile. Existing authorized app authentication can be supplied through
+`--storage-state` before recording. The authentication file is not copied into
+the artifacts. Native host browser tools have their own session and permission
+rules.
 
-**The frames show a dev overlay or a half-loaded skeleton.** Investigate the
-overlay; it may be a real runtime error. Add routes to `prewarm` so they compile
-first. Hide overlays only for a presentation recording, after keeping
-unfiltered frames.
+**Is ffmpeg required?** The native recorder produces WebM without a separate
+ffmpeg command on PATH. ffmpeg enables MP4 conversion. `finish --mp4 required`
+fails if MP4 cannot be delivered; ordinary finish preserves WebM and reports
+missing or failed conversion accurately.
 
-**Can I insert rows straight into the dev database?** No. Seeded state must pass
-the same validation real usage does.
+**What if a command fails or the session is interrupted?** Call `finish` on
+the returned run directory. Failed actions keep a failure frame when possible,
+and finalization preserves partial evidence. Wait for each command to return;
+overlap is rejected. After an interrupted command's process exits and all tool
+calls return, `finish --recover` preserves its lock and marks that run failed.
+Read the manifest before making a completion claim. No broad browser or process
+cleanup is used.
+If browser close failed, repeat `finish` retries that cleanup without replaying
+actions or recording finalization. The original failure stays in the manifest.
 
-**The recording doesn't show my change.** A stale server proves old code;
-restart when in doubt.
+**Why no JSON walkthrough language?** Playwright CLI already supplies
+navigation, locators, forms, dialogs, tabs, uploads, and recording annotations.
+The helper handles reusable capture responsibilities; app flows supply native
+actions. An unsupported interaction can use a narrow CLI `run-code` call while
+recording stays in the helper.
 
-**Can it attach the mp4 to the PR?** Only when existing authorization covers
-that write. Otherwise you get the local file to attach.
+**Can it upload the recording?** Only with existing explicit authorization.
+Select reviewed media; diagnostic files can contain local paths or app data,
+so the entire artifact directory is not an attachment bundle.
 
-**Should seeded data look like test data?** No. Name entities as a user would
-("Sprint review"), not "TEST-1234 probe".
+## It is working if
 
-**Does it work outside Next.js?** Yes. `hideNextDevOverlay` is the only
-Next-specific option, and it is off by default.
-
-## It's working if
-
-- Every `scene-*.png` was read and shows the expected state, with no runtime
-  errors or skeletons.
-- `manifest.json` lists your scenes with `ok: true`.
-- A wrong-looking scene triggered a fix and a re-record.
-- The dev server you started is stopped, the port is closed, and seeded
-  entities are gone.
-
-**Not working if** you hand over a video nobody checked frame by frame, or you
-start adding assertions to scenes so failures break the build.
-
-## Where it fits
-
-`ui-demo-video` ships in **`toolkit`**, the optional plugin; nothing in the
-`workbench` flow requires it. It lands before a done-claim: the frames are
-visual evidence, and the mp4 is what the reviewer sees.
+- The video and scene frames come from the changed app's real user flow.
+- Every checkpoint image was viewed and error evidence was inspected.
+- Runs preserve previous evidence and report actual capture/conversion failures.
+- The helper closes its own browser and keeps the evidence.
+- Claude Code and Codex use the installed helper without writing recorder code.

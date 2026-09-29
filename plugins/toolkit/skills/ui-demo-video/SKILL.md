@@ -1,105 +1,66 @@
 ---
 name: ui-demo-video
-description: Use after UI work that can be verified visually, such as a new element, layout change, or user flow in a web app whose dev server a browser can drive. Not for API-only or non-visual changes, and not a test suite.
+description: Use when a browser-driven UI change needs a recorded walkthrough or visual evidence, such as a new element, layout, or user flow. Not for API-only changes or a regression test suite.
 ---
 
 # UI Demo Video
 
-Record a Playwright-driven walkthrough of the running app into a shareable video,
-emitting a PNG frame per scene. **The frames are the point for the model**: Read
-them after recording to visually verify the UI state, and iterate (fix code or
-scenario, re-record) until the frames show the expected result. The video is the
-human-shareable artifact (GitHub PR descriptions accept mp4 drag-drop).
+Record the real user flow with Microsoft's Playwright CLI and the bundled
+capture helper. The helper owns recording, scene frames, diagnostics, and
+cleanup. Run it from the installed skill. Demos supply browser actions.
 
-## When to use
+## Launch and discover
 
-After UI work that a video can verify: a new element, layout change, or flow.
-Use proportionate visual feedback with existing tooling. Record a video when
-requested, required by the repo, or useful within the authorized UI task; a small
-visual check does not require installing a recording toolchain.
-Not for API-only or non-visual changes, and not as a test suite: scenes
-demonstrate and verify visually, they do not assert.
+Use the app's documented run path and verify it serves the changed checkout.
+Back up a database if startup can migrate or reseed it. Seed
+placeholder data through a supported API, fixture endpoint, or CLI, never direct
+database writes. Reuse the project's verification instructions and discover
+the short walkthrough before recording.
 
-## Prerequisites
+Use `@playwright/cli` (`0.1.22` tested). [Setup and commands](references/commands.md) covers an isolated
+installation and authentication. App package and lockfiles stay untouched.
+Run `node scripts/capture.mjs --help` from this skill's directory for flags.
+Recording needs a launchable browser; MP4 conversion also needs `ffmpeg`.
+Use the shared setup when recording prerequisites are missing.
 
-- The app runs locally. Find the project's documented run path: a project run
-  skill, README, package scripts, and use that; do not invent a launch command.
-- Playwright is installed **in the project** (`@playwright/test` or
-  `playwright`) with a Chromium browser available. If absent, use an available
-  browser tool for visual checks and report the video prerequisite. Install a new
-  persistent dependency/browser only when that setup is in the authorized scope,
-  using the repository's package manager and documented setup. Do not silently
-  modify package or lockfiles just to record a demo.
-- `ffmpeg` on PATH for mp4 conversion (optional: the webm is always produced).
+## Capture
 
-## Workflow
+Resolve `UI_DEMO_SKILL` to this skill's directory. `start` returns a fresh
+`runDir`; use it as `UI_DEMO_RUN` for all later calls.
 
-1. **App running first.** Start the dev server via the documented run path, in
-   the background, and health-check it before anything else. If booting can
-   reseed or migrate a local dev database, back that file up first. Seed the
-   data the scenes need through the app's **real surface**: a fixture/seed
-   endpoint, the REST/RPC API, a documented CLI seeder, never direct DB
-   writes: seeded state must pass the same validation real usage does.
-2. **Copy the harness, then write a scenario file next to it.** Copy
-   `scripts/harness.mjs` from this skill's directory into the project's `tmp/`
-   folder: the harness must live inside the project so Node resolves the
-   project's own Playwright install: then write `tmp/<scenario>.mjs` beside it
-   (example below). Scenes should be short and named for what they prove. Use
-   `highlight()` to draw the eye to the element under test. List every route
-   the scenario visits in `prewarm` so dev-compile skeletons stay out of frame.
-3. **Run it:** `node tmp/<scenario>.mjs`. Outputs land in `tmp/<name>/`:
-   per-scene PNGs, `<name>.webm` + `<name>.mp4`, `manifest.json`. A scenario
-   failure still saves the video and a `scene-FAIL.png`; those are debugging
-   evidence, not garbage.
-4. **Feedback loop (mandatory):** Read every `scene-*.png` with the Read tool
-   and check the UI is actually correct: the element present, states right, no
-   hidden runtime errors or half-loaded skeletons. Inspect unfiltered UI/error
-   evidence first; overlay suppression is presentation-only and must not conceal
-   a verification failure. Wrong → fix in scope and re-record. Only
-   a frame-verified recording counts as evidence.
-5. **Cleanup:** delete the demo entities you seeded (through the same real
-   surface you created them with), stop any dev server you started, and confirm
-   the port is closed.
-6. **Delivery:** provide the local recording and frames. Attach them to a PR or
-   tracker only when existing authorization explicitly covers that external write.
-   When authorized, use the host's supported attachment mechanism; do not turn
-   local verification into an implicit publication step.
-
-## Scenario example
-
-```js
-import { recordUiDemo } from "./harness.mjs";
-
-const BASE = "http://localhost:3000";
-
-await recordUiDemo(
-  {
-    name: "my-feature-demo",
-    baseUrl: BASE,
-    prewarm: ["/items", "/items/42"],
-  },
-  async ({ page, scene, highlight }) => {
-    await scene("list shows the new item", async () => {
-      await page.goto(`${BASE}/items`, { waitUntil: "networkidle" });
-      await page.getByText("Quarterly report").first().click();
-    });
-    await scene("detail dialog renders the new action", async () => {
-      await page.getByRole("button", { name: "Share" }).click();
-      await highlight(page.getByRole("dialog").getByRole("link", { name: "Copy link" }));
-    });
-  },
-);
+```sh
+node "$UI_DEMO_SKILL/scripts/capture.mjs" doctor --project . --url http://localhost:3000
+node "$UI_DEMO_SKILL/scripts/capture.mjs" start --project . --url http://localhost:3000 --name share-project
+node "$UI_DEMO_SKILL/scripts/capture.mjs" act --run "$UI_DEMO_RUN" -- snapshot
+node "$UI_DEMO_SKILL/scripts/capture.mjs" act --run "$UI_DEMO_RUN" -- click "getByRole('button', { name: 'Share' })"
+node "$UI_DEMO_SKILL/scripts/capture.mjs" frame --run "$UI_DEMO_RUN" --name "Share dialog is visible" --wait-for 'dialog[open]'
+node "$UI_DEMO_SKILL/scripts/capture.mjs" finish --run "$UI_DEMO_RUN"
 ```
 
-## Notes
+Drive sequentially with observed refs or stable semantic locators. Refresh refs
+after navigation or DOM changes. Wait for each call to return; inspect each
+scene. Native cursor pacing and action callouts make the video readable.
+`frame` saves a PNG and snapshot and adds a video chapter. Readiness uses visible
+controls or hidden loading indicators, not network idle or improvised sleeps.
+Use CLI actions for dialogs, uploads, and tabs. An unsupported action
+may use `run-code` for that interaction; recording remains in the helper.
 
-- The harness leaves overlays visible by default. After inspecting and preserving
-  unfiltered failure evidence, an optional presentation recording may set
-  `hideNextDevOverlay: true` or explicit `hideSelectors`. Those frames alone do
-  not establish that no runtime error occurred.
-- Realistic demo data reads better than test slugs: name seeded entities like
-  a user would ("Sprint review"), not "TEST-1234 probe".
-- Viewport defaults to 1280×720; override via `viewport` if the surface needs it.
-- mp4 conversion needs `ffmpeg` on PATH; without it the webm is still produced.
-- The app under test must be the working tree you changed: the dev server
-  compiles from source, so a stale server proves old code; restart when in doubt.
+## Inspect, finish, deliver
+
+Always call `finish`, including after an action failure or interruption. It
+retains failure frames, run-wide errors, all tab videos, and available MP4, and
+closes only its own browser. Read `manifest.json` and its named frames, not a
+glob across earlier runs. Deliver all listed video parts. View every PNG, inspect error
+evidence, and fix in-scope defects in a fresh recording. Preserve unfiltered
+evidence; overlays and runtime errors must stay visible.
+
+`captureStatus: captured` means recording completed; `visualReview: pending`
+is intentional. Only inspected images support a visual correctness claim.
+Claude Code uses Read for PNGs; Codex uses its available image tool. Native
+browser tools can help discovery or small visual checks when present. Use
+their own documented recording capability only when exposed; neither host
+guarantees it. Follow the host's browser and permission rules.
+
+Remove only entities you created through their real surface and stop only
+servers you started. Keep artifacts. Deliver the recording, reviewed frame
+paths, and any gaps. Publish attachments only with existing explicit authority.

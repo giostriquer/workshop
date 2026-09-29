@@ -1,89 +1,74 @@
-# Decision: add the `ui-demo-video` skill
+# Decision: reusable UI demo recording
 
-**Date:** 2026-07-15
-
-## Status
-
-Implemented.
+**Date:** 2026-09-29
 
 ## Context
 
-A lived-in pattern from a real web-app project: after UI work, the session
-records a Playwright-driven walkthrough of the running app: a shareable
-webm/mp4 for the PR, plus a PNG frame per scene. The frames turned out to be
-the real value: a model cannot watch a video mid-session, but it can `Read` a
-frame, see the actual rendered UI, and iterate (fix code or scenario,
-re-record) until the frames show the expected result. The video is for
-humans; the frames are the model's visual feedback loop.
+The original skill came from repeated real web-app walkthroughs: a recording
+for people and scene PNGs for the model's visual feedback. The operator now
+requested a complete refresh for Claude Code and Codex, with no per-demo
+recorder code. The old interface required copying `harness.mjs` into each app
+and writing a JavaScript scenario. It reused output directories, waited for
+network idle, and reported any conversion failure as missing ffmpeg.
 
-The pattern earned its keep across repeated real use, but the skill text and
-its harness were saturated with project specifics: a hardcoded port and
-package manager, a Prisma dev-database path to back up, an internal State API
-with fixture credentials for seeding, project routes in every example, and a
-tracker-specific delivery rule. Copied as-is, a new adopter would inherit
-instructions that are wrong everywhere except the origin project.
+A read-only Claude Code consultation with the exact `claude-opus-5-5` model
+confirmed that copy-and-script overhead and identified stale evidence,
+startup/finalization gaps, and misleading conversion errors. Its proposed JSON
+walkthrough runner would duplicate controls now supplied by Playwright CLI.
+Choose native CLI actions with a reusable capture helper instead.
 
-## The shape
+## Decision
 
-`ui-demo-video` lands in `toolkit` as a direct-use skill with a bundled
-recording harness (`scripts/harness.mjs`): the first toolkit skill to ship a
-supporting script. Sanitization decisions:
+Use Microsoft's maintained [Playwright CLI](https://github.com/microsoft/playwright-cli)
+for browser control and recording. The tested version is `0.1.22`. Its native
+recorder supplies cursor pacing, video chapters, action callouts, and
+screenshots. No Microsoft implementation or upstream skill text is bundled.
 
-- **Project specifics become conditionals on observable predicates.** "Start
-  `pnpm dev` (port 3002)" becomes "start the dev server via the project's
-  documented run path and health-check it"; the Prisma backup becomes "if
-  boot can reseed or migrate a local dev database, back that file up"; the
-  State API seeding becomes "seed through the app's real surface: a
-  fixture/seed endpoint, the REST/RPC API, a documented CLI seeder, never
-  direct DB writes." The principle (real surface, not DB writes) survives;
-  the credentials and query strings do not.
-- **The harness is copied into the project, not imported from the plugin.**
-  Node resolves `import "@playwright/test"` relative to the importing file,
-  so a harness left in the plugin cache can never find the project's
-  Playwright install. The skill instructs: copy `scripts/harness.mjs` into
-  the project's `tmp/` next to the scenario file.
-- **Two portability fixes in the harness itself.** It now resolves
-  `@playwright/test` *or* `playwright` (projects have either) via dynamic
-  import with a clear install hint on failure; and the Next.js dev-overlay
-  hack (`nextjs-portal`) generalizes to a `hideSelectors` option: the Next
-  default stays (a no-op elsewhere), other frameworks' dev badges get the
-  same treatment without editing the harness.
-- **Delivery rule generalized.** "GitHub only accepts video attachments via
-  the browser editor" is universally true and stays; "never upload to
-  Linear" was a project rule and becomes "don't push local artifacts to
-  other trackers unless the project's own rules say to."
-- **The rigid core is the feedback loop.** Step 4 says to read every
-  `scene-*.png` and count only a frame-verified recording as evidence. This is
-  the skill's non-negotiable; everything visual/environmental is adaptable.
+The bundled `scripts/capture.mjs` owns one isolated session per run. It
+allocates a fresh directory, drives native CLI commands, captures named scene
+frames and snapshots, retains diagnostics after failure, and finalizes only
+its session. It runs from the installed skill rather than being copied into
+an app. Dependencies can be installed once in a separate reusable tool
+directory; app package and lockfiles stay untouched.
 
-## Packaging
+A Claude Code application run recorded and inspected the complete form and
+share flow without recorder code, but submitted two UI calls in parallel.
+Enforce one command at a time per run with a lock. Recovery preserves an
+interrupted command's evidence, marks the run failed, and finalizes the owned
+session after outstanding calls return; it does not replay an uncertain action.
 
-- Canonical (only) copy at `plugins/toolkit/skills/ui-demo-video/`:
-  `SKILL.md` + `scripts/harness.mjs`. Not mirrored to `.claude/` (the repo
-  itself has no UI to demo) and not in the onboarding bundle.
-- Origin doc at `docs/skills/ui-demo-video.md`; roster entry in
-  `docs/skills/README.md` (sixteen skills).
-- Root `README.md` and `plugins/toolkit/README.md` skill lists gain the new
-  name; Codex manifest prose and default prompts updated.
-- `scripts/validate-native-plugin.ps1` `$expectedSkills` widens to include
-  `ui-demo-video` in both the Claude and Codex assertions.
-- `toolkit` `0.12.4` → `0.13.0` (new skill = minor bump, per the doc-to-html
-  precedent) in the three plugin manifests and the Claude marketplace entry.
+Native diagnostics are scoped to a tab and can reset on navigation. Install a
+fixed bundled BrowserContext event collector before app navigation so run status
+includes earlier and closed-tab console/page errors and HTTP/transport failures.
+Keep native summaries as well. Native recording creates one WebM per tab; retain
+every returned part, associate scene frames with their part, and convert all
+parts when requested. Retry failed owned-session cleanup separately from completed
+recording finalization.
 
-## Validation
+The workflow adapts Launch, Doctor, Drive, Evidence, and Cleanup from Lauren
+Tan's MIT-licensed
+[create-verification-skill](https://github.com/cursor/plugins/blob/69cf06fa253ba0761213669171198968e51fb9ff/pstack/skills/create-verification-skill/SKILL.md).
+Reuse the app's documented run and seeding surfaces, stable UI controls,
+ownership of temporary instances, and preserved evidence. Retain the original
+skill's visual feedback loop and publication boundary.
 
-- `scripts/validate-native-plugin.ps1` passes with the new skill directory.
-- GREEN test: the sanitized harness executed end-to-end against a neutral
-  static page (no framework, no project fixtures): scenes recorded, per-scene
-  PNGs emitted and read back, manifest written, webm produced: proving the
-  harness carries no hidden dependency on the origin project.
+Both hosts run the same helper. Claude Code inspects PNGs with Read; Codex
+uses its available image tool. Their native browser integrations remain useful
+for discovery or small visual checks, but neither is assumed to expose video
+recording. Host browser and permission rules still apply. A missing capability
+is a reported gap, not permission to attach through raw CDP to a managed
+browser or to generate another recorder.
 
-## Non-goals
+## Evidence contract
 
-- Not a test framework: scenes demonstrate and verify visually; assertions
-  belong to the project's test suite.
-- Not for API-only or non-visual changes (that is `empirical-proof`'s
-  territory).
-- The skill does not install Playwright or provision the app; missing
-  prerequisites are reported with the one-line install hint, not fixed
-  silently.
+Capture completion and visual review are separate results. The helper reports
+`captureStatus` and leaves `visualReview: pending`; only inspected frames
+support a visual correctness claim. Console and request evidence stays
+unfiltered. Media signatures check that artifacts were written, not that a
+video played or that every frame is correct. MP4 conversion is optional, with
+missing tooling and actual conversion failure reported separately.
+
+The helper owns browser lifecycle, not dev-server provisioning, app seeding,
+product regression assertions, or external publication. Cleanup closes only
+the owned browser and keeps artifacts. The agent handles only app data and
+servers it created and publishes selected media only under explicit authority.

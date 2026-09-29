@@ -4,11 +4,13 @@ Rationale for the workbench `model-reference` skill (born `route-work`), apart f
 
 ## Operator-supplied reference rows (2026-09-29)
 
-The operator added `gpt-6.1-sol` at 7 / 9 / 9 / 9 / 7 and `sonnet-5.5` at
-7 / 7.5 / 7.5 / 7.5 / 7, and changed the `opus-5.5` code score to 9.5.
-The usage page mirrors those rows. The table retains its existing
-legacy-illustrative qualification; these edits provide no new evaluation
-provenance or general routing mandate.
+The operator re-graded `gpt-6.1-sol` to 7 / 9 / 8 / 8 / 6 and removed the
+older `gpt-6-sol` row. Astra's speed is 5, Fable's intelligence is 9.5 and
+speed is 4, Opus's speed is 6, and Sonnet's speed is 8. The other scores
+remain unchanged. The usage page mirrors the canonical skill table.
+
+The table retains its legacy-illustrative qualification. These operator-supplied
+edits provide no new evaluation provenance or general routing mandate.
 
 ## Claude CI watching uses Sonnet 5.5 (2026-09-29)
 
@@ -29,8 +31,8 @@ and contract-message shape stay the same. The model-reference exceptions,
 using-workbench orientation, and matching usage pages carry the same pin.
 
 This replaces the Sol 6 model pins described in the earlier decisions below.
-Recorded probe results and the legacy Sol 6 score row keep `gpt-6-sol`: they
-describe that model. The Sol 6.1 reference row and its usage-page copy retain
+Recorded probe results keep `gpt-6-sol`: they describe that model. The
+current table removes its retired row, as recorded above. The Sol 6.1 reference row and its usage-page copy retain
 the table's existing legacy-illustrative qualification.
 
 ## One canonical table behind a pointer (2026-07-20)
