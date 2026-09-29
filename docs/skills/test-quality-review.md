@@ -4,7 +4,7 @@
 
 This skill reviews implemented test code for **trustworthiness**: whether each test protects the behavior it claims to protect. It reads the tests with the production code they exercise, because **"a test that compiles, runs green, and asserts almost nothing passes every other review gate."**
 
-It is **dispatched, never self-served**: the `test-quality-reviewer` agent runs it as a separate Opus agent at `xhigh` effort on Claude Code or `gpt-6-sol` at `xhigh` reasoning effort on Codex, spawned without your session's history (the host's default model elsewhere). A change review returns `PASS` or `ISSUES_FOUND`; other requests get prioritized findings or a testing recommendation. The implementer owns fixes and permanent tooling changes.
+It is **dispatched, never self-served**: the `test-quality-reviewer` agent runs it as a separate Opus agent at `xhigh` effort on Claude Code or `gpt-6.1-sol` at `xhigh` reasoning effort on Codex, spawned without your session's history (the host's default model elsewhere). A change review returns `PASS` or `ISSUES_FOUND`; other requests get prioritized findings or a testing recommendation. The implementer owns fixes and permanent tooling changes.
 
 ## When to reach for it
 

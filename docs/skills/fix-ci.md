@@ -101,7 +101,7 @@ reports the monitoring gap rather than polling in your session.
 **Why not a Monitor or a background loop in my own session?** *(Claude Code
 only.)* Every turn your session spends is billed at its own model, and a Fable
 or Astra session is the expensive one; a Monitor also wakes you once per output
-line. The watcher's Opus turns are the cheap ones, so the loop lives there. After
+line. The watcher's Sonnet 5.5 turns cost less, so the loop lives there. After
 dispatching, end your turn: the harness re-invokes you with the watcher's report,
 so you do not poll `gh`, arm a Monitor, or read the watcher's output file in the
 meantime.

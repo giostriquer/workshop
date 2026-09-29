@@ -9,6 +9,16 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-12 reformat.
 
 
+## workbench 0.44.3: 2026-09-29
+
+- **Codex dispatches use Sol 6.1.** CI watching, test-quality review, and comment trimming now select `gpt-6.1-sol`; `xhigh` effort, fresh context, and the contract-message requirements stay intact. ([decision](decisions/model-reference.md#sol-61-dispatch-pins-2026-09-29))
+- **Claude Code CI watching uses Sonnet 5.5.** The watcher pins `claude-sonnet-5-5` at `xhigh`, with matching skill and usage guidance. Test-quality review and comment trimming retain Opus. ([decision](decisions/fix-ci.md#claude-watcher-pinned-to-sonnet-55-2026-09-29))
+- **Reference rows reflect the updated fleet.** Add Sol 6.1 and Sonnet 5.5 rows and raise the Opus 5.5 code score to 9.5. The scores remain legacy illustrations; they do not establish a current calibration. ([decision](decisions/model-reference.md#operator-supplied-reference-rows-2026-09-29))
+
+## toolkit 0.13.2: 2026-09-29
+
+- **Global rules permit Sonnet.** The model-floor rule now bans only Haiku and allows explicit Claude model selections, including the Sonnet 5.5 CI watcher. The adoption example and usage page match the rule. ([decision](decisions/adopt-global-rules.md#remove-the-sonnet-ban-retain-the-haiku-ban-2026-09-29))
+
 ## workbench 0.44.2: 2026-09-28
 
 - **Epic coordination and verification tooling stays local.** Sessions may create progress scripts and qualification harnesses, but keep them and their supporting CI or package integration out of delivery unless explicitly approved as maintained deliverables. Dispatches, recovery notes and delivery checks carry that boundary; normal product regression tests still ship. ([decision](decisions/epic-orchestration.md#coordination-and-verification-tooling-stays-local-2026-09-28))
@@ -87,14 +97,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 - **Codex honors user-invoked skills.** `adopt-global-rules` and `me-human` ship `agents/openai.yaml` with implicit invocation off. ([decision](decisions/plugin-surfaces.md#codex-implicit-invocation-parity-2026-09-24))
 - **`get-pr-comments` credits its Cursor source** in the plugin LICENSE and README. ([decision](decisions/get-pr-comments.md))
 - **Shipped globals: GitHub reads need no approval, one authorization per task, focused tests.** `adopt-global-rules`' global instruction files keep the approval rule for PR and tracker comments, and add that routine GitHub reads need no approval, an authorized GitHub write carries through the rest of the task, and local runs stay focused while the PR's CI runs the full suite. Re-running the skill updates the managed block. ([decision](decisions/adopt-global-rules.md#shipped-globals-github-reads-free-one-authorization-per-task-focused-tests-2026-09-24))
-
-## workbench 0.41.6: 2026-09-24
-
-- **Re-grade sol, opus-5.5 and grok-4.7.** In `model-reference`, gpt-6-sol moves to 7 / 6 / 6 / 6 / 7, opus-5.5's speed to 7, and grok-4.7 to 7.5 on intelligence, taste and code with speed 7; the table stays legacy. The taste-floor note now names luna and sol, not grok, as below 7, and the usage page's table matches the spec. ([decision](decisions/fleet-refresh-2026-09.md#re-grade-sol-opus-55-and-grok-47-2026-09-24))
-
-## workbench 0.41.5: 2026-09-23
-
-- **One run per scope, one campaign at a time.** In `test-quality-review` a completed mutation run is the round's evidence for its scope and never runs again under another runner, coverage setting or test set to confirm or reconcile its counts; Stryker's command runner is the fallback when no framework runner works in the copy, not a second pass. Campaigns run one at a time on the host: timeouts from a run that shared the host with another campaign are load, recorded as `partial`, and only a run that had the host to itself scores a timeout as detected. A survivor re-checked by hand is one hand-applied defect. ([decision](decisions/mutation-scope-and-budget.md#one-run-per-scope-one-campaign-at-a-time-an-estimate-first-2026-09-23))
-- **A test file is never a mutation target.** Whatever a dispatch names as scope, gate, oracle or parser logic that lives in a test file is reviewed through the checklist and at most five hand-applied defects for that file. ([decision](decisions/mutation-scope-and-budget.md#one-run-per-scope-one-campaign-at-a-time-an-estimate-first-2026-09-23))
-- **Estimate, then bound.** Every run has an estimate before its mutants execute (mutants × baseline ÷ concurrency, from the counts the tool prints first); an estimate over 10 minutes ends the run and narrows the scope, the estimate goes on the Mutation run line, and the 30- and 15-minute budgets are ceilings, not targets. ([decision](decisions/mutation-scope-and-budget.md#one-run-per-scope-one-campaign-at-a-time-an-estimate-first-2026-09-23))
-- **A dispatch names a skill, never a version or a path.** `epic-orchestration` and `code-quality-review` say a lane or review dispatch names each skill by its host name, never by a plugin version, a cache path or a copy of its text; `test-quality-reviewer` and `code-quality-reviewer` read the installed plugin's copy when the host does not auto-load skills, never a path a dispatch pins. ([decision](decisions/epic-orchestration.md#a-dispatch-names-a-skill-never-a-version-or-a-path-2026-09-23))

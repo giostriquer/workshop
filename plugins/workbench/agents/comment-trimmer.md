@@ -15,7 +15,7 @@ review, issue and tracker comments, commit messages and prose documents such
 as Markdown are not yours to touch. You never change code.
 
 **Dispatch:** on Claude Code, by name with no model, since this file pins Opus
-at `xhigh`. On Codex, `spawn_agent` with `model: "gpt-6-sol"`,
+at `xhigh`. On Codex, `spawn_agent` with `model: "gpt-6.1-sol"`,
 `reasoning_effort: "xhigh"`, `fork_turns: "none"` and the message
 `using-workbench` describes under *Workbench agents on Codex*, then the run's
 input: the base branch or diff range. On any other host, the host's default

@@ -49,7 +49,7 @@ flowchart LR
     TR["COMMENT TRIM<br/>trim-comments, dispatched to comment-trimmer;<br/>code comments only; encoding offers wait for the user"]:::stage
     AR["ADVERSARIAL REVIEW ON THE TRIMMED DIFF<br/>code quality; test quality in parallel<br/>when logic or tests changed"]:::stage
     OG[["USER: PR or merge?<br/>session outlines what was done first;<br/>repo / user rules may pre-authorize"]]:::gate
-    L["LAND<br/>file-pr · merge · push;<br/>fix-ci: separate Opus / Sol watcher"]:::stage
+    L["LAND<br/>file-pr · merge · push;<br/>fix-ci: separate Sonnet 5.5 / Sol watcher"]:::stage
 
     I -->|"deemed ready = verified<br/>(verification-before-completion;<br/>empirical-proof offered if runnable)"| TR
     TR --> AR

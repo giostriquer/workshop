@@ -77,7 +77,7 @@ of comment noise. It never replaces the review, and code-level slop belongs to
 **Why an agent, not the session that wrote the code?**
 That session wrote the comments too, so its narration reads as explanation and
 its stale comments read as current. `comment-trimmer` starts without that
-history: Opus at `xhigh` effort on Claude Code, `gpt-6-sol` at `xhigh` on
+history: Opus at `xhigh` effort on Claude Code, `gpt-6.1-sol` at `xhigh` on
 Codex.
 
 **Will it touch code outside my branch?**

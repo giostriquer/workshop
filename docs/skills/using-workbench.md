@@ -87,7 +87,7 @@ session hands that folder's path to every agent it dispatches.
 established repo or user pattern; otherwise `<repo>/.worktrees/<task-name>`,
 confirmed ignored first. Never outside the repository unless the user asks.
 
-**CI watching** always goes to a separate Opus agent on Claude or `gpt-6-sol`
+**CI watching** always goes to a separate Sonnet 5.5 agent on Claude Code or `gpt-6.1-sol`
 agent on Codex, never parent polling.
 
 **Workbench agents on Codex.** Each agent file has a Dispatch line naming how

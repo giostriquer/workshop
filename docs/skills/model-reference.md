@@ -39,10 +39,12 @@ Scores are 1-10, higher is better.
 | model | cost | intelligence | taste | code | speed |
 |---|---|---|---|---|---|
 | gpt-6-astra | 3 | 10 | 9 | 8.5 | 6 |
+| gpt-6.1-sol | 7 | 9 | 9 | 9 | 7 |
 | gpt-6-sol | 7 | 6 | 6 | 6 | 7 |
 | gpt-6-luna | 10 | 3 | 3 | 3 | 9 |
 | fable-5.1 | 1 | 10 | 9.5 | 9 | 5 |
-| opus-5.5 | 6 | 9.5 | 9.5 | 9 | 7 |
+| opus-5.5 | 6 | 9.5 | 9.5 | 9.5 | 7 |
+| sonnet-5.5 | 7 | 7.5 | 7.5 | 7.5 | 7 |
 | grok-4.7 | 5 | 7.5 | 7.5 | 7.5 | 7 |
 
 One row per model, graded at the effort you actually run it at.
@@ -80,19 +82,20 @@ These hold for any fleet ([decision](../decisions/model-routing-stays-in-harness
 
 ## Common questions
 
-**Doesn't this skill ban Haiku and Sonnet? Doesn't it set a model floor?**
+**Doesn't this skill ban Haiku? Doesn't it set a model floor?**
 
 Not as fleet policy. A floor or ban list belongs in your own always-injected
 rules file; `adopt-global-rules` ships one example, `model-floor.md`. The skill
 names models only in two exceptions, for separate agents whose model is
 selected explicitly, not inherited:
 
-- **CI watching:** Opus on Claude or gpt-6-sol on Codex, both at `xhigh`
-  effort and spawned without the parent's history. Never Astra, Fable, Haiku,
-  or Sonnet, and never parent polling. See `fix-ci`.
+- **CI watching:** Sonnet 5.5 (`claude-sonnet-5-5`) on Claude Code or
+  gpt-6.1-sol on Codex, both at `xhigh`
+  effort and spawned without the parent's history. Never use Astra, Fable,
+  or Haiku, and never poll in the parent. See `fix-ci`.
 - **Test-quality review and the comment trim:** the `test-quality-reviewer`
   and `comment-trimmer` agents, at the same tier: Opus on Claude Code or
-  gpt-6-sol on Codex, both at `xhigh` effort and spawned without the parent's
+  gpt-6.1-sol on Codex, both at `xhigh` effort and spawned without the parent's
   history; the host's default model elsewhere.
 
 **The table lists models I don't have.**

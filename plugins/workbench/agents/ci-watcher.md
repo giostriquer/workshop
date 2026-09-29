@@ -2,7 +2,7 @@
 name: ci-watcher
 description: Watch PR CI for the current branch and report pass/fail with relevant failure links. Use when waiting for CI results or CI has failed, dispatched by fix-ci or file-pr, one watcher per pinned head.
 tools: Bash, Read
-model: opus
+model: claude-sonnet-5-5
 effort: xhigh
 ---
 
@@ -15,8 +15,8 @@ while other work continues, then read its report when it returns. It is also the
 watch half of a watch-and-fix loop: the `fix-ci` skill dispatches this agent for
 background waits and keeps the diagnose–fix–push cycle in the calling session.
 
-**Dispatch:** on Claude Code, by name with no model, since this file pins Opus
-at `xhigh`. On Codex, `spawn_agent` with `model: "gpt-6-sol"`,
+**Dispatch:** on Claude Code, by name with no model, since this file pins Sonnet 5.5
+at `xhigh`. On Codex, `spawn_agent` with `model: "gpt-6.1-sol"`,
 `reasoning_effort: "xhigh"`, `fork_turns: "none"` and the message
 `using-workbench` describes under *Workbench agents on Codex*. The run's
 inputs are the PR, the pinned head SHA, the deadline and, for a flake rerun,
@@ -27,9 +27,9 @@ the run id and the attempt that failed.
 All CI polling and watch commands run in this separate read-only agent, even
 when the parent is idle, and it never dispatches another agent. Never use
 Astra or Fable for watching, and never inherit those models into the watcher.
-An Opus/Sol parent still dispatches a separate designated-model agent. If the
+A Sonnet/Sol parent still dispatches a separate designated-model agent. If the
 host cannot dispatch it, report the monitoring gap rather than polling in the
-parent or choosing a prohibited fallback. Haiku and Sonnet remain prohibited.
+parent or choosing a prohibited fallback. Haiku remains prohibited.
 The parent owns diagnosis and repairs; the watcher only gathers CI evidence.
 
 ## Trigger

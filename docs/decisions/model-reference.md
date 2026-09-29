@@ -2,6 +2,37 @@
 
 Rationale for the workbench `model-reference` skill (born `route-work`), apart from the harness-routing and 2026-09 fleet-refresh decisions, which keep their own notes; superseded choices are omitted and git history keeps the originals.
 
+## Operator-supplied reference rows (2026-09-29)
+
+The operator added `gpt-6.1-sol` at 7 / 9 / 9 / 9 / 7 and `sonnet-5.5` at
+7 / 7.5 / 7.5 / 7.5 / 7, and changed the `opus-5.5` code score to 9.5.
+The usage page mirrors those rows. The table retains its existing
+legacy-illustrative qualification; these edits provide no new evaluation
+provenance or general routing mandate.
+
+## Claude CI watching uses Sonnet 5.5 (2026-09-29)
+
+The operator removed the global Sonnet ban and assigned Claude Code CI
+watching to Sonnet 5.5. The watcher pins `claude-sonnet-5-5` in its agent
+frontmatter, so an alias cannot drift to another Sonnet version. The parent
+still dispatches by name without a model override. The watcher keeps `xhigh`
+effort and a separate context; Codex still uses `gpt-6.1-sol`. Test-quality
+review and comment trimming keep Opus on Claude Code. Haiku remains banned.
+
+## Sol 6.1 dispatch pins (2026-09-29)
+
+The operator requested that every current Sol 6 spawn recommendation or
+requirement move to `gpt-6.1-sol`. The Codex dispatches for `ci-watcher`,
+`test-quality-reviewer`, and `comment-trimmer` now use that model. Their
+`reasoning_effort: "xhigh"`, `fork_turns: "none"`, separate-agent requirement,
+and contract-message shape stay the same. The model-reference exceptions,
+using-workbench orientation, and matching usage pages carry the same pin.
+
+This replaces the Sol 6 model pins described in the earlier decisions below.
+Recorded probe results and the legacy Sol 6 score row keep `gpt-6-sol`: they
+describe that model. The Sol 6.1 reference row and its usage-page copy retain
+the table's existing legacy-illustrative qualification.
+
 ## One canonical table behind a pointer (2026-07-20)
 
 The operator's always-injected rules file carried its own model table, which went stale because an injected copy has no update trigger. The table moved into the skill as its only canonical copy, and the rules file shrank to the hard invariants plus a pointer. Three of those invariants still stand: orchestration never goes to a weaker-model subagent, a session reruns on a smarter tier without asking when output misses the bar, and for shipped work intelligence outranks taste and both outrank cost. The skill never dispatches, and its rows describe one operator's fleet for adopters to replace.

@@ -2,6 +2,15 @@
 
 This is the rationale for the toolkit plugin's `adopt-global-rules` skill and its root `bin/` launcher; superseded choices are omitted, and git history keeps the originals.
 
+## Remove the Sonnet ban, retain the Haiku ban (2026-09-29)
+
+The operator removed the Claude Code global Sonnet ban so the CI watcher can
+use Sonnet 5.5. The shipped model-floor rule now bans only Haiku. Claude
+work inherits the session model unless an explicit model is selected; this
+permits a pinned Sonnet agent while preserving the default and escalation
+rule. Updating the pack with the installed rule prevents a later adoption
+from restoring the removed ban.
+
 ## The pack is plugin payload, not a template (2026-08-12)
 
 Hand-kept global rules had drifted; the model floor had reached Claude alone. The pack therefore ships as plugin content, so one release reaches every machine; per-operator templates would never converge. Unlike the workbench `model-reference` skill, it may carry concrete policy such as `model-floor`'s Haiku and Sonnet ban, because the pack is explicitly the workshop's own and arrives only when invoked.

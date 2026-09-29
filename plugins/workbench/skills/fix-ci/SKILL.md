@@ -22,8 +22,8 @@ Astra parent is the expensive one. Dispatch `ci-watcher` by name with no model
 (on Codex, paste the agent file, `agents/ci-watcher.md` two directories above
 this `SKILL.md`, and use its Dispatch line, per `using-workbench`'s *Workbench
 agents on Codex*), with the PR, the pinned head SHA and the deadline. Never
-watch inside the parent's own turns, and never route the watcher to Haiku or
-Sonnet. If the host cannot dispatch the agent, report the monitoring gap rather
+watch inside the parent's own turns, and never route the watcher to Haiku.
+If the host cannot dispatch the agent, report the monitoring gap rather
 than polling in the parent. The parent owns diagnosis and repairs; the watcher
 only gathers CI evidence.
 

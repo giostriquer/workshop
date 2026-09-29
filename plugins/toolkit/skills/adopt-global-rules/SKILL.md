@@ -87,7 +87,7 @@ reason this skill exists:
    unmarked file in a rules directory. Read it. Does any of it duplicate what is
    about to be installed **under a different filename or heading**? Does any of
    it *contradict* it? A rules directory is a flat namespace, so a user's
-   `no-haiku-sonnet.md` and the pack's `model-floor.md` never collide; they both
+   `no-haiku.md` and the pack's `model-floor.md` never collide; they both
    install and say the same thing twice. Nothing but a reader catches that.
 2. **Collisions**: an unmarked file occupying a rule's path. Read it and say
    whether it is the same rule, a conflicting one, or unrelated.

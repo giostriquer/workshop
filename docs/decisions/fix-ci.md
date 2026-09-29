@@ -2,6 +2,15 @@
 
 This note is the rationale for the `fix-ci` skill and the `ci-watcher` agent it dispatches, both shipped in the `workbench` plugin; superseded choices are omitted and git history keeps the originals.
 
+## Claude watcher pinned to Sonnet 5.5 (2026-09-29)
+
+The operator assigned Claude Code CI watching to Sonnet 5.5 instead of Opus
+and removed the Sonnet ban. The agent pins `model: claude-sonnet-5-5` with
+`effort: xhigh`; dispatch by name without a model override preserves that
+exact version. The watcher remains separate and read-only. Its loop, host
+waiting rules, and Codex model pin stay the same. Earlier Opus results below
+remain historical evidence for the model that ran them.
+
 ## ci-watcher absorbs the wait on CI (2026-06-29)
 
 Waiting on CI was a recurring session tax: babysit the checks or forget to return, then dig the failing log out of a multi-job workflow. `ci-watcher`, adapted from the agent of the same name in Cursor's MIT-licensed `cursor-team-kit` plugin ([cursor/plugins](https://github.com/cursor/plugins)), is a self-contained agent, needing only `git` and `gh`, that watches the requested revision's checks and returns a verdict with the failing-log excerpt or check link in hand. It is read-only by design, with `Bash` and `Read` as its only tools and no nested subagents; re-running, fixing and pushing belong to the caller. Background dispatch is described in its body rather than a frontmatter flag, since Claude Code agents have no such field. When there is no branch, no applicable CI or no `gh` access, it reports that gap precisely; other CI hosts would swap out the `gh` calls.

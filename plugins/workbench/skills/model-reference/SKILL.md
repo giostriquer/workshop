@@ -37,10 +37,12 @@ Scores are 1–10, higher is better.
 | model | cost | intelligence | taste | code | speed |
 |---|---|---|---|---|---|
 | gpt-6-astra | 3 | 10 | 9 | 8.5 | 6 |
+| gpt-6.1-sol | 7 | 9 | 9 | 9 | 7 |
 | gpt-6-sol | 7 | 6 | 6 | 6 | 7 |
 | gpt-6-luna | 10 | 3 | 3 | 3 | 9 |
 | fable-5.1 | 1 | 10 | 9.5 | 9 | 5 |
-| opus-5.5 | 6 | 9.5 | 9.5 | 9 | 7 |
+| opus-5.5 | 6 | 9.5 | 9.5 | 9.5 | 7 |
+| sonnet-5.5 | 7 | 7.5 | 7.5 | 7.5 | 7 |
 | grok-4.7 | 5 | 7.5 | 7.5 | 7.5 | 7 |
 
 **One row per model, graded at the effort that model is actually run at.**
@@ -90,20 +92,21 @@ verified for the current fleet; the legacy rows above do not establish that.
 
 ## CI monitoring exception
 
-Every CI watch uses a separate **Opus (`opus`) agent at `xhigh` effort on
-Claude** or **`gpt-6-sol` agent at `xhigh` reasoning effort on Codex**, spawned
+Every CI watch uses a separate **Sonnet 5.5 (`claude-sonnet-5-5`) agent at
+`xhigh` effort on Claude Code** or **`gpt-6.1-sol` agent at `xhigh` reasoning
+effort on Codex**, spawned
 without the parent's history. Never use Astra or Fable to watch CI. Select the
 model and effort explicitly; do not inherit a more capable parent. Parents
-already using Opus/Sol still delegate to a separate designated agent. Missing
+already using Sonnet/Sol still delegate to a separate designated agent. Missing
 dispatch is a reported monitoring gap, not permission for parent polling or a
-prohibited fallback. Haiku and Sonnet remain prohibited. See `fix-ci` for the
+prohibited fallback. Haiku remains prohibited. See `fix-ci` for the
 workflow.
 
 ## Test-quality review and comment-trim exception
 
 Every `test-quality-reviewer` and every `comment-trimmer` dispatch uses a
 separate **Opus (`opus`) agent at `xhigh` effort on Claude Code** or
-**`gpt-6-sol` agent at `xhigh` reasoning effort on Codex**, spawned without the
+**`gpt-6.1-sol` agent at `xhigh` reasoning effort on Codex**, spawned without the
 parent's history, and the host's default model on any other host. Select the
 model and effort explicitly; do not inherit the parent's. See
 `test-quality-review` and `trim-comments` for when each runs.

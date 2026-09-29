@@ -87,7 +87,7 @@ edits code comments in the diff and nothing else:
 | Skill | Does |
 | --- | --- |
 | `file-pr` | files the branch's PR, tends it to green-and-mergeable |
-| `fix-ci` | delegates CI watching to Opus (Claude) or Sol (Codex), fixes red in-session |
+| `fix-ci` | delegates CI watching to Sonnet 5.5 (Claude Code) or Sol (Codex), fixes red in-session |
 | `handoff-goal` | hands a long-running goal to a fresh autonomous session |
 | `claim-check` | deep verdict on a ticket / hunch / premise |
 | `qa-sweep` | team-scale QA over a broad surface, corroborated |

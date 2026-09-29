@@ -74,7 +74,7 @@ and removed only with `--prune`.
 **What is "unmanaged"?**
 
 Everything the pack does not own, returned verbatim for you to read. A rules
-directory is a flat namespace, so your own `no-haiku-sonnet.md` never collides
+directory is a flat namespace, so your own `no-haiku.md` never collides
 with the pack's `model-floor.md`: both install and say the same thing twice.
 Only a reader catches that.
 
