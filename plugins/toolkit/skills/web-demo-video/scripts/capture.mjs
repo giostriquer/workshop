@@ -15,7 +15,7 @@ const actions = new Set([
   'dialog-accept', 'dialog-dismiss', 'tab-list', 'tab-new', 'tab-close', 'tab-select',
   'state-load', 'console', 'requests', 'generate-locator', 'highlight', 'run-code',
 ]);
-const help = `UI demo capture — uses @playwright/cli 0.1.22 or a compatible newer release.
+const help = `UI demo capture: uses @playwright/cli 0.1.22 or a compatible newer release.
 
 node capture.mjs doctor [--project DIR] [--cli PATH] [--url URL]
 node capture.mjs start --url URL [--project DIR] [--out DIR] [--name NAME]

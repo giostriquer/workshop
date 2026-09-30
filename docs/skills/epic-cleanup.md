@@ -5,15 +5,18 @@
 Cleans up on request, in one of two modes.
 
 **Workspace mode** covers one repository or workspace. It inventories stale
-worktrees, merged or gone branches, build caches, temp artifacts and stray
-processes. Every entry shows its last commit date, whether it is dirty, any
-unmerged commits, any live process or session using it as its working directory,
-and its size. It presents that list and removes only the entries you pick.
+worktrees, merged or gone branches, build caches, temp artifacts, stray
+processes and Docker images used by the work. Worktree entries show their last
+commit date, whether they are dirty, any unmerged commits, any live process or
+session using them as its working directory, and their size. Other entries carry
+the applicable evidence. Docker entries show the daemon, full image ID, tags, size,
+ownership and remaining consumers. It presents that list and removes only the
+entries you pick.
 
 **Epic mode** removes obsolete temporary artifacts and worktrees owned by a
-completed epic. It accounts for implementation lanes and the worktrees used for
-corrections, validation, reviews and audits. It preserves material that still
-has a purpose.
+completed epic, including disposable Docker images built or pulled for the work.
+It accounts for implementation lanes and the worktrees used for corrections,
+validation, reviews and audits. It preserves material that still has a purpose.
 
 In both modes, a worktree that is dirty, has unmerged commits, or is the working
 directory of a live process or session stays unless you pick it, even when it
@@ -64,6 +67,23 @@ material inside a worktree must be preserved in an established location and
 verified before removing the worktree. The ledger is retired last. The skill
 does not keep an archive of all scratch by default.
 
+**Which Docker images can it remove?**
+
+Images proven disposable within the request, after checking the exact daemon,
+image ID, all tags, project references, and both running and stopped containers.
+Using an image during the epic does not prove exclusive ownership. Shared base
+images, active consumers and unknown ownership stay protected. It removes exact
+targets without force or a broad Docker prune. A stopped container can be
+removed first only when it is also in scope and disposable, including its
+writable data; it preserves volumes.
+
+**What if Docker is unavailable or the selected context has changed?**
+
+It holds Docker cleanup until it can verify the daemon used for the work and its
+inventory. Safe filesystem cleanup continues. Missing access is reported as a
+gap, not as an empty image list. Untagging an image is reported separately from
+removing its image ID or reclaiming disk space.
+
 **Does it delete branches or close the epic?**
 
 Epic mode does not. Branch deletion, tracker changes, commits and remote writes
@@ -75,8 +95,8 @@ mode lists merged or gone branches and deletes only the ones you pick.
 
 In workspace mode, you get a list grouped by category with evidence for every
 entry, and nothing changes until you pick. In epic mode, the result accounts for
-every epic-owned worktree and temporary artifact, with verified removals and
-clear reasons for anything retained. If worktrees or unresolved candidates
+every epic-owned worktree, temporary artifact and Docker image candidate, with
+verified removals and clear reasons for anything retained. If worktrees or unresolved candidates
 remain, the result is partial or blocked, with the next action needed to finish.
 Repeating the request safely resumes that work. In either mode, a worktree with
 active or unique work is still there unless you picked it.

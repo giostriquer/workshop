@@ -69,7 +69,7 @@ commits.
 | `epic-orchestration` | owns a multi-ticket epic: writes the lane prompts the operator dispatches by hand, validates each report against the repo, authorizes the PR; never implements; user-invoked only |
 | `epic-implementation` | uses the shared [lane report template](skills/epic-orchestration/references/lane-report.md) across amendments, recovery and delivery; only for lanes dispatched through epic-orchestration |
 | `epic-auditor` | uses the shared [audit report template](skills/epic-orchestration/references/audit-report.md) across audit follow-ups, amendments and recovery; only for auditor lanes dispatched through epic-orchestration |
-| `epic-cleanup` | on an explicit cleanup request: lists a repository's stale worktrees, merged or gone branches, caches, temp files and stray processes with evidence and removes only what you pick, or removes an epic's obsolete artifacts and owned worktrees; never removes a dirty, unmerged or in-use worktree on its own judgment |
+| `epic-cleanup` | on an explicit cleanup request: lists a repository's stale worktrees, merged or gone branches, caches, temp files, stray processes and Docker image candidates with evidence and removes only what you pick, or removes an epic's obsolete artifacts, owned worktrees and disposable images; protects active worktrees and shared images |
 | `model-reference` | reference table for the model fleet across cost, intelligence, taste, code, and speed, plus the hard routing invariants; a lookup, not a dispatch step |
 
 ## Workbench: the process layer

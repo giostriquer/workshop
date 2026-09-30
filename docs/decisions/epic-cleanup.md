@@ -153,3 +153,39 @@ absent from the model-visible list. With `allow_implicit_invocation: true`, it
 appeared with the new description. Codex behavior itself was not probed. The
 native plugin validator passes; its parity check only applies to skills that
 set `disable-model-invocation: true`.
+
+## Docker images used during the work (2026-09-29)
+
+**Why.** Epic builds and browser or integration verification can leave Docker
+images after their consumers and worktrees are gone. The skill has no Docker
+inventory or removal procedure. Using an image during the epic does not make a
+shared base image disposable, and a daemon-wide prune can affect other work.
+
+**Change.** Include images built or pulled for the work in the cleanup inventory.
+Bind each entry to its verified daemon, full image ID, tags and remaining
+consumers. Inspect running and stopped containers and current project references.
+Workspace mode still reports candidates for the user to pick. Epic mode removes
+only verified disposable images within the cleanup request. Unknown ownership,
+shared consumers, active containers and unavailable Docker inventory hold the
+affected entries while independent cleanup continues.
+
+Use exact non-force removals, with `--no-prune` to preserve unselected parent
+images. Stopped containers need their own disposable-state and scope checks;
+their writable data is not disposable merely because they exited. Leave volumes,
+networks, build caches and registry contents outside this image-cleanup change.
+Verify absence by ID on the same daemon; distinguish untagging from image
+removal and report measured disk changes separately.
+
+The command behavior was checked against current official Docker documentation
+through Context7 and the [image removal](https://docs.docker.com/reference/cli/docker/image/rm/),
+[image pruning](https://docs.docker.com/reference/cli/docker/image/prune/),
+[container listing](https://docs.docker.com/reference/cli/docker/container/ls/)
+and [context](https://docs.docker.com/engine/manage-resources/contexts/) references.
+
+**Validation.** The previous skill preserved ownership and authority in five
+read-only scenarios; this is a concrete inventory gap, not an observed
+destructive failure. A fresh reader applied the updated skill to those cases
+and one container-data/worktree preservation case. It selected exact disposable
+targets, preserved shared images and retained data, and held incomplete Docker
+checks while continuing independent cleanup. These are bounded scenario checks;
+no actual Docker cleanup or cross-model reliability claim was made.

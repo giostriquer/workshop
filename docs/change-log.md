@@ -9,6 +9,14 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-12 reformat.
 
 
+## toolkit 0.14.2: 2026-09-29
+
+- **Capture help passes the native punctuation check.** Replace the help text's em dash with a colon; recording behavior is unchanged.
+
+## workbench 0.44.6: 2026-09-29
+
+- **Epic cleanup includes disposable Docker images.** Inventory images used by the work on the verified daemon, check shared and stopped-container consumers, and remove only exact disposable targets. Workspace cleanup remains report-only until you pick entries. ([decision](decisions/epic-cleanup.md#docker-images-used-during-the-work-2026-09-29))
+
 ## toolkit 0.14.1: 2026-09-29
 
 - **Browser demos use `web-demo-video`.** Rename `ui-demo-video` and its discovery, usage, and catalog references to make the browser scope explicit. Existing capture settings and saved runs remain compatible. ([decision](decisions/web-demo-video.md#browser-specific-name-2026-09-29))
@@ -65,14 +73,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 ## workbench 0.43.3: 2026-09-25
 
 - **Always pull latest before opening a PR.** `file-pr` integrates missing commits from the latest remote base even when they merge cleanly. The final push pulls the remote head when it exists; incoming changes refresh the diff and body and run affected validation and review. Failed synchronization blocks filing. ([decision](decisions/file-pr.md#always-pull-latest-before-filing-2026-09-25))
-
-## workbench 0.43.2: 2026-09-25
-
-- **Lane-facing owner returns include a copyable handoff.** Accepting or rejecting a report, returning a correction or ruling, and authorizing delivery require a dispatch file and a separate fenced pointer for each affected lane. Accepted corrections still receive a handoff when only approval remains; status-only answers can stay brief prose. Pending delivery approval preserves the hold without creating correction work or merge authority. ([decision](decisions/epic-orchestration.md#dispatches-are-files-and-paste-blocks-are-pointers-2026-09-11))
-
-## workbench 0.43.1: 2026-09-24
-
-- **Epic assignments stay tied to approved scope.** The owner checks governing criteria and amendments before delegation and recovery; its own backlog or continuation packet cannot add obligations. Relevant integration changes invalidate affected evidence, while unrelated changes add no qualification work. ([decision](decisions/epic-orchestration.md#scope-membership-precedes-technical-validity-2026-09-24))
-- **Lanes receive outcomes and concise amendments.** Initial contracts stay complete, amendments carry only changes, and implementation methods, conforming PR titles and conflicts within settled contracts belong to the lane. `file-pr` follows the same conflict boundary. Every final handback still contains the populated shared report. ([epic contracts](decisions/epic-orchestration.md#contracts-leave-implementation-choices-to-the-lane-2026-09-24), [merge resolution](decisions/file-pr.md#settled-contracts-govern-merge-resolution-2026-09-24))
-- **Independent validation fits the claim.** Regression fixes need defect-sensitive evidence; preservation work may use equivalence and passing characterization with RED marked not applicable. Closure depends on acceptance evidence and a corroborated blind audit, not a predicted number of rounds. ([decision](decisions/epic-orchestration.md#contracts-leave-implementation-choices-to-the-lane-2026-09-24))
-- **Epic handoffs preserve the current delivery gates.** Review follow-ups continue while converging and return to the owner when they stop; records survive handoffs and delivery. Reports include the comment trim and encoding offers, which remain operator decisions. ([review authority](decisions/epic-correction-review-authority.md#the-owner-decides-only-when-review-stops-converging-2026-09-24), [trim handoff](decisions/epic-orchestration.md#lanes-trim-before-their-completion-review-2026-09-24))
