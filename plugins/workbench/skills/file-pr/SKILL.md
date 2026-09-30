@@ -87,9 +87,12 @@ permission or access; do not ask again for authority already given.
 workflow agent or epic lane, names `file-pr` as the skill the agent loads before
 filing, plus the agreed PR plan entry that PR carries when a plan exists.
 
-## The two rules that make the body right
+## The two rules that make PR text right
 
-1. **The body must stand alone.** Reviewers arrive with no access to this session,
+1. **The title and body must each stand alone.** A reviewer scanning the PR list
+   sees only the title: it identifies the affected feature and the change without
+   requiring the body, ticket, or conversation to decode it.
+   Reviewers arrive with no access to this session,
    so every field is derived from evidence they can check: what changed from the
    **branch diff**, and why from the **problem that prompted it**: the observed
    defect or need and how it surfaced (a bug report, a failing check, a
@@ -116,19 +119,38 @@ or verification references. These are drafting inputs, not extra PR sections:
 | **Result** | What the change and its relevant checks support. Name diagnostics, mitigation, recovery controls, refactoring, docs, and tests for their actual contribution. A focused regression can support a narrow fix; it does not establish completion of a larger workflow. |
 | **Limits** | Remaining failures, dependencies, or unverified paths that materially narrow the result. When the cause is unknown, describe the observed failure and implemented change without inventing a cause. |
 
-**Title recipe:** name the surface and a concrete action on an object, adding the
-condition or mechanism that distinguishes this change. Use the repo's enforced
-syntax; when its allowed scope is broader than the feature, name the feature in
-the subject. Keep the distinguishing information when shortening to a title
-limit. For example, two changes prompted by failed report exports might be
-`fix(reporting): extend export response deadline to 45 seconds` and
-`feat(reporting): show row errors for failed exports`. Each names its contribution;
-`fix(webapp): fix exports` cannot distinguish them. A recovery control enables a
-retry; it does not promise that the retry succeeds.
+**Title recipe:** name the affected feature and what changes for its user or
+consumer. For a bugfix, state the corrected behavior in the situation that
+failed. For retention or recovery, include the relevant lifecycle event or
+boundary: what survives a restart, what resumes after interruption, or what is
+retained when an operation fails. For a new capability, name the capability;
+for refactors, docs, and tests, name the changed responsibility or artifact.
+Implementation identifiers belong in the description when the behavior can be
+stated more clearly without them.
+
+Use the repo's enforced syntax; when its allowed scope is broader than the
+feature, name the feature in the subject. Keep the feature and distinguishing
+behavior when shortening to a title limit. Specificity comes from the information
+the reader gets, not from a strong verb or a technical noun.
+
+For example, Report Builder drops saved date filters after the app restarts.
+The change saves and reloads those filters from durable storage:
+
+| Title | What a PR-list reader learns |
+| --- | --- |
+| `fix(webapp): preserve report export settings` | The containing app and a broad intent; neither the affected settings nor the failure condition. |
+| `fix(reporting): preserve report export settings` | The correct surface, but still no distinguishing behavior. Changing the prefix alone is insufficient. |
+| `fix(reporting): keep saved date filters after app restart` | The affected state and the exact event it now survives. |
+
+Other changes to exports still need their own contribution: extending a response
+deadline, showing row errors, or adding a retry control. A recovery control
+enables a retry; it does not promise that the retry succeeds.
 
 **Description recipe:** in the template's existing fields, state the concrete
 problem or need, explain the final change and its effect, and put any limit that
-narrows that effect alongside it. A small change may need only two sentences.
+narrows that effect alongside it. Expand the title's specific claim: what happened
+before, what changes now, and why the change produces that result. A small change
+may need only two sentences.
 Use relevant implementation detail to explain behavior or risk; keep validation
 commands and their results in the template's testing field. Describe the final
 state when updating a PR: replace obsolete claims and consolidate validation
@@ -138,6 +160,11 @@ updates, preserving material caveats and required template content.
 
 - Can the surface be traced to its owner and affected consumers? If a broad
   scope is enforced, does the subject still identify the affected feature?
+- With the body and ticket hidden, can a reviewer identify the changed behavior
+  or artifact and, for a fix, the failure condition? If they must open the body
+  to learn what "preserve", "restore", or "support" means here, put that missing
+  distinction in the title. Replacing an app prefix with a subsystem prefix or
+  adding an implementation identifier does not by itself satisfy this check.
 - Does the title distinguish this delta from another repair to the same symptom?
   For a recurring issue or follow-up, inspect the linked predecessor or a few
   recent related PRs when accessible. Compare contributions, not just wording;

@@ -9,6 +9,10 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-12 reformat.
 
 
+## workbench 0.45.2: 2026-09-30
+
+- **PR titles explain the change without opening the description.** Name the affected feature and corrected behavior, including the restart, interruption, or failure condition for retention and recovery fixes. A worked example rejects a vague title even after its scope prefix is corrected; descriptions expand the same before/after claim. ([decision](decisions/file-pr.md#titles-and-descriptions-share-an-evidence-boundary-2026-09-30))
+
 ## workbench 0.45.1: 2026-09-30
 
 - **PR titles and descriptions identify the actual contribution.** Ground both in the owning surface, final diff, supported result, and material limits. Check claims before publication, distinguish successive repairs to the same symptom, and refresh both title and body after synchronization or later corrections. ([decision](decisions/file-pr.md#titles-and-descriptions-share-an-evidence-boundary-2026-09-30))
@@ -69,7 +73,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 - **Bounded CI repairs preserve completed reviews.** After review closes, a correction within the accepted scope and design continues through focused verification, push, and CI watching without restarting review or mutation rounds. `fix-ci` owns this delivery loop. ([decision](decisions/bounded-correction-review.md))
 - **Each review discipline owns its process.** Code-quality and test-quality reviews keep separate findings, follow-ups, convergence decisions, and closure records. A missing stage runs without repeating a completed stage, and delivery callers preserve each result. ([decision](decisions/completion-review-stages.md))
 - **Codex prompts match the plugin's skills.** PR-comment summarization is advertised by Toolkit, which ships that skill. ([decision](decisions/plugin-surfaces.md#codex-submission-export-2026-09-25))
-
-## toolkit 0.13.1: 2026-09-25
-
-- **Codex starter prompts describe shipped utilities.** PR-comment summarization replaces the obsolete skill-authoring prompt. All host manifests replace the stale skill-authoring keyword with PR review. ([decision](decisions/plugin-surfaces.md#codex-submission-export-2026-09-25))

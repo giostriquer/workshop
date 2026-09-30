@@ -132,3 +132,29 @@ A further fresh context checked two edge cases against the final wording. It
 described diagnostic work without inventing an unknown cause or blocking on
 inaccessible PR history, and updated stale title/body claims after a repair was
 removed during CI tending, even though no further source push was needed.
+
+Follow-up review identified a remaining ambiguity: a title can contain a valid
+surface, an active verb, and a plausible object while omitting the information
+that tells readers what changed. The first revision made the body stand alone,
+but left the title's independent usefulness implicit. It now applies that
+requirement to each. For a retention or recovery fix, the title names the
+affected state and lifecycle event or failure boundary. A worked example shows
+that correcting an application prefix alone does not repair a vague title.
+The description expands the same before/after claim. New capabilities,
+refactors, docs, and tests retain their own forms rather than being forced into
+a bugfix narrative.
+
+Six follow-up scenarios ask an agent to accept or replace supplied titles,
+including a vague host-scoped title, the same title with its prefix corrected,
+an accurate implementation-only title, two already useful titles, and a recovery
+claim backed only by a new control. One fresh context with the prior wording
+already made all six intended decisions. This is an explicit acceptance-standard
+and example correction; that baseline does not establish a measured reliability
+gain. Scenario material remains local.
+
+A fresh context using the revised wording made the same six intended decisions:
+it replaced all three underspecified titles, retained the two useful titles, and
+named the recovery control without claiming recovery. Two follow-up cases in
+that context retained accurate refactor and reproduction-only titles without
+inventing a behavior change. These checks cover interpretation of the revised
+standard; they do not show that the prior release caused the reported title.

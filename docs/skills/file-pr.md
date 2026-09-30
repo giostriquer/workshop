@@ -5,13 +5,15 @@
 `file-pr` turns a finished branch into a pull request, then tends it until it
 is **green and mergeable**, or reports precisely why it stopped.
 
-"The body must stand alone": what changed comes from the branch diff, and why
-from the problem that prompted it, the observed defect or need and how it
+The title and body must each stand alone. A reviewer scanning the PR list can
+identify the affected feature and change from the title itself. What changed
+comes from the branch diff, and why from the problem that prompted it, the
+observed defect or need and how it
 surfaced, stated as evidence rather than as the session's story. The title and
 description share four facts: owning surface, concrete change, supported result,
 and material limits. The title names the surface and distinguishing change. If
-the repo ships a PR template, the body *is* that template filled in, with headings, order,
-checkboxes and hidden `<!-- markers -->` intact. The skill adds only two
+the repo ships a PR template, the body *is* that template filled in, with
+headings, order, checkboxes and hidden `<!-- markers -->` intact. The skill adds only two
 conditional sections: `## Architecture` and `## Screenshots`.
 
 It never merges, enables auto-merge, closes or re-targets the PR, force-pushes,
@@ -80,12 +82,20 @@ handback. It stops at green and mergeable, or at a cap, and reports either way.
 
 ## Common questions
 
-**What makes a useful title?** The affected surface and a concrete action,
-object, and distinguishing condition. For example,
-`fix(reporting): extend export response deadline to 45 seconds` identifies a
-specific mitigation. `feat(reporting): show row errors for failed exports`
-identifies diagnostics. Both distinguish the work better than
-`fix(webapp): fix exports`, which could claim either change completes the fix.
+**What makes a useful title?** It tells a reviewer what changes for the affected
+feature without opening the description. A bugfix names the behavior and failure
+condition; a capability names what becomes available. For example,
+`fix(reporting): keep saved date filters after app restart` identifies the state
+and the event it now survives. `feat(reporting): download reports as CSV` already
+identifies a specific capability and needs no invented failure condition.
+
+**Is a precise scope and a strong verb enough?** No.
+`fix(webapp): preserve report export settings` gives a broad intent.
+`fix(reporting): preserve report export settings` corrects the owner but still
+leaves the behavior unclear. Neither says which settings were lost or when.
+The body cannot compensate for those missing facts in the title. Naming a
+storage helper instead is useful only if that name explains the change better
+than the behavior it implements.
 
 **The files are in the app package. Should the title name the app?** Follow the
 owner of the changed behavior and its consumers. A Reporting feature can live
@@ -171,6 +181,8 @@ several candidates or the template requires one.
 - The title names the owning surface and distinguishing change; the body's why
   names the problem and how it surfaced. Outcome claims match the evidence,
   with material limits stated alongside the change.
+- The title still makes sense with the body and ticket hidden. Retention and
+  recovery fixes name the relevant restart, interruption, or failure boundary.
 - **Negative signal:** multiple different repairs share a generic fix title,
   a feature is named only by its containing app, or diagnostics and retry
   controls are presented as successful repair of the underlying failure.
