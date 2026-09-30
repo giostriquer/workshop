@@ -35,7 +35,7 @@ you want them, and skip to keep sessions lean.
 | Implementing where a test harness exists | [test-driven-development](test-driven-development.md) |
 | An unresolved failure requiring sustained investigation | [systematic-debugging](systematic-debugging.md) |
 | About to claim something is done | [verification-before-completion](verification-before-completion.md) |
-| Proving one finished change at the running app | [empirical-proof](empirical-proof.md) |
+| Checking one finished change through its app or real consumer | [empirical-proof](empirical-proof.md) |
 | Trimming a finished diff's code comments before the review round | [trim-comments](trim-comments.md), run by the `comment-trimmer` agent |
 | The adversarial pass before PR-or-merge | [code-quality-review](code-quality-review.md), plus [test-quality-review](test-quality-review.md) when production logic or tests changed |
 | Checking whether existing tests protect the behavior they claim to | [test-quality-review](test-quality-review.md) |

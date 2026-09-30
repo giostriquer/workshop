@@ -91,7 +91,7 @@ edits code comments in the diff and nothing else:
 | `handoff-goal` | hands a long-running goal to a fresh autonomous session |
 | `claim-check` | deep verdict on a ticket / hunch / premise |
 | `qa-sweep` | team-scale QA over a broad surface, corroborated |
-| `empirical-proof` | proves a finished change at the running app |
+| `empirical-proof` | checks a finished change through its app or real consumer, with guidance by surface |
 | `code-quality-review` | strict structure-first review of a diff |
 | `test-quality-review` | whether a diff's tests protect behavior, backed by a mutation run |
 | `trim-comments` | the comment trim before the review round: removes code-comment slop from the finished diff and offers encodings for constraint comments |
@@ -135,6 +135,11 @@ its comment keep-list and its constraint-comment and suppression rules from the
 (`no-comments` and `comment-sicko`, MIT, Copyright (c) 2026 Lauren Tan),
 adapted per
 [`docs/decisions/trim-comments.md`](docs/decisions/trim-comments.md).
+
+`empirical-proof` adapts Lauren Tan's `pstack` verification guidance from
+Cursor's [cursor/plugins](https://github.com/cursor/plugins) (MIT, Copyright
+(c) 2026 Lauren Tan). The [decision](docs/decisions/empirical-proof.md) records
+the surface-aware approach for Codex and Claude Code.
 
 Details in [`plugins/workbench/README.md`](plugins/workbench/README.md).
 

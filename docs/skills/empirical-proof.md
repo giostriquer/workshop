@@ -2,124 +2,99 @@
 
 ## What it does
 
-`empirical-proof` proves a just-finished change **at the running software**.
-It starts the real app, or finds one already running. It drives the surface the
-change touched through the same boundary a real client uses, records each
-exchange word for word, and returns one of three verdicts: `verified`,
-`broken`, or `blocked`. A "verified" must trace back to a recorded exchange.
-Reading the code, passing unit tests, mocks, and in-process harnesses don't
-count.
+`empirical-proof` checks a finished change through the way its user or consumer
+experiences it. It covers web, desktop, and mobile apps, CLIs and TUIs, APIs,
+MCP tools, libraries, and generated artifacts. The skill guides what to test
+and how to choose a route; it does not prescribe a harness, a health endpoint,
+a scenario count, or a team for every proof.
 
-Each attempt keeps its revision, transcripts, and verdict. An authorized
-repair leads to a new attempt.
+Modern models can operate software, inspect screenshots, follow a flow across
+tools, and read back its effects. The session uses those capabilities when
+available, alongside existing project automation and documented run paths.
 
 ## When to reach for it
 
-Ask for it after finishing a change that touched a surface a real client can
-drive: an MCP tool, a REST endpoint, runnable app behavior, or a generator's
-emitted artifact. It is an expensive tier. The session offers it and runs it
-only when you ask, either now or through a standing rule
-([decision](../decisions/workbench-operator-decisions.md)). A repo process
-document that requires driving the real artifact counts as that standing ask,
-and the session names that gate when it runs the proof.
+Ask after a finished change when you want proof from the actual software.
+A repo completion rule that requires this check also counts as an invitation.
+Otherwise the session offers it. A drivable surface alone does not make it
+mandatory ([decision](../decisions/workbench-operator-decisions.md)).
 
-| The problem | The skill |
+| Need | Route |
 | --- | --- |
-| One finished change touched a drivable surface | `empirical-proof` |
-| Exploring a running surface for unknown bugs | No skill; ordinary session work |
-| A release, branch, or feature area at team scale | `qa-sweep` |
-| A premise, ticket, or hunch to prove or break | `claim-check` |
-| About to claim done | `verification-before-completion` |
+| Check one finished change through its real consumer | `empirical-proof` |
+| Explore a running app for unknown bugs | Ordinary session work |
+| Broad QA over a release or feature area | `qa-sweep` |
+| Investigate a premise, ticket, or hunch | `claim-check` |
+| Support a completion claim with fresh evidence | `verification-before-completion` |
 
-## The gate, the scenarios, the verdicts
+## What a useful proof looks like
 
-**The gate (rigid) runs before any scenario.**
+The session identifies the expected outcome, exercises the changed path, and
+selects relevant failure cases and nearby regressions. It checks the result,
+including persisted data or integration effects where those matter.
 
-1. Find the documented way to run the project: a run skill, the README, or
-   package scripts.
-2. Prefer an instance that is already running. Health-check it, and record the
-   endpoint and its exact response. Without a recorded health-check, nothing
-   downstream counts.
-3. Confirm the instance is running the change. If you're unsure, restart it.
-4. Otherwise start it yourself. Anything the docs prescribe is in scope:
-   installs, env setup, builds, the dev server, and a clean retry. Repairing
-   the *machine* is not in scope, meaning a broken toolchain, a missing
-   service, or config drift.
-5. "One failed launch is not a blocked verdict; a documented path you have
-   actually exhausted is."
+| Surface | Typical direction |
+| --- | --- |
+| Web | Browser flow, rendered layout, responsive and keyboard states |
+| Desktop | Actual changed app, windows/menus, focus, lifecycle and saved state |
+| Mobile | Available simulator/emulator/device, relevant navigation and platform states |
+| CLI / TUI | Changed executable, exit/output, interactive terminal and emitted files |
+| API / MCP | Real requests or connected tool calls, errors, schema and side effects |
+| Library / generator | Real consumer of the public interface or generated output |
 
-**Don't fake the environment.** If the app can't reach a database, credential,
-or service it needs, the verdict is `blocked`. Never stub a listener, fake an
-env var, or edit the boot check to get past it
-([decision](../decisions/empirical-proof.md)).
+The route needs to match the claim. An API request can prove backend behavior;
+it cannot show whether a desktop dialog clips. A healthy process can still be
+an old build. A saved screenshot supports a visual claim only after the model
+has inspected it.
 
-**Generated code.** A generator's output is the surface. Run the generator,
-then build, boot, and drive what it emits. A failure the evidence ties to the
-emitted artifact is `broken`. Missing credentials or services are `blocked`.
+Evidence can be a native tool exchange, terminal output, inspected screenshot,
+log, recording, or result readback. Useful evidence identifies the build,
+inputs, expected outcome, and observed outcome. Save it in the scope's scratch
+folder when it needs to survive a handoff; a separate recording or transcript
+file is not necessary for every tool call.
 
-**Scenarios.** When MCP tools or REST endpoints are touched, they must be
-covered. MCP tools go through a real MCP client, and REST endpoints get real
-HTTP. For each surface, run the happy path and then probe it with invalid
-input, boundary and coercion cases, the error path, and auth. Scale the number
-of scenarios to the blast radius. A surface tested only on the happy path is
-**incomplete**.
-
-**Fan-out and corroboration.** Every agent gets the same contract: environment
-facts and the single evidence folder; real boundary only, fix nothing, stop
-what it starts and confirm the stop; and a schema of scenario, exact
-invocation, verbatim response, observed vs expected, PASS / FAIL / BLOCKED. A
-verdict without a transcript is void. The session re-drives every FAIL and at
-least one PASS per surface itself.
-
-| Verdict | Means | Carries |
-| --- | --- | --- |
-| `verified` | Every scenario passed | Per-surface transcripts |
-| `broken` | Scenarios failed | Expected vs observed; the attempt is preserved |
-| `blocked` | The app can't honestly come up | The failure verbatim and the one unblock |
-
-The report opens with the verdict. It then lists the scenarios run per surface
-and any gaps left unrun. It ends with a cleanup line that cites how each stop
-was confirmed.
+The report leads with what was verified, what failed, or what could not be
+checked. It names the unrun cases and any temporary resources left running.
+A failed result stays visible when an authorized repair and new check follow.
 
 ## Common questions
 
-**I asked it to hunt bugs, and it reported `blocked` after a launch failure.**
-The wrong protocol ran. Hunting is ordinary session work: set up, start the
-dev server, drive the app. Even here, one failed launch isn't `blocked`.
+**Does this work for native apps?**
+Yes. Use available native app/computer tools or existing project automation.
+Mobile checks can use a simulator, emulator, or device. State which platform
+and build were exercised; a web preview does not prove native integration.
 
-**If launching is in scope, why won't it stand up the missing database?**
-Starting the app is setup. A stub that stands in for a real dependency is
-fabrication. A service booted against a stub isn't the artifact that ships.
+**What differs between Codex and Claude Code?**
+The shared approach is the same. Use the tools actually exposed and connected
+in the session. Codex's browser/computer surfaces depend on its host. Claude
+Code's Chrome integration and native computer use have separate availability
+and setup; built-in computer use needs an interactive session and is not
+available in `claude -p`. The skill does not assume either host has every tool.
 
-**It found a real bug. Why didn't it fix it?**
-The attempt keeps the failure on record. It never reports a PASS after a silent
-fix. If you authorized repairs, they come next, followed by a new attempt.
+**Do I need to create a temporary harness?**
+Usually an existing project workflow, native tool, real client, or terminal
+invocation is enough. Choose the simplest route that exercises the behavior.
+For a requested browser video, `toolkit:web-demo-video` supplies the recorder.
 
-**My unit tests are green. Isn't that enough?**
-No. Tests gate the change but don't prove it.
+**What if a dependency or UI tool is unavailable?**
+Try reasonable documented setup within existing task authority, including
+starting a real local dependency. Report the gap and continue independent checks.
+An environment or verifier failure is not automatically an app defect. A fake
+service can support a narrower test, but not a claim about the real integration.
 
-**My repo's `AGENTS.md` requires booting the app. Does the session still just
-offer?**
-No. That requirement counts as the invitation, so it runs.
+**Are passing tests enough?**
+They support the behavior they exercise. Report app interaction separately
+from unit tests, builds, source inspection, or mocked behavior.
 
-**Should it clean up its logs?**
-No. It stops its processes and proves the stop, but it leaves the logs alone.
-They are the evidence.
+**Does it repair bugs?**
+A verification-only request ends at findings. Existing repair authority lets
+the session fix the defect and check the repaired build without hiding the
+original failure.
 
-## It's working if
+## How to tell it worked
 
-- The verdict comes first, and every pass cites a real transcript.
-- Probes run alongside the happy paths.
-- A `blocked` verdict quotes the failure and names the one thing that would
-  unblock it.
-- Product code doesn't change during an attempt.
-- **Not working:** it ran with no ask, rule, or repo gate; it went hunting for
-  bugs; it reported `blocked` after one failed launch; "verified" rests on tests
-  or reading the code; or the environment was stubbed.
-
-## Where it fits
-
-This is the deep form of the completion gate. `verification-before-completion`
-is the floor for every done-claim; this skill, when asked for, supplies that
-evidence from the running software. Once the work is verified, the comment
-trim and the required adversarial review run, then the PR-or-merge question.
+- The chosen route exercises the changed behavior on the changed artifact.
+- Checks fit the surface and risk; their observations support the claims.
+- Missing platforms, tools, states, and cases remain visible.
+- User-owned sessions and data are preserved; temporary resources and evidence
+  have a clear disposition.

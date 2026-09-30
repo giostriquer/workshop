@@ -2,17 +2,72 @@
 
 Rationale for the `empirical-proof` skill and the verification choices it shares with `verification-before-completion`, both shipped by the workbench plugin; superseded choices are omitted, and git history keeps the originals.
 
-## Proof runs at the real artifact, with a counter for each cheat mode (2026-07-03)
+## Surface-aware guidance for modern harnesses (2026-09-30)
 
-Sessions finishing work on a runnable surface kept claiming unearned verification in four ways: a run that never happened, tests or a build reported as runtime proof, a mocked surface, and happy-path-only checks. Each gets a structural counter: nothing counts before a recorded health-check of the right running build, only the real boundary counts (MCP tools through a real client, REST over real HTTP), and a surface without probe scenarios is incomplete. Subagents return evidence in a fixed schema, a verdict without its transcript is void, and the session re-drives every FAIL and at least one PASS per surface. The report leads with `verified`, `broken` or `blocked`; an honest `blocked` beats code-reading "verification". The skill proves one finished change; branch-wide passes belong to `qa-sweep` and premises to `claim-check`.
+The operator asked to repeat the web-demo modernization for empirical proof,
+then clarified the desired shape: include apps, guide what to test, and give a
+general direction for each surface without hard constraints on how. The old
+protocol assumed a recorded HTTP health endpoint before any scenario, a fixed
+request/response schema, API-style probes for every surface, default fan-out,
+and compulsory replay. That made valid desktop and short-lived CLI checks
+ineligible and could encourage restarting a user-owned instance to resolve
+build uncertainty.
 
-## A proof attempt changes nothing and proves its own cleanup (2026-07-03)
+The replacement covers web, desktop, and mobile apps; CLI/TUI; API and MCP;
+libraries; and generated output. It directs checks toward the actual claim:
+user journeys, relevant adverse states, side effects, and likely regressions.
+Readiness and build identity fit the surface. Tools, case counts, evidence
+format, recordings, delegation, and replay are choices, not ritual gates.
+Native tool exchanges and inspected images can supply evidence without a new
+capture harness. Existing project workflows remain useful. This change adds
+no helper, project feature map, SDK dependency, or model pin.
 
-Baseline runs surfaced further failures: agents fixed the bug mid-verification and reported PASS, faked a missing dependency to pass a boot check, deleted the request log as cleanup, and claimed a server had stopped while it still listened. So an attempt edits neither product code nor setup, its verdict is preserved, and any repair the task already authorizes returns to implementation and earns a fresh proof on the new revision. Every process a proof starts must be shown stopped (port closed, process gone), and logs stay as evidence.
+The shared design borrows launch/readiness/drive/evidence/cleanup concepts from
+Lauren Tan's MIT-licensed pstack
+[create-verification-skill](https://github.com/cursor/plugins/blob/fae2c6ed95821bd85f614a73e4842e13229fa5e5/pstack/skills/create-verification-skill/SKILL.md)
+and
+[maintain-verification-skill](https://github.com/cursor/plugins/blob/fae2c6ed95821bd85f614a73e4842e13229fa5e5/pstack/skills/maintain-verification-skill/SKILL.md).
+Their project-skill generation and parallel maintenance protocols are not
+adopted. A read-only Claude Code Opus 5.5 consultation supported native tools,
+surface-specific observations, current-build identity, and proportional proof.
 
-## Generated code is proven through its emitted artifact (2026-08-12)
+Host directions name capabilities without assuming they exist in every
+session. Official [Claude Chrome](https://code.claude.com/docs/en/chrome),
+[Claude computer use](https://code.claude.com/docs/en/computer-use), and
+[Codex MCP](https://developers.openai.com/codex/mcp/) documentation ground the
+availability distinction. In particular, Claude's built-in computer use needs
+an interactive session and is unavailable in print mode; a reasoning
+consultation is not native-app execution.
 
-A code-generator project had no app to boot, and the skill offered no path to the right proof. For a generator, the runnable surface is the emitted artifact: generate via the documented path, then build and drive the output as its real consumer would, with the boot gate applying to that artifact. A build or boot failure is `broken` when evidence attributes it to the emitted artifact; missing credentials, services or verifier capabilities are `blocked`.
+Baseline characterization applied the old wording to five surface/tool/ownership
+cases and found source contradictions for desktop and CLI proof. A desktop
+no-guidance comparator was reasoned in the same context. These establish the
+specific correction, not a reliability estimate. Fresh corrected-guidance
+application checks cover those cases plus mobile, generated output, public
+library use, side effects, and opt-in boundaries. Research and check records
+remain local scratch evidence. No real app was driven by these scenario checks.
+
+## Evidence describes the actual consumer and result
+
+The original failures were invented runs, tests or builds reported as app
+interaction, simulated dependencies reported as real integration, and narrow
+happy-path coverage reported as a whole-surface pass. Keep the evidence and
+scope distinction rather than the old fixed protocol. HTTP and MCP changes
+are exercised through their public boundaries; apps through relevant user
+interaction; libraries and generated artifacts through actual consumers.
+Relevant adverse cases matter, but a fixed API matrix does not fit every app.
+A missing tool or platform limits coverage and is not automatically a defect.
+
+## Repairs and cleanup preserve work and observations
+
+A failed observation remains visible when authorized implementation repairs
+follow; the repaired build earns a new check. Verification-only work ends with
+findings. Documented setup, including starting a real local dependency, can
+support the proof within existing authority. A fake dependency supports only
+the narrower test it actually exercises. Preserve user-owned sessions and
+data; dispose of owned temporary resources, confirm cleanup where relevant,
+and retain useful evidence. The skill does not grant machine repair or
+external-write authority.
 
 ## A verification picker instead of merged protocols (2026-08-12)
 
@@ -20,7 +75,7 @@ Choosing among verification-adjacent pieces meant reading several protocols, spe
 
 ## Bug-hunting is not this protocol, and launching is in scope (2026-08-12)
 
-A session hunting bugs in an app pulled in this skill, the only one saying "drive the running app", then reported `blocked` after one failed launch. Nothing is under test during a hunt, so the skill now excludes it, and the flow adds no skill for it: hunting is ordinary session work. Launching is now in scope: whatever the project's docs prescribe, a clean retry, and a fresh worktree or clean install are ordinary setup, and `blocked` is the last resort once the documented path is exhausted. Faking dependencies stays forbidden and repairing the machine stays out of scope; the fix separates "don't fabricate" from "don't try twice".
+A session hunting bugs in an app pulled in this skill, the only one saying "drive the running app", then reported `blocked` after one failed launch. Nothing is under test during a hunt, so the skill now excludes it, and the flow adds no skill for it: hunting is ordinary session work. Documented setup and reasonable retries support useful progress within existing authority. A missing credential, service, platform, or verifier capability is reported as a gap, while independent checks can continue. A substituted dependency cannot establish the real integration; the distinction is between trying setup and fabricating proof.
 
 ## A repo's completion gate is a standing invitation (2026-08-19)
 

@@ -9,6 +9,10 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-12 reformat.
 
 
+## workbench 0.45.0: 2026-09-30
+
+- **Empirical proof fits apps and their real consumers.** Cover web, desktop, mobile, CLI/TUI, API, MCP, libraries and generated output with general checks and surface-specific direction. Use available native tools and project workflows, keep evidence proportional, and show build identity and coverage gaps without a fixed health gate, probe matrix, transcript format or fan-out requirement. ([decision](decisions/empirical-proof.md#surface-aware-guidance-for-modern-harnesses-2026-09-30))
+
 ## toolkit 0.14.2: 2026-09-29
 
 - **Capture help passes the native punctuation check.** Replace the help text's em dash with a colon; recording behavior is unchanged.
@@ -69,7 +73,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 ## workbench 0.43.4: 2026-09-25
 
 - **The coordinator owns routine lane publication decisions.** After independent acceptance and required pre-publication gates, it authorizes branch push, PR creation or update, and CI work through the copyable lane handoff. Holds identify who can release them and their governing source; an owner-written dispatch or ledger cannot invent another operator approval requirement. Explicit operator or repository reservations remain binding, and merges remain operator decisions. ([decision](decisions/epic-orchestration.md#authorization-claims-the-pr-review-gate-2026-09-04))
-
-## workbench 0.43.3: 2026-09-25
-
-- **Always pull latest before opening a PR.** `file-pr` integrates missing commits from the latest remote base even when they merge cleanly. The final push pulls the remote head when it exists; incoming changes refresh the diff and body and run affected validation and review. Failed synchronization blocks filing. ([decision](decisions/file-pr.md#always-pull-latest-before-filing-2026-09-25))

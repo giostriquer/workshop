@@ -61,3 +61,14 @@ and `comment-sicko` agent, Copyright (c) 2026 Lauren Tan, and are used under
 the MIT License. The above permission and warranty notices apply to those
 portions as required by that license. Adaptations are documented at
 https://github.com/giostriquer/workshop/blob/main/docs/decisions/trim-comments.md
+
+---
+
+Portions of this plugin (the `empirical-proof` skill's surface-aware
+launch/readiness/drive/evidence/cleanup guidance) are adapted from Cursor's
+plugins (https://github.com/cursor/plugins): the `pstack` plugin's
+`create-verification-skill` and `maintain-verification-skill` skills,
+Copyright (c) 2026 Lauren Tan, and are used under the MIT License. The above
+permission and warranty notices apply to those portions as required by that
+license. Adaptations are documented at
+https://github.com/giostriquer/workshop/blob/main/docs/decisions/empirical-proof.md
