@@ -82,3 +82,53 @@ One fresh context using the revised skill integrated the base in both the
 existing-head and first-push cases, revalidated the late behavior change, and
 blocked a draft after a failed fetch. These four plan-only scenarios check the
 wording; they do not establish live Git behavior or cross-model reliability.
+
+## Titles and descriptions share an evidence boundary (2026-09-30)
+
+The reported problem was recurring broad fix titles and inaccurate surface
+labels. A read-only PR sample showed distinct contributions to related failures:
+a deadline adjustment, retained state, and a new retry entry point whose
+underlying failure remained unresolved. Some titles already named the narrow
+change; others used the containing application as their scope. Descriptions also
+accumulated successive validation and merge updates. The existing instruction
+to name what the change does did not define how to choose the surface,
+distinguish these contributions, or limit the
+claim. The remote-head refresh step named the body but omitted the title.
+
+The correction is a positive recipe in the canonical skill. Establish the owning
+surface, concrete delta, supported result, and material limits from the final
+diff, source, and verification. Use that same account for the title and body.
+Choose the surface from ownership and consumers rather than the containing
+directory; an enforced broad title scope still permits the feature name in its
+subject. A narrow repair can be stated directly with relevant focused evidence.
+Diagnostics, mitigation, recovery controls, and test-only work must be named for
+their actual contribution. A limitation that changes the claimed outcome belongs
+with the change description, not only in a testing footer.
+
+Before publication, check the title's surface, distinguishing behavior, and
+outcome against that evidence. Related PRs help distinguish successive changes
+to a recurring symptom; they are context, not a naming authority or proof that
+the next change completes the fix. Reconcile both title and body after incoming
+changes and subsequent repairs, including the final tending handback. Keep the
+existing template and delivery gates; add no mandatory PR section, title syntax,
+or repository-wide history scan. All examples and local scenarios use invented
+domain content.
+
+Six local drafting scenarios cover diagnostics-only work, an enforced broad
+scope, a verified narrow fix, a stale open-PR draft, a failing reproduction-only
+test, and a genuinely shared application change. One fresh context using the old
+skill and one without guidance both produced bounded drafts; these probes did
+not reproduce the reported overclaim. The change is grounded in the reported
+failures, inspected PRs, and the missing skill contract, not an invented failing
+control. Local scenario material stays in ignored scratch.
+
+One fresh context applying the revised skill produced all six bounded drafts,
+kept the supplied template markers and checkbox states, used the feature name
+inside the enforced broad scope, replaced the obsolete recovery claim, and
+returned a claim check. These are local drafting checks across three contexts,
+not live publication tests or a reliability estimate.
+
+A further fresh context checked two edge cases against the final wording. It
+described diagnostic work without inventing an unknown cause or blocking on
+inaccessible PR history, and updated stale title/body claims after a repair was
+removed during CI tending, even though no further source push was needed.

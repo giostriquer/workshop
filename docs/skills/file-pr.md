@@ -7,9 +7,10 @@ is **green and mergeable**, or reports precisely why it stopped.
 
 "The body must stand alone": what changed comes from the branch diff, and why
 from the problem that prompted it, the observed defect or need and how it
-surfaced, stated as evidence rather than as the session's story. The title
-names what the change does, not the ticket or lane. If the repo ships a PR
-template, the body *is* that template filled in, with headings, order,
+surfaced, stated as evidence rather than as the session's story. The title and
+description share four facts: owning surface, concrete change, supported result,
+and material limits. The title names the surface and distinguishing change. If
+the repo ships a PR template, the body *is* that template filled in, with headings, order,
 checkboxes and hidden `<!-- markers -->` intact. The skill adds only two
 conditional sections: `## Architecture` and `## Screenshots`.
 
@@ -59,21 +60,54 @@ docs), run format, lint and type-check, then the affected
 tests; full suites run in PR CI. Find the ticket link. Search for the PR
 template case-insensitively in `.github/`, the repo root and `docs/`, and
 record the result; the Summary / Ticket / Caveats fallback is allowed only
-after an empty search. Conform to enforced title or branch patterns.
+after an empty search. Establish the four facts from the final diff, source,
+and relevant verification, then draft the body and title. Check that the title
+names the right surface, distinguishes the contribution, and agrees with the
+evidence and body. Conform to enforced title or branch patterns.
 
 **File.** Pull the latest remote head before pushing. A first push skips that
 pull when no remote head exists, but still syncs the base. If the pull changes
-HEAD, refresh the scope check, diff and body, and run affected validation and
-review. Push per the repo's conventions, then open or update the PR, with one
+HEAD, refresh the scope check, diff, title and body, and run affected validation
+and review. Push per the repo's conventions, then open or update the PR, with one
 `--attach` per screenshot. The PR URL is reported as soon as it exists.
 
 **See it through.** CI runs through `fix-ci`'s loop. A separate watcher (Sonnet 5.5 on
 Claude Code or gpt-6.1-sol on Codex) returns at the first failed required check.
 Mergeability comes from `gh pr view --json mergeable,mergeStateStatus`. If the
-base moves and conflicts, it merges again. It stops at green and mergeable, or
-at a cap, and reports either way.
+base moves and conflicts, it merges again. It reconciles the title and body
+after changes to scope, implementation, or verification and before the final
+handback. It stops at green and mergeable, or at a cap, and reports either way.
 
 ## Common questions
+
+**What makes a useful title?** The affected surface and a concrete action,
+object, and distinguishing condition. For example,
+`fix(reporting): extend export response deadline to 45 seconds` identifies a
+specific mitigation. `feat(reporting): show row errors for failed exports`
+identifies diagnostics. Both distinguish the work better than
+`fix(webapp): fix exports`, which could claim either change completes the fix.
+
+**The files are in the app package. Should the title name the app?** Follow the
+owner of the changed behavior and its consumers. A Reporting feature can live
+inside an app package; shared window management can belong to the app shell.
+If enforced title scopes allow only `webapp`, put Reporting in the subject:
+`fix(webapp): extend Reporting export response deadline to 45 seconds`.
+
+**Can a title say a bug is fixed without a full app run?** Relevant focused
+evidence can support a narrow claim, such as preventing duplicate jobs after a
+lost acknowledgement. The title must not extend that result to a whole export
+workflow. A retry button promises a recovery action, not successful recovery;
+diagnostics explain a failure without repairing its cause. State remaining
+failures that narrow the result alongside the change description.
+
+**Several PRs address the same symptom.** Compare this diff's contribution with
+the linked predecessor or a few recent related PRs when accessible. Name the
+part this PR changes. The comparison checks meaning, not title uniqueness.
+
+**The implementation changed while the PR was open.** Refresh both title and
+body from the final diff. Replace obsolete claims and consolidate validation
+updates while preserving material caveats and required template content. The
+description should explain the current change without a chronology of attempts.
 
 **My PR has `Summary` / `Ticket` / `Caveats` headings, but my repo has a
 template.** The fallback replaced the template, which the skill forbids. Every
@@ -134,8 +168,14 @@ several candidates or the template requires one.
   template path, or "none: fallback" after a real search.
 - **Negative signal:** screenshots on an API-only PR, or a UI PR whose report
   says nothing about them.
-- The body's why names the problem and how it surfaced; the title names the
-  change.
+- The title names the owning surface and distinguishing change; the body's why
+  names the problem and how it surfaced. Outcome claims match the evidence,
+  with material limits stated alongside the change.
+- **Negative signal:** multiple different repairs share a generic fix title,
+  a feature is named only by its containing app, or diagnostics and retry
+  controls are presented as successful repair of the underlying failure.
+- The handback includes the final title and claim check; title and body stay
+  consistent after synchronization and later corrections.
 - **Negative signal:** a PR mixing unrelated concerns, or more PRs than the
   agreed plan, filed without a split proposal; a delegated agent opening a PR
   without loading `file-pr`.

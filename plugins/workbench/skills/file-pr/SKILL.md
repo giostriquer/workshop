@@ -104,6 +104,54 @@ filing, plus the agreed PR plan entry that PR carries when a plan exists.
    below is a **last resort for repos that have no template**; never emit it, or its
    `Summary` / `Ticket` / `Caveats` headings, when a template exists.
 
+## Ground the title and description in the final change
+
+Before drafting either, establish four facts in preparation notes, with source
+or verification references. These are drafting inputs, not extra PR sections:
+
+| Fact | Establish from evidence |
+| --- | --- |
+| **Surface** | The feature, subsystem, or shared component that owns the changed behavior. Trace the changed path and its consumers; use the repo's documented names. A containing app or directory alone does not establish ownership. Shared infrastructure keeps its shared scope. |
+| **Delta** | The concrete behavior or artifact this final diff adds, removes, or changes, including the trigger that distinguishes it. Ticket titles, branch names, and earlier drafts are context to check against the diff. |
+| **Result** | What the change and its relevant checks support. Name diagnostics, mitigation, recovery controls, refactoring, docs, and tests for their actual contribution. A focused regression can support a narrow fix; it does not establish completion of a larger workflow. |
+| **Limits** | Remaining failures, dependencies, or unverified paths that materially narrow the result. When the cause is unknown, describe the observed failure and implemented change without inventing a cause. |
+
+**Title recipe:** name the surface and a concrete action on an object, adding the
+condition or mechanism that distinguishes this change. Use the repo's enforced
+syntax; when its allowed scope is broader than the feature, name the feature in
+the subject. Keep the distinguishing information when shortening to a title
+limit. For example, two changes prompted by failed report exports might be
+`fix(reporting): extend export response deadline to 45 seconds` and
+`feat(reporting): show row errors for failed exports`. Each names its contribution;
+`fix(webapp): fix exports` cannot distinguish them. A recovery control enables a
+retry; it does not promise that the retry succeeds.
+
+**Description recipe:** in the template's existing fields, state the concrete
+problem or need, explain the final change and its effect, and put any limit that
+narrows that effect alongside it. A small change may need only two sentences.
+Use relevant implementation detail to explain behavior or risk; keep validation
+commands and their results in the template's testing field. Describe the final
+state when updating a PR: replace obsolete claims and consolidate validation
+updates, preserving material caveats and required template content.
+
+**Before opening or updating, check both against the final diff:**
+
+- Can the surface be traced to its owner and affected consumers? If a broad
+  scope is enforced, does the subject still identify the affected feature?
+- Does the title distinguish this delta from another repair to the same symptom?
+  For a recurring issue or follow-up, inspect the linked predecessor or a few
+  recent related PRs when accessible. Compare contributions, not just wording;
+  history is context, never proof or authority to copy its scope.
+- Does every outcome claim have relevant support, and does the body agree with
+  the title? Narrow unsupported claims to the implemented contribution. A caveat
+  buried in verification cannot repair an overbroad title or opening paragraph.
+
+Revise any mismatch before publication. Record the final title and this claim
+check in the handback. Reconcile both title and body after changes to scope,
+diff, or verification during synchronization and tending, before publication
+and again before the final handback. Update an
+open PR in place; preserve the merged-PR boundary below.
+
 ## Architecture in the PR body
 
 Include a Mermaid diagram when it materially clarifies relevant calls,
@@ -240,7 +288,8 @@ Reusing the merged head branch requires an explicit instruction.
    record why. **Record the search outcome** as found (path) or none-found-after-search
    before building anything; the fallback is allowed only after a recorded empty
    search.
-6. **Build the body.** If a template was found, fill it **verbatim** with the same headings, order,
+6. **Establish the four facts above and build the body.** If a template was found,
+   fill it **verbatim** with the same headings, order,
    every checkbox, comment markers preserved; map content into the fields it already
    has, the why into its motivation or description field; tick `[x]` only what was
    actually verified; leave unfillable fields blank
@@ -254,16 +303,16 @@ Reusing the merged head branch requires an explicit instruction.
    minimal fallback:
 
    > ## Summary
-   > `<what changed, grounded in the diff, and why: the evidenced problem and how it surfaced>`
+   > `<evidenced problem or need, final change and supported effect, with any material limit>`
    >
    > ## Ticket
    > `<ticket link(s), or omit the section if none>`
    >
    > ## Caveats / follow-ups
    > `<anything the reviewer should know; "none" if none>`
-7. **Title the change and conform to enforced conventions.** The title names what
-   the change does ("Retry webhook delivery on 5xx responses"); tracker, lane and
-   ticket bookkeeping are not the change. If the repo enforces PR-title or branch-name
+7. **Draft the title from the same facts and run the claim check above.** Name
+   the owning surface and distinguishing delta; tracker, lane and ticket
+   bookkeeping are not the change. If the repo enforces PR-title or branch-name
    patterns (a title linter, commit-lint, a branch rule), discover the pattern from
    the linter / CI config and conform: don't guess a prefix that gets the PR
    rejected.
@@ -272,7 +321,7 @@ Reusing the merged head branch requires an explicit instruction.
 
 8. **Push and open or update.** Pull the latest remote head before pushing; a
    first push with no remote head skips only that pull, never step 2's base sync.
-   If the pull changes HEAD, refresh the scope check, diff and body, then run
+   If the pull changes HEAD, refresh the scope check, diff, title and body, then run
    affected validation and review before delivery. Push per the repo's conventions
    (use its push skill if it ships one). Update an associated open PR in
    place; otherwise use `gh pr create --base <base> --head <branch>` with the title
@@ -302,6 +351,8 @@ Use the session's required handback format and include all information below
 in its existing fields. If no format is required, use a verdict-first report.
 
 - PR URL and end state: **green and mergeable** / merged / still red / conflicted / blocked.
+- Final title and claim check: owning surface, distinguishing delta, and the
+  evidence and material limits supporting the stated outcome.
 - Validation provenance: the discovered gate commands and each result, by kind
   (format / lint / type-check / tests); this lives in the report, and lands in the
   PR body only where the template has a testing/QA field for it.

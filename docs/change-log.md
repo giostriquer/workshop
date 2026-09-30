@@ -9,6 +9,10 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-12 reformat.
 
 
+## workbench 0.45.1: 2026-09-30
+
+- **PR titles and descriptions identify the actual contribution.** Ground both in the owning surface, final diff, supported result, and material limits. Check claims before publication, distinguish successive repairs to the same symptom, and refresh both title and body after synchronization or later corrections. ([decision](decisions/file-pr.md#titles-and-descriptions-share-an-evidence-boundary-2026-09-30))
+
 ## workbench 0.45.0: 2026-09-30
 
 - **Empirical proof fits apps and their real consumers.** Cover web, desktop, mobile, CLI/TUI, API, MCP, libraries and generated output with general checks and surface-specific direction. Use available native tools and project workflows, keep evidence proportional, and show build identity and coverage gaps without a fixed health gate, probe matrix, transcript format or fan-out requirement. ([decision](decisions/empirical-proof.md#surface-aware-guidance-for-modern-harnesses-2026-09-30))
@@ -69,7 +73,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 ## toolkit 0.13.1: 2026-09-25
 
 - **Codex starter prompts describe shipped utilities.** PR-comment summarization replaces the obsolete skill-authoring prompt. All host manifests replace the stale skill-authoring keyword with PR review. ([decision](decisions/plugin-surfaces.md#codex-submission-export-2026-09-25))
-
-## workbench 0.43.4: 2026-09-25
-
-- **The coordinator owns routine lane publication decisions.** After independent acceptance and required pre-publication gates, it authorizes branch push, PR creation or update, and CI work through the copyable lane handoff. Holds identify who can release them and their governing source; an owner-written dispatch or ledger cannot invent another operator approval requirement. Explicit operator or repository reservations remain binding, and merges remain operator decisions. ([decision](decisions/epic-orchestration.md#authorization-claims-the-pr-review-gate-2026-09-04))
