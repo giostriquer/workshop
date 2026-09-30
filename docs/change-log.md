@@ -9,6 +9,10 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-12 reformat.
 
 
+## workbench 0.45.3: 2026-09-30
+
+- **PR text uses one concise contract.** Replace the drafting worksheet, repeated checks, and claim-check report with a title formula, a description sequence, and one example. Titles retain the affected feature, concrete contribution, and failure condition for fixes. ([decision](decisions/file-pr.md#titles-and-descriptions-share-an-evidence-boundary-2026-09-30))
+
 ## workbench 0.45.2: 2026-09-30
 
 - **PR titles explain the change without opening the description.** Name the affected feature and corrected behavior, including the restart, interruption, or failure condition for retention and recovery fixes. A worked example rejects a vague title even after its scope prefix is corrected; descriptions expand the same before/after claim. ([decision](decisions/file-pr.md#titles-and-descriptions-share-an-evidence-boundary-2026-09-30))
@@ -67,9 +71,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 ## workbench 0.44.0: 2026-09-25
 
 - **Epic auditors return complete, copyable reports.** The new `epic-auditor` skill keeps verdicts, coverage, fix-family results, findings, gaps and next actions together across audit follow-ups, amendments and recovery. `epic-orchestration` requires it in auditor dispatches and links the shared audit report template; implementation lanes retain their own reporting skill. ([decision](decisions/epic-auditor.md))
-
-## workbench 0.43.5: 2026-09-25
-
-- **Bounded CI repairs preserve completed reviews.** After review closes, a correction within the accepted scope and design continues through focused verification, push, and CI watching without restarting review or mutation rounds. `fix-ci` owns this delivery loop. ([decision](decisions/bounded-correction-review.md))
-- **Each review discipline owns its process.** Code-quality and test-quality reviews keep separate findings, follow-ups, convergence decisions, and closure records. A missing stage runs without repeating a completed stage, and delivery callers preserve each result. ([decision](decisions/completion-review-stages.md))
-- **Codex prompts match the plugin's skills.** PR-comment summarization is advertised by Toolkit, which ships that skill. ([decision](decisions/plugin-surfaces.md#codex-submission-export-2026-09-25))

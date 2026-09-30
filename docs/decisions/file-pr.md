@@ -85,76 +85,27 @@ wording; they do not establish live Git behavior or cross-model reliability.
 
 ## Titles and descriptions share an evidence boundary (2026-09-30)
 
-The reported problem was recurring broad fix titles and inaccurate surface
-labels. A read-only PR sample showed distinct contributions to related failures:
-a deadline adjustment, retained state, and a new retry entry point whose
-underlying failure remained unresolved. Some titles already named the narrow
-change; others used the containing application as their scope. Descriptions also
-accumulated successive validation and merge updates. The existing instruction
-to name what the change does did not define how to choose the surface,
-distinguish these contributions, or limit the
-claim. The remote-head refresh step named the body but omitted the title.
+Reported PR titles overstated partial repairs, used a containing application as
+the scope, or omitted the condition that made the change meaningful. The first
+corrections accumulated a four-fact worksheet, recipes, checks, and handback
+requirements. The user asked for a concise contract to reduce interpretation.
 
-The correction is a positive recipe in the canonical skill. Establish the owning
-surface, concrete delta, supported result, and material limits from the final
-diff, source, and verification. Use that same account for the title and body.
-Choose the surface from ownership and consumers rather than the containing
-directory; an enforced broad title scope still permits the feature name in its
-subject. A narrow repair can be stated directly with relevant focused evidence.
-Diagnostics, mitigation, recovery controls, and test-only work must be named for
-their actual contribution. A limitation that changes the claimed outcome belongs
-with the change description, not only in a testing footer.
+Replace those layers with one contract: a fix title names the affected feature,
+corrected behavior, and failure condition; other titles name the capability,
+responsibility, or artifact changed. The description connects previous behavior,
+implementation, supported result, and limits within the repository's template.
+Keep the evidenced why and refresh both fields when the diff changes. One
+invented example distinguishes a broad intent from a specific restart fix.
+No drafting worksheet, related-PR lookup, or claim-check report is required.
 
-Before publication, check the title's surface, distinguishing behavior, and
-outcome against that evidence. Related PRs help distinguish successive changes
-to a recurring symptom; they are context, not a naming authority or proof that
-the next change completes the fix. Reconcile both title and body after incoming
-changes and subsequent repairs, including the final tending handback. Keep the
-existing template and delivery gates; add no mandatory PR section, title syntax,
-or repository-wide history scan. All examples and local scenarios use invented
-domain content.
+Earlier local drafting probes produced correct results with both prior guidance
+and no guidance, so they did not reproduce the reported failure or establish a
+reliability gain. The simplification rests on the user's feedback and removes
+redundant instructions while preserving the accepted title and evidence rules.
+Scenario material remains in ignored scratch.
 
-Six local drafting scenarios cover diagnostics-only work, an enforced broad
-scope, a verified narrow fix, a stale open-PR draft, a failing reproduction-only
-test, and a genuinely shared application change. One fresh context using the old
-skill and one without guidance both produced bounded drafts; these probes did
-not reproduce the reported overclaim. The change is grounded in the reported
-failures, inspected PRs, and the missing skill contract, not an invented failing
-control. Local scenario material stays in ignored scratch.
-
-One fresh context applying the revised skill produced all six bounded drafts,
-kept the supplied template markers and checkbox states, used the feature name
-inside the enforced broad scope, replaced the obsolete recovery claim, and
-returned a claim check. These are local drafting checks across three contexts,
-not live publication tests or a reliability estimate.
-
-A further fresh context checked two edge cases against the final wording. It
-described diagnostic work without inventing an unknown cause or blocking on
-inaccessible PR history, and updated stale title/body claims after a repair was
-removed during CI tending, even though no further source push was needed.
-
-Follow-up review identified a remaining ambiguity: a title can contain a valid
-surface, an active verb, and a plausible object while omitting the information
-that tells readers what changed. The first revision made the body stand alone,
-but left the title's independent usefulness implicit. It now applies that
-requirement to each. For a retention or recovery fix, the title names the
-affected state and lifecycle event or failure boundary. A worked example shows
-that correcting an application prefix alone does not repair a vague title.
-The description expands the same before/after claim. New capabilities,
-refactors, docs, and tests retain their own forms rather than being forced into
-a bugfix narrative.
-
-Six follow-up scenarios ask an agent to accept or replace supplied titles,
-including a vague host-scoped title, the same title with its prefix corrected,
-an accurate implementation-only title, two already useful titles, and a recovery
-claim backed only by a new control. One fresh context with the prior wording
-already made all six intended decisions. This is an explicit acceptance-standard
-and example correction; that baseline does not establish a measured reliability
-gain. Scenario material remains local.
-
-A fresh context using the revised wording made the same six intended decisions:
-it replaced all three underspecified titles, retained the two useful titles, and
-named the recovery control without claiming recovery. Two follow-up cases in
-that context retained accurate refactor and reproduction-only titles without
-inventing a behavior change. These checks cover interpretation of the revised
-standard; they do not show that the prior release caused the reported title.
+One fresh context using the concise contract handled ten drafting cases: vague
+and implementation-only titles, valid titles, partial recovery, refactoring,
+a failing reproduction, an enforced broad scope, and stale metadata after a
+repair was removed. All matched the intended outcomes. This is regression
+evidence for the shorter wording, not a reliability estimate.

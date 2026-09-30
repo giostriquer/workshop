@@ -87,97 +87,41 @@ permission or access; do not ask again for authority already given.
 workflow agent or epic lane, names `file-pr` as the skill the agent loads before
 filing, plus the agreed PR plan entry that PR carries when a plan exists.
 
-## The two rules that make PR text right
+## PR text contract
 
-1. **The title and body must each stand alone.** A reviewer scanning the PR list
-   sees only the title: it identifies the affected feature and the change without
-   requiring the body, ticket, or conversation to decode it.
-   Reviewers arrive with no access to this session,
-   so every field is derived from evidence they can check: what changed from the
-   **branch diff**, and why from the **problem that prompted it**: the observed
-   defect or need and how it surfaced (a bug report, a failing check, a
-   reproduction, a measurement, the ticket). A problem first seen in this session
-   is stated as that evidence, not as the session's story.
-2. **The PR body belongs to the repo, not to this skill: follow its template, never
-   replace it.** If the repo ships a PR template, the body **is** that template
-   filled in: its exact headings, order, checkboxes, and hidden `<!-- markers -->`,
-   plus the conditional `Architecture` and `Screenshots` sections below and
-   additions required by governing instructions, such as a host attribution
-   footer. The built-in skeleton
-   below is a **last resort for repos that have no template**; never emit it, or its
-   `Summary` / `Ticket` / `Caveats` headings, when a template exists.
+Derive the title and description from the final diff. Ground the why in the
+observed defect or need and how it surfaced.
 
-## Ground the title and description in the final change
+**Title**
 
-Before drafting either, establish four facts in preparation notes, with source
-or verification references. These are drafting inputs, not extra PR sections:
+- Fix: **affected feature + corrected behavior + condition that previously failed**.
+- Other change: **affected feature + capability, responsibility, or artifact changed**.
 
-| Fact | Establish from evidence |
-| --- | --- |
-| **Surface** | The feature, subsystem, or shared component that owns the changed behavior. Trace the changed path and its consumers; use the repo's documented names. A containing app or directory alone does not establish ownership. Shared infrastructure keeps its shared scope. |
-| **Delta** | The concrete behavior or artifact this final diff adds, removes, or changes, including the trigger that distinguishes it. Ticket titles, branch names, and earlier drafts are context to check against the diff. |
-| **Result** | What the change and its relevant checks support. Name diagnostics, mitigation, recovery controls, refactoring, docs, and tests for their actual contribution. A focused regression can support a narrow fix; it does not establish completion of a larger workflow. |
-| **Limits** | Remaining failures, dependencies, or unverified paths that materially narrow the result. When the cause is unknown, describe the observed failure and implemented change without inventing a cause. |
+Name the subsystem that owns the behavior. Follow the repository's title syntax;
+if its enforced scope is broader, name the feature in the subject.
 
-**Title recipe:** name the affected feature and what changes for its user or
-consumer. For a bugfix, state the corrected behavior in the situation that
-failed. For retention or recovery, include the relevant lifecycle event or
-boundary: what survives a restart, what resumes after interruption, or what is
-retained when an operation fails. For a new capability, name the capability;
-for refactors, docs, and tests, name the changed responsibility or artifact.
-Implementation identifiers belong in the description when the behavior can be
-stated more clearly without them.
+**Description:** previous behavior → implemented change → supported result and
+remaining limits. Preserve the repository's template.
 
-Use the repo's enforced syntax; when its allowed scope is broader than the
-feature, name the feature in the subject. Keep the feature and distinguishing
-behavior when shortening to a title limit. Specificity comes from the information
-the reader gets, not from a strong verb or a technical noun.
+Describe the contribution actually delivered: adding diagnostics or a retry
+control does not establish that the underlying failure is fixed.
 
-For example, Report Builder drops saved date filters after the app restarts.
-The change saves and reloads those filters from durable storage:
+Refresh both when the diff changes, including during synchronization and tending.
 
-| Title | What a PR-list reader learns |
-| --- | --- |
-| `fix(webapp): preserve report export settings` | The containing app and a broad intent; neither the affected settings nor the failure condition. |
-| `fix(reporting): preserve report export settings` | The correct surface, but still no distinguishing behavior. Changing the prefix alone is insufficient. |
-| `fix(reporting): keep saved date filters after app restart` | The affected state and the exact event it now survives. |
+Example:
 
-Other changes to exports still need their own contribution: extending a response
-deadline, showing row errors, or adding a retry control. A recovery control
-enables a retry; it does not promise that the retry succeeds.
+- Vague: `fix(webapp): preserve export settings`
+- Specific: `fix(reporting): keep saved date filters after app restart`
 
-**Description recipe:** in the template's existing fields, state the concrete
-problem or need, explain the final change and its effect, and put any limit that
-narrows that effect alongside it. Expand the title's specific claim: what happened
-before, what changes now, and why the change produces that result. A small change
-may need only two sentences.
-Use relevant implementation detail to explain behavior or risk; keep validation
-commands and their results in the template's testing field. Describe the final
-state when updating a PR: replace obsolete claims and consolidate validation
-updates, preserving material caveats and required template content.
+## Preserve the repository's PR template
 
-**Before opening or updating, check both against the final diff:**
-
-- Can the surface be traced to its owner and affected consumers? If a broad
-  scope is enforced, does the subject still identify the affected feature?
-- With the body and ticket hidden, can a reviewer identify the changed behavior
-  or artifact and, for a fix, the failure condition? If they must open the body
-  to learn what "preserve", "restore", or "support" means here, put that missing
-  distinction in the title. Replacing an app prefix with a subsystem prefix or
-  adding an implementation identifier does not by itself satisfy this check.
-- Does the title distinguish this delta from another repair to the same symptom?
-  For a recurring issue or follow-up, inspect the linked predecessor or a few
-  recent related PRs when accessible. Compare contributions, not just wording;
-  history is context, never proof or authority to copy its scope.
-- Does every outcome claim have relevant support, and does the body agree with
-  the title? Narrow unsupported claims to the implemented contribution. A caveat
-  buried in verification cannot repair an overbroad title or opening paragraph.
-
-Revise any mismatch before publication. Record the final title and this claim
-check in the handback. Reconcile both title and body after changes to scope,
-diff, or verification during synchronization and tending, before publication
-and again before the final handback. Update an
-open PR in place; preserve the merged-PR boundary below.
+If the repo ships a PR template, the body **is** that template filled in: its
+exact headings, order, checkboxes, and hidden `<!-- markers -->`, plus the
+conditional `Architecture` and `Screenshots` sections below and additions
+required by governing instructions, such as a host attribution footer. The
+built-in skeleton below is a **last resort for repos that have no template**;
+never emit it, or its `Summary` / `Ticket` / `Caveats` headings, when a template
+exists.
 
 ## Architecture in the PR body
 
@@ -272,7 +216,7 @@ Reusing the merged head branch requires an explicit instruction.
 1. **Detect branch and base.** `git branch --show-current`; base defaults to `main`
    unless the repo says otherwise. Summarize what changed from `git diff
    <base>...HEAD` and the commit list rather than session memory; the why follows
-   the first body rule above.
+   the PR text contract above.
    **Stop and propose a split, instead of filing,** when the diff goes beyond the
    agreed PR plan (a PR the plan does not name, or changes outside this PR's
    entry), or spans unrelated concerns (groups of changes with different
@@ -315,7 +259,7 @@ Reusing the merged head branch requires an explicit instruction.
    record why. **Record the search outcome** as found (path) or none-found-after-search
    before building anything; the fallback is allowed only after a recorded empty
    search.
-6. **Establish the four facts above and build the body.** If a template was found,
+6. **Build the body using the PR text contract.** If a template was found,
    fill it **verbatim** with the same headings, order,
    every checkbox, comment markers preserved; map content into the fields it already
    has, the why into its motivation or description field; tick `[x]` only what was
@@ -337,10 +281,8 @@ Reusing the merged head branch requires an explicit instruction.
    >
    > ## Caveats / follow-ups
    > `<anything the reviewer should know; "none" if none>`
-7. **Draft the title from the same facts and run the claim check above.** Name
-   the owning surface and distinguishing delta; tracker, lane and ticket
-   bookkeeping are not the change. If the repo enforces PR-title or branch-name
-   patterns (a title linter, commit-lint, a branch rule), discover the pattern from
+7. **Draft the title using the PR text contract.** If the repo enforces PR-title
+   or branch-name patterns (a title linter, commit-lint, a branch rule), discover the pattern from
    the linter / CI config and conform: don't guess a prefix that gets the PR
    rejected.
 
@@ -378,8 +320,6 @@ Use the session's required handback format and include all information below
 in its existing fields. If no format is required, use a verdict-first report.
 
 - PR URL and end state: **green and mergeable** / merged / still red / conflicted / blocked.
-- Final title and claim check: owning surface, distinguishing delta, and the
-  evidence and material limits supporting the stated outcome.
 - Validation provenance: the discovered gate commands and each result, by kind
   (format / lint / type-check / tests); this lives in the report, and lands in the
   PR body only where the template has a testing/QA field for it.
