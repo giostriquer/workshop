@@ -89,29 +89,39 @@ filing, plus the agreed PR plan entry that PR carries when a plan exists.
 
 ## PR text contract
 
-Derive the title and description from the final diff. Ground the why in the
-observed defect or need and how it surfaced.
+**Describe the change this PR actually delivers.**
 
-**Title**
+Read the final diff and identify its main contribution and the feature or
+subsystem it affects. Use the repository's product terminology. Determine the
+surface from the affected workflow and its callers; the containing application
+or directory does not determine it.
 
-- Fix: **affected feature + corrected behavior + condition that previously failed**.
-- Other change: **affected feature + capability, responsibility, or artifact changed**.
+**The title names that surface and the specific contribution.** Include the
+operation, mechanism, or failure condition that distinguishes this change from
+other work on the same problem. Select the main contribution; supporting edits
+belong in the description. Follow the repository's title syntax; if its enforced
+scope is broader, name the feature in the subject.
 
-Name the subsystem that owns the behavior. Follow the repository's title syntax;
-if its enforced scope is broader, name the feature in the subject.
+A ticket's desired outcome is context. A partial repair, diagnostic, workaround,
+or recovery control must be named for what it contributes. Claim resolution only
+as broadly as the implementation and verification support.
 
-**Description:** previous behavior → implemented change → supported result and
-remaining limits. Preserve the repository's template.
+**The description explains the connection:** what observed problem prompted the
+work, what changed, why that change addresses the problem, and what remains
+unresolved or unverified. Write this as a coherent explanation within the
+repository's template.
 
-Describe the contribution actually delivered: adding diagnostics or a retry
-control does not establish that the underlying failure is fixed.
+Before publishing, read the title alone: **can a reviewer tell what this PR
+changes and where, and distinguish it from another PR addressing the same
+symptom?** Keep both fields current with the final change, including during
+synchronization and tending.
 
-Refresh both when the diff changes, including during synchronization and tending.
+For example, these changes each address failed imports but deliver different
+contributions:
 
-Example:
-
-- Vague: `fix(webapp): preserve export settings`
-- Specific: `fix(reporting): keep saved date filters after app restart`
+- `fix(imports): retain uploaded files until the worker finishes`
+- `feat(imports): add manual retry for failed uploads`
+- `chore(imports): log rejected upload responses`
 
 ## Preserve the repository's PR template
 

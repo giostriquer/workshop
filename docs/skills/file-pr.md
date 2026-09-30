@@ -5,10 +5,11 @@
 `file-pr` turns a finished branch into a pull request, then tends it until it
 is **green and mergeable**, or reports precisely why it stopped.
 
-The title names the affected feature and concrete change. A fix also names the
-condition that previously failed. The description explains the previous behavior,
-implemented change, supported result, and remaining limits. Both follow the
-final diff; the why comes from the observed problem or need and how it surfaced.
+The title names the affected feature or shared subsystem and this PR's main
+contribution. Its operation, mechanism, or failure condition distinguishes it
+from other work on the same problem. The description connects the observed
+problem to the implementation, why it helps, and what remains unresolved or
+unverified. Both follow the final diff and its supported scope.
 If the repo ships a PR template, the body fills it in with headings, order,
 checkboxes and hidden `<!-- markers -->` intact. The skill adds only two
 conditional sections: `## Architecture` and `## Screenshots`.
@@ -77,20 +78,22 @@ either way.
 
 ## Common questions
 
-**What makes a useful title?** A fix names the affected feature, corrected
-behavior, and condition that previously failed. For example,
-`fix(reporting): keep saved date filters after app restart` states what
-`fix(webapp): preserve export settings` leaves unclear. Other changes name the
-capability, responsibility, or artifact changed.
+**What makes a useful title?** It tells a reader what this particular PR changes
+and where, even when other PRs address the same symptom. Retaining uploaded files
+until a worker finishes, adding a manual retry, and logging rejected responses
+are different contributions; calling each "fix imports" hides the difference.
+Name the main contribution and put supporting edits in the description.
 
-**Which surface belongs in the title?** The subsystem that owns the behavior.
+**Which surface belongs in the title?** Use the repository's product terminology
+for the affected workflow or shared subsystem, tracing callers when needed.
+The containing application or directory alone does not determine the surface.
 If the repository enforces a broader scope, name the feature in the subject.
-Shared application behavior can use the application scope.
 
-**What can the description claim?** The contribution actually delivered and its
-supported result, with remaining limits. Diagnostics and retry controls do not
-establish that the underlying failure is fixed. Refresh both title and body
-when the diff changes, including while the PR is open.
+**How should the description read?** Explain the observed problem, what changed,
+why that change addresses it, and what remains unresolved or unverified, within
+the existing template. A ticket's desired resolution can exceed the contribution
+of one PR. Partial repairs, diagnostics, workarounds, and recovery controls are
+named for what they deliver. Refresh title and body when the final change moves.
 
 **My PR has `Summary` / `Ticket` / `Caveats` headings, but my repo has a
 template.** The fallback replaced the template, which the skill forbids. Every
@@ -151,9 +154,10 @@ several candidates or the template requires one.
   template path, or "none: fallback" after a real search.
 - **Negative signal:** screenshots on an API-only PR, or a UI PR whose report
   says nothing about them.
-- The title identifies the affected feature and change; a fix includes its
-  failure condition. The description explains why and claims only the supported
-  result, with remaining limits. Both stay current with the diff.
+- The title identifies the affected surface and this PR's contribution,
+  distinguishing it from other changes to the same symptom. The description
+  connects problem, change, and supported effect, including remaining limits.
+  Both stay current with the diff.
 - **Negative signal:** a PR mixing unrelated concerns, or more PRs than the
   agreed plan, filed without a split proposal; a delegated agent opening a PR
   without loading `file-pr`.

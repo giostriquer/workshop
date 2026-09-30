@@ -9,6 +9,10 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-12 reformat.
 
 
+## workbench 0.45.4: 2026-09-30
+
+- **PR titles distinguish each change's actual contribution.** Identify the affected workflow or shared subsystem from the diff and callers, then name the operation, mechanism, or condition that separates this PR from other work on the same symptom. Descriptions connect the observed problem to the implementation and its supported effect, including unresolved work. ([decision](decisions/file-pr.md#titles-and-descriptions-share-an-evidence-boundary-2026-09-30))
+
 ## workbench 0.45.3: 2026-09-30
 
 - **PR text uses one concise contract.** Replace the drafting worksheet, repeated checks, and claim-check report with a title formula, a description sequence, and one example. Titles retain the affected feature, concrete contribution, and failure condition for fixes. ([decision](decisions/file-pr.md#titles-and-descriptions-share-an-evidence-boundary-2026-09-30))
@@ -67,7 +71,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 ## workbench 0.44.1: 2026-09-26
 
 - **Audit acceptance and assignment completion are explicit.** The orchestrator states report acceptance, the auditor's remaining work or completion, and epic closure separately. A completed auditor assignment ends with an acknowledgment instead of another validation report; findings, evidence gaps and the operator's closure authority remain intact. ([decision](decisions/epic-auditor.md#explicit-audit-acceptance-and-assignment-completion-2026-09-26))
-
-## workbench 0.44.0: 2026-09-25
-
-- **Epic auditors return complete, copyable reports.** The new `epic-auditor` skill keeps verdicts, coverage, fix-family results, findings, gaps and next actions together across audit follow-ups, amendments and recovery. `epic-orchestration` requires it in auditor dispatches and links the shared audit report template; implementation lanes retain their own reporting skill. ([decision](decisions/epic-auditor.md))

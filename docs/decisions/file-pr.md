@@ -85,27 +85,28 @@ wording; they do not establish live Git behavior or cross-model reliability.
 
 ## Titles and descriptions share an evidence boundary (2026-09-30)
 
-Reported PR titles overstated partial repairs, used a containing application as
-the scope, or omitted the condition that made the change meaningful. The first
-corrections accumulated a four-fact worksheet, recipes, checks, and handback
-requirements. The user asked for a concise contract to reduce interpretation.
+PR titles were describing the desired resolution of an issue instead of the
+contribution a particular change delivered. Several different repairs could
+therefore receive the same broad title, and a containing application could
+replace the affected feature as the scope. A worksheet added too much ceremony;
+reducing it to a corrected-behavior formula then lost the distinction between
+an implemented contribution and the larger outcome still being pursued.
 
-Replace those layers with one contract: a fix title names the affected feature,
-corrected behavior, and failure condition; other titles name the capability,
-responsibility, or artifact changed. The description connects previous behavior,
-implementation, supported result, and limits within the repository's template.
-Keep the evidenced why and refresh both fields when the diff changes. One
-invented example distinguishes a broad intent from a specific restart fix.
-No drafting worksheet, related-PR lookup, or claim-check report is required.
+The approved guidance starts with the final diff and affected workflow or shared
+subsystem. The title names the main contribution, using the operation, mechanism,
+or failure condition that distinguishes it. The description connects the
+observed problem, implementation, reason it helps, and remaining uncertainty.
+Partial repairs, diagnostics, workarounds, and recovery controls retain their
+actual scope. Three invented titles address one symptom through different
+contributions. Repository title syntax, templates, and synchronization rules
+remain in force; there is no new worksheet or handback report.
 
-Earlier local drafting probes produced correct results with both prior guidance
-and no guidance, so they did not reproduce the reported failure or establish a
-reliability gain. The simplification rests on the user's feedback and removes
-redundant instructions while preserving the accepted title and evidence rules.
-Scenario material remains in ignored scratch.
-
-One fresh context using the concise contract handled ten drafting cases: vague
-and implementation-only titles, valid titles, partial recovery, refactoring,
-a failing reproduction, an enforced broad scope, and stale metadata after a
-repair was removed. All matched the intended outcomes. This is regression
-evidence for the shorter wording, not a reliability estimate.
+Earlier prose-based drafting checks passed with both prior guidance and no
+guidance. Eight further cases use source, callers, diffs, misleading draft titles,
+and verification records, requiring the agent to derive the contribution itself.
+One fresh context per variant produced appropriate titles with both prior and
+revised guidance, preserved template fields and evidence limits, and updated
+stale metadata. The cases cover distinct changes to one symptom, shared ownership,
+refactoring, and reproduction-only work. These results preserve regression
+coverage but do not establish a reliability gain or permanent guarantee. Scenario
+material stays in ignored scratch.
