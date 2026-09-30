@@ -1,6 +1,14 @@
-# Decision: reusable UI demo recording
+# Decision: reusable web demo recording
 
 **Date:** 2026-09-29
+
+## Browser-specific name (2026-09-29)
+
+The operator renamed `ui-demo-video` to `web-demo-video` because the skill
+records browser workflows. The skill folder, discovery name, usage page,
+tests, catalogs, and cross-references use the new name. Keep the recorder's
+existing environment variables, output directory, and ownership format so
+installed tooling and saved runs remain compatible.
 
 ## Context
 

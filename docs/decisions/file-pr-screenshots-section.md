@@ -13,10 +13,10 @@ changes that alter only tests, types, data fetching or build config get no
 screenshots, and API-only, backend, CLI-text and non-visual changes never do.
 
 Reviewers of a UI change otherwise had to run the branch to see it. The
-`ui-demo-video` skill already produces per-scene frames for the model's own
+`web-demo-video` skill already produces per-scene frames for the model's own
 verification; this change carries the human-facing evidence into the PR body
 where reviewers meet it. Screenshots come from the real running head (repo run
-path, `ui-demo-video` frames or a browser tool), pair before/after when existing
+path, `web-demo-video` frames or a browser tool), pair before/after when existing
 UI changed, live in the session's scratch location and never in the repository.
 If the app cannot be run, the section is omitted and the gap is reported.
 

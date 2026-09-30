@@ -1,9 +1,9 @@
 ---
-name: ui-demo-video
+name: web-demo-video
 description: Use when a browser-driven UI change needs a recorded walkthrough or visual evidence, such as a new element, layout, or user flow. Not for API-only changes or a regression test suite.
 ---
 
-# UI Demo Video
+# Web Demo Video
 
 Record the real user flow with Microsoft's Playwright CLI and the bundled
 capture helper. The helper owns recording, scene frames, diagnostics, and

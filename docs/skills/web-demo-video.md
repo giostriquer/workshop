@@ -1,4 +1,4 @@
-# ui-demo-video
+# web-demo-video
 
 Records a real browser walkthrough with a reusable capture helper and
 Microsoft's Playwright CLI. Claude Code and Codex use the same capture commands;
@@ -37,7 +37,7 @@ regression protection, `empirical-proof` for non-visual runnable surfaces, and
 6. Remove only demo entities and servers this run created. Keep the artifacts
    and deliver the recording, reviewed frame paths, and remaining gaps.
 
-The skill's [command reference](../../plugins/toolkit/skills/ui-demo-video/references/commands.md)
+The skill's [command reference](../../plugins/toolkit/skills/web-demo-video/references/commands.md)
 contains the complete setup, authentication, flags, and a concrete form flow.
 
 ## What the outputs mean

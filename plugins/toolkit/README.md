@@ -33,7 +33,7 @@ codex plugin add toolkit@workshop
 | Skill | Does |
 | --- | --- |
 | `html-artifact` | creates HTML reports, plans, architecture explanations, and interactive product targets; user-invoked only |
-| `ui-demo-video` | records a browser walkthrough with reusable CLI capture, scene frames, and optional MP4 |
+| `web-demo-video` | records a browser walkthrough with reusable CLI capture, scene frames, and optional MP4 |
 | `get-pr-comments` | triages the PR's conversation, review, and inline comments into a prioritized action list; read-only |
 | `adopt-global-rules` | installs the workshop's shipped global CLAUDE.md / AGENTS.md, rules, and Claude output styles onto this machine additively; user-invoked only |
 | `me-human` | dogfoods a system from a human user's perspective by trying before asking, escalating on bugs, and stopping at the scope edge; user-invoked only |
@@ -49,7 +49,7 @@ codex plugin add toolkit@workshop
 
 > **Attribution:** `test-audit` is derived from OpenClaw's [openclaw/openclaw](https://github.com/openclaw/openclaw) `.agents/skills/test-audit` (MIT, Copyright (c) 2026 OpenClaw Foundation): adapted per the [test-audit decision](https://github.com/giostriquer/workshop/blob/main/docs/decisions/test-audit.md): user-invoked only, validation and landing made host- and stack-neutral, OpenClaw examples replaced with placeholders.
 
-> **Attribution:** `ui-demo-video` adapts the verification workflow from Lauren Tan's `pstack` `create-verification-skill` in Cursor's [cursor/plugins](https://github.com/cursor/plugins) (MIT, Copyright (c) 2026 Lauren Tan). Its recorder uses Microsoft's [Playwright CLI](https://github.com/microsoft/playwright-cli) as an external tool. See the [ui-demo-video decision](https://github.com/giostriquer/workshop/blob/main/docs/decisions/ui-demo-video.md).
+> **Attribution:** `web-demo-video` adapts the verification workflow from Lauren Tan's `pstack` `create-verification-skill` in Cursor's [cursor/plugins](https://github.com/cursor/plugins) (MIT, Copyright (c) 2026 Lauren Tan). Its recorder uses Microsoft's [Playwright CLI](https://github.com/microsoft/playwright-cli) as an external tool. See the [web-demo-video decision](https://github.com/giostriquer/workshop/blob/main/docs/decisions/web-demo-video.md).
 
 > **Attribution:** `grill-me`, `grilling`, `improve-codebase-architecture`, `codebase-design` and `domain-modeling` are derived from Matt Pocock's [mattpocock/skills](https://github.com/mattpocock/skills) (MIT, Copyright (c) 2026 Matt Pocock), with improvements to `improve-codebase-architecture` and `codebase-design` adapted from the `pstack` plugin in Cursor's [cursor/plugins](https://github.com/cursor/plugins) (MIT, Copyright (c) 2026 Lauren Tan): adapted per the [mattpocock-skills decision](https://github.com/giostriquer/workshop/blob/main/docs/decisions/mattpocock-skills.md).
 

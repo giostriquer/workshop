@@ -264,7 +264,7 @@ html-artifact
 improve-codebase-architecture
 me-human
 test-audit
-ui-demo-video"
+web-demo-video"
 
 assert_plugin() {
     name=$1

@@ -149,7 +149,7 @@ this repo's job, so the skill ships in **no plugin** and is validator-exempt
 from the bundle-template sync) is the loop:
 
 - A bundled deterministic script (`scripts/drift-check.mjs`, Node: same pattern
-  as `ui-demo-video`'s harness) clones/fetches upstream, diffs
+  as `web-demo-video`'s harness) clones/fetches upstream, diffs
   `lastReviewed..HEAD` over `skills/` and `hooks/`, maps changed paths through the
   manifest, and emits a grouped report: **review-required** (adopted pieces, with
   diffs), **intentionally-dropped** (count only), **unmapped** (new upstream

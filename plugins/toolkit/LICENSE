@@ -62,10 +62,10 @@ https://github.com/giostriquer/workshop/blob/main/docs/decisions/mattpocock-skil
 
 ---
 
-The `ui-demo-video` workflow adapts the `pstack` plugin's
+The `web-demo-video` workflow adapts the `pstack` plugin's
 `create-verification-skill` from Cursor's plugins
 (https://github.com/cursor/plugins), Copyright (c) 2026 Lauren Tan, under the
 MIT License. The above permission and warranty notices apply to those
 portions. The recording helper uses Microsoft's Playwright CLI as an external
 tool; no upstream implementation is bundled. Adaptations are documented at
-https://github.com/giostriquer/workshop/blob/main/docs/decisions/ui-demo-video.md
+https://github.com/giostriquer/workshop/blob/main/docs/decisions/web-demo-video.md

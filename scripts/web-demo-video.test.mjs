@@ -7,11 +7,11 @@ import { promisify } from 'node:util';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 import { EventEmitter } from 'node:events';
-import { installEvidence, readEvidence, currentPage, stopTabVideo } from '../plugins/toolkit/skills/ui-demo-video/scripts/browser-evidence.mjs';
+import { installEvidence, readEvidence, currentPage, stopTabVideo } from '../plugins/toolkit/skills/web-demo-video/scripts/browser-evidence.mjs';
 
 const exec = promisify(execFile);
 const script = path.resolve(process.env.UI_DEMO_CAPTURE_SCRIPT ?? fileURLToPath(
-  new URL('../plugins/toolkit/skills/ui-demo-video/scripts/capture.mjs', import.meta.url),
+  new URL('../plugins/toolkit/skills/web-demo-video/scripts/capture.mjs', import.meta.url),
 ));
 
 async function invoke(args, options = {}) {
@@ -26,7 +26,7 @@ async function invoke(args, options = {}) {
 }
 
 async function fixture(t, overrides = {}) {
-  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'ui-demo-video-'));
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'web-demo-video-'));
   t.after(() => fs.rm(root, { recursive: true, force: true }));
   const cli = path.join(root, 'browser-cli.mjs');
   await fs.writeFile(path.join(root, 'config.json'), JSON.stringify(overrides));

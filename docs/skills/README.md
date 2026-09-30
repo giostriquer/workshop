@@ -54,7 +54,7 @@ you want them, and skip to keep sessions lean.
 | What you want | The skill |
 | --- | --- |
 | An HTML report, plan, architecture explanation, or interactive product target | [html-artifact](html-artifact.md), user-invoked only |
-| A recorded walkthrough of UI work, with frames the model reads back | [ui-demo-video](ui-demo-video.md) |
+| A recorded walkthrough of UI work, with frames the model reads back | [web-demo-video](web-demo-video.md) |
 | To triage a PR's scattered feedback into one action list | [get-pr-comments](get-pr-comments.md) |
 | To install the workshop's global CLAUDE.md / AGENTS.md and rules on a machine | [adopt-global-rules](adopt-global-rules.md) |
 | To use a system as a real human user and report what got in the way | [me-human](me-human.md) |

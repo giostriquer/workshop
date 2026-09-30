@@ -146,7 +146,7 @@ installed skill's listing rides in each session's context:
 | Skill | Does |
 | --- | --- |
 | `html-artifact` | HTML reports, plans, architecture explanations, and interactive product targets (user-invoked only) |
-| `ui-demo-video` | reusable browser recording + scene frames for Claude Code and Codex |
+| `web-demo-video` | reusable browser recording + scene frames for Claude Code and Codex |
 | `get-pr-comments` | triages PR feedback into an action list |
 | `adopt-global-rules` | installs the workshop's shipped global CLAUDE.md / AGENTS.md, rules, and Claude output styles onto a machine, additively (user-invoked only) |
 | `me-human` | dogfood a system from a human user's perspective (user-invoked only) |
@@ -177,11 +177,11 @@ Lauren Tan), adapted per
 
 Details in [`plugins/toolkit/README.md`](plugins/toolkit/README.md).
 
-`ui-demo-video` adapts Lauren Tan's `pstack` verification workflow from
+`web-demo-video` adapts Lauren Tan's `pstack` verification workflow from
 Cursor's [cursor/plugins](https://github.com/cursor/plugins) (MIT, Copyright
 (c) 2026 Lauren Tan), and uses Microsoft's
 [Playwright CLI](https://github.com/microsoft/playwright-cli) as its recorder.
-The [decision](docs/decisions/ui-demo-video.md) records the cross-host design.
+The [decision](docs/decisions/web-demo-video.md) records the cross-host design.
 
 ## Going deeper
 

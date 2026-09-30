@@ -6,6 +6,10 @@ native recorder commands before capture. Resolve the helper from the loaded
 skill directory and invoke it with `node`, including when plugin files have no
 executable bit.
 
+The `UI_DEMO_*` variable names, tool directory, and saved-run format remain
+compatible with the earlier skill name. Resolve `UI_DEMO_SKILL` to the current
+`web-demo-video` directory.
+
 ## One-time setup
 
 Reuse an existing CLI first. Resolution order is `--cli`, `UI_DEMO_VIDEO_CLI`,

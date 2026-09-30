@@ -148,7 +148,7 @@ no screenshots. API-only, backend, CLI-text and non-visual changes never do.
 
 Capture the screenshots from the **real running change**, on this branch's
 head, using the repo's documented run path (a project run skill, the
-`ui-demo-video` skill's frames, or an available browser tool). One screenshot
+`web-demo-video` skill's frames, or an available browser tool). One screenshot
 per distinct visual state the reviewer needs; when the diff alters existing UI,
 pair a before capture from the base with the after capture. Write the files to
 the session's scratch location, never into the repository. Reuse no stale,
