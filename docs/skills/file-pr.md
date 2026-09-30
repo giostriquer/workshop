@@ -70,7 +70,9 @@ and review. Push per the repo's conventions, then open or update the PR, with on
 `--attach` per screenshot. The PR URL is reported as soon as it exists.
 
 **See it through.** CI runs through `fix-ci`'s loop. A separate watcher (Sonnet 5.5 on
-Claude Code or gpt-6.1-sol on Codex) returns at the first failed required check.
+Claude Code or gpt-6.1-sol on Codex) returns at the first failed check or job,
+including checks not listed as required. The parent then collects logs and
+diagnoses the failure.
 Mergeability comes from `gh pr view --json mergeable,mergeStateStatus`. If the
 base moves and conflicts, it merges again. It refreshes the title and body when
 the diff changes. It stops at green and mergeable, or at a cap, and reports

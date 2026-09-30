@@ -2,6 +2,31 @@
 
 This note is the rationale for the `fix-ci` skill and the `ci-watcher` agent it dispatches, both shipped in the `workbench` plugin; superseded choices are omitted and git history keeps the originals.
 
+## Return failures before diagnostics or required-check filtering (2026-09-30)
+
+A reported watcher run detected a failed check and exited its shell loop while
+other checks were pending. It then gathered logs, inspected branch rules, and
+restarted a required-only watch instead of returning. The parent remained
+unaware of the failure until the user intervened. The agent explicitly permitted
+re-arming after optional failures and requested a failure excerpt before its
+final report. The latest model-routing change did not introduce those rules.
+
+Any failed check or job on the verified pinned revision now ends the watcher's
+turn. Required status is coverage information, not a failure-notification filter;
+a failed child job also returns while its workflow or aggregate gate is pending.
+The watcher reports observed facts and available links without further network
+reads after the loop's failed exit. The parent collects logs and decides relevance
+and repairs. Merged/closed state, superseded heads, and the rerun attempt guard
+retain precedence. Normal bounded polling and the host's final-answer handback
+remain unchanged.
+
+Verification used seven invented terminal-state scenarios in fresh agent
+contexts. The old contract re-armed after a non-required failure and requested
+logs before reporting three other failures. The revised contract returned all
+four failures without further commands and preserved superseded, rerun, and
+merged handling. These were plan-only probes, not live delivery timing tests.
+The unchanged shell template passed all 52 focused harness tests.
+
 ## Claude watcher pinned to Sonnet 5.5 (2026-09-29)
 
 The operator assigned Claude Code CI watching to Sonnet 5.5 instead of Opus
@@ -195,14 +220,11 @@ fetching and grepping job logs and the PR diff, while 11 of 271 runs hit
 persisted-output truncation (40 KB to 1.4 MB) by printing whole poll logs or
 `gh` JSON. One call now resolves the PR, snapshots the checks with the
 required ones, and arms the loop; the exit line names each failed check and
-its link; after exit the watcher takes at most one read, one snapshot and
-`--log-failed | tail -n 150`, and leaves the diff and the diagnosis to the
-parent. The probes below surfaced two template gaps, fixed in the same change:
-an empty poll (a failed `gh` call, or checks not yet reported after a push)
-ended the loop as `superseded` or `settled`, and a loop re-armed after an
-optional failure exited again on that same failure. An empty checks list now
-counts as pending, as it is right after a push, a poll whose `gh pr view`
-failed reaches no verdict, and the re-armed loop polls with `--required`. Four
+its link. The failure handback now follows the immediate-return rule above;
+log collection and diagnosis belong to the parent. The probes below also found
+that an empty poll could end as `superseded` or `settled`. An empty checks list
+counts as pending, as it is right after a push, and a poll whose `gh pr view`
+failed reaches no verdict. Four
 failed `gh pr view` polls in a row end the loop `blocked` with the last `gh`
 error, so an expired login reports the access gap within two minutes instead
 of `pending` at the deadline. The template creates the scratch folder, since without it every

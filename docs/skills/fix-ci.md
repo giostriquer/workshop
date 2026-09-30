@@ -45,10 +45,11 @@ checks should be seen through to green.
    state; on Claude Code it runs in long foreground calls, on Codex in one
    call. On Codex, wait for it with `wait_agent`
    at `timeout_ms: 600000`, repeated until its final answer. It returns at the
-   **first failed required check**, listing those still pending, or the moment
-   the PR **merges or closes**. Green means every required check passed on the
+   **first failed check or job on the pinned revision**, including failures not
+   listed as required, or the moment the PR **merges or closes**. Its report
+   lists the checks still pending. Green means every required check passed on the
    pinned SHA; missing, cancelled or superseded checks are not green.
-3. **Collect evidence.** `gh run view <run-id> --log-failed`, then read the
+3. **The parent collects evidence after the watcher returns.** `gh run view <run-id> --log-failed`, then read the
    failing step's output. For an external check, surface the link; if the cause
    isn't reachable from the repo, report rather than guess.
 4. **Diagnose in repo context.** The branch's own recent commits are the prime
@@ -87,9 +88,13 @@ recommended next step.
 **Why won't it just skip the flaky test?** A red check that encodes an
 intended-behavior question is reported as a decision for you, not worked around.
 
-**Why did it start fixing while other checks were still running?** The watcher
-returns at the first failure. Checks still running when the fix is pushed rerun
-on the new head anyway.
+**Why did it return while other checks were still running?** Any failed check
+or job on the pinned revision ends the watcher's turn, even if it is not listed
+as required or an aggregate gate is still pending. The report uses the observed
+snapshot and available links. Log fetching, branch-rule checks, diagnosis, and
+repair decisions happen in the parent after that handback. Missing logs do not
+delay notification. Checks still running when a fix is pushed rerun on the new
+head anyway.
 
 **My branch has no PR.** It works the branch's push-triggered runs, pinned to the
 target commit. ([decision](../decisions/fix-ci.md))

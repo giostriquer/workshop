@@ -9,6 +9,10 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-12 reformat.
 
 
+## workbench 0.45.5: 2026-09-30
+
+- **CI failures return to the parent before diagnostics.** The watcher reports any failed check or job on the pinned revision, even when it is not listed as required or its workflow is still running. It returns with the available evidence; the parent collects logs and decides the next action. ([decision](decisions/fix-ci.md#return-failures-before-diagnostics-or-required-check-filtering-2026-09-30))
+
 ## workbench 0.45.4: 2026-09-30
 
 - **PR titles distinguish each change's actual contribution.** Identify the affected workflow or shared subsystem from the diff and callers, then name the operation, mechanism, or condition that separates this PR from other work on the same symptom. Descriptions connect the observed problem to the implementation and its supported effect, including unresolved work. ([decision](decisions/file-pr.md#titles-and-descriptions-share-an-evidence-boundary-2026-09-30))
@@ -67,7 +71,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 
 - **Epic coordination and verification tooling stays local.** Sessions may create progress scripts and qualification harnesses, but keep them and their supporting CI or package integration out of delivery unless explicitly approved as maintained deliverables. Dispatches, recovery notes and delivery checks carry that boundary; normal product regression tests still ship. ([decision](decisions/epic-orchestration.md#coordination-and-verification-tooling-stays-local-2026-09-28))
 - **Every lane gets its own paste label.** Each destination has a visible `Paste this into <LANE>:` label directly above its fenced pointer, including returns to existing sessions. Multiple ready lanes still go out in one reply. ([decision](decisions/epic-orchestration.md#dispatches-are-files-and-paste-blocks-are-pointers-2026-09-11))
-
-## workbench 0.44.1: 2026-09-26
-
-- **Audit acceptance and assignment completion are explicit.** The orchestrator states report acceptance, the auditor's remaining work or completion, and epic closure separately. A completed auditor assignment ends with an acknowledgment instead of another validation report; findings, evidence gaps and the operator's closure authority remain intact. ([decision](decisions/epic-auditor.md#explicit-audit-acceptance-and-assignment-completion-2026-09-26))

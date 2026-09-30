@@ -60,15 +60,15 @@ the rerun's new attempt (step 2), then watches every check on the head.
    value that line printed. A blocking `gh pr checks --watch` cannot see the
    PR merge or close and is not the watch; a poll per tool call is not the
    watch either.
-   **Return at the first failed required check, and return the moment the PR
-   state becomes `MERGED` or `CLOSED`**: report that state, the merge time, and
+   **Return at the first failed check or job on the pinned revision, whether
+   required or optional, and return the moment the PR becomes `MERGED` or `CLOSED`**: report that state, the merge time, and
    the checks' state at that moment; checks still running on a merged head
    belong to the base branch, and a closed PR has nothing to fix. A PR already
    merged or closed at dispatch exits at the first poll, so it gets no watch.
-   A failed optional check with required checks still pending is judged
-   against the snapshot and the loop re-armed for the remaining window, with
-   `--required` on its `gh pr checks` calls so the known failure does not end
-   it again.
+   Required-check status describes coverage; it does not filter failure
+   notification. A failed child job is enough even while its workflow or
+   aggregate gate is pending. After a failed exit, end the turn with the failure
+   report; never re-arm the loop with `--required` to wait past that failure.
 
    ```
    pr=<n>; sha=<pinned sha>; out=<scratch>/watch-<n>.log; err=$out.err; mkdir -p "${out%/*}"
@@ -117,18 +117,21 @@ the rerun's new attempt (step 2), then watches every check on the head.
    poll after `gh run view` first shows an attempt newer than the one that
    failed, since GitHub can show the new attempt before its check runs replace
    the old failure. Branch-only CI polls `gh run view <run-id>
-   --json status,conclusion,jobs` in the same shape.
+   --json status,conclusion,jobs` in the same shape: inspect each job's conclusion
+   and return on a failure without waiting for the run to finish.
    Do not wait for the remaining checks to finish: report the failed check, the
    checks still pending, and the ones already passed, and let the caller act.
    At the window's end with nothing failed, report pending and the next action.
    If the head changes, report superseded; never certify the new head using an
    old run.
-3. After the exit line, the report needs at most one read of the poll file's
-   tail, one fresh snapshot and, for a failed GitHub Actions check, `gh run
-   view <run-id> --log-failed | tail -n 150` (or `--job <job-id>` while the
-   run is still in progress). An external check gets its link and a concise
-   next step. Print no whole poll file or unfiltered `gh` JSON. Reading the
-   diff and diagnosing belong to the parent.
+3. **A failed exit goes straight to the final answer.** Use the observed failure,
+   available check links, and the poll file's last snapshot; at most one local
+   tail read is needed. Make no further network calls for logs, branch rules,
+   required-check classification, or a fresher snapshot before returning.
+   Missing logs are a reported evidence gap, not a reason to delay handback.
+   The parent owns log collection, diagnosis, and the next action. For other
+   exit states, at most one local tail read and one fresh snapshot may complete
+   the report. Print no whole poll file or unfiltered `gh` JSON.
 
 ## Host notes
 
@@ -165,8 +168,10 @@ agent on another host.
   blocked), target SHA, observed run SHA, and required-check coverage.
   Missing/cancelled checks are not passed.
 - PR and check metadata (number, URL, check names).
-- If failed: a concise failure excerpt or the external check link, the checks
-  still pending at the moment of return, plus the likely next step.
+- If failed: the failed check or job and its available link, checks still
+  pending in the last observed snapshot, and the next step for the parent.
+  Include an excerpt only if already available; logs are not required to report
+  a known failure.
 
 ## Boundaries
 

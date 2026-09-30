@@ -312,10 +312,11 @@ Reusing the merged head branch requires an explicit instruction.
 9. **Watch to a verdict.** Checks run through the **`fix-ci` skill's loop**; it
    owns the failing-log diagnosis, flake-vs-fault triage, minimal in-session fixes,
    the per-cause two-attempt cap, and the never-weaken-a-check rule. The watcher
-   returns at the first failed required check, or the moment the PR merges or
-   closes; the fix starts then, not after the remaining checks finish. Watching always runs in the
+   returns at the first failed check or job on the pinned revision, including
+   checks not listed as required, or the moment the PR merges or closes. It
+   reports before collecting logs; the parent starts diagnosis then. Watching always runs in the
    `ci-watcher` agent, dispatched as `fix-ci` says, never in the
-   parent's own turns; accept only results for the target SHA and required checks. Mergeability comes from
+   parent's own turns; accept only results for the target SHA, with required-check coverage stated. Mergeability comes from
    `gh pr view --json mergeable,mergeStateStatus`.
 10. **If the base moves and conflicts appear**, merge the base in again and resolve
     under step 2's governing-contract boundary. Run affected validation and review

@@ -72,22 +72,28 @@ is not polling and the parent runs it itself.
    gets a precise report; missing checks are not green.
 2. **Dispatch one designated watcher to read and then watch the state.** PR: `gh pr checks --json name,bucket,state,workflow,link`.
    Runs: `gh run list` / `gh run view <run-id>`.
-   - All required checks green for the target SHA → report green; done.
    - Merged or closed (`gh pr view --json state,mergedAt,closedAt`) → the
      watcher reports `merged` or `closed` at once and the loop ends: a closed
      PR has nothing to fix, and a merged head's remaining checks belong to the
      base branch.
+   - Any failed check or job on the pinned SHA → return `failed` immediately,
+     including checks not listed as required and jobs whose workflow is still
+     running. Use the observed snapshot and available links; the watcher ends
+     its turn before fetching logs or classifying merge requirements. The parent
+     owns those next steps. A required-only filter must not hide the failure.
+   - With no observed failures, all required checks green for the target SHA →
+     report green; done.
    - Pending → the watcher's loop polls the PR state and its checks every
      thirty seconds (branch-only CI: `gh run view <run-id> --json jobs`),
-     within its bounded window. **The watcher returns at the first failed required
-     check, or the moment the PR merges or closes**, naming the check or the
+     within its bounded window. **The watcher returns at the first failed check or
+     job, or the moment the PR merges or closes**, naming the check or the
      state and listing the checks still pending. Neither the watcher nor the parent waits for the
      remaining checks: any check still running when the fix is pushed reruns
      on the new head anyway, so waiting buys nothing and a failure visible in
      the first minute is acted on in the first minute.
    - Old-head, missing, cancelled, or superseded checks → report that state,
      not green. A new push requires a newly pinned target SHA.
-3. **Red → collect evidence first.** GitHub Actions: `gh run view <run-id>
+3. **Red → the parent collects evidence.** GitHub Actions: `gh run view <run-id>
    --log-failed` and read the failing step's actual output. External checks: surface
    the link; if the cause isn't reachable from the repo, report rather than guess.
 4. **Diagnose in repo context.** The branch's own recent commits are the prime
