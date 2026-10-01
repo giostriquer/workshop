@@ -31,9 +31,10 @@ checks should be seen through to green.
 
 ## The loop
 
-1. **Resolve the target.** Find the branch's PR, or its push-triggered runs if it
-   has none. Pin the target SHA with `git rev-parse HEAD`, confirm it matches the
-   remote head, and identify the required checks. No branch, no CI or no access
+1. **Resolve the target.** Find the branch's PR and its target repository and
+   branch, or its push-triggered runs if it has no PR. Pin the target SHA with
+   `git rev-parse HEAD`, confirm it matches the remote head, and identify the
+   required checks. No branch, no CI or no access
    gets a precise report.
 2. **Dispatch one watcher** for that SHA: a separate `ci-watcher`, even when
    your session is idle, with the PR, the pinned head SHA and the deadline. On
@@ -63,20 +64,39 @@ checks should be seen through to green.
 6. **Reproduce locally when feasible.** Run the focused failing case before and
    after the fix, plus mandatory local gates; full suites run in PR CI.
 7. **Fix in-session**, addressing only the cause. After completed review, a
-   bounded CI repair goes straight from focused verification to push and
-   re-watch, without another review or mutation round. Open reviewer findings
+   bounded CI repair goes through synchronization and focused verification to
+   push and re-watch, without another review or mutation round for the repair
+   alone. Integration changes receive affected review when they invalidate
+   prior coverage. Open reviewer findings
    remain open. A fix that requires new scope or a different design is reported
    as a decision before the repair expands; user and repository requirements
    still apply.
-8. **Commit and push** per the repo's conventions, staging only the fix's files.
-   Just before pushing, your session reads the old head's checks once and folds
-   any new in-scope failure into the same push. No-commit or no-push
-   instructions hold; the report then names the remaining step.
+8. **Synchronize before every repair push**, preserving unrelated dirty work and
+   committing only the fix's files. Refresh the PR's state, head and actual target;
+   merged or closed ends this loop with unpushed work preserved. Pull the remote
+   feature head, fetch the current target from its repository, and merge missing
+   commits even without conflicts. Resolve mechanical conflicts and semantic
+   collisions settled by the accepted requirements, then validate the combined
+   result and refresh the diff, PR text and any invalidated review coverage.
+   Read the old head's checks once and fold any new in-scope failure into the fix.
+   Immediately before pushing, refresh and fetch the target again and verify its
+   tip is in HEAD. If it changed or has missing commits, synchronize and validate
+   again, with at most two additional rounds per push attempt for concurrent
+   updates. An unresolved merge, failed fetch, or exhausted cap leaves the push
+   pending. Branch-only CI pulls its upstream without inventing a PR target.
+   No-commit or no-push instructions hold; the report names the remaining step.
 9. **Re-watch** with a new watcher for the new head. A different check failing
    there is a new cause with its own two attempts; the same check failing after
    its second fix ends the loop.
 
 ## Common questions
+
+**Will it handle conflicts itself?** Yes. It resolves mechanical conflicts and
+semantic collisions whose result follows from governing requirements or
+decisions, verifies the result, and continues. It asks only when resolution
+needs a new scope, product, policy or authority decision. Each push includes a
+fresh sync of the PR's actual target, regardless of whether GitHub reports it
+as mergeable.
 
 **It re-ran the job instead of fixing anything.** That is the flake path, and it
 fires once. If the rerun comes back red, the loop treats it as a fault.

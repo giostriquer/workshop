@@ -101,9 +101,15 @@ FEEDBACK
 | The comment trim: **required** once the work-stream is complete, before the adversarial pass, **dispatched** to an agent that did not write the code | `trim-comments`, run by the `comment-trimmer` agent |
 | The initial adversarial pass: **required** on the trimmed diff, right before PR-or-merge, **dispatched** to reviewers that did not write the code | `code-quality-review`, run by the `code-quality-reviewer` agent; plus `test-quality-review`, run by the `test-quality-reviewer` agent, when the diff changes production logic or tests |
 | Checking existing tests or recommending a testing approach | `test-quality-review`, run by the `test-quality-reviewer` agent; give it the question and target |
-| Landing | outline gate → `file-pr` / merge / push; `fix-ci`. A dispatch that will open a PR names `file-pr` |
+| Landing | outline gate → `file-pr` for opening or pushing to a PR; merge or branch-only push; `fix-ci`. Delegated PR delivery names `file-pr` |
 | Review feedback arrives | `receiving-code-review` |
 | The user asks to clean up worktrees, branches, caches, temp files or processes, or an epic's leftovers | `epic-cleanup`; never on the session's own initiative |
+
+Before any push, resolve whether the branch has an open PR. If it does, load
+`file-pr` before pushing, including review corrections with green CI. Its target
+synchronization applies to every PR push; completed review stages retain their
+coverage. With no open PR and none being filed, use the repository's plain-push
+workflow.
 
 ## Picking the verification piece
 

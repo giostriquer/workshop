@@ -1,6 +1,6 @@
 ---
 name: file-pr
-description: Always use before or to file/open a PR, including before dispatching an agent that will open one.
+description: Always use before opening a PR or pushing to a branch with an open PR, including before delegating either action.
 ---
 
 # File PR
@@ -78,14 +78,15 @@ stopped.
 
 ## When to use
 
-The work on the current branch is ready for a PR and this session is authorized to
-push and open one. Missing authorization and missing access are different gaps.
+The work on the current branch is ready to open a PR or update an existing one,
+including review corrections with green CI. Use this skill before either push.
+Missing authorization and missing access are different gaps.
 Finish local reviewable preparation, then report the exact delivery step needing
 permission or access; do not ask again for authority already given.
 
-**Delegated filing.** Every dispatch that will open a PR, to a subagent, fork,
-workflow agent or epic lane, names `file-pr` as the skill the agent loads before
-filing, plus the agreed PR plan entry that PR carries when a plan exists.
+**Delegated delivery.** Every dispatch that will open or push to a PR, to a
+subagent, fork, workflow agent or epic lane, names `file-pr` as the skill the agent
+loads before delivery, plus the agreed PR plan entry when a plan exists.
 
 ## PR text contract
 
@@ -216,15 +217,19 @@ than refiling.
 
 ### Prepare
 
-At entry and before each push, refresh the associated PR's state and head branch,
-including merged PRs. If it merged, end that PR's tending loop and report its
-merge revision. Preserve local work; carry any authorized remaining changes onto
-a new branch from the current base for a new PR. If none remain, delivery is
+At entry and before each push, refresh the associated PR's state, head branch,
+and actual target repository and branch, including merged PRs. If it merged, end
+that PR's tending loop and report its merge revision. Preserve local work; carry
+any authorized remaining changes onto a new branch from the current base for a
+new PR. If none remain, delivery is
 finished. Changes awaiting delivery authority retain an owner and pending action.
 Reusing the merged head branch requires an explicit instruction.
 
-1. **Detect branch and base.** `git branch --show-current`; base defaults to `main`
-   unless the repo says otherwise. Summarize what changed from `git diff
+1. **Detect branch and base.** `git branch --show-current`; an existing PR's
+   current target is the base. Before filing, use the intended target from the
+   user or repository; default to `main` only when neither specifies one. Resolve
+   the remote for that target repository, which can differ from the feature
+   branch's remote. Summarize what changed from `git diff
    <base>...HEAD` and the commit list rather than session memory; the why follows
    the PR text contract above.
    **Stop and propose a split, instead of filing,** when the diff goes beyond the
@@ -234,16 +239,19 @@ Reusing the merged head branch requires an explicit instruction.
    List each concern with its files and the PR it becomes, and file once the
    split is decided. A diff whose changes all serve one concern files normally,
    whatever its size.
-2. **Always pull the latest base before filing.** Fetch the PR's base from its
-   remote and **merge it into the working branch** whenever it has commits the
-   branch lacks, even when there are no conflicts. Fetching alone does not satisfy
-   this step. Preserve uncommitted work before syncing; a failed fetch or merge
-   blocks filing. Mechanical conflicts (imports, adjacent edits, formatting)
-   resolve confidently. For a
+2. **Synchronize the target before validation and every push.** Fetch the current
+   target from its remote and **merge it into the working branch** whenever it has
+   commits the branch lacks, even when there are no conflicts. This applies to
+   the initial filing and every later push, including CI repairs and review fixes.
+   Fetching alone or pulling only the feature branch does not satisfy this step.
+   Preserve uncommitted work before syncing. Resolve mechanical conflicts
+   (imports, adjacent edits, formatting) in-session and continue the merge. For a
    **semantic collision**, where both sides changed the same logic with different
    intent, resolve it when an existing governing contract or decision determines
    the result. Stop and report when resolution needs a new scope, product, policy
-   or authority decision. Run affected validation and review before delivery.
+   or authority decision. A failed fetch or unresolved merge blocks the push;
+   a resolvable conflict is work to complete. Run affected validation and any
+   review whose prior coverage the integration changes invalidate before delivery.
    Never rebase published commits and never force-push.
 3. **Run focused local checks and required local gates.** *Discover* what this repo gates a PR on
    rather than assuming a toolchain: read its CI workflow definitions, hook config,
@@ -298,10 +306,19 @@ Reusing the merged head branch requires an explicit instruction.
 
 ### File
 
-8. **Push and open or update.** Pull the latest remote head before pushing; a
-   first push with no remote head skips only that pull, never step 2's base sync.
-   If the pull changes HEAD, refresh the scope check, diff, title and body, then run
-   affected validation and review before delivery. Push per the repo's conventions
+8. **Push and open or update.** Pull the latest remote feature head using a merge,
+   then perform step 2's target sync; a first push skips only the nonexistent-head
+   pull. Refresh the scope check, diff, title and body for the combined result,
+   and run affected validation and any invalidated review. Immediately before
+   pushing, refresh the PR's target (or the intended target before filing) and
+   fetch it again. Verify the fetched target tip is an ancestor of HEAD
+   (for example, `git merge-base --is-ancestor
+   <fetched-target> HEAD`). If the target changed or has missing commits, repeat
+   synchronization and affected checks. Allow at most **two additional sync
+   rounds per push attempt** if concurrent updates keep invalidating the result;
+   if another round is needed, report the pending push instead of pushing without
+   the latest fetched target. Resolve remote-head push rejection by syncing again under the
+   same cap, never by force. Push per the repo's conventions
    (use its push skill if it ships one). Update an associated open PR in
    place; otherwise use `gh pr create --base <base> --head <branch>` with the title
    and body, adding one `--attach` per screenshot when the Screenshots rule holds.
@@ -318,10 +335,10 @@ Reusing the merged head branch requires an explicit instruction.
    `ci-watcher` agent, dispatched as `fix-ci` says, never in the
    parent's own turns; accept only results for the target SHA, with required-check coverage stated. Mergeability comes from
    `gh pr view --json mergeable,mergeStateStatus`.
-10. **If the base moves and conflicts appear**, merge the base in again and resolve
-    under step 2's governing-contract boundary. Run affected validation and review
-    before pushing. Allow at most **two** re-syncs; a base that keeps moving is
-    reported, not chased.
+10. **If conflicts appear while tending**, use steps 2 and 8 to integrate the
+    target, resolve them, validate, and push. Every push still integrates the
+    latest target even when GitHub reports the PR as mergeable. The per-push cap
+    bounds concurrent movement, not the number of later repairs that may sync.
 11. **Stop when the PR is green and mergeable, or when a cap is hit**, and report
     either way.
 
@@ -350,7 +367,8 @@ in its existing fields. If no format is required, use a verdict-first report.
   encodes an intended-behavior question is reported as a decision for the user.
 - Keep substantive PR text focused on the change. Include attribution required
   by governing host/user/repository instructions; do not invent extra footers.
-- Hard caps: `fix-ci`'s two fix attempts for CI, two base re-syncs for conflicts;
-  after that, report rather than thrash.
+- Hard caps: `fix-ci`'s two fix attempts per cause, and two additional sync rounds
+  per push attempt when concurrent updates keep invalidating validation. At a
+  cap, report rather than bypassing synchronization or thrashing.
 - Semantic merge collisions follow step 2's boundary; unresolved decisions end
   the loop with a plain report.

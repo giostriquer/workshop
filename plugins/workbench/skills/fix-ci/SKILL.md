@@ -64,7 +64,9 @@ is not polling and the parent runs it itself.
 ## Workflow
 
 1. **Resolve the target.** `git branch --show-current`, then `gh pr view --json
-   number,url,headRefName`. If the branch has a PR, work its checks. If it has no PR
+   number,url,state,headRefName,baseRefName`. If the branch has a PR, resolve its
+   target repository and branch, and work its checks. The target remote may
+   differ from the feature branch's remote. If it has no PR
    but CI runs on push (e.g. a direct-to-main workflow), work the branch's runs
    instead: `gh run list --branch <branch> --commit <sha> --limit 5`. Pin the
    target SHA with `git rev-parse HEAD`, compare it with the remote PR/run head,
@@ -109,15 +111,42 @@ is not polling and the parent runs it itself.
    explicit repo/user requirement or a named unresolved integration risk.
 7. **Fix in-session.** Address the cause of the red check; do not bundle
    unrelated changes into the fix. After completed review, a bounded CI repair
-   proceeds from focused verification to push and re-watch, without another
-   review or mutation round. Preserve any open reviewer findings; a CI repair
+   proceeds through step 8's synchronization and focused verification to push and
+   re-watch, without another review or mutation round for the repair alone.
+   Integration changes that invalidate prior review coverage receive affected
+   review. Preserve any open reviewer findings; a CI repair
    does not close them. If the cause requires new scope or a different design,
    report that decision before expanding the repair. Existing user and repository
    requirements still apply.
-8. **Commit and push per the repo's conventions**: pull first, use the repo's own
-   push skill if it ships one, and stage only the files the fix touched. Right
-   before pushing, the parent runs one `gh pr checks` read of the old head (a
-   single read, not a watcher dispatch): a further
+8. **Synchronize before every repair push.** Preserve unrelated dirty work and
+   commit only the fix's files; use the repo's push conventions and push skill if
+   it ships one. Refresh the associated PR's state, head and actual target
+   repository and branch. If it merged or closed, end this loop and preserve
+   unpushed work for the appropriate follow-up. Pull the remote feature head
+   without rebasing. For an open PR, fetch its current target and merge every
+   missing commit, even without conflicts. A previous sync, pulling only the
+   feature branch, or GitHub reporting mergeable does not satisfy this step.
+   Branch-only CI pulls its upstream without inventing a PR target.
+
+   Resolve mechanical conflicts in-session. Resolve semantic collisions using
+   governing requirements or decisions when they determine the result, finish
+   the merge, and continue. Stop for a new scope, product, policy or authority
+   decision only when the existing contract cannot settle it. A failed fetch or
+   unresolved merge blocks the push; complete resolvable conflicts rather than
+   handing them back automatically. Refresh the combined diff and PR text, run
+   affected focused checks and local gates, and refresh invalidated review
+   coverage. Never rebase published commits or force-push.
+
+   Immediately before pushing to an open PR, refresh its target and fetch it
+   again. Verify the fetched target tip is an ancestor of HEAD; if the target
+   changed or has missing commits, integrate it and repeat affected checks.
+   Allow **two additional sync rounds per push attempt** for concurrent updates;
+   if still stale, report the pending push. A remote-head push rejection also
+   returns to synchronization under that cap. Later repair pushes each start
+   with a fresh target sync and their own concurrency budget.
+
+   Before that final target refresh, the parent runs one `gh pr checks` read of
+   the old head (a single read, not a watcher dispatch): a further
    check that failed while the fix was being written is diagnosed from its log
    and folded into the same push when its cause is in scope; otherwise it is
    named in the report. Carry

@@ -16,7 +16,7 @@ PRs still carried the fallback's `Summary` / `Ticket` / `Caveats` headings over 
 
 ## File the PR and see it through (2026-08-11)
 
-Once sessions were fully authorized, `handoff-pr`'s split (packaging a PR for another session to open) became ceremony followed by the same manual tail: open, watch CI, fix, resolve conflicts. The skill now merges the base in before filing (never rebasing published commits or force-pushing), runs the discovered gates and fixes in-scope failures so the tend loop's bounded attempts are not spent on a known-red baseline, then files with `gh pr create` and reports the URL. It tends the PR through the `fix-ci` skill's loop, composed rather than duplicated, reads mergeability from `gh pr view`, and allows two base re-syncs at most. Mechanical conflicts and semantic collisions settled by governing contracts or decisions resolve autonomously; unresolved scope, intended-behavior or authority questions end the loop with a report, and the skill never merges the PR. One ticket candidate is linked and several prompt a question; validation provenance lives in the session report.
+Once sessions were fully authorized, `handoff-pr`'s split (packaging a PR for another session to open) became ceremony followed by the same manual tail: open, watch CI, fix, resolve conflicts. The skill now merges the base in before filing (never rebasing published commits or force-pushing), runs the discovered gates and fixes in-scope failures so the tend loop's bounded attempts are not spent on a known-red baseline, then files with `gh pr create` and reports the URL. It tends the PR through the `fix-ci` skill's loop, composed rather than duplicated, reads mergeability from `gh pr view`, and bounds repeated synchronization within each push attempt. Mechanical conflicts and semantic collisions settled by governing contracts or decisions resolve autonomously; unresolved scope, intended-behavior or authority questions end the loop with a report, and the skill never merges the PR. One ticket candidate is linked and several prompt a question; validation provenance lives in the session report.
 
 ## The review gate's exemptions are measured (2026-08-20)
 
@@ -63,7 +63,44 @@ The MUST gate lists the comment trim (`trim-comments`, run by `comment-trimmer`)
 
 The epic contract lets a lane resolve conflicts within settled scope, but `file-pr` stopped on every semantic collision. The delivery skill now uses the existing governing contract or decision when it determines the resolution. A collision that needs a new scope, product, policy or authority decision still stops for a ruling. Both the initial sync and later re-syncs use this boundary and retain affected validation and review before delivery. This aligns the two skills without granting the lane new scope or delivery authority.
 
-## Always pull latest before filing (2026-09-25)
+## Synchronize the actual target before every push (2026-10-01)
+
+The pre-filing base sync did not cover every later push: tending only merged
+again when conflicts appeared, and CI repairs only said to pull the working
+branch. Every push now refreshes the PR's actual target repository and branch,
+merges missing target commits even without conflicts, and incorporates the
+remote feature head. The intended target supplies the base before a PR exists.
+Focused validation covers the combined result; a final fetch checks for target
+movement during validation before the push proceeds.
+
+The skill's trigger and `using-workbench` landing guidance cover pushes to an
+already-open PR, including review corrections with green CI. A fresh session
+checks for an open PR before choosing plain push; otherwise the synchronization
+rule could remain undiscovered until after delivery.
+
+Conflicts are work for the session: resolve mechanical conflicts and semantic
+collisions settled by the governing requirements, validate, and continue. Only
+unresolved decisions or an unrecoverable synchronization failure block delivery.
+Two additional synchronization rounds bound a target that keeps moving during
+one push attempt; ordinary synchronization for later CI repairs has its own
+budget. If another round is needed after that cap, report the pending push.
+
+One fresh context per version ran eight plan-only scenarios. The baseline
+allowed clean target updates to remain absent during CI repairs, standalone
+repairs after retargeting, and target movement during pre-filing validation.
+The revised plans integrated those updates, resolved contract-settled conflicts,
+preserved unrelated work, and held pushes for unsettled policy, failed fetches,
+or exhausted synchronization attempts. Two additional revised scenarios preserved
+branch-only CI and ended repair delivery when the PR had merged. These are
+bounded wording checks, not live Git execution or a reliability estimate.
+
+Independent review found that the original filing-only trigger missed fresh
+sessions pushing review corrections. After extending discovery and landing
+routing, a fresh-context probe selected `file-pr` before a green-CI review-fix
+push and in its delegated handoff, while keeping a branch-only push on the
+repository workflow. This additional check was also plan-only.
+
+### Earlier pre-filing correction (2026-09-25)
 
 The preparation step required a base merge only when the branch was behind and
 conflicted. That allowed a PR to open without cleanly mergeable base updates.

@@ -20,7 +20,8 @@ finishes local preparation and names the delivery step still needed.
 
 ## When to reach for it
 
-When the branch's work is done and the PR should be filed and seen through. It
+Before opening a PR or pushing to a branch with an open PR, including review
+corrections when CI is green. It
 assumes the completion gates ran, except these: it will not file a code PR whose
 diff lacks its comment trim (`trim-comments`, run by the `comment-trimmer`
 agent) and then its adversarial review by reviewers who did not write the code
@@ -33,13 +34,14 @@ pending findings return to the owning review skill. Filing or updating the PR
 does not itself restart a completed stage. Both receive the same trimmed scope
 and revision, and keep separate verdicts and pass records. A draft PR is still a filed PR.
 
-When another agent will open the PR (a subagent, fork, workflow agent or epic
+When another agent will open or push to the PR (a subagent, fork, workflow agent or epic
 lane), the dispatch names `file-pr`, plus the agreed PR plan entry when there
 is a plan, so that agent loads it.
 
 | The problem | The skill |
 | --- | --- |
 | A finished branch should become a PR and be tended to green | `file-pr` |
+| A branch with an open PR needs another push | `file-pr` before pushing |
 | A branch or PR already exists and its checks are red | `fix-ci` |
 | The PR is open and review feedback arrived | `receiving-code-review` |
 | You are not sure the work is complete | `verification-before-completion` |
@@ -47,14 +49,16 @@ is a plan, so that agent loads it.
 
 ## The three phases
 
-At entry and before each push, it refreshes the PR's state. A PR that already
-merged ends tending; authorized remaining changes go on a new branch.
+At entry and before each push, it refreshes the PR's state and actual target
+repository and branch. Before filing, it uses the intended target. A PR that
+already merged ends tending; authorized remaining changes go on a new branch.
 
 **Prepare.** Summarize from `git diff <base>...HEAD` and the commits. If the
 diff goes beyond the agreed PR plan, or spans unrelated concerns the plan does
 not put together, stop and propose a split instead of filing. Always pull the
 latest base: fetch it from the remote and merge any commits the branch lacks,
-even without conflicts. Preserve uncommitted work; a failed sync blocks filing.
+even without conflicts. Preserve uncommitted work and resolve conflicts under
+the accepted requirements; a failed fetch or unresolved merge blocks delivery.
 Discover the repo's PR gates (CI workflows, hooks, build scripts, contributor
 docs), run format, lint and type-check, then the affected
 tests; full suites run in PR CI. Find the ticket link. Search for the PR
@@ -63,18 +67,22 @@ record the result; the Summary / Ticket / Caveats fallback is allowed only
 after an empty search. Draft the body and title using the PR text contract,
 within enforced title or branch patterns.
 
-**File.** Pull the latest remote head before pushing. A first push skips that
-pull when no remote head exists, but still syncs the base. If the pull changes
-HEAD, refresh the scope check, diff, title and body, and run affected validation
-and review. Push per the repo's conventions, then open or update the PR, with one
+**File.** Before every push, including CI and review fixes, pull the latest remote
+feature head and fetch and merge the current target. A first push skips only the
+nonexistent-head pull. Refresh scope, diff, title and body, run affected checks,
+and refresh any review coverage invalidated by integration. Immediately before
+pushing, refresh and fetch the target again and verify its tip is in HEAD. If it
+changed or advanced beyond HEAD, integrate and validate again. Push per the
+repo's conventions, then open or update the PR, with one
 `--attach` per screenshot. The PR URL is reported as soon as it exists.
 
 **See it through.** CI runs through `fix-ci`'s loop. A separate watcher (Sonnet 5.5 on
 Claude Code or gpt-6.1-sol on Codex) returns at the first failed check or job,
 including checks not listed as required. The parent then collects logs and
 diagnoses the failure.
-Mergeability comes from `gh pr view --json mergeable,mergeStateStatus`. If the
-base moves and conflicts, it merges again. It refreshes the title and body when
+Mergeability comes from `gh pr view --json mergeable,mergeStateStatus`. It
+resolves conflicts that appear while tending. Every push integrates the latest
+target, even without conflicts. It refreshes the title and body when
 the diff changes. It stops at green and mergeable, or at a cap, and reports
 either way.
 
@@ -142,8 +150,16 @@ or decision, then runs affected validation and review. A conflict that needs a
 new scope, product, policy or authority decision comes back to you. So does a
 red check that leaves an intended-behavior question unresolved.
 
-**How long will it keep trying?** Two fix attempts per CI cause and two base
-re-syncs, then it reports.
+**Does every repair include the latest target?** Yes. It reads the PR's current
+target, including a retargeted PR or a target in another remote repository,
+before every push. Pulling the feature branch alone is insufficient. A failed
+target fetch leaves the push pending.
+
+**How long will it keep trying?** Two fix attempts per CI cause. Each push allows
+two additional synchronization rounds if concurrent target or head updates keep
+invalidating the verified result. If another round is needed, it reports the
+pending push; the cap never permits a stale push. Later repair pushes each
+start with a fresh synchronization budget.
 
 **It found no ticket.** It proceeds and says so, asking only when there are
 several candidates or the template requires one.

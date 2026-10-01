@@ -221,7 +221,12 @@ code-quality review + comment trimming**, per the repo's rules
 proceeds: no second review round**; (4) the session **outlines structurally what
 was done** and asks: file a PR or merge directly? When repo or user rules
 explicitly pre-authorize, it may proceed without asking. Landing runs through
-`file-pr` / merge / `push`, with `fix-ci` tending the checks.
+`file-pr` / merge / `push`, with `fix-ci` tending the checks. Before a push,
+resolve whether the branch has an open PR: PR pushes use `file-pr`, including
+review corrections with green CI; branch-only pushes retain the repository's
+push workflow. This routing was made explicit on 2026-10-01 so the
+[target synchronization requirement](file-pr.md#synchronize-the-actual-target-before-every-push-2026-10-01)
+is discovered before delivery rather than after a push triggers CI.
 
 **Feedback.** `get-pr-comments` triages arriving PR feedback;
 `receiving-code-review` governs acting on it; verified fixes re-enter

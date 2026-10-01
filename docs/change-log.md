@@ -9,6 +9,10 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-12 reformat.
 
 
+## workbench 0.45.6: 2026-10-01
+
+- **Every PR push includes the latest target branch.** Filing and CI repairs refresh the actual target repository and branch, merge missing commits even without conflicts, and recheck the target after validation. Sessions resolve conflicts settled by existing requirements and validate the combined result; unresolved decisions and failed synchronization leave the push pending. ([decision](decisions/file-pr.md#synchronize-the-actual-target-before-every-push-2026-10-01))
+
 ## workbench 0.45.5: 2026-09-30
 
 - **CI failures return to the parent before diagnostics.** The watcher reports any failed check or job on the pinned revision, even when it is not listed as required or its workflow is still running. It returns with the available evidence; the parent collects logs and decides the next action. ([decision](decisions/fix-ci.md#return-failures-before-diagnostics-or-required-check-filtering-2026-09-30))
@@ -66,8 +70,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 ## toolkit 0.13.2: 2026-09-29
 
 - **Global rules permit Sonnet.** The model-floor rule now bans only Haiku and allows explicit Claude model selections, including the Sonnet 5.5 CI watcher. The adoption example and usage page match the rule. ([decision](decisions/adopt-global-rules.md#remove-the-sonnet-ban-retain-the-haiku-ban-2026-09-29))
-
-## workbench 0.44.2: 2026-09-28
-
-- **Epic coordination and verification tooling stays local.** Sessions may create progress scripts and qualification harnesses, but keep them and their supporting CI or package integration out of delivery unless explicitly approved as maintained deliverables. Dispatches, recovery notes and delivery checks carry that boundary; normal product regression tests still ship. ([decision](decisions/epic-orchestration.md#coordination-and-verification-tooling-stays-local-2026-09-28))
-- **Every lane gets its own paste label.** Each destination has a visible `Paste this into <LANE>:` label directly above its fenced pointer, including returns to existing sessions. Multiple ready lanes still go out in one reply. ([decision](decisions/epic-orchestration.md#dispatches-are-files-and-paste-blocks-are-pointers-2026-09-11))

@@ -60,6 +60,12 @@ specific task skips it.
   or user rules pre-authorize it.
 - **Feedback**: `receiving-code-review`; verified fixes re-enter implementation.
 
+Before any push, check whether the branch has an open PR. If it does, load
+`file-pr` and synchronize its actual target before pushing, including review
+corrections with green CI. With no open PR and none being filed, use the
+repository's plain-push workflow. Dispatches that will open or push to a PR
+name `file-pr`.
+
 **Picking the verification piece** by the work's shape:
 
 | Shape | Piece |
@@ -119,7 +125,7 @@ repo process
 
 No; they skip the orientation. The dispatching session puts the scope
 folder's path in each agent's contract, and names `file-pr` in any dispatch
-that will open a PR.
+that will open or push to a PR.
 
 **My one-ticket change turned into a sprawl. Does workbench catch that?**
 

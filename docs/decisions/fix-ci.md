@@ -2,6 +2,20 @@
 
 This note is the rationale for the `fix-ci` skill and the `ci-watcher` agent it dispatches, both shipped in the `workbench` plugin; superseded choices are omitted and git history keeps the originals.
 
+## Synchronize the PR target on every repair push (2026-10-01)
+
+"Pull first" could update only the feature branch, leaving clean target-branch
+updates out of a CI repair. Before each push, the parent now refreshes the open
+PR's actual target, incorporates both remote head and target, resolves conflicts
+within the accepted requirements, and validates the combined result. This also
+covers standalone `fix-ci` sessions and retargeted PRs. Branch-only CI keeps its
+ordinary upstream pull without inventing a PR target.
+
+The final target fetch and per-push synchronization cap follow the
+[file-pr decision](file-pr.md#synchronize-the-actual-target-before-every-push-2026-10-01).
+Completed reviews stay valid for a bounded repair; integration changes receive
+affected review when they invalidate that coverage. The watcher remains read-only.
+
 ## Return failures before diagnostics or required-check filtering (2026-09-30)
 
 A reported watcher run detected a failed check and exited its shell loop while
