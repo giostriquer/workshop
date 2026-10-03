@@ -9,6 +9,10 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-12 reformat.
 
 
+## workbench 0.46.0: 2026-10-03
+
+- **Sessions message each other through Session Orchestrator.** The new `session-messaging` skill lets a Claude Code or Codex session ask, tell or consult another one on the machine with `so post`, find it with `so ls --live`, and answer an arrival by running the command its header names. A refused send (six messages since the operator last spoke) stops the session for the operator; in Codex, `so post` asks to leave the sandbox with the prefix rule `["so", "post"]`. ([decision](decisions/session-messaging.md))
+
 ## workbench 0.45.6: 2026-10-01
 
 - **Every PR push includes the latest target branch.** Filing and CI repairs refresh the actual target repository and branch, merge missing commits even without conflicts, and recheck the target after validation. Sessions resolve conflicts settled by existing requirements and validate the combined result; unresolved decisions and failed synchronization leave the push pending. ([decision](decisions/file-pr.md#synchronize-the-actual-target-before-every-push-2026-10-01))
@@ -66,7 +70,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 - **Codex dispatches use Sol 6.1.** CI watching, test-quality review, and comment trimming now select `gpt-6.1-sol`; `xhigh` effort, fresh context, and the contract-message requirements stay intact. ([decision](decisions/model-reference.md#sol-61-dispatch-pins-2026-09-29))
 - **Claude Code CI watching uses Sonnet 5.5.** The watcher pins `claude-sonnet-5-5` at `xhigh`, with matching skill and usage guidance. Test-quality review and comment trimming retain Opus. ([decision](decisions/fix-ci.md#claude-watcher-pinned-to-sonnet-55-2026-09-29))
 - **Reference rows reflect the updated fleet.** Add Sol 6.1 and Sonnet 5.5 rows and raise the Opus 5.5 code score to 9.5. The scores remain legacy illustrations; they do not establish a current calibration. ([decision](decisions/model-reference.md#operator-supplied-reference-rows-2026-09-29))
-
-## toolkit 0.13.2: 2026-09-29
-
-- **Global rules permit Sonnet.** The model-floor rule now bans only Haiku and allows explicit Claude model selections, including the Sonnet 5.5 CI watcher. The adoption example and usage page match the rule. ([decision](decisions/adopt-global-rules.md#remove-the-sonnet-ban-retain-the-haiku-ban-2026-09-29))
