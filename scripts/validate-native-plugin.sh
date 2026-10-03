@@ -239,6 +239,7 @@ model-reference
 qa-sweep
 receiving-code-review
 self-audit
+session-messaging
 systematic-debugging
 test-driven-development
 test-quality-review

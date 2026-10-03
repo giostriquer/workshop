@@ -46,6 +46,7 @@ you want them, and skip to keep sessions lean.
 | A multi-ticket epic whose lanes other sessions implement | [epic-orchestration](epic-orchestration.md) |
 | Implementing a lane dispatched through epic-orchestration | [epic-implementation](epic-implementation.md) |
 | Auditing a lane dispatched through epic-orchestration | [epic-auditor](epic-auditor.md) |
+| Asking or telling another Claude Code or Codex session on this machine | [session-messaging](session-messaging.md) |
 | Cleaning up a repo's stale worktrees, branches, caches or processes, or an epic's leftovers, when you ask | [epic-cleanup](epic-cleanup.md) |
 | Looking back at how the process itself ran | [self-audit](self-audit.md) |
 
