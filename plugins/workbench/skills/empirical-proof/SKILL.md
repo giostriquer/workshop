@@ -97,6 +97,15 @@ failures before attributing a defect.
 
 ## Keep evidence proportional to the claim
 
+When the claim is about performance, identify the revision and realistic
+workload/configurations, verify completed correct work and errors, and report
+repetitions and spread for comparisons. Observe the limiter or name the gap;
+separate microbenchmarks from end-to-end results. Confounded or incomplete
+measurements cannot establish a winner. An explicitly requested one-run
+ballpark can remain one validated observation. If available,
+`toolkit:benchmark-checklist` supplies the fuller procedure; this guidance
+works without Toolkit and does not expand the authorized experiment budget.
+
 Use tool exchanges, terminal output, inspected screenshots, recordings, logs,
 or side-effect readback. Native session evidence can suffice; save artifacts
 in the scope's scratch folder for handoffs or shareable reports. A video is

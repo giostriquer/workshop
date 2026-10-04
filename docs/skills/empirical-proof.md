@@ -59,6 +59,13 @@ A failed result stays visible when an authorized repair and new check follow.
 
 ## Common questions
 
+For performance claims, evidence includes workload and configurations, completed
+correct work and failures, repetitions and spread, and the limiter or uncertainty.
+Microbenchmarks do not establish the end-to-end improvement. A requested
+ballpark may remain one validated run. When installed,
+[benchmark-checklist](benchmark-checklist.md) supplies the full procedure;
+Workbench does not require Toolkit or a larger experiment to report a gap.
+
 **Does this work for native apps?**
 Yes. Use available native app/computer tools or existing project automation.
 Mobile checks can use a simulator, emulator, or device. State which platform

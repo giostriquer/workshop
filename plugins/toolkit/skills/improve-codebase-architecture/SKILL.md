@@ -13,7 +13,7 @@ The skills this command loads ship beside it in the toolkit plugin: `toolkit:cod
 This command is _informed_ by the project's domain model and built on a shared design vocabulary:
 
 - Load `toolkit:codebase-design` for the architecture vocabulary (**module**, **interface**, **depth**, **seam**, **adapter**, **leverage**, **locality**) and its principles (the deletion test, "the interface is the test surface", "one adapter = hypothetical seam, two = real"). Use these terms exactly in every suggestion, and don't drift into "component," "service," "API," or "boundary."
-- The domain language in `CONTEXT.md` gives names to good seams; ADRs (in `docs/adr/`, or wherever the repo keeps its decision records) record decisions this command should not re-litigate.
+- The domain glossary gives names to good seams; ADRs (in `docs/adr/`, or wherever the repo keeps its decision records) record decisions this command should not re-litigate.
 
 ## Process
 
@@ -24,7 +24,11 @@ This command is _informed_ by the project's domain model and built on a shared d
 - If the user named a direction (a module, a subsystem, a pain point), take it, and skip the inference below.
 - Otherwise, walk back a good stretch of the commit history (`git log --oneline`) to find the codebase's hot spots, the files and areas that keep coming up, and let those paths pull your attention first. If the changes are scattered with no clear hot spot, widen the net.
 
-Read the project's domain glossary (`CONTEXT.md`) and any ADRs in the area you're touching first.
+Read the project's domain glossary and any ADRs in the area you're touching
+first. Use the shared [glossary lookup](../domain-modeling/CONTEXT-FORMAT.md#locate-the-glossary)
+to follow repo pointers and either `GLOSSARY` or legacy `CONTEXT` files/maps.
+Carry the resolved path into exploration briefs. Reading vocabulary does not
+invoke active domain modeling or create missing files.
 
 Then walk the codebase, through an exploration sub-agent where the host has one. Don't follow rigid heuristics; explore organically and note where you experience friction:
 
@@ -35,12 +39,19 @@ Then walk the codebase, through an exploration sub-agent where the host has one.
 - Where are modules split by execution order (load, validate, transform, save), each re-handling the same data and its invariants?
 - Where does the same workaround recur across unrelated callers, or do types need escape hatches (`any`, casts, optional fields that are always set) to compile?
 - Which parts of the codebase are untested, or hard to test through their current interface?
+- Where do the partial-context risks from `codebase-design` appear: split state ownership, equivalent competing paths, reachable internals, or hand-synchronized lists? Trace the mistaken edit each permits and any compatibility contract the remedy must preserve.
 
 Apply the **deletion test** to anything you suspect is shallow: would deleting it concentrate complexity, or just move it? A "yes, concentrates" is the signal you want.
 
 **Evidence.** Read the code, not the file names. Each candidate rests on a traced path: the entry point, the modules the call passes through, and the call sites the deletion test counted, cited as `file:line`. Name any part you couldn't trace as a gap instead of filling it with a guess.
 
 **Screen before presenting.** Check each candidate's proposed deepening against the same tells: one that adds a pass-through, splits by execution order, or carries a transport type through the new interface is not a deepening; revise or drop it. A deep call chain is not a deep module: depth concentrates behaviour behind one interface, a chain scatters it across modules. A few special cases don't make a candidate; complexity in the data is not complexity in the design.
+
+For a recurring-mistake candidate, explain in its Solution and Benefits how
+ownership, visibility, or an existing check prevents the traced mistake. Keep
+required compatibility and distinct adapters. Name a possible negative and
+positive verification case in Gaps until exercised; a survey proposes checks,
+it does not claim implementation or proof.
 
 ### 2. Present candidates as an HTML report
 
@@ -60,7 +71,7 @@ For each candidate, render a card with:
 
 End the report with a **Top recommendation** section: which candidate you'd tackle first and why.
 
-**Use CONTEXT.md vocabulary for the domain, and the `codebase-design` vocabulary for the architecture.** If `CONTEXT.md` defines "Order," talk about "the Order intake module," not "the FooBarHandler," and not "the Order service."
+**Use the resolved glossary's vocabulary for the domain, and the `codebase-design` vocabulary for the architecture.** If it defines "Order," talk about "the Order intake module," not "the FooBarHandler," and not "the Order service."
 
 **ADR conflicts**: if a candidate contradicts an existing ADR, only surface it when the friction is real enough to warrant revisiting the ADR. Mark it clearly in the card (e.g. a warning callout: _"contradicts ADR-0007, but worth reopening because…"_). Don't list every theoretical refactor an ADR forbids.
 
@@ -74,7 +85,7 @@ Once the user picks a candidate, load `toolkit:grilling` to walk the decision tr
 
 Side effects happen inline as decisions crystallize; load `toolkit:domain-modeling` to keep the domain model current as you go:
 
-- **Naming a deepened module after a concept not in `CONTEXT.md`?** Add the term to `CONTEXT.md`. Create the file lazily if it doesn't exist.
-- **Sharpening a fuzzy term during the conversation?** Update `CONTEXT.md` right there.
+- **Naming a deepened module after a concept not in the glossary?** Add the resolved term to the same selected glossary. Create it lazily if it doesn't exist.
+- **Sharpening a fuzzy term during the conversation?** Update that glossary right there.
 - **User rejects the candidate with a load-bearing reason?** Offer an ADR, framed as: _"Want me to record this as an ADR so future architecture reviews don't re-suggest it?"_ Only offer when the reason would actually be needed by a future explorer to avoid re-suggesting the same thing; skip ephemeral reasons ("not worth it right now") and self-evident ones.
 - **Want to explore alternative interfaces for the deepened module?** Use the design-it-twice pattern in `toolkit:codebase-design` (its `DESIGN-IT-TWICE.md`).

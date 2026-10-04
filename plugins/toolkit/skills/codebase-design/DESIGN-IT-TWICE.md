@@ -27,7 +27,15 @@ Prompt each sub-agent with a separate technical brief (file paths, coupling deta
 - Agent 3: "Optimise for the most common caller: make the default case trivial."
 - Agent 4 (if applicable): "Design around ports & adapters for cross-seam dependencies."
 
-Include both [SKILL.md](SKILL.md) vocabulary and CONTEXT.md vocabulary in the brief so each sub-agent names things consistently with the architecture language and the project's domain language. Tell each one to produce the strongest design its constraint allows and not to hedge toward the others: the differences between designs are what the comparison runs on, and a second flavour of one shape adds nothing.
+Include both [SKILL.md](SKILL.md) vocabulary and the project's domain vocabulary
+in each brief. Reuse the glossary path already resolved by the caller; otherwise
+follow the shared [glossary lookup](../domain-modeling/CONTEXT-FORMAT.md#locate-the-glossary).
+Pass the exact selected path, or its absence, so each sub-agent uses the same
+`GLOSSARY.md`, legacy `CONTEXT.md`, or repo-specific location. A design exercise
+does not create a glossary. Tell each agent to produce the strongest design its
+constraint allows and not to hedge toward the others: the differences between
+designs are what the comparison runs on, and a second flavour of one shape adds
+nothing.
 
 Each sub-agent outputs:
 
@@ -36,9 +44,10 @@ Each sub-agent outputs:
 3. What the implementation hides behind the seam
 4. Dependency strategy and adapters (see [DEEPENING.md](DEEPENING.md))
 5. Trade-offs: where leverage is high, where it's thin
+6. One plausible mistaken local edit, the ownership/interface/check that prevents it, and how to verify rejection while preserving valid callers; label proposed checks as unrun
 
 ### 3. Present and compare
 
-Present designs sequentially so the user can absorb each one, then compare them in prose. Contrast by **depth** (leverage at the interface), **locality** (where change concentrates), and **seam placement**.
+Present designs sequentially so the user can absorb each one, then compare them in prose. Contrast by **depth** (leverage at the interface), **locality** (where change concentrates), **seam placement**, and whether a contributor with partial context can preserve the contract. Apply the four checks in `codebase-design`'s partial-context section; preserve required compatibility and distinct adapters.
 
 After comparing, give your own recommendation: which design you think is strongest and why. If elements from different designs would combine well, propose a hybrid. Be opinionated: the user wants a strong read, not a menu.

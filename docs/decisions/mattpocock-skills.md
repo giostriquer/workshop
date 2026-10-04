@@ -172,3 +172,51 @@ absent from the model-visible list and the three dependencies present.
 Flipping `grill-me`'s sidecar to `allow_implicit_invocation: true` made it
 appear. Codex behavior itself was not probed, nor were Cursor, Antigravity and
 OpenCode.
+
+## Agent contributions with partial context (2026-10-04)
+
+The approved update from pstack 0.15.9 at `e43c7ee` adds split state ownership,
+equivalent competing paths, importable internals, and hand-synchronized lists
+to the architecture survey and candidate screening. `codebase-design` owns
+the detailed vocabulary; design-it-twice compares how a plausible local edit
+stays correct across the whole module. Each candidate identifies an enforcing
+mechanism and a way to check it, without claiming that a sketch was executed.
+
+The port preserves required compatibility, distinct adapters, and legitimate
+replicas with explicit ownership. It does not turn every alternative path
+into a deletion order. Workbench carries a concise independent review check
+because Toolkit is optional. Source and behavioral checks are distinct.
+
+## Glossary compatibility and source tracking (2026-10-04)
+
+The approved review compares the original `c55ee46073ed923f86ce59a5eb3b6d895095d1b7`
+baseline with `d81f3a183412e71a5b1e84ca21bc1a35eea03a60`. Across the five
+ported skills, eleven source files are unchanged and four differ only in
+the `CONTEXT` to `GLOSSARY` naming convention, including the format-file
+rename. The upstream manifest still says `1.2.3`; a merge from a branch named
+`release/v1.3` does not prove that version was published.
+
+Toolkit accepts both conventions. Repository instructions choose the location
+first, existing maps and glossaries are reused, and a new unconfigured repo
+defaults to `GLOSSARY.md`. Ambiguous competing files require a location decision
+before writing. No automatic rename, merge, or second glossary is authorized.
+The existing `CONTEXT-FORMAT.md` owns this lookup contract for domain modeling,
+architecture surveys, and design briefs; its filename remains stable for links.
+
+The repo-local drift checker gains a Matt Pocock manifest, with the five carried
+skills, explicit reviewed exclusions, and the exact source pin. Branch tracking
+is deliberate: the adopted baseline and reviewed changes postdate the latest
+published tag. Unreviewed skills remain unmapped so later changes surface.
+`retro`, `pr`, and `implement-spec` were promoted upstream, but their concerns
+already have local owners with different authority and delivery contracts.
+No new workflow skill is imported.
+
+Validation used fresh Astra contexts before and after the glossary change.
+The baseline followed the old filename literally and proposed a parallel
+`CONTEXT.md` for a new-name glossary or map. Ten post-change synthetic cases
+preserved both naming conventions, followed mixed map paths and explicit repo
+pointers, surfaced competing owners, and kept read-only surveys from creating
+files. These are bounded response probes, not live host or reliability proof.
+The real drift checker ran against a fetched upstream clone: the reviewed pin
+was current, and replaying the original baseline produced three adopted review
+blocks, 21 excluded changed paths, and no unmapped paths in that range.

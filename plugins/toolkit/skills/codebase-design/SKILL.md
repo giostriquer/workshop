@@ -64,6 +64,26 @@ When designing an interface, ask:
 - **The interface is the test surface.** Callers and tests cross the same seam. If you want to test *past* the interface, the module is probably the wrong shape.
 - **One adapter means a hypothetical seam. Two adapters means a real one.** Don't introduce a seam unless something actually varies across it.
 
+## Designing for contributors with partial context
+
+An agent may see one file, copy the nearest example, and choose the shortest
+path that compiles. Prefer a module where that local change preserves the
+whole contract. Check:
+
+- **Split ownership:** independently writable copies of the same state let
+  rules diverge. Give the invariant one authoritative owner; replicas and
+  caches need an explicit synchronization contract.
+- **Equivalent competing paths:** callers keep copying both. Converge on one
+  supported path while preserving required compatibility and distinct adapters.
+- **Reachable internals:** a private convention does not stop an import. Use
+  exports, visibility, or dependency checks to enforce the intended interface.
+- **Hand-synchronized lists:** derive views from one source of truth, or make
+  the existing build/check reject disagreement when derivation is impractical.
+
+Name the plausible mistaken edit and what would reject it or make it unnecessary.
+These are evidence prompts, not blanket deletion rules. Keep a distinct path
+when a real use case or compatibility contract requires it.
+
 ## Designing for testability
 
 Good interfaces make testing natural:

@@ -35,13 +35,14 @@ structure resists self-flattery rather than trusting the session not to.
   reported, no edit; *clean* → one line. Without the split, every retrospective
   becomes "the skill should have made me do it."
 - **The conversion rule** keeps the split honest the other way: an instruction
-  the session *reliably* misses is a wording defect, not a discipline defect.
-  Repeated misses move from *session defect* to *process defect*.
+  the session *reliably* misses merits investigating a process remedy.
+  Repeated misses move from *session defect* to *process defect*; the remedy
+  may be structural enforcement or wording.
 - **A bar, and a no-findings out.** A proposal survives only if the change
   would have altered this session or the next of its shape. A clean result is
   reported as clean; padding is barred explicitly.
 - **Named target, named edit shape**: one piece (or *the absence of one*) and
-  one of: wording, gate, boundary, new, delete. "Clarify the handoff" is not a
+  one of: wording, gate, boundary, enforcement, new, delete. "Clarify the handoff" is not a
   proposal; the replacement sentence is.
 - **Observation window stated first**, so a compacted session cannot be
   reconstructed from the artifacts it left behind.
@@ -150,3 +151,13 @@ the same change.
 ## Reachable on an explicit request (2026-09-24)
 
 `self-audit` drops `disable-model-invocation`, and its Codex sidecar sets `policy.allow_implicit_invocation: true`; the description now fires only on the user's explicit ask for a look back at how the process ran, never on the session's own initiative. A 30-day usage audit found the user asks for retrospectives in plain words (six transcript analyses in fourteen days) and never types the slash command, so a hidden skill fired about once in thirty days across both hosts. Both hosts now behave the same way. A routing probe (Opus 5.5, fresh context, the shipped skills' descriptions, three reps per message) sent two plain-words retrospective asks to `self-audit` 6 of 6 times and an unrelated fix and a closing "PR is merged" to it 0 of 6 times: bounded regression evidence.
+
+## Structural remedies for repeated misses (2026-10-04)
+
+Repeated misses become a process defect to investigate, not automatically a
+wording defect. The report names the smallest effective owner, interface, or
+enforcement change when the trace supports it; judgment-dependent fixes may
+still belong in prose. The observation window, report-only boundary, and
+separation from auditing product code remain unchanged. A repository prevention
+request can use `toolkit:correct` separately; self-audit does not invoke it or
+expand transcript mining on its own.

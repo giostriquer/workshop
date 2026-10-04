@@ -1,0 +1,141 @@
+{
+  "system": "mattpocock-adaptations",
+  "description": "Five carried skills and explicitly reviewed exclusions. Unreviewed skills remain unmapped so future changes surface.",
+  "upstream": {
+    "repo": "https://github.com/mattpocock/skills",
+    "ref": "main",
+    "track": "branch",
+    "license": "MIT",
+    "author": "Matt Pocock",
+    "watchPaths": [
+      "skills"
+    ],
+    "trackingNote": "The original adaptation and approved source review postdate the latest published tag. Track the source branch explicitly; plugin manifest version and published release are separate facts.",
+    "lastReviewed": {
+      "commit": "d81f3a183412e71a5b1e84ca21bc1a35eea03a60",
+      "version": "1.2.3",
+      "date": "2026-10-04",
+      "baseline": "c55ee46073ed923f86ce59a5eb3b6d895095d1b7",
+      "latestPublishedRelease": "v1.2.3",
+      "note": "Reviewed all 25 changed skill paths in the 21-commit range, including promotions and removals. The four changed files among the five carried skills are glossary naming changes only. This pin does not assert a full audit of unchanged upstream skills or publication of v1.3."
+    }
+  },
+  "adaptationFilter": "Preserve host parity, Toolkit-qualified dependencies, repo-specific conventions, explicit user authority, independent Workbench operation, and the local pstack improvements. No automatic migrations, imports, cleanup, or publication.",
+  "pieces": [
+    {
+      "upstreamPath": "skills/productivity/grill-me/",
+      "localPath": "plugins/toolkit/skills/grill-me/",
+      "disposition": "adopted",
+      "why": "Explicit interview entry point.",
+      "adaptations": "Preserve user-only invocation and Codex policy; load the Toolkit dependency by its namespaced name."
+    },
+    {
+      "upstreamPath": "skills/productivity/grilling/",
+      "localPath": "plugins/toolkit/skills/grilling/",
+      "disposition": "adopted",
+      "why": "Round-based design-tree interviews.",
+      "adaptations": "Host-neutral fact lookup; preserve the distinction from Workbench brainstorming."
+    },
+    {
+      "upstreamPath": "skills/engineering/codebase-design/",
+      "localPath": "plugins/toolkit/skills/codebase-design/",
+      "disposition": "adopted",
+      "why": "Deep-module vocabulary and independent interface alternatives.",
+      "adaptations": "Keep pstack evidence and partial-context checks, usage-first designs, sequential fallback, and shared glossary lookup with legacy compatibility."
+    },
+    {
+      "upstreamPath": "skills/engineering/domain-modeling/",
+      "localPath": "plugins/toolkit/skills/domain-modeling/",
+      "disposition": "adopted",
+      "why": "Resolve domain language and capture consequential decisions.",
+      "adaptations": "Respect repo glossary and ADR locations; support GLOSSARY and CONTEXT files/maps without migration. Keep CONTEXT-FORMAT.md as the shared lookup and format reference."
+    },
+    {
+      "upstreamPath": "skills/engineering/improve-codebase-architecture/",
+      "localPath": "plugins/toolkit/skills/improve-codebase-architecture/",
+      "disposition": "adopted",
+      "why": "Evidence-grounded architecture surveys and candidate exploration.",
+      "adaptations": "Preserve Toolkit dependency names, offline script-free HTML, file:line evidence, gaps, pstack screening, and shared glossary lookup; no implementation during the survey."
+    },
+    {
+      "upstreamPath": "skills/engineering/ask-matt/",
+      "disposition": "dropped",
+      "why": "Upstream routing and default retro do not replace Workshop routing or explicit retrospective triggers."
+    },
+    {
+      "upstreamPath": "skills/engineering/diagnosing-bugs/",
+      "disposition": "dropped",
+      "why": "The reviewed change only renames glossary references; local systematic-debugging remains the owner."
+    },
+    {
+      "upstreamPath": "skills/engineering/implement-spec/",
+      "disposition": "dropped",
+      "why": "Parallel task execution already has local owners; do not import automatic worktree reset, early draft PR, or cleanup authority."
+    },
+    {
+      "upstreamPath": "skills/engineering/pr/",
+      "disposition": "dropped",
+      "why": "Keep file-pr evidence, visuals, and repository-template preservation; do not import a fixed PR body."
+    },
+    {
+      "upstreamPath": "skills/engineering/retro/",
+      "disposition": "dropped",
+      "why": "Promotion leaves the baseline skill text unchanged. Correct and self-audit own the relevant local prevention and retrospective scopes."
+    },
+    {
+      "upstreamPath": "skills/engineering/resolving-merge-conflicts/",
+      "disposition": "dropped",
+      "why": "Removed upstream; file-pr already owns conflict resolution within settled contracts."
+    },
+    {
+      "upstreamPath": "skills/engineering/setup-matt-pocock-skills/",
+      "disposition": "dropped",
+      "why": "No hard dependency from the carried entry points; local glossary discovery works without upstream setup."
+    },
+    {
+      "upstreamPath": "skills/engineering/tdd/",
+      "disposition": "dropped",
+      "why": "The reviewed change only renames glossary references; keep the existing Workbench TDD adaptation."
+    },
+    {
+      "upstreamPath": "skills/engineering/triage/",
+      "disposition": "dropped",
+      "why": "The reviewed change only renames glossary references in a workflow outside the port."
+    },
+    {
+      "upstreamPath": "skills/productivity/wait-what/",
+      "disposition": "dropped",
+      "why": "The reviewed change only renames glossary references; no additional corrective-conversation command."
+    },
+    {
+      "upstreamPath": "skills/in-progress/implement-spec/",
+      "disposition": "dropped",
+      "why": "Former path of the promoted skill; same exclusion as its engineering path."
+    },
+    {
+      "upstreamPath": "skills/in-progress/pr/",
+      "disposition": "dropped",
+      "why": "Former path of the promoted skill; same exclusion as its engineering path."
+    },
+    {
+      "upstreamPath": "skills/in-progress/retro/",
+      "disposition": "dropped",
+      "why": "Former path of the promoted skill; same exclusion as its engineering path."
+    },
+    {
+      "upstreamPath": "skills/engineering/README.md",
+      "disposition": "dropped",
+      "why": "Upstream catalog only; local catalogs describe local skills."
+    },
+    {
+      "upstreamPath": "skills/productivity/README.md",
+      "disposition": "dropped",
+      "why": "Upstream catalog only; local catalogs describe local skills."
+    },
+    {
+      "upstreamPath": "skills/in-progress/README.md",
+      "disposition": "dropped",
+      "why": "Upstream promotion inventory only; no broad exclusion of future in-progress skills."
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+interface:
+  display_name: "Benchmark Checklist"
+  short_description: "Check the evidence behind performance numbers"
+
+policy:
+  allow_implicit_invocation: true

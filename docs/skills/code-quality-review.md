@@ -22,6 +22,13 @@ Mostly you don't: it fires at completion, right before PR-or-merge. You can also
 
 ## The rubric
 
+Ownership review includes the mistakes a contributor with partial context can
+introduce: independent writers, equivalent competing paths, reachable internals,
+and lists kept synchronized by hand. Findings need a concrete consequence in
+the accepted change and preserve required compatibility and distinct adapters.
+At external inputs, review favors an existing schema that validates the entire
+claimed type over casts or partial predicates; no library is mandated.
+
 The baseline is a deep audit that restructures the change without altering behavior: **"Be extremely thorough and rigorous. Measure twice, cut once."** On top sit nine standards. Rule 0 is ambition: delete complexity rather than rearrange it. Rules 1 to 7 fight a file pushed past 1,000 lines, ad-hoc branches bolted into unrelated flows, rubber-stamped "it works" code, magic and thin wrappers, loose types and silent fallbacks, logic in the wrong layer or duplicated helpers, and needless sequential or non-atomic orchestration. Rule 8 reports what the [comment trim](trim-comments.md) left: comments your repo's rules say to remove, a lint or type suppression that hides a correctness rule, and a "do not remove" comment a test, type, or lint could enforce.
 
 **Scope decides what a finding costs** ([decision](../decisions/workbench-operator-decisions.md)). Strictness applies inside the accepted work (ticket, plan, or agreed change), which the dispatch hands the reviewer as its accepted scope, and every finding carries a label:

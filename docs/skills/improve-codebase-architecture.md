@@ -40,14 +40,20 @@ Neighbours it is easy to confuse with:
 ## Prerequisites and side effects
 
 None to run it. With no direction given, it reads recent commit history and
-weights the scan toward files that keep changing. It reads `CONTEXT.md` and
-the repo's ADRs (in `docs/adr/`, or wherever the repo keeps decision records)
+weights the scan toward files that keep changing. It reads the repo's glossary
+and ADRs (in `docs/adr/`, or wherever the repo keeps decision records)
 when they exist, and names candidates in your domain's own nouns.
+
+Glossary lookup follows repository pointers, existing `GLOSSARY-MAP.md` or
+`CONTEXT-MAP.md` maps, and either `GLOSSARY.md` or `CONTEXT.md`. It keeps existing
+names and asks when competing sources have no clear owner. Exploration briefs
+carry the resolved path; the read-only survey creates no glossary.
 
 It writes in two places. The report goes to
 `<tmpdir>/architecture-review-<timestamp>.html`, outside the repo. During the
-grilling loop it adds or sharpens terms in `CONTEXT.md` (creating it if
-needed) and offers to record a rejected candidate as an ADR, so a later run
+grilling loop it adds or sharpens terms in that same glossary (creating it lazily
+if needed; `GLOSSARY.md` by default for a new unconfigured repo) and offers to
+record a rejected candidate as an ADR, so a later run
 does not suggest it again.
 
 ## The report
@@ -70,6 +76,11 @@ It opens in dark mode.
 Candidates are screened before they reach the report: a proposed deepening
 that adds a pass-through, splits a module by execution order, or passes a
 transport type through its new interface is revised or dropped.
+
+The survey also traces split ownership, equivalent competing paths, reachable
+internals, and hand-synchronized lists. A recurring-mistake candidate explains
+the prevention mechanism in Solution and Benefits, preserves required
+compatibility, and names unrun negative and positive checks in Gaps.
 
 ## Common questions
 

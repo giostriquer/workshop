@@ -315,3 +315,21 @@ phase B:
   (`.claude/skills/`: repo-only tooling, not shipped; operator call).
 - [ ] **D: cutover**: operator sign-off, commit, install everywhere, uninstall
   superpowers.
+
+## pstack drift alongside Superpowers (2026-10-04)
+
+The existing deterministic checker already accepts a manifest and supports an
+explicit branch-tracking policy. The approved pstack integration therefore adds
+`pstack-manifest.json` beside the Superpowers manifest and extends the repo-local
+skill's source selection; it adds no second checker or shipped maintenance skill.
+The initial record pins source commit `e43c7ee` and plugin version 0.15.9 after
+reviewing the 21 changed pstack files since `12d587d`, plus recorded pins for
+existing ports. Source version is not marketplace release proof.
+
+Superpowers keeps release-tag tracking. pstack has no release tags at review,
+so its explicit branch policy records a commit and manifest version. Entries map
+carried material and reviewed exclusions. Other unchanged older skills stay
+unmapped and surface if they change; there is no catch-all dropped skill entry.
+Caches stay in ignored repository-local storage. Review pins advance only after
+all changed watched paths have dispositions; applying approved adaptations and
+shipping them are separate facts.

@@ -28,9 +28,18 @@ dependencies into four categories (in-process, local-substitutable, remote but
 owned, true external), which decide how the deepened module is tested.
 `DESIGN-IT-TWICE.md` has several sub-agents design radically different
 interfaces for one module, usage first, and then compares them on depth,
-locality, and seam placement.
+locality, and seam placement. Every design brief carries the same resolved
+domain-glossary path, following repo guidance and either `GLOSSARY.md` or legacy
+`CONTEXT.md` conventions; the design exercise creates no glossary.
 
 ## When to reach for it
+
+The partial-context checks ask whether an agent can make a locally plausible
+edit that breaks the wider contract. They cover split ownership, equivalent
+competing paths, reachable internals, and hand-synchronized lists. A design
+names the mistake and the mechanism that prevents it, while preserving real
+compatibility and distinct adapters. Design-it-twice includes a proposed
+negative and positive check; a sketch does not claim those checks ran.
 
 It is model-invocable: the agent loads it when you design or reshape a
 module's interface, argue about where a seam goes, or judge whether an

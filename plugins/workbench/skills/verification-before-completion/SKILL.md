@@ -56,6 +56,13 @@ Use focused local checks and required local gates. Full suites normally run in P
 | Regression test works | Red-green cycle verified | Test passes once |
 | Agent completed | Inspect VCS diff and corroborate acceptance evidence | Agent reports "success" |
 | Requirements met | Line-by-line checklist | Tests passing |
+| Measured performance improvement or option comparison | Revision, workload/configurations, completed correct work and error counts, repeated comparable runs with spread, and an observed limiter or explicit uncertainty | One fast run, scheduling time reported as completion, fast errors, unequal tuning, or a micro result promoted to end-to-end |
+
+For performance claims, report only the comparison the evidence supports.
+Unchecked work or correctness and confounded comparisons are inconclusive.
+An unknown cause limits causal and adoption claims. A requested one-run
+ballpark may report a validated observation labeled as one run. This floor
+does not require Toolkit, profiling, or a benchmark campaign for unrelated work.
 
 ## Red Flags - STOP
 

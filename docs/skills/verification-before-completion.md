@@ -51,6 +51,11 @@ the required local gates. Full suites normally run in PR CI.
 | Regression test works | Verified red-green cycle | Test passes once |
 | Agent completed | Diff inspected, acceptance evidence corroborated | Agent says "success" |
 | Requirements met | Line-by-line checklist | Tests passing |
+| Measured performance comparison | Revision, workload/configuration, completed correct work, errors, repetitions/spread, limiter or uncertainty | Fast errors, scheduling-only timing, unequal tuning, or a micro result claimed for the whole operation |
+
+Confounded or incomplete comparisons are inconclusive. An explicitly requested
+one-run ballpark can report a validated observation labeled as one run. Missing
+evidence limits the claim; it does not require a benchmark campaign or Toolkit.
 
 To prove a regression test, use a disposable checkout. Remove only the fix,
 watch the intended assertion fail, then restore the fix and watch it pass.

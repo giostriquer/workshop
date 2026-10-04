@@ -99,3 +99,14 @@ Plan-only micro-tests, fresh Opus contexts (`claude -p`, customizations off, no 
 | Library fix, no app: adds a running-app label or a launch | not run | 0 of 3 | 0 of 3 |
 
 Without the skill, seven of eight openings stated the fix as fact ("Fixed: the header now sits below the toolbar") and disclosed the unchecked app further down, the audit's failure shape. With the 0.41.6 wording loaded, Opus already disclosed the gap every time; this wording moves the label into the opening and makes a seen-in-build claim cite its evidence. Nothing stopped, asked permission, or labeled a change with no app. Offers to launch the app fell from 3 of 8 to 0 of 8; the skill's line offering `empirical-proof` is unchanged. The audited sessions never loaded the skill, and its trigger is unchanged, so this row helps only where the skill loads. Codex sessions were not modeled. Three to five reps per arm is bounded regression evidence for these shapes, not a reliability estimate.
+
+## Performance claims (2026-10-04)
+
+The approved pstack 0.15.9 adaptation adds a small measurement contract to
+verification-before-completion and connects empirical proof to the optional
+Toolkit checklist. A performance comparison identifies revision, workload,
+configurations, completed correct work, repetitions and variation, and the
+observed limiter or uncertainty. An unsupported comparison is inconclusive;
+an explicitly requested ballpark can report a valid single run. This does not
+make empirical proof mandatory or give Workbench a Toolkit dependency. The
+full procedure and its source are recorded in `benchmark-checklist.md`.

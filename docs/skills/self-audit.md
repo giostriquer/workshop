@@ -46,14 +46,16 @@ dead end. "Skip nothing for being unflattering."
 | **Clean** | it worked, or nothing was owed | at most one line |
 
 An instruction the session misses more than once moves from session defect to
-process defect: the fix belongs in the text.
+process defect. Its remedy may be ownership, an interface, an executable check,
+or wording. The trace must support the proposal; repeated misses do not
+automatically justify more instructions or authorize repository edits.
 
 **4: Apply the bar.** A proposal survives only if it would have changed what
 happened here, or the next session of this shape. No findings is a legitimate
 result, never padded.
 
 **5: Name the target and shape.** One piece (or the absence of one) and one
-edit shape: **wording**, **gate**, **boundary**, **new**, or **delete**, with
+edit shape: **wording**, **gate**, **boundary**, **enforcement**, **new**, or **delete**, with
 the replacement text itself.
 
 **6: Report, close with the defect note, and stop.** Observation window

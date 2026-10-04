@@ -1,0 +1,158 @@
+{
+  "system": "pstack-adaptations",
+  "description": "Reviewed source adaptations across Toolkit, Workbench, and repo-local authoring. Unmapped older pieces are not silently classified; future changes surface for review.",
+  "upstream": {
+    "repo": "https://github.com/cursor/plugins",
+    "ref": "main",
+    "track": "branch",
+    "license": "MIT",
+    "author": "Lauren Tan",
+    "watchPaths": [
+      "pstack"
+    ],
+    "trackingNote": "No release tags were available at review. Track source commits explicitly and record the plugin manifest version; this is not marketplace publication proof.",
+    "lastReviewed": {
+      "commit": "e43c7ee26e0038c6c1fa8380dd34ce86ff94cb2a",
+      "version": "0.15.9",
+      "date": "2026-10-04",
+      "baseline": "12d587dfb20741cafc376c42c696c5f6e2a64487",
+      "note": "Reviewed 21 changed pstack files since the architecture baseline; checked recorded source pins for existing comment and verification ports. The operator approved the listed adaptations and exclusions. This pin does not assert a full audit of unchanged upstream skills."
+    }
+  },
+  "adaptationFilter": "Use conditional triggers, existing task authority, host-neutral tools, local evidence, and independent Workbench operation. Preserve user work, compatibility, same-reviewer closure, and local-only proof tooling.",
+  "pieces": [
+    {
+      "upstreamPath": "pstack/skills/architect/",
+      "localPath": "plugins/toolkit/skills/codebase-design/",
+      "disposition": "adopted",
+      "why": "Deep interfaces and safe changes with partial context.",
+      "adaptations": "Also informs improve-codebase-architecture and the independent Workbench code-quality rubric. Preserve compatibility and distinct adapters; no arena, model pins, or automatic implementation."
+    },
+    {
+      "upstreamPath": "pstack/skills/correct/",
+      "localPath": "plugins/toolkit/skills/correct/",
+      "disposition": "adopted",
+      "why": "Prevent evidenced recurring repository mistakes.",
+      "adaptations": "Explicit-request trigger, scoped plan or repair authority, distinct occurrences, isolated negative and positive proof. No automatic commits or global rule writes. Self-audit borrows the prevention choice but stays report-only."
+    },
+    {
+      "upstreamPath": "pstack/skills/benchmark-checklist/",
+      "localPath": "plugins/toolkit/skills/benchmark-checklist/",
+      "disposition": "adopted",
+      "why": "Validate performance comparisons.",
+      "adaptations": "Platform-aware tools, bounded experiments, observed-versus-causal claims, explicit ballpark path. Workbench keeps an independent minimal measurement floor."
+    },
+    {
+      "upstreamPath": "pstack/skills/principle-explain-the-number/",
+      "localPath": "plugins/toolkit/skills/benchmark-checklist/",
+      "disposition": "adopted",
+      "why": "Measured outputs must support the conclusion.",
+      "adaptations": "Folded into the checklist, Workbench verification, and repo-local writing-skills evaluation guidance. No standalone principle skill or mandatory benchmark campaign."
+    },
+    {
+      "upstreamPath": "pstack/skills/poteto-mode/playbooks/perf-issue.md",
+      "localPath": "plugins/toolkit/skills/benchmark-checklist/",
+      "disposition": "adopted",
+      "why": "Order optimization hypotheses from avoided work to cheaper execution.",
+      "adaptations": "Only the strategy order after a valid baseline; no poteto dispatcher or delegated performance workflow."
+    },
+    {
+      "upstreamPath": "pstack/skills/typescript-best-practices/references/patterns.md",
+      "localPath": "plugins/workbench/skills/code-quality-review/",
+      "disposition": "adopted",
+      "why": "External input validation must prove the whole declared shape.",
+      "adaptations": "Adapt the schema-backed type principle, not the Zod-specific examples or a new dependency."
+    },
+    {
+      "upstreamPath": "pstack/skills/no-comments/",
+      "localPath": "plugins/workbench/skills/trim-comments/",
+      "disposition": "adopted",
+      "why": "Comment keep-list, constraint encodings, and suppression checks.",
+      "adaptations": "Preserve the local comment-only scope and approval rules in docs/decisions/trim-comments.md."
+    },
+    {
+      "upstreamPath": "pstack/agents/comment-sicko.md",
+      "localPath": "plugins/workbench/skills/trim-comments/",
+      "disposition": "adopted",
+      "why": "Comment keep-list and suppression checks.",
+      "adaptations": "No persona or default deletion of all comments; the local comment-trimmer applies the shared rubric."
+    },
+    {
+      "upstreamPath": "pstack/skills/create-verification-skill/",
+      "localPath": "plugins/workbench/skills/empirical-proof/",
+      "disposition": "adopted",
+      "why": "Real artifact launch, drive, and evidence concepts.",
+      "adaptations": "Also informs toolkit web-demo-video; no generated project verification skill or fixed feature map."
+    },
+    {
+      "upstreamPath": "pstack/skills/maintain-verification-skill/",
+      "localPath": "plugins/workbench/skills/empirical-proof/",
+      "disposition": "adopted",
+      "why": "Keep verification tied to current behavior.",
+      "adaptations": "Surface-aware proof, not a parallel maintenance campaign."
+    },
+    {
+      "upstreamPath": "pstack/skills/reflect/",
+      "localPath": "plugins/workbench/skills/self-audit/",
+      "disposition": "adopted",
+      "why": "Content-confirmed transcripts treated as untrusted evidence.",
+      "adaptations": "Single-session process retrospective plus named sessions; no automatic edits, publishing, or broad transcript mining."
+    },
+    {
+      "upstreamPath": "pstack/skills/interrogate/",
+      "localPath": "plugins/workbench/skills/code-quality-review/",
+      "disposition": "adopted",
+      "why": "Pass accepted scope before independent review.",
+      "adaptations": "Keep local review authority, same-reviewer corrections, and model routing."
+    },
+    {
+      "upstreamPath": "pstack/skills/how/references/explorer-prompt.md",
+      "localPath": "plugins/toolkit/skills/improve-codebase-architecture/",
+      "disposition": "adopted",
+      "why": "Trace actual code paths and name gaps.",
+      "adaptations": "Borrow evidence grounding only; no how skill or host-specific investigators."
+    },
+    {
+      "upstreamPath": "pstack/skills/principle-exhaust-the-design-space/",
+      "localPath": "plugins/toolkit/skills/codebase-design/DESIGN-IT-TWICE.md",
+      "disposition": "adopted",
+      "why": "Compare structurally distinct interfaces.",
+      "adaptations": "Usage-first candidate designs with host-neutral delegation and sequential fallback."
+    },
+    {
+      "upstreamPath": "pstack/skills/poteto-mode/",
+      "disposition": "dropped",
+      "why": "Dispatcher, fresh-agent fix rounds, hourly loops, automatic pushes, PR template and stack mechanics remain outside the local contracts. The perf-issue leaf has its own narrower adoption."
+    },
+    {
+      "upstreamPath": "pstack/agents/poteto-agent.md",
+      "disposition": "dropped",
+      "why": "Keep Workshop routing and reviewer continuity."
+    },
+    {
+      "upstreamPath": "pstack/skills/swarm/",
+      "disposition": "dropped",
+      "why": "Keep existing local delegation contracts; the reviewed retry-to-respawn edit is not adopted."
+    },
+    {
+      "upstreamPath": "pstack/skills/technical-writing/",
+      "disposition": "dropped",
+      "why": "The reviewed source-label removals do not change carried guidance."
+    },
+    {
+      "upstreamPath": "pstack/docs/",
+      "disposition": "dropped",
+      "why": "Upstream usage docs are informational; local usage pages follow local specs."
+    },
+    {
+      "upstreamPath": "pstack/README.md",
+      "disposition": "dropped",
+      "why": "Catalog changes are reflected through the mapped skills, not a mirrored upstream README."
+    },
+    {
+      "upstreamPath": "pstack/.cursor-plugin/",
+      "disposition": "dropped",
+      "why": "Upstream registration is not portable; read its version when recording the reviewed source snapshot."
+    }
+  ]
+}

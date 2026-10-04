@@ -9,6 +9,19 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-12 reformat.
 
 
+## toolkit 0.15.0: 2026-10-04
+
+- **Prevent recurring mistakes with `correct`.** Trace repeated repository mistakes to their cause, then use ownership, interfaces, types, checks, or behavioral tests to prevent recurrence. Plans stay read-only; authorized repairs require evidence that the check rejects the mistake and accepts valid work. ([decision](decisions/correct.md))
+- **Check performance claims with `benchmark-checklist`.** Validate completed correct work, comparable configurations, repeated runs and variation before drawing conclusions. A requested one-run ballpark stays a labeled observation, and an unknown cause limits causal claims. ([decision](decisions/benchmark-checklist.md))
+- **Design for contributors with partial context.** Architecture surveys and alternative designs check split ownership, equivalent competing paths, reachable internals, and hand-synchronized lists while preserving legitimate compatibility. ([decision](decisions/mattpocock-skills.md#agent-contributions-with-partial-context-2026-10-04))
+- **Reuse either glossary convention.** Domain modeling, architecture surveys, and design briefs share one lookup rule for `GLOSSARY.md`, legacy `CONTEXT.md`, their maps, and repository-specific locations. Existing names remain intact; new unconfigured repos default to `GLOSSARY.md`. ([decision](decisions/mattpocock-skills.md#glossary-compatibility-and-source-tracking-2026-10-04))
+
+## workbench 0.47.0: 2026-10-04
+
+- **Performance claims carry comparable evidence.** Verification and empirical proof require completed correct work, comparable runs, variation, and explicit limits on causality, independently of Toolkit. ([decision](decisions/empirical-proof.md))
+- **Reviews inspect enforceable contracts.** The quality rubric checks external-input validation against the whole declared type and identifies architecture that permits distant mistakes from plausible local edits. ([decision](decisions/code-quality-review.md))
+- **Self-audits can propose structural prevention.** Repeated process misses can point to an owner, interface, or executable check; the retrospective remains a report with no new edit authority. ([decision](decisions/self-audit.md))
+
 ## workbench 0.46.0: 2026-10-03
 
 - **Sessions message each other through Session Orchestrator.** The new `session-messaging` skill lets a Claude Code or Codex session ask, tell or consult another one on the machine with `so post`, find it with `so ls --live`, and answer an arrival by running the command its header names. A refused send (six messages since the operator last spoke) stops the session for the operator; in Codex, `so post` asks to leave the sandbox with the prefix rule `["so", "post"]`. ([decision](decisions/session-messaging.md))
@@ -60,13 +73,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 ## toolkit 0.14.0: 2026-09-29
 
 - **UI demos use one reusable capture helper.** `ui-demo-video` now uses native Playwright CLI recording on Claude Code and Codex, with prerequisite checks, scene frames, run-wide browser diagnostics, tab video parts, interruption recovery, and owned-session cleanup. Host-specific setup and image inspection replace per-demo recorder harnesses. ([decision](decisions/web-demo-video.md))
-
-## workbench 0.44.4: 2026-09-29
-
-- **Model reference reflects the updated operator ratings.** Refresh the Sol 6.1, Astra, Fable, Opus, and Sonnet scores and remove the retired Sol 6 row. The usage page matches the canonical table; the scores remain legacy illustrations without a new calibration claim. ([decision](decisions/model-reference.md#operator-supplied-reference-rows-2026-09-29))
-
-## workbench 0.44.3: 2026-09-29
-
-- **Codex dispatches use Sol 6.1.** CI watching, test-quality review, and comment trimming now select `gpt-6.1-sol`; `xhigh` effort, fresh context, and the contract-message requirements stay intact. ([decision](decisions/model-reference.md#sol-61-dispatch-pins-2026-09-29))
-- **Claude Code CI watching uses Sonnet 5.5.** The watcher pins `claude-sonnet-5-5` at `xhigh`, with matching skill and usage guidance. Test-quality review and comment trimming retain Opus. ([decision](decisions/fix-ci.md#claude-watcher-pinned-to-sonnet-55-2026-09-29))
-- **Reference rows reflect the updated fleet.** Add Sol 6.1 and Sonnet 5.5 rows and raise the Opus 5.5 code score to 9.5. The scores remain legacy illustrations; they do not establish a current calibration. ([decision](decisions/model-reference.md#operator-supplied-reference-rows-2026-09-29))

@@ -1,14 +1,14 @@
 ---
 name: workbench-drift
-description: Use when checking the workbench skill set (the workbench plugin's superpowers-derived process skills) against upstream (obra/superpowers), on demand ("check superpowers drift") or on a review cadence. Runs the bundled deterministic diff, then judges each upstream change against the manifest's recorded dispositions and recommends adopt / adapt / ignore, verdict-first. Never auto-applies upstream changes; advances the manifest's reviewed-commit pin only after the review completes; never commits.
+description: Use when checking Workshop's adaptations against obra/superpowers, cursor/plugins pstack, or mattpocock/skills, or changing their recorded adoption decisions.
 metadata:
   system: workbench
 ---
 
 # Workbench Drift
 
-Keep the **workbench** skill set honest against its upstream. The manifest
-(`manifest.json`, beside this file) records where each piece came from, whether it
+Keep the shipped adaptations honest against their upstreams. Each manifest
+beside this file records where each piece came from, whether it
 was adopted or dropped, and *why*; this skill turns upstream churn into a reviewed
 decision instead of a standing merge debt. The division of labor is strict: the
 bundled script computes **what changed**; this skill judges **what it means**; the
@@ -23,18 +23,46 @@ That requires a manifest edit plus, for adoptions, the port workflow below.
 
 ## Workflow
 
+Select the source the user requested; for an all-upstream check run each:
+
+| Source | Manifest | Target policy |
+| --- | --- | --- |
+| Superpowers | `manifest.json` | Published release tags |
+| pstack | `pstack-manifest.json` | Explicit branch tracking; record the exact commit and plugin manifest version |
+| Matt Pocock | `mattpocock-manifest.json` | Explicit branch tracking; the adopted baseline postdates the latest published tag |
+
+Use the existing script with the chosen `--manifest` path and an explicitly
+repo-local ignored `--cache` directory. Resolve paths relative to this skill;
+from the repository root, for example:
+
+```sh
+node .claude/skills/workbench-drift/scripts/drift-check.mjs --manifest .claude/skills/workbench-drift/pstack-manifest.json --cache .cache/pstack-drift --json
+```
+
+Follow the repository's hook-setup rule for a newly cloned cache. The pstack
+and Matt Pocock manifests map carried pieces and explicitly reviewed exclusions,
+not their entire older corpora. Other paths remain unmapped and surface when they next change;
+never add a catch-all dropped entry that would hide new skills.
+
 1. **Run the script:** `node scripts/drift-check.mjs` (add `--json` when you want
    machine-readable output; `--manifest` / `--cache` to override paths). It
    clones or fetches upstream, diffs `lastReviewed..target` over the watched
    paths, and groups every change by the manifest's dispositions.
 
-   **The target is upstream's newest published release, never the branch tip.**
+   **Release tracking targets the newest published release, not the branch tip.**
    A branch tip is whatever was committed last: half-finished work, experiments,
    things the author has not shipped. Reviewing or mirroring that imports churn
    upstream never stood behind. Commits sitting past the release are reported as
    a count and excluded. If upstream ever stops tagging releases the script stops
    rather than silently falling back; `upstream.track: "branch"` is the explicit
-   opt-out.
+   opt-out. pstack uses that opt-out because its source repository has no
+   release tags. Its reported target is a source snapshot, not proof of a
+   marketplace release. Read `pstack/.cursor-plugin/plugin.json` at that exact
+   commit to record the version; do not guess it from the branch name.
+   Matt Pocock also tracks the branch explicitly because the port and approved
+   review are newer than its latest release tag. Read `.claude-plugin/plugin.json`
+   at the target commit and record the latest published tag separately: a
+   `release/v1.3` branch name is not evidence of a published 1.3 version.
 2. **Initial-pin mode** (manifest has no reviewed commit yet): the script reports
    coverage: upstream entries vs manifest pieces. Resolve every unmapped entry
    to a disposition with the operator, fix any stale mappings, then set
@@ -71,11 +99,12 @@ That requires a manifest edit plus, for adoptions, the port workflow below.
    without re-applying them has silently reverted an operator decision. Keep the
    list short: it is a recorded exception, not a reopened fork. If it grows past
    a few lines, the piece wants the `adopted` disposition instead.
-6. **Advance the pin.** Set `upstream.lastReviewed.commit` to the reviewed
-   release's commit, and `release` to its tag, only after the review completed,
-   including the ignores; an advanced pin asserts "everything up to here was
-   seen." Land the pin on a release, never on a loose commit: a pin between
-   releases cannot be described to anyone, including a later you.
+6. **Advance the pin.** Only after reviewing every changed path in the watched
+   range, including ignores and unmapped changes, set
+   `upstream.lastReviewed.commit`. For release tracking, also record the release
+   tag. For explicit branch tracking, record the exact source commit
+   and its plugin manifest `version`, never a fabricated release tag. A pin
+   records review coverage of that range, not adoption or publication of it.
 7. **Report:** verdict-first: up-to-date / N changes reviewed (adopted /
    adapted / ignored) / unmapped pieces needing dispositions, with the applied
    edits listed.

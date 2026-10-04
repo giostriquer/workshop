@@ -65,7 +65,9 @@ you want them, and skip to keep sessions lean.
 | The round-based interview other skills run | [grilling](grilling.md) |
 | To survey a codebase for refactors that deepen shallow modules | [improve-codebase-architecture](improve-codebase-architecture.md), user-invoked only |
 | Shared words for a module's interface, seam, and depth | [codebase-design](codebase-design.md) |
-| To settle a project's domain terms in `CONTEXT.md`, or record an ADR | [domain-modeling](domain-modeling.md) |
+| Prevent recurring repository mistakes, on an explicit request | [correct](correct.md) |
+| Check the evidence behind a measured performance comparison | [benchmark-checklist](benchmark-checklist.md) |
+| To settle a project's glossary terms (`GLOSSARY.md` or `CONTEXT.md`), or record an ADR | [domain-modeling](domain-modeling.md) |
 
 ## Two things worth knowing up front
 

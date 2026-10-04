@@ -90,10 +90,14 @@ it: facts are cheap to write down before there is a verdict riding on them.
    | **Session defect** | the process was clear and the session didn't follow it | reported, no edit |
    | **Clean** | it worked, or nothing was owed here | at most one line |
 
-   **The conversion rule:** an instruction the session reliably misses is a
-   wording defect, not a discipline defect. If the trace shows the same rule
+   **The conversion rule:** an instruction the session reliably misses reveals
+   a process defect to investigate. If the trace shows the same rule
    ignored, misread, or fired late more than once, move it out of *session
-   defect* and into *process defect*: the fix belongs in the text.
+   defect* and into *process defect*. Identify whether the remedy belongs in
+   ownership, an interface, an executable check, or wording. Prefer the smallest
+   effective prevention; reserve prose for judgment or constraints that cannot
+   be encoded economically. The trace supports a proposal, not authority to
+   change the repository or investigate product code.
 
 4. **Apply the bar.** A proposal survives only if making the change would have
    altered what happened here, or would alter the next session of this shape.
@@ -107,6 +111,7 @@ it: facts are cheap to write down before there is a verdict riding on them.
    - **wording**: the instruction is there but reads wrong, ambiguous, or buried
    - **gate**: fires too often, too rarely, or at the wrong moment
    - **boundary**: two pieces overlap, or a moment had no owner
+   - **enforcement**: an owner, interface, or check can prevent a traced repeat; name the mechanism and the negative/positive proof to request
    - **new**: a moment recurred with nothing owning it
    - **delete**: a piece cost more than it returned
 

@@ -45,3 +45,12 @@ Prepare workbench 0.37.0 and toolkit 0.10.0 with synchronized host manifests and
 - Rendered the actual flow page in Edge at 1440px and 390px widths, captured both, and checked page overflow. Executed the diagnostic presence example with a dummy secret; output contained only SET/UNSET.
 - Reused-session decision probes preserved valid existing code, intended RED/GREEN, targeted freshness checks, and four-phase investigation for unclear failures while excluding expected RED and obvious localized fixes. These are bounded regression observations, not cross-model reliability estimates.
 - Independent reviewers checked restoration of the original verification detail and source/usage consistency. Their final localized corrections were applied and the diff/link checks passed. At the review checkpoint, no full CI suites, publication, installation, commit, or push had been performed.
+
+## Measured evaluation claims (2026-10-04)
+
+The approved pstack 0.15.9 measurement adaptation adds trial validity to the
+repo-local writing-skills contract. Record guidance, model/settings, scenarios,
+trial counts, failures, missing runs, and variation. Check that the task was
+attempted and the rubric grades its outcome, not compliance with the proposed
+wording. Comparable fresh contexts support comparisons; small or reused-context
+probes remain bounded evidence. Harnesses and raw evidence stay local.

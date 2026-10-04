@@ -1,4 +1,29 @@
-# CONTEXT.md Format
+# Domain Glossary Format
+
+## Locate the glossary
+
+Resolve one authoritative glossary for the relevant domain before reading its
+vocabulary or writing a term:
+
+1. Follow the location or convention named by the user's request or the repo's
+   `AGENTS.md` / `CLAUDE.md`. An explicit repository pointer wins over a default
+   filename. If the named file is missing, report that gap; create it only when
+   recording a resolved term is authorized.
+2. Otherwise look for `GLOSSARY-MAP.md` or legacy `CONTEXT-MAP.md` at the root.
+   Follow the existing map's paths as written, even when they mix filename
+   conventions. Select the context relevant to the topic; ask if unclear.
+3. Without a map, reuse an existing root `GLOSSARY.md` or `CONTEXT.md`.
+4. If competing maps or glossaries exist and repo guidance does not identify
+   the owner, ask which is authoritative before editing or treating either as
+   settled vocabulary. Continue independent work while that choice is pending.
+5. When none exists and the repo specifies no convention, use root
+   `GLOSSARY.md`, created lazily when the first term is resolved. A read-only
+   survey reports the missing glossary and creates nothing.
+
+Use the resolved location consistently in reads, edits, reports, and subagent
+briefs. Keep existing names. Do not rename, merge, or create a parallel glossary
+as part of terminology work. The examples below show the default for new repos;
+the legacy names remain supported.
 
 ## Structure
 
@@ -31,18 +56,18 @@ _Avoid_: Client, buyer, account
 
 ## Single vs multi-context repos
 
-**Single context (most repos):** One `CONTEXT.md` at the repo root.
+**Single context (most repos):** One glossary at the resolved location.
 
-**Multiple contexts:** A `CONTEXT-MAP.md` at the repo root lists the contexts, where they live, and how they relate to each other:
+**Multiple contexts:** A `GLOSSARY-MAP.md` (or existing `CONTEXT-MAP.md`) at the repo root lists the contexts, where they live, and how they relate to each other:
 
 ```md
-# Context Map
+# Glossary Map
 
 ## Contexts
 
-- [Ordering](./src/ordering/CONTEXT.md): receives and tracks customer orders
-- [Billing](./src/billing/CONTEXT.md): generates invoices and processes payments
-- [Fulfillment](./src/fulfillment/CONTEXT.md): manages warehouse picking and shipping
+- [Ordering](./src/ordering/GLOSSARY.md): receives and tracks customer orders
+- [Billing](./src/billing/GLOSSARY.md): generates invoices and processes payments
+- [Fulfillment](./src/fulfillment/GLOSSARY.md): manages warehouse picking and shipping
 
 ## Relationships
 
@@ -51,10 +76,5 @@ _Avoid_: Client, buyer, account
 - **Ordering ↔ Billing**: Shared types for `CustomerId` and `Money`
 ```
 
-The skill infers which structure applies:
-
-- If `CONTEXT-MAP.md` exists, read it to find contexts
-- If only a root `CONTEXT.md` exists, single context
-- If neither exists, create a root `CONTEXT.md` lazily when the first term is resolved
-
-When multiple contexts exist, infer which one the current topic relates to. If unclear, ask.
+Follow the lookup order above for existing repos. A glossary map routes terms;
+its presence does not authorize inventing another context or moving files.

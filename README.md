@@ -162,7 +162,9 @@ installed skill's listing rides in each session's context:
 | `grilling` | the round-based interview behind `grill-me` and `improve-codebase-architecture` |
 | `improve-codebase-architecture` | surveys a codebase for deepening opportunities, then grills the one you pick (user-invoked only) |
 | `codebase-design` | the deep-module design vocabulary |
-| `domain-modeling` | keeps a project's `CONTEXT.md` glossary and ADRs current |
+| `correct` | prevents recurring repository mistakes through ownership, interfaces, types and checks, on an explicit request |
+| `benchmark-checklist` | checks completed work, comparability, variation and relevance behind performance claims |
+| `domain-modeling` | keeps a project's glossary (`GLOSSARY.md` or legacy `CONTEXT.md`) and ADRs current |
 
 `get-pr-comments` derives from `cursor-team-kit` in Cursor's
 [cursor/plugins](https://github.com/cursor/plugins) (MIT), adapted per
@@ -182,6 +184,12 @@ Lauren Tan), adapted per
 [`docs/decisions/mattpocock-skills.md`](docs/decisions/mattpocock-skills.md).
 
 Details in [`plugins/toolkit/README.md`](plugins/toolkit/README.md).
+
+`correct` and `benchmark-checklist` adapt Lauren Tan's MIT-licensed `pstack`
+guidance in [cursor/plugins](https://github.com/cursor/plugins), with the
+benchmarking method attributed to Brendan Gregg. See the
+[correction decision](docs/decisions/correct.md) and
+[benchmark decision](docs/decisions/benchmark-checklist.md).
 
 `web-demo-video` adapts Lauren Tan's `pstack` verification workflow from
 Cursor's [cursor/plugins](https://github.com/cursor/plugins) (MIT, Copyright

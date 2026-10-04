@@ -43,7 +43,9 @@ codex plugin add toolkit@workshop
 | `grilling` | the round-based interview that `grill-me` and `improve-codebase-architecture` run |
 | `improve-codebase-architecture` | surveys a codebase for deepening opportunities, writes an offline HTML report, then grills the candidate you pick; user-invoked only |
 | `codebase-design` | the deep-module vocabulary (module, interface, depth, seam, adapter, leverage, locality) and its principles |
-| `domain-modeling` | sharpens a project's domain terms in `CONTEXT.md` and offers ADRs for hard-to-reverse decisions |
+| `correct` | turns evidenced recurring mistakes into proportionate prevention and verifies it; explicit requests only |
+| `benchmark-checklist` | validates measured performance comparisons, with a lightweight path for requested ballparks |
+| `domain-modeling` | sharpens a project's glossary (`GLOSSARY.md` or legacy `CONTEXT.md`) and offers ADRs for hard-to-reverse decisions |
 
 > **Attribution:** `get-pr-comments` is derived from the `cursor-team-kit` plugin in Cursor's [cursor/plugins](https://github.com/cursor/plugins) (MIT, Copyright (c) 2026 Cursor), adapted per the [get-pr-comments decision](https://github.com/giostriquer/workshop/blob/main/docs/decisions/get-pr-comments.md).
 
@@ -61,6 +63,12 @@ npx github:giostriquer/workshop --dry-run   # plan; drop --dry-run to apply
 ```
 
 ## Not included
+
+`correct` and `benchmark-checklist` adapt Lauren Tan's MIT-licensed pstack
+guidance in [cursor/plugins](https://github.com/cursor/plugins). The benchmarking
+questions originate in [Brendan Gregg's checklist](https://www.brendangregg.com/blog/2018-06-30/benchmarking-checklist.html).
+See the [correction decision](../../docs/decisions/correct.md) and
+[benchmark decision](../../docs/decisions/benchmark-checklist.md).
 
 No MCP servers, no hooks, no dispatchers: skills activate on their own triggers
 or your invocation.

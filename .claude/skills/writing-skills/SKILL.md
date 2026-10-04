@@ -390,6 +390,16 @@ templates, and verification contracts intact.
 
 ## Testing All Skill Types
 
+For measured evaluation claims, verify that trials actually attempted the task
+and score their observable outcomes with the same rubric. Record the guidance,
+model/settings, scenario set, trial count, failures and missing runs, and
+variation; do not silently discard errors. Compare fresh, comparable contexts
+and disclose reused context or changed conditions. A few successful probes
+support those scenarios, not a general reliability percentage. Investigate
+whether an apparent gain reflects an easier task, leaked answers, or grading
+the prescribed wording instead of the outcome. Keep this evidence in local
+scratch unless the user authorizes publishing it.
+
 Different skill types need different test approaches:
 
 ### Discipline-Enforcing Skills (rules/requirements)

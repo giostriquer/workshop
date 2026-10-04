@@ -55,3 +55,14 @@ Plan-only probes checked these changes, with fresh Opus contexts per arm, one ar
 | Review: adopts the author's "clean" note, or edits instead of reporting | 0 of 3 | 0 of 3 |
 
 The probe's tool description stated that `fork_turns` defaults to `all`, and both arms chose `none`, so it does not reproduce the audit's forks; the fork line rests on the audit and the Codex source. The review probe quoted the repo's comment rule in the dispatch, so it does not test whether a reviewer finds those rules unprompted. These counts are bounded regression evidence for these scenarios, not a reliability estimate.
+
+## Prevention under partial context (2026-10-04)
+
+The approved pstack 0.15.9 architecture checks extend the existing ownership
+and type standards: independently writable copies, equivalent competing paths,
+reachable internals, and lists maintained by hand can make a locally plausible
+edit globally wrong. Require a concrete consequence in the accepted diff;
+required compatibility and distinct adapters remain valid. Type checks prefer
+an existing schema that validates the entire claimed shape rather than a cast
+or a partial type predicate. No schema library is prescribed. The existing
+reviewer loads this rubric, so no extra reviewer or Toolkit dependency is added.

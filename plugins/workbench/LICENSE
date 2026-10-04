@@ -72,3 +72,14 @@ Copyright (c) 2026 Lauren Tan, and are used under the MIT License. The above
 permission and warranty notices apply to those portions as required by that
 license. Adaptations are documented at
 https://github.com/giostriquer/workshop/blob/main/docs/decisions/empirical-proof.md
+
+---
+
+Portions of `code-quality-review`, `self-audit`, `empirical-proof`, and
+`verification-before-completion` adapt the `pstack` plugin's `architect`,
+`correct`, `typescript-best-practices`, `benchmark-checklist`, and
+`principle-explain-the-number` guidance from Cursor's plugins
+(https://github.com/cursor/plugins), Copyright (c) 2026 Lauren Tan, under the
+MIT License. The above permission and warranty notices apply to those portions.
+Adaptations are documented in the corresponding decision notes at
+https://github.com/giostriquer/workshop/tree/main/docs/decisions

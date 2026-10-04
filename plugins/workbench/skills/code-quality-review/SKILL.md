@@ -194,12 +194,14 @@ Apply the baseline prompt above, plus these explicit review rules:
 5. **Push hard on type and boundary cleanliness when they affect maintainability.**
    - Question unnecessary optionality, `unknown`, `any`, or cast-heavy code when a clearer type boundary could exist.
    - Prefer explicit typed models or shared contracts over loosely-shaped ad-hoc objects.
+   - At external inputs, prefer the existing authoritative schema and a type derived from it, or a validator checked against the whole declared type. A cast or a predicate that checks only some fields does not establish that type; do not introduce a schema library merely to satisfy this preference.
    - If a branch relies on silent fallback to paper over an unclear invariant, ask whether the boundary should be made explicit instead.
 
 6. **Keep logic in the canonical layer and reuse existing helpers.**
    - Call out feature logic leaking into shared paths or implementation details leaking through APIs.
    - Prefer existing canonical utilities/helpers over bespoke one-offs.
    - Push code toward the right package, service, or module instead of normalizing architectural drift.
+   - Check whether a plausible local edit can break a distant invariant: independently writable copies, equivalent competing paths, importable internals, or hand-synchronized lists. Name the concrete consequence and the ownership, visibility, or consistency check that prevents it. Preserve required compatibility and distinct adapters; the smell alone is advisory.
 
 7. **Treat unnecessary sequential orchestration and non-atomic updates as design smells when the cleaner structure is obvious.**
    - If independent work is serialized for no good reason, ask whether the flow should run in parallel instead.

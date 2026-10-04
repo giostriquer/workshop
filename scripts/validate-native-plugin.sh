@@ -255,7 +255,9 @@ spec-reviewer.md
 test-quality-reviewer.md"
 
 TOOLKIT_SKILLS="adopt-global-rules
+benchmark-checklist
 codebase-design
+correct
 dependency-audit
 domain-modeling
 get-pr-comments
