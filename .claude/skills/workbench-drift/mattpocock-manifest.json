@@ -1,6 +1,6 @@
 {
   "system": "mattpocock-adaptations",
-  "description": "Five carried skills and explicitly reviewed exclusions. Unreviewed skills remain unmapped so future changes surface.",
+  "description": "Five carried skills, scoped PR-writing guidance, and explicitly reviewed exclusions. Unreviewed skills remain unmapped so future changes surface.",
   "upstream": {
     "repo": "https://github.com/mattpocock/skills",
     "ref": "main",
@@ -74,8 +74,15 @@
     },
     {
       "upstreamPath": "skills/engineering/pr/",
-      "disposition": "dropped",
-      "why": "Keep file-pr evidence, visuals, and repository-template preservation; do not import a fixed PR body."
+      "localPath": "plugins/workbench/skills/file-pr/",
+      "disposition": "adopted",
+      "why": "Adapt compact visuals, paired evidence, and rollback consequences into the existing PR body contract.",
+      "adaptations": "Keep repository templates, behavioral scope and compatibility assessment, honest evidence limits, local delivery authority, review, and target synchronization. Do not import fixed sections, mandatory visuals, pseudocode as proof, or one-word risk labels.",
+      "scopedReview": {
+        "commit": "4588b32ecab9ecc9fc8cc6b6c5e7d675b6004b0d",
+        "date": "2026-10-05",
+        "note": "PR skill only; does not advance the upstream range-review pin. See docs/decisions/file-pr.md."
+      }
     },
     {
       "upstreamPath": "skills/engineering/retro/",
@@ -115,7 +122,7 @@
     {
       "upstreamPath": "skills/in-progress/pr/",
       "disposition": "dropped",
-      "why": "Former path of the promoted skill; same exclusion as its engineering path."
+      "why": "Retired upstream path; the scoped adaptation tracks skills/engineering/pr/."
     },
     {
       "upstreamPath": "skills/in-progress/retro/",

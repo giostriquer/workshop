@@ -9,6 +9,11 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-12 reformat.
 
 
+## workbench 0.47.1: 2026-10-05
+
+- **PR bodies explain the full impact of a change.** `file-pr` follows the behavior activated by flags and defaults, then explains workflow changes, compatibility, breaking changes, side effects, rollout, and rollback. Known failures and unverified critical workflows appear in the change description, with detailed evidence in the repository's verification field. ([decision](decisions/file-pr.md#clear-technical-prose-and-reviewer-evidence-2026-10-05))
+- **PR writing uses precise technical English.** Titles, bodies, and delivery reports use ASD-STE100 Simplified Technical English as a guiding style without claiming formal compliance. Compact visuals, paired evidence, and recovery guidance adapt Matt Pocock's PR skill while preserving repository templates and delivery rules. ([decision](decisions/file-pr.md#clear-technical-prose-and-reviewer-evidence-2026-10-05))
+
 ## toolkit 0.15.0: 2026-10-04
 
 - **Prevent recurring mistakes with `correct`.** Trace repeated repository mistakes to their cause, then use ownership, interfaces, types, checks, or behavioral tests to prevent recurrence. Plans stay read-only; authorized repairs require evidence that the check rejects the mistake and accepts valid work. ([decision](decisions/correct.md))
@@ -69,7 +74,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 ## workbench 0.44.5: 2026-09-29
 
 - **PR screenshot guidance names `web-demo-video`.** The visual evidence reference uses the renamed Toolkit skill. ([decision](decisions/file-pr-screenshots-section.md))
-
-## toolkit 0.14.0: 2026-09-29
-
-- **UI demos use one reusable capture helper.** `ui-demo-video` now uses native Playwright CLI recording on Claude Code and Codex, with prerequisite checks, scene frames, run-wide browser diagnostics, tab video parts, interruption recovery, and owned-session cleanup. Host-specific setup and image inspection replace per-demo recorder harnesses. ([decision](decisions/web-demo-video.md))

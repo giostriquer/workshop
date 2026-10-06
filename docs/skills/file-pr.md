@@ -10,6 +10,11 @@ contribution. Its operation, mechanism, or failure condition distinguishes it
 from other work on the same problem. The description connects the observed
 problem to the implementation, why it helps, and what remains unresolved or
 unverified. Both follow the final diff and its supported scope.
+For a flag or default switch, it also reads the implementation being activated.
+The body explains the resulting workflow even when earlier PRs added that code.
+It uses ASD-STE100 Simplified Technical English as a guiding style, without
+claiming formal compliance. Short sentences retain domain terms and necessary
+technical detail.
 If the repo ships a PR template, the body fills it in with headings, order,
 checkboxes and hidden `<!-- markers -->` intact. The skill adds only two
 conditional sections: `## Architecture` and `## Screenshots`.
@@ -105,6 +110,42 @@ the existing template. A ticket's desired resolution can exceed the contribution
 of one PR. Partial repairs, diagnostics, workarounds, and recovery controls are
 named for what they deliver. Refresh title and body when the final change moves.
 
+**What belongs in a UI cutover or default-switch body?** Describe who gets the
+change and compare the old and new workflows. Explain compatibility and breaking
+changes, side effects, rollout and rollback, and known caveats. Cover affected
+saved sessions, routes, automation, and embedded consumers. State required user
+actions and compatibility gaps. A small selector diff can activate a large
+behavior change, so read the selected implementation and its callers.
+
+**Where does that impact assessment go?** Use the template's existing risk,
+rollout, and compatibility fields. If those fields are absent, use bold labels,
+lists, or a comparison table inside its change-description fields. Keep the
+original headings and markers. Put material caveats beside the claims they limit.
+When failures or unverified critical workflows remain, a brief **Known limits**
+paragraph or list in the change description explains their effect on use or
+release. Detailed run results stay in Verification. A long Verification section
+does not substitute for explaining the impact.
+
+**Does keeping the old implementation make rollback safe?** Establish the
+actual recovery path. A source constant requires a rebuild and deployment; it
+is not a runtime toggle. State whether saved data and external effects can be
+restored, and whether rollback was tested. Name missing evidence. Do not infer
+compatibility or reversibility from passing tests or retained source alone.
+
+**How should evidence and visuals help?** Use a small workflow comparison,
+logic sketch, or responsibility tree when it clarifies the explanation. Follow
+the Architecture and Screenshots rules for those sections. In an existing
+testing field, pair recorded results for the same before/after scenario. Include
+the command or action and its result. State missing baselines and runtime checks.
+An illustration is not proof, and a passing rerun does not erase an earlier
+failure. Without a testing field, execution details stay in the delivery report.
+
+**Does every PR need a long body?** No. Detail follows the behavior and risk.
+A wording correction can be one sentence. A capability-wide change must explain
+its consequences. Use precise terms, active voice, and short, complete sentences.
+Keep one idea per sentence and one topic per paragraph. Use lists or tables for
+complex material, without removing essential detail or claiming STE compliance.
+
 **My PR has `Summary` / `Ticket` / `Caveats` headings, but my repo has a
 template.** The fallback replaced the template, which the skill forbids. Every
 original heading must survive in order; the only additions are the two
@@ -176,6 +217,11 @@ several candidates or the template requires one.
   distinguishing it from other changes to the same symptom. The description
   connects problem, change, and supported effect, including remaining limits.
   Both stay current with the diff.
+- A cutover body explains exposure, before/after workflows, compatibility,
+  side effects, recovery, and material limits. Unknowns are explicit.
+- **Negative signal:** a capability-wide default switch described only as a flag
+  flip, a rollback claim based only on retained legacy code, or caveats buried
+  under test counts and screenshots.
 - **Negative signal:** a PR mixing unrelated concerns, or more PRs than the
   agreed plan, filed without a split proposal; a delegated agent opening a PR
   without loading `file-pr`.

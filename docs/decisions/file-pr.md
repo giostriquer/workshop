@@ -2,6 +2,60 @@
 
 This note is the rationale for the `file-pr` skill in the `workbench` plugin, which began as `handoff-pr` and was renamed when it took over filing; superseded choices are omitted and git history keeps the originals.
 
+## Clear technical prose and reviewer evidence (2026-10-05)
+
+The PR text contract already ties claims to the final diff. It does not require
+enough detail about the behavior that a small default switch can activate.
+A capability-wide UI switch can receive a short implementation summary followed
+by extensive verification, yet leave compatibility, side effects, and rollback
+unclear. Test counts, screenshots, and architecture diagrams do not answer those
+questions. Judge the body by what a reviewer needs to understand before merging.
+
+Read the selected implementation and its callers when a flag, route, or default
+activates existing code. Describe the resulting workflow, not just the changed
+selector. For cutovers and similarly consequential changes, the body explicitly
+covers exposure and before/after behavior, compatibility and breaking changes,
+side effects, rollout and rollback, and caveats. Put this information in the
+existing template fields. Name uncertainty instead of inferring compatibility
+from absent failures or inferring rollback safety from retained legacy code.
+
+The contract also lacked an explicit writing style and paired execution evidence.
+The user requested ASD-STE100 Simplified Technical English as a guiding style,
+without claiming formal compliance. Apply it to titles, bodies, and delivery
+reports. Preserve domain terms, technical detail, and repository template syntax.
+
+Adapt three ideas from Matt Pocock's
+[`pr` skill](https://github.com/mattpocock/skills/blob/4588b32ecab9ecc9fc8cc6b6c5e7d675b6004b0d/skills/engineering/pr/SKILL.md):
+small explanatory visuals, comparable before/after evidence, and concrete
+rollback limits and affected consumers. The upstream skill credits Dex Horthy's
+Humanlayer `show-me` skill for its visual approach. The source is MIT-licensed,
+Copyright (c) 2026 Matt Pocock.
+
+Keep the repository's template. Put compact sketches beside the explanation
+they support. Existing Architecture and Screenshots rules still own those
+sections. Pair recorded execution results in an existing testing field; retain
+them in the delivery report when no such field exists. State missing evidence
+without fabricating a baseline or requiring new runs merely to fill the body.
+Explain material rollback constraints in an existing risk or rollout field, or
+in the description. A code revert does not necessarily restore data or external
+effects. Small wording edits need no visual or risk ceremony.
+
+Do not adopt the fixed Summary / Evidence / Merge Danger template, mandatory
+visuals, pseudocode as execution proof, or one-word risk labels. Keep delivery
+authority, independent review, target synchronization, and validation rules.
+Record this as a scoped adaptation; it does not advance the whole upstream
+review pin.
+
+Five synthetic drafting cases checked a retry repair, destructive migration,
+wording correction, missing runtime evidence, and a broad UI cutover. Baseline
+drafts already preserved many evidence and template constraints. The first
+revised cutover still left an unresolved journey failure and incomplete critical
+coverage only in Verification. A required **Known limits** summary in the change
+description corrected that placement in a fresh-context retest. The other cases
+retained technical terms, evidence limits, template structure, and proportional
+detail. These are bounded drafting checks, not a reliability estimate or live
+publication proof. Scenario inputs and outputs remain in ignored scratch.
+
 ## The PR body is the repo's own template (2026-06-18)
 
 Repos that care about PRs ship a template naming the sections and checklist they want; a skill-invented structure drops that checklist and adds sections nobody asked for. The skill searches, case-insensitively, wherever GitHub honors a template (`.github/`, the repo root, `docs/`) and fills the one found verbatim, preserving headings, order, checkboxes and hidden markers and ticking only verified items. Among several templates it picks by the branch's intent and records why. With none it falls back to a minimal Summary / Ticket / Caveats body; validation provenance and review status enter the PR only through a template's testing field. The body describes the change, not how it was produced, with attribution only where governing instructions require it.

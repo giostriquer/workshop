@@ -83,3 +83,13 @@ Portions of `code-quality-review`, `self-audit`, `empirical-proof`, and
 MIT License. The above permission and warranty notices apply to those portions.
 Adaptations are documented in the corresponding decision notes at
 https://github.com/giostriquer/workshop/tree/main/docs/decisions
+
+---
+
+Portions of the `file-pr` skill's visual, evidence, and rollback guidance are
+adapted from Matt Pocock's skills (https://github.com/mattpocock/skills),
+Copyright (c) 2026 Matt Pocock, under the MIT License. The above permission and
+warranty notices apply to those portions. The upstream `pr` skill credits Dex
+Horthy's Humanlayer `show-me` skill for its visual approach. Adaptations are
+documented at
+https://github.com/giostriquer/workshop/blob/main/docs/decisions/file-pr.md

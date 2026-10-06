@@ -97,6 +97,12 @@ subsystem it affects. Use the repository's product terminology. Determine the
 surface from the affected workflow and its callers; the containing application
 or directory does not determine it.
 
+**Describe the scope of the behavior, not the size of the patch.** When a flag,
+default, route, or configuration selects an existing implementation, read that
+implementation and its entry points. Explain the experience this PR activates,
+including code introduced in earlier PRs. Distinguish newly enabled behavior
+from fixes made in this diff. A one-line selector can replace an entire workflow.
+
 **The title names that surface and the specific contribution.** Include the
 operation, mechanism, or failure condition that distinguishes this change from
 other work on the same problem. Select the main contribution; supporting edits
@@ -110,7 +116,9 @@ as broadly as the implementation and verification support.
 **The description explains the connection:** what observed problem prompted the
 work, what changed, why that change addresses the problem, and what remains
 unresolved or unverified. Write this as a coherent explanation within the
-repository's template.
+repository's template. Lead with the user or consumer impact. A list of files,
+implementation fixes, screenshots, or passing tests does not replace that
+explanation.
 
 Before publishing, read the title alone: **can a reviewer tell what this PR
 changes and where, and distinguish it from another PR addressing the same
@@ -123,6 +131,67 @@ contributions:
 - `fix(imports): retain uploaded files until the worker finishes`
 - `feat(imports): add manual retry for failed uploads`
 - `chore(imports): log rejected upload responses`
+
+### Technical writing style
+
+Always use ASD-STE100 Simplified Technical English as a guiding style for PR
+titles, bodies, and delivery reports, not as a claim of formal compliance.
+Use precise, consistent terms. Prefer active voice and short, complete sentences.
+Express one instruction or idea per sentence and one topic per paragraph.
+Use vertical lists or tables for complex material. Preserve necessary domain
+terms and technical accuracy. Do not simplify away essential detail. Preserve
+exact identifiers and repository-required title syntax, headings, and markers.
+
+### Explain impact before presenting proof
+
+For a default switch, UI replacement, migration, removed behavior, or changed
+consumer contract, explicitly cover each topic below. Scale the detail to the
+affected behavior. A localized fix can use a few sentences; a capability-wide
+cutover needs a workflow comparison and its consequences.
+
+| Topic | What the reviewer must learn |
+| --- | --- |
+| Exposure and behavior | Who receives the change, through which entry points, and when. Describe the old and new workflows. Include existing users, saved sessions, and embedded consumers when affected. |
+| Compatibility and breaking changes | Which prior behavior, API, route, saved state, configuration, or automation no longer works or needs a different action. State required migration or user action. Name compatibility that remains unverified. |
+| Side effects | Relevant changes to persistence, generated output, invalidation, background work, performance, or shared callers. Separate intended effects from evidenced regression risks. |
+| Rollout and rollback | The actual activation control and deployment order. State whether recovery needs a runtime toggle, rebuild, redeploy, or data restoration. Explain what reversal does not restore and whether it was tested. |
+| Caveats and limits | Known failures, incomplete coverage, slow paths, deferred work, and unsupported workflows that affect the merge decision. Put each material limit beside the affected claim. |
+
+Use existing risk, rollout, or compatibility fields when the template has them.
+Otherwise put this information in its change-description fields, using bold
+labels, lists, or a comparison table. Keep every original heading and marker.
+The fallback uses Summary for impact and Caveats / follow-ups for limits.
+
+When a known failure or unverified critical workflow remains, include a brief
+**Known limits** paragraph or list in the change description. Summarize its
+effect on using or releasing the change. Keep detailed run results in the
+verification field. This makes the limitation visible before the test report.
+
+Assess each topic from source and recorded evidence. State a supported absence
+briefly when a topic has no impact. State unknowns as unknowns. Retained legacy
+code alone does not prove a safe rollback. Passing tests alone do not establish
+that there are no breaking changes or side effects. Keep simple wording edits
+proportional; they need no impact table or speculative risk inventory.
+
+### Make the explanation and evidence easy to inspect
+
+Use the smallest useful visual beside the claim it explains: a before/after
+table for workflow changes, pseudocode for local logic, or a shallow tree for
+responsibilities. A short paragraph is enough for a simple change. Derive
+visuals from source. The Architecture and Screenshots rules below govern their
+sections; a sketch illustrates behavior and is not execution evidence.
+
+In an existing testing or QA field, pair recorded before/after results for the
+same relevant scenario. Include the command or action, observed result, and
+coverage limit. When a baseline or runtime check is unavailable, say so. Separate
+test results, observed UI behavior, and unverified end-to-end claims. Retain known
+failures even when a rerun passes. If there is no testing field, keep execution
+details in the delivery report and material evidence limits in the description.
+
+Before publishing, read the body as a reviewer who has not seen earlier PRs or
+the session. Can they explain what changes for users, what could break, how to
+recover, and what remains unverified? Fill missing impact information from source
+or name the gap. More test counts and screenshots do not fill those gaps.
 
 ## Preserve the repository's PR template
 
