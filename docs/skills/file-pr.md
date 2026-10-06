@@ -88,8 +88,8 @@ diagnoses the failure.
 Mergeability comes from `gh pr view --json mergeable,mergeStateStatus`. It
 resolves conflicts that appear while tending. Every push integrates the latest
 target, even without conflicts. It refreshes the title and body when
-the diff changes. It stops at green and mergeable, or at a cap, and reports
-either way.
+the diff changes. It stops at green and mergeable, when a CI cause exhausts its
+two fix attempts, or when a genuine blocker prevents delivery, and reports why.
 
 ## Common questions
 
@@ -196,11 +196,14 @@ target, including a retargeted PR or a target in another remote repository,
 before every push. Pulling the feature branch alone is insufficient. A failed
 target fetch leaves the push pending.
 
-**How long will it keep trying?** Two fix attempts per CI cause. Each push allows
-two additional synchronization rounds if concurrent target or head updates keep
-invalidating the verified result. If another round is needed, it reports the
-pending push; the cap never permits a stale push. Later repair pushes each
-start with a fresh synchronization budget.
+**What if the target keeps advancing?** It continues merging and validating the
+latest target, with no synchronization retry cap. Remote feature-head push
+rejections also return to synchronization and validation. It still requires the
+latest fetched target in HEAD and passing affected checks before pushing. Failed
+fetches and unresolved merges or decisions leave delivery pending.
+
+**How long will it keep fixing CI?** Two fix attempts per failing CI cause.
+Synchronization rounds neither consume nor reset those attempts.
 
 **It found no ticket.** It proceeds and says so, asking only when there are
 several candidates or the template requires one.

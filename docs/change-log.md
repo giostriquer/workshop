@@ -9,6 +9,10 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-12 reformat.
 
 
+## workbench 0.47.2: 2026-10-06
+
+- **Keep synchronizing when the PR target advances.** `file-pr` and `fix-ci` continue merging and validating concurrent target or feature-head updates without a synchronization retry cap. The two-attempt limit remains scoped to fixes for the same CI failure; synchronization neither consumes nor resets it. ([decision](decisions/file-pr.md#remove-the-synchronization-retry-cap-2026-10-06))
+
 ## workbench 0.47.1: 2026-10-05
 
 - **PR bodies explain the full impact of a change.** `file-pr` follows the behavior activated by flags and defaults, then explains workflow changes, compatibility, breaking changes, side effects, rollout, and rollback. Known failures and unverified critical workflows appear in the change description, with detailed evidence in the repository's verification field. ([decision](decisions/file-pr.md#clear-technical-prose-and-reviewer-evidence-2026-10-05))
@@ -70,7 +74,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 ## toolkit 0.14.1: 2026-09-29
 
 - **Browser demos use `web-demo-video`.** Rename `ui-demo-video` and its discovery, usage, and catalog references to make the browser scope explicit. Existing capture settings and saved runs remain compatible. ([decision](decisions/web-demo-video.md#browser-specific-name-2026-09-29))
-
-## workbench 0.44.5: 2026-09-29
-
-- **PR screenshot guidance names `web-demo-video`.** The visual evidence reference uses the renamed Toolkit skill. ([decision](decisions/file-pr-screenshots-section.md))

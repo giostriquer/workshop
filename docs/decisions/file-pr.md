@@ -70,7 +70,7 @@ PRs still carried the fallback's `Summary` / `Ticket` / `Caveats` headings over 
 
 ## File the PR and see it through (2026-08-11)
 
-Once sessions were fully authorized, `handoff-pr`'s split (packaging a PR for another session to open) became ceremony followed by the same manual tail: open, watch CI, fix, resolve conflicts. The skill now merges the base in before filing (never rebasing published commits or force-pushing), runs the discovered gates and fixes in-scope failures so the tend loop's bounded attempts are not spent on a known-red baseline, then files with `gh pr create` and reports the URL. It tends the PR through the `fix-ci` skill's loop, composed rather than duplicated, reads mergeability from `gh pr view`, and bounds repeated synchronization within each push attempt. Mechanical conflicts and semantic collisions settled by governing contracts or decisions resolve autonomously; unresolved scope, intended-behavior or authority questions end the loop with a report, and the skill never merges the PR. One ticket candidate is linked and several prompt a question; validation provenance lives in the session report.
+Once sessions were fully authorized, `handoff-pr`'s split (packaging a PR for another session to open) became ceremony followed by the same manual tail: open, watch CI, fix, resolve conflicts. The skill now merges the base in before filing (never rebasing published commits or force-pushing), runs the discovered gates and fixes in-scope failures so the tend loop's bounded attempts are not spent on a known-red baseline, then files with `gh pr create` and reports the URL. It tends the PR through the `fix-ci` skill's loop, composed rather than duplicated, reads mergeability from `gh pr view`, and continues synchronization as target or feature-head updates arrive. Mechanical conflicts and semantic collisions settled by governing contracts or decisions resolve autonomously; unresolved scope, intended-behavior or authority questions end the loop with a report, and the skill never merges the PR. One ticket candidate is linked and several prompt a question; validation provenance lives in the session report.
 
 ## The review gate's exemptions are measured (2026-08-20)
 
@@ -135,16 +135,17 @@ rule could remain undiscovered until after delivery.
 Conflicts are work for the session: resolve mechanical conflicts and semantic
 collisions settled by the governing requirements, validate, and continue. Only
 unresolved decisions or an unrecoverable synchronization failure block delivery.
-Two additional synchronization rounds bound a target that keeps moving during
-one push attempt; ordinary synchronization for later CI repairs has its own
-budget. If another round is needed after that cap, report the pending push.
+Synchronization continues when concurrent target or feature-head updates require
+another merge and validation. It has no retry cap and neither consumes nor resets
+the separate CI fix-attempt budget.
 
 One fresh context per version ran eight plan-only scenarios. The baseline
 allowed clean target updates to remain absent during CI repairs, standalone
 repairs after retargeting, and target movement during pre-filing validation.
 The revised plans integrated those updates, resolved contract-settled conflicts,
 preserved unrelated work, and held pushes for unsettled policy, failed fetches,
-or exhausted synchronization attempts. Two additional revised scenarios preserved
+or, under the original wording, exhausted synchronization attempts. The correction
+below removes that last stopping condition. Two additional revised scenarios preserved
 branch-only CI and ended repair delivery when the PR had merged. These are
 bounded wording checks, not live Git execution or a reliability estimate.
 
@@ -153,6 +154,28 @@ sessions pushing review corrections. After extending discovery and landing
 routing, a fresh-context probe selected `file-pr` before a green-CI review-fix
 push and in its delegated handoff, while keeping a branch-only push on the
 repository workflow. This additional check was also plan-only.
+
+### Remove the synchronization retry cap (2026-10-06)
+
+A reported delivery stopped after the target advanced through the allowed
+synchronization rounds, despite having no conflict or access blocker. The cap
+was explicit in both `file-pr` and `fix-ci`; the session followed defective
+guidance. Target movement is routine integration work, so it must not exhaust a
+retry budget or leave an otherwise deliverable PR pending.
+
+Both skills now keep synchronizing and validating until the latest fetched target
+is included and an ordinary push succeeds. Remote-head push rejections return to
+the same process. Failed fetches, unresolved decisions, and merge failures still
+block delivery, and published history remains intact. The two-attempt limit stays
+scoped to fixes for the same CI cause; synchronization neither consumes nor resets
+it. The watcher's polling limits and read-only role are unchanged.
+
+Eight plan-only scenarios ran in one fresh Codex subagent context per version.
+The baseline stopped on target movement, remote-head rejection, and repeated
+integration during a CI repair. The revised guidance continued all three while
+preserving the same-cause CI limit, failed-fetch blocking, conflict authority,
+branch-only CI, and merged-PR handling. These checks cover the wording, not live
+Git delivery or general reliability. Scenario evidence stays in local scratch.
 
 ### Earlier pre-filing correction (2026-09-25)
 

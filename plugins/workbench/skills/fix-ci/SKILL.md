@@ -140,10 +140,11 @@ is not polling and the parent runs it itself.
    Immediately before pushing to an open PR, refresh its target and fetch it
    again. Verify the fetched target tip is an ancestor of HEAD; if the target
    changed or has missing commits, integrate it and repeat affected checks.
-   Allow **two additional sync rounds per push attempt** for concurrent updates;
-   if still stale, report the pending push. A remote-head push rejection also
-   returns to synchronization under that cap. Later repair pushes each start
-   with a fresh target sync and their own concurrency budget.
+   **Synchronization has no retry cap**: continue integrating and validating
+   concurrent target or head updates. A remote-head push rejection returns to
+   synchronization and validation, never a force-push. These rounds neither
+   consume nor reset the two fix attempts per failing CI cause. Push only after
+   the latest fetched target is included and affected checks pass.
 
    Before that final target refresh, the parent runs one `gh pr checks` read of
    the old head (a single read, not a watcher dispatch): a further

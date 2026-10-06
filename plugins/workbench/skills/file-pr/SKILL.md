@@ -383,11 +383,11 @@ Reusing the merged head branch requires an explicit instruction.
    fetch it again. Verify the fetched target tip is an ancestor of HEAD
    (for example, `git merge-base --is-ancestor
    <fetched-target> HEAD`). If the target changed or has missing commits, repeat
-   synchronization and affected checks. Allow at most **two additional sync
-   rounds per push attempt** if concurrent updates keep invalidating the result;
-   if another round is needed, report the pending push instead of pushing without
-   the latest fetched target. Resolve remote-head push rejection by syncing again under the
-   same cap, never by force. Push per the repo's conventions
+   synchronization and affected checks until the latest fetched target is included.
+   Resolve remote-head push rejection by syncing and validating again, never by
+   force. **Synchronization has no retry cap**: continue through concurrent
+   target or head updates. These rounds neither consume nor reset `fix-ci`'s
+   per-cause fix attempts. Push per the repo's conventions
    (use its push skill if it ships one). Update an associated open PR in
    place; otherwise use `gh pr create --base <base> --head <branch>` with the title
    and body, adding one `--attach` per screenshot when the Screenshots rule holds.
@@ -406,10 +406,11 @@ Reusing the merged head branch requires an explicit instruction.
    `gh pr view --json mergeable,mergeStateStatus`.
 10. **If conflicts appear while tending**, use steps 2 and 8 to integrate the
     target, resolve them, validate, and push. Every push still integrates the
-    latest target even when GitHub reports the PR as mergeable. The per-push cap
-    bounds concurrent movement, not the number of later repairs that may sync.
-11. **Stop when the PR is green and mergeable, or when a cap is hit**, and report
-    either way.
+    latest target even when GitHub reports the PR as mergeable.
+11. **Stop when the PR is green and mergeable, or when a CI cause exhausts its
+    two fix attempts**, and report either way. Report access, synchronization,
+    or unresolved-decision blockers when they prevent delivery; concurrent branch
+    movement alone is work to complete.
 
 ## Output
 
@@ -436,8 +437,8 @@ in its existing fields. If no format is required, use a verdict-first report.
   encodes an intended-behavior question is reported as a decision for the user.
 - Keep substantive PR text focused on the change. Include attribution required
   by governing host/user/repository instructions; do not invent extra footers.
-- Hard caps: `fix-ci`'s two fix attempts per cause, and two additional sync rounds
-  per push attempt when concurrent updates keep invalidating validation. At a
-  cap, report rather than bypassing synchronization or thrashing.
+- `fix-ci` allows two fix attempts per failing CI cause. Synchronization has no
+  retry cap and neither consumes nor resets those attempts. Always integrate
+  the latest fetched target and validate before pushing.
 - Semantic merge collisions follow step 2's boundary; unresolved decisions end
   the loop with a plain report.

@@ -11,8 +11,12 @@ within the accepted requirements, and validates the combined result. This also
 covers standalone `fix-ci` sessions and retargeted PRs. Branch-only CI keeps its
 ordinary upstream pull without inventing a PR target.
 
-The final target fetch and per-push synchronization cap follow the
+The final target fetch and synchronization procedure follow the
 [file-pr decision](file-pr.md#synchronize-the-actual-target-before-every-push-2026-10-01).
+The [synchronization correction](file-pr.md#remove-the-synchronization-retry-cap-2026-10-06)
+removes the per-push cap: concurrent updates require continued integration and
+validation. Synchronization neither consumes nor resets the two CI fix attempts
+per cause.
 Completed reviews stay valid for a bounded repair; integration changes receive
 affected review when they invalidate that coverage. The watcher remains read-only.
 

@@ -81,8 +81,9 @@ checks should be seen through to green.
    Read the old head's checks once and fold any new in-scope failure into the fix.
    Immediately before pushing, refresh and fetch the target again and verify its
    tip is in HEAD. If it changed or has missing commits, synchronize and validate
-   again, with at most two additional rounds per push attempt for concurrent
-   updates. An unresolved merge, failed fetch, or exhausted cap leaves the push
+   again. Synchronization has no retry cap; remote-head push rejections also
+   return to synchronization and validation. These rounds neither consume nor
+   reset CI fix attempts. An unresolved merge or failed fetch leaves the push
    pending. Branch-only CI pulls its upstream without inventing a PR target.
    No-commit or no-push instructions hold; the report names the remaining step.
 9. **Re-watch** with a new watcher for the new head. A different check failing
@@ -104,6 +105,11 @@ fires once. If the rerun comes back red, the loop treats it as a fault.
 **It stopped after two attempts and left CI red.** That is the cap. Instead of a
 third attempt you get the diagnosis, the failing-log excerpt or check link, and a
 recommended next step.
+
+**Do repeated target updates use those attempts?** No. The limit counts fixes
+for a failing CI cause. Target and remote-head synchronization continues as
+needed, with validation before each push, and neither consumes nor resets the
+CI attempt count.
 
 **Why won't it just skip the flaky test?** A red check that encodes an
 intended-behavior question is reported as a decision for you, not worked around.
