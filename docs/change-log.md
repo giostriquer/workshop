@@ -9,6 +9,14 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-12 reformat.
 
 
+## toolkit 0.15.1: 2026-10-07
+
+- **Haiku gets a narrow lane instead of a ban.** The shipped `model-floor` rule allows Haiku 5.5 for high-volume, cost-sensitive summaries, compactions, and database queries that fetch and report data. Coding, code review, auditing, profiling, debugging, planning, design, and judging another agent's output never go to Haiku; mixed or unclear tasks stay off it, and volume or budget never moves a task into the lane. ([decision](decisions/adopt-global-rules.md#haiku-gets-a-narrow-lane-2026-10-07))
+
+## workbench 0.47.3: 2026-10-07
+
+- **CI watching names its own Haiku exclusion.** `model-reference` and `ci-watcher` list Haiku beside Astra and Fable as models that never watch CI, instead of relying on the global Haiku ban the operator rule no longer carries. ([decision](decisions/model-reference.md#claude-ci-watching-uses-sonnet-55-2026-09-29))
+
 ## workbench 0.47.2: 2026-10-06
 
 - **Keep synchronizing when the PR target advances.** `file-pr` and `fix-ci` continue merging and validating concurrent target or feature-head updates without a synchronization retry cap. The two-attempt limit remains scoped to fixes for the same CI failure; synchronization neither consumes nor resets it. ([decision](decisions/file-pr.md#remove-the-synchronization-retry-cap-2026-10-06))
@@ -66,11 +74,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 ## toolkit 0.14.2: 2026-09-29
 
 - **Capture help passes the native punctuation check.** Replace the help text's em dash with a colon; recording behavior is unchanged.
-
-## workbench 0.44.6: 2026-09-29
-
-- **Epic cleanup includes disposable Docker images.** Inventory images used by the work on the verified daemon, check shared and stopped-container consumers, and remove only exact disposable targets. Workspace cleanup remains report-only until you pick entries. ([decision](decisions/epic-cleanup.md#docker-images-used-during-the-work-2026-09-29))
-
-## toolkit 0.14.1: 2026-09-29
-
-- **Browser demos use `web-demo-video`.** Rename `ui-demo-video` and its discovery, usage, and catalog references to make the browser scope explicit. Existing capture settings and saved runs remain compatible. ([decision](decisions/web-demo-video.md#browser-specific-name-2026-09-29))

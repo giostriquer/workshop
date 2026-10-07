@@ -2,18 +2,39 @@
 
 This is the rationale for the toolkit plugin's `adopt-global-rules` skill and its root `bin/` launcher; superseded choices are omitted, and git history keeps the originals.
 
-## Remove the Sonnet ban, retain the Haiku ban (2026-09-29)
+## Haiku gets a narrow lane (2026-10-07)
+
+With Haiku 5.5 released, the operator replaced the shipped `model-floor`
+rule's blanket Haiku ban with a lane. Haiku runs only high-volume,
+cost-sensitive work that condenses or looks up existing material: summaries,
+compactions, and database queries that fetch and report data. It never runs
+complex work such as coding, code review, auditing, profiling, debugging,
+planning, design, or judging another agent's output. The boundary keeps the
+ban's bright-line form: a mixed task counts as complex, volume and budget never
+move a task into the lane, and an unclear fit falls outside it. Haiku is only
+selected explicitly, so a default or agent definition that picks it outside
+the lane is still overridden upward. CI watching keeps its own Haiku
+exclusion, now stated directly in `model-reference` and `ci-watcher` rather
+than resting on the global ban.
+
+One fresh-context probe per scenario ran against the new wording with an Opus
+5.5 parent. Ticket-thread summaries, a read-replica signups report, and an SDK
+transcript-compaction job picked Haiku. A budget-pressured 230-file rename
+picked Sonnet; PR summaries with risk flags, a slow-query `EXPLAIN ANALYZE`,
+and judging transcripts for ignored corrections inherited the session model.
+This is regression evidence for these scenarios, not a reliability estimate.
+
+## Remove the Sonnet ban (2026-09-29)
 
 The operator removed the Claude Code global Sonnet ban so the CI watcher can
-use Sonnet 5.5. The shipped model-floor rule now bans only Haiku. Claude
-work inherits the session model unless an explicit model is selected; this
-permits a pinned Sonnet agent while preserving the default and escalation
-rule. Updating the pack with the installed rule prevents a later adoption
-from restoring the removed ban.
+use Sonnet 5.5. Claude work inherits the session model unless an explicit
+model is selected; this permits a pinned Sonnet agent while preserving the
+default and escalation rule. Updating the pack with the installed rule
+prevents a later adoption from restoring the removed ban.
 
 ## The pack is plugin payload, not a template (2026-08-12)
 
-Hand-kept global rules had drifted; the model floor had reached Claude alone. The pack therefore ships as plugin content, so one release reaches every machine; per-operator templates would never converge. Unlike the workbench `model-reference` skill, it may carry concrete policy such as `model-floor`'s Haiku and Sonnet ban, because the pack is explicitly the workshop's own and arrives only when invoked.
+Hand-kept global rules had drifted; the model floor had reached Claude alone. The pack therefore ships as plugin content, so one release reaches every machine; per-operator templates would never converge. Unlike the workbench `model-reference` skill, it may carry concrete policy such as `model-floor`'s Haiku lane, because the pack is explicitly the workshop's own and arrives only when invoked.
 
 ## One implementation, two entry points (2026-08-12)
 

@@ -19,7 +19,10 @@ watching to Sonnet 5.5. The watcher pins `claude-sonnet-5-5` in its agent
 frontmatter, so an alias cannot drift to another Sonnet version. The parent
 still dispatches by name without a model override. The watcher keeps `xhigh`
 effort and a separate context; Codex still uses `gpt-6.1-sol`. Test-quality
-review and comment trimming keep Opus on Claude Code. Haiku remains banned.
+review and comment trimming keep Opus on Claude Code. Haiku stays out of CI
+watching; since the global rule gave Haiku a narrow lane
+([adopt-global-rules](adopt-global-rules.md#haiku-gets-a-narrow-lane-2026-10-07)),
+the watcher exclusion names it directly.
 
 ## Sol 6.1 dispatch pins (2026-09-29)
 
@@ -61,7 +64,7 @@ Effort is not a modeled axis: each model gets one row, graded at the effort it a
 
 ## The two exceptions pin effort and history (2026-09-24)
 
-The CI-watch and test-quality-review exceptions named a model and nothing else, and Codex filled the gaps with defaults: `spawn_agent` resolves a named model without `reasoning_effort` to that model's default effort, and `fork_turns` defaults to the whole parent history. A 30-day audit of Codex sessions found 4 of 14 test-quality reviews at low effort (two to five minutes active) and one on astra, and all nine CI watchers of the first two weeks on the parent's model. The operator set both exceptions to `xhigh`, spawned without the parent's history: Opus on Claude Code, pinned by the agent files' `model` and `effort` frontmatter, which Claude Code honors for plugin agents, so the caller passes no model; `gpt-6-sol` on Codex, pinned per spawn with `model`, `reasoning_effort: "xhigh"` and `fork_turns: "none"`, since Codex registers no plugin agents. The Haiku and Sonnet ban and the no-Astra-or-Fable watcher rule stand. This skill keeps the policy; the spawn arguments that carry it live once, in each agent file's Dispatch line, and the calling skills point there ([plugin-surfaces](plugin-surfaces.md#codex-agents-the-parent-pastes-the-contract-2026-09-24)).
+The CI-watch and test-quality-review exceptions named a model and nothing else, and Codex filled the gaps with defaults: `spawn_agent` resolves a named model without `reasoning_effort` to that model's default effort, and `fork_turns` defaults to the whole parent history. A 30-day audit of Codex sessions found 4 of 14 test-quality reviews at low effort (two to five minutes active) and one on astra, and all nine CI watchers of the first two weeks on the parent's model. The operator set both exceptions to `xhigh`, spawned without the parent's history: Opus on Claude Code, pinned by the agent files' `model` and `effort` frontmatter, which Claude Code honors for plugin agents, so the caller passes no model; `gpt-6-sol` on Codex, pinned per spawn with `model`, `reasoning_effort: "xhigh"` and `fork_turns: "none"`, since Codex registers no plugin agents. The no-Astra-or-Fable watcher rule stands. This skill keeps the policy; the spawn arguments that carry it live once, in each agent file's Dispatch line, and the calling skills point there ([plugin-surfaces](plugin-surfaces.md#codex-agents-the-parent-pastes-the-contract-2026-09-24)).
 
 In plan-only probes with two fresh Codex-parent contexts per arm, the current wording's test-reviewer spawns named `gpt-6-sol` with no effort 2 of 2, and its watcher spawns named no `xhigh` 2 of 2; this wording named `reasoning_effort: "xhigh"` with `fork_turns: "none"` 2 of 2 in each, and its Claude Code variant passed no model to `test-quality-reviewer` 2 of 2, where the current wording passed `opus` 2 of 2. This is bounded regression evidence for these dispatch shapes, not a reliability estimate.
 

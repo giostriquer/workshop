@@ -88,7 +88,8 @@ reason this skill exists:
    about to be installed **under a different filename or heading**? Does any of
    it *contradict* it? A rules directory is a flat namespace, so a user's
    `no-haiku.md` and the pack's `model-floor.md` never collide; they both
-   install and say the same thing twice. Nothing but a reader catches that.
+   install, and a session reads two Haiku rules that disagree. Nothing but a
+   reader catches that.
 2. **Collisions**: an unmarked file occupying a rule's path. Read it and say
    whether it is the same rule, a conflicting one, or unrelated.
 3. **Skipped rules**: report the precondition that failed. A rule skipped for a

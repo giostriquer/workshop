@@ -75,8 +75,8 @@ and removed only with `--prune`.
 
 Everything the pack does not own, returned verbatim for you to read. A rules
 directory is a flat namespace, so your own `no-haiku.md` never collides
-with the pack's `model-floor.md`: both install and say the same thing twice.
-Only a reader catches that.
+with the pack's `model-floor.md`: both install, and a session reads two Haiku
+rules that disagree. Only a reader catches that.
 
 **Can I run it on a machine without the plugin?**
 

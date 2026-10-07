@@ -26,10 +26,10 @@ the run id and the attempt that failed.
 
 All CI polling and watch commands run in this separate read-only agent, even
 when the parent is idle, and it never dispatches another agent. Never use
-Astra or Fable for watching, and never inherit those models into the watcher.
-A Sonnet/Sol parent still dispatches a separate designated-model agent. If the
-host cannot dispatch it, report the monitoring gap rather than polling in the
-parent or choosing a prohibited fallback. Haiku remains prohibited.
+Astra, Fable, or Haiku for watching, and never inherit those models into the
+watcher. A Sonnet/Sol parent still dispatches a separate designated-model
+agent. If the host cannot dispatch it, report the monitoring gap rather than
+polling in the parent or choosing a prohibited fallback.
 The parent owns diagnosis and repairs; the watcher only gathers CI evidence.
 
 ## Trigger
