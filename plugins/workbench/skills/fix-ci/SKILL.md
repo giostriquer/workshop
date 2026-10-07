@@ -13,19 +13,20 @@ recurring one-liner "CI is failing, take a look."
 
 ## Who waits, and where
 
-The wait is one shell loop that polls the PR state and its checks every thirty
-seconds and exits on the first terminal state: a failed check, the PR merged or
-closed, no check pending, a moved head, or its own deadline. The `ci-watcher`
-agent carries that loop on every host, even when the parent is idle: every
-parent turn spent waiting costs the parent model's tokens, and a Fable or
-Astra parent is the expensive one. Dispatch `ci-watcher` by name with no model
-(on Codex, paste the agent file, `agents/ci-watcher.md` two directories above
-this `SKILL.md`, and use its Dispatch line, per `using-workbench`'s *Workbench
-agents on Codex*), with the PR, the pinned head SHA and the deadline. Never
-watch inside the parent's own turns, and never route the watcher to Haiku.
-If the host cannot dispatch the agent, report the monitoring gap rather
-than polling in the parent. The parent owns diagnosis and repairs; the watcher
-only gathers CI evidence.
+The wait runs in the bundled `scripts/watch-ci.mjs` command, inside one
+separate `ci-watcher` agent. Resolve the runner's absolute path from this
+loaded skill's directory and pass it with the repository, PR number or branch,
+full pinned SHA, one scratch state-file path, deadline and known expected
+required checks. The agent invokes that file; neither agent generates polling
+code. Node 18+ and authenticated `gh` are prerequisites. A missing runner or
+runtime is a reported gap, not a reason to synthesize a replacement.
+
+Dispatch `ci-watcher` by name with no model (on Codex, paste the agent file,
+`agents/ci-watcher.md` two directories above this `SKILL.md`, and use its Dispatch
+line, per `using-workbench`'s *Workbench agents on Codex*). Never watch inside
+the parent's own turns. If the host cannot dispatch the agent, report the
+monitoring gap. The parent owns diagnosis and repairs; the watcher gathers CI
+evidence and returns the runner's verdict.
 
 Host notes, of which only the first is Claude Code behavior:
 
@@ -33,13 +34,14 @@ Host notes, of which only the first is Claude Code behavior:
   re-invoked by the watcher's handback notification, so the parent ends its
   turn after dispatching and runs no `gh pr checks`, `gh run view`, Monitor or
   read of the watcher's output file in the meantime. Inside the watcher, the
-  loop runs in foreground Bash calls that each end before the tool's
+  bundled command runs in foreground Bash calls that each end before the tool's
   ten-minute limit, so the watcher's turn never ends early and the parent is
   re-invoked once, by the handback. A host that raises the limit with
   `BASH_MAX_TIMEOUT_MS` (to eleven minutes or more for the default window)
   lets one call cover the whole window.
-- **Codex.** After `spawn_agent`, call `wait_agent` with `timeout_ms: 600000`
-  and repeat until the watcher's final answer. Do not end the turn meanwhile:
+- **Codex.** After `spawn_agent`, call `wait_agent` with the longest timeout
+  permitted by the active host instructions (up to `600000` ms) and repeat
+  until the watcher's final answer. Do not end the turn meanwhile:
   a finished child does not wake the parent. Run no `gh` read or `sleep`
   between waits, and do not ask the watcher for progress updates. A
   follow-up to a returned watcher follows `using-workbench`'s *Workbench
@@ -72,8 +74,9 @@ is not polling and the parent runs it itself.
    target SHA with `git rev-parse HEAD`, compare it with the remote PR/run head,
    and identify the required checks. No branch, no CI, or unavailable access
    gets a precise report; missing checks are not green.
-2. **Dispatch one designated watcher to read and then watch the state.** PR: `gh pr checks --json name,bucket,state,workflow,link`.
-   Runs: `gh run list` / `gh run view <run-id>`.
+2. **Dispatch one designated watcher to execute the bundled command.** Pass the
+   runner and state-file paths with the target from step 1. The same command
+   handles PR checks and branch-only runs; the watcher does not compose CLI loops.
    - Merged or closed (`gh pr view --json state,mergedAt,closedAt`) → the
      watcher reports `merged` or `closed` at once and the loop ends: a closed
      PR has nothing to fix, and a merged head's remaining checks belong to the
@@ -83,10 +86,11 @@ is not polling and the parent runs it itself.
      running. Use the observed snapshot and available links; the watcher ends
      its turn before fetching logs or classifying merge requirements. The parent
      owns those next steps. A required-only filter must not hide the failure.
-   - With no observed failures, all required checks green for the target SHA →
-     report green; done.
-   - Pending → the watcher's loop polls the PR state and its checks every
-     thirty seconds (branch-only CI: `gh run view <run-id> --json jobs`),
+   - `passed` means all reported checks settled without failure. Report green
+     only when the caller's known required checks also passed on the target SHA.
+     Unspecified required coverage is a reported gap, not proof of merge readiness.
+   - Pending → the bundled command polls the PR state and its checks every
+     thirty seconds (including child jobs for branch-only CI),
      within its bounded window. **The watcher returns at the first failed check or
      job, or the moment the PR merges or closes**, naming the check or the
      state and listing the checks still pending. Neither the watcher nor the parent waits for the

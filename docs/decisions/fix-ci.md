@@ -2,6 +2,35 @@
 
 This note is the rationale for the `fix-ci` skill and the `ci-watcher` agent it dispatches, both shipped in the `workbench` plugin; superseded choices are omitted and git history keeps the originals.
 
+## Execute a bundled watcher instead of generating loops (2026-10-07)
+
+An instruction template still asks each watcher to construct executable code.
+That repeats quoting, CLI field selection, timeout handling and verdict logic;
+the branch-only path had no executable implementation at all. The existing
+template also treated cancelled checks as settled. A focused scenario reproduced
+that result before this change.
+
+The existing `fix-ci` skill now bundles `scripts/watch-ci.mjs`. The designated
+agent invokes it through Node 18 or later and reports its JSON result. This is
+one implementation for PR and branch watches, with fixed polling, bounded CLI
+calls, pinned revisions, persisted deadlines and resumable host slices. GitHub
+access stays read-only. Repair, rerun and delivery authority stay with the parent.
+Missing runtimes or missing bundled files produce a reported gap, not a replacement
+script. Packaging the runner inside the skill also carries it in Codex exports.
+
+PR check snapshots come from the PR's structured head/rollup response. Rerun
+retried jobs use the named run's newer, explicitly selected attempt, preserving
+other jobs from the latest job snapshot after a failed-only rerun. Waiting one
+arbitrary interval is not evidence that old check results vanished.
+Unrelated failures still return while a rerun is waiting. Cancelled, malformed
+and absent evidence cannot become a passing verdict. A passing result describes
+reported checks; required coverage is explicit through the caller's expected
+check names, and unspecified coverage remains a gap.
+
+The focused harness exercises the shipped runner through its read-only command
+interface and controlled GitHub responses. Historical template measurements
+below describe earlier versions, not the runner's current verification.
+
 ## Synchronize the PR target on every repair push (2026-10-01)
 
 "Pull first" could update only the feature branch, leaving clean target-branch
