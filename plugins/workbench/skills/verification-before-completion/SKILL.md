@@ -1,6 +1,6 @@
 ---
 name: verification-before-completion
-description: Use when about to claim work is complete, fixed, or passing.
+description: Use while finishing a change or before reporting it complete, fixed, ready, or passing, including when tests pass but the user-visible result has not been checked.
 ---
 
 # Verification Before Completion
@@ -13,10 +13,10 @@ description: Use when about to claim work is complete, fixed, or passing.
 
 In the workbench flow, this skill defines **"deemed ready"**: an implementation may
 proceed to its adversarial review only once the claims about it carry fresh
-verification evidence. When the change has a runnable surface (an API, MCP tool,
-or app a real client can drive), `empirical-proof` is an optional deeper check, not an automatic step. Offer it, and run it only on the
-user's explicit ask or a standing authorization. This gate itself is the
-always-on floor.
+verification evidence. For behavioral changes, use `empirical-proof` to check
+the affected user or consumer boundary before claiming completion or readiness.
+This is the default, without another offer or permission exchange. Existing
+checks can satisfy it when they exercise the relevant boundary and artifact.
 
 ## The Iron Law
 
@@ -31,7 +31,7 @@ Evidence stays fresh while its relevant revision, inputs, dependencies, configur
 ```
 BEFORE claiming completion, correctness, or a passing check:
 
-1. IDENTIFY: What check or observation substantiates this claim?
+1. IDENTIFY: What outcome is claimed, and what boundary or artifact can demonstrate it?
 2. RUN or REUSE: Run the complete relevant check, or reuse valid evidence for unchanged relevant state
 3. READ: Full output, check exit code, count failures
 4. VERIFY: Does output confirm the claim?
@@ -44,6 +44,31 @@ Skip any step = lying, not verifying
 
 Use focused local checks and required local gates. Full suites normally run in PR CI; expand locally for an explicit requirement or a specific unresolved risk. A failed check does not end an already-authorized repair: fix the in-scope defect and verify it.
 
+## Match proof to the deliverable
+
+For a feature or fix, exercise the affected behavior through its actual user or
+consumer boundary on an artifact containing the change. For a refactor, compare
+the preserved behavior at the affected boundary. Check the result and relevant
+side effects. A real public-interface test can suffice for a library claim;
+a mocked component test cannot establish what a running app shows. Use
+`empirical-proof` for the surface-specific route and artifact identity checks.
+
+Reuse evidence that already meets this bar. No extra run, recording, agent team,
+full suite, or permanent harness is required merely to invoke the skill.
+Claims limited to a test or build need that check's evidence, not an unrelated
+app launch. Research and document edits use source or artifact inspection and
+relevant checks; inspect a render for visual claims, and exercise behavioral
+agent instructions through consuming-agent scenarios.
+
+If required proof is unavailable, try reasonable documented setup within task
+authority, continue independent checks, and report **verification incomplete**:
+what was checked, what was attempted, the concrete blocker, and what remains.
+Disclosing an unchecked app does not complete behavioral verification. Do not
+invent integration evidence or use unauthorized accounts to get a pass.
+An explicit user decline or superseding repo process changes the required
+checks; name that instruction and the unverified behavior, never report a
+waived check as passed. Preserve user-owned sessions and data.
+
 ## Common Failures
 
 | Claim | Requires | Not Sufficient |
@@ -51,8 +76,8 @@ Use focused local checks and required local gates. Full suites normally run in P
 | Tests pass | Applicable test output: 0 failures | Stale result, "should pass", broader claim than coverage |
 | Linter clean | Linter output: 0 errors | Partial check, extrapolation |
 | Build succeeds | Build command: exit 0 | Linter passing, logs look good |
-| Bug fixed | Test original symptom: passes | Code changed, assumed fixed |
-| App or UI state ("the button appears", "the crash is fixed in the app") | Say which: **seen in the running build** (how: screenshot, live look, driven flow), or **not checked in the running app** (the tests, fixtures, mock screens or build it rests on, plus the user's step to see it: rebuild, reinstall, relaunch, restart X) | Tests, fixtures or mock screens reported as what the app shows |
+| Bug fixed | Original symptom checked through the affected consumer boundary on the changed artifact: passes | Code changed, a green test that bypasses the failing path |
+| App or UI state ("the button appears", "the crash is fixed in the app") | Seen in the changed running build; name the flow and observation, inspect images for visual claims | Tests, fixtures, mock screens, an old installed build, or an unchecked-app disclosure treated as completion |
 | Regression test works | Red-green cycle verified | Test passes once |
 | Agent completed | Inspect VCS diff and corroborate acceptance evidence | Agent reports "success" |
 | Requirements met | Line-by-line checklist | Tests passing |
@@ -73,15 +98,15 @@ does not require Toolkit, profiling, or a benchmark campaign for unrelated work.
 - Relying on partial verification
 - Thinking "just this once"
 - Tired and wanting work over
-- **ANY wording implying success without having run verification**
+- **ANY wording implying success without valid verification evidence**
 
 ## Rationalization Prevention
 
 | Excuse | Reality |
 |--------|---------|
-| "Should work now" | RUN the verification |
+| "Should work now" | Run the relevant check or inspect valid existing evidence |
 | "I'm confident" | Confidence ≠ evidence |
-| "Just this once" | No exceptions |
+| "Just this once" | Convenience does not waive a required check |
 | "Linter passed" | Linter ≠ compiler |
 | "Agent said success" | Verify independently |
 | "I'm tired" | Exhaustion ≠ excuse |
@@ -98,7 +123,7 @@ does not require Toolkit, profiling, or a benchmark campaign for unrelated work.
 
 **Regression tests (TDD Red-Green):**
 ```
-✅ In a disposable checkout: preserve test → remove only fix → intended assertion fails → restore fix → passes
+✅ In a disposable checkout: preserve test → remove only fix → inspect diff against pristine source → intended assertion fails → restore fix → passes
    Never mutate an active/dirty worktree for this comparison
 ❌ "I've written a regression test" (without red-green verification)
 ```
@@ -112,7 +137,7 @@ does not require Toolkit, profiling, or a benchmark campaign for unrelated work.
 **App or UI state:**
 ```
 ✅ [Drove the flow in the running build] [Screenshot: Export visible] "Seen in the running build: admins get the Export button (screenshot)"
-✅ "Not checked in the running app: a unit test and the mock-screen harness show the Export button. To see it, rebuild and relaunch the app."
+✅ "Verification incomplete: the unit test passes, but the changed app cannot launch without the test service. Startup was attempted; the Export flow remains unchecked."
 ❌ "Admins now get the Export button" (from a unit test and a mock screen)
 ```
 

@@ -243,10 +243,9 @@ deep (claim-check) / sweep (qa-sweep) · **Q9** audit-revealed work routes by sh
 · **Q10** PLAN resolves through the user's stack (plugin skill → local skill →
 repo standards → harness plan mode) · **Q11** "deemed ready" =
 verification-before-completion, with empirical-proof for runnable surfaces,
-refined by **Q14** (2026-08-12): expensive verification (empirical-proof,
-qa-sweep) is user-optioned: offered when it fits, run only on explicit ask or
-standing authorization; verification-before-completion is the only always-on
-gate. Two scope guards joined 2026-08-12 after a field session grew a
+refined by **Q14** (2026-10-08): focused consumer proof is the default for
+behavioral completion, with reuse of adequate current evidence; broad qa-sweep
+remains user-optioned. Explicit declines and superseding repo rules apply. Two scope guards joined 2026-08-12 after a field session grew a
 one-ticket change into a 52-file workset: **Q15** (refining Q3): the
 adversarial review fires only when the work-stream's implementation is
 believed complete, right before the PR-or-merge gate, never

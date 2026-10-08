@@ -91,7 +91,7 @@ edits code comments in the diff and nothing else:
 | `handoff-goal` | hands a long-running goal to a fresh autonomous session |
 | `claim-check` | deep verdict on a ticket / hunch / premise |
 | `qa-sweep` | team-scale QA over a broad surface, corroborated |
-| `empirical-proof` | checks a finished change through its app or real consumer, with guidance by surface |
+| `empirical-proof` | default focused proof of behavioral changes through their app or real consumer |
 | `code-quality-review` | strict structure-first review of a diff |
 | `test-quality-review` | whether a diff's tests protect behavior, backed by a mutation run |
 | `trim-comments` | the comment trim before the review round: removes code-comment slop from the finished diff and offers encodings for constraint comments |

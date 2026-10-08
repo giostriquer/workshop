@@ -2,6 +2,48 @@
 
 Rationale for the `empirical-proof` skill and the verification choices it shares with `verification-before-completion`, both shipped by the workbench plugin; superseded choices are omitted, and git history keeps the originals.
 
+## Focused consumer proof is the completion default (2026-10-08)
+
+Behavioral changes now require proof through the affected user or consumer
+boundary before a completion or readiness claim. The gate invokes
+`empirical-proof` without another offer. Existing evidence counts when it
+exercises that boundary on the relevant artifact and state; invoking the skill
+does not require repeating a valid run. Focused test results still support
+their own claims while overall verification is incomplete.
+
+The former label-only UI rule improved disclosure but allowed a session to
+leave runnable proof to the user. The original cost decision also assumed
+fan-out and a fixed protocol, which the surface-aware rewrite removed. The
+new default keeps checks proportional: no automatic broad QA, full suite,
+recording, team, or permanent verification harness. A blocked route needs
+reasonable authorized setup, a concrete remaining gap, and continued independent
+checks. Missing access is not a pass or permission to use another account.
+Explicit user declines and superseding repository rules retain precedence;
+a waived check is reported as unverified.
+
+This adapts pstack's
+[prove-it-works principle](https://github.com/cursor/plugins/blob/ccb5507cec1546dc88135c1139c811e6c59115ba/pstack/skills/principle-prove-it-works/SKILL.md)
+and [bug-fix workflow](https://github.com/cursor/plugins/blob/ccb5507cec1546dc88135c1139c811e6c59115ba/pstack/skills/poteto-mode/playbooks/bug-fix.md)
+without importing its dispatcher, model routing, or delivery authority.
+Documents use artifact inspection and relevant checks; behavioral agent
+instructions use consuming-agent scenarios. A pure refactor can use a real
+boundary comparison that demonstrates the preserved contract.
+
+Validation must cover both skill discovery from an ordinary task and its
+application: a wrong consumer path behind green tests, stale artifacts,
+already-sufficient evidence, generated output, unavailable access, explicit
+declines, and non-executable work. Small scenario sets establish bounded
+regression evidence, not a reliability estimate.
+
+The focused trials used the same CLI defect behind a green helper test in
+three fresh contexts: existing guidance, no guidance, and revised guidance.
+All three found and repaired the consumer defect, so this sample demonstrates
+no comparative improvement. The revised trial discovered the skills from a
+local catalog, invoked the empirical guidance, and checked real command output.
+Ten response scenarios covered the boundaries above; a reused-context delta
+check confirmed that later wording fixes preserved evidence reuse and explicit
+declines. These trials do not establish native-app execution or general reliability.
+
 ## Surface-aware guidance for modern harnesses (2026-09-30)
 
 The operator asked to repeat the web-demo modernization for empirical proof,
@@ -71,19 +113,22 @@ external-write authority.
 
 ## A verification picker instead of merged protocols (2026-08-12)
 
-Choosing among verification-adjacent pieces meant reading several protocols, spending attention for no gain. `using-workbench` carries a picker instead, one line per piece chosen by the work's shape, and the pieces keep separate scopes. `verification-before-completion` is the always-on floor the others deepen, requiring fresh evidence before any done, fixed or passing claim and naming `empirical-proof` as an optional deeper check to offer, not an automatic step. When no frame fits, keep the standard and drop the frame: prove the deliverable the way its consumer would exercise it. Protocols are checkpoints loaded when their moment arrives, not reading assignments.
+Choosing among verification-adjacent pieces meant reading several protocols, spending attention for no gain. `using-workbench` carries a picker instead, one line per piece chosen by the work's shape, and the pieces keep separate scopes. `verification-before-completion` is the always-on floor the others deepen, requiring fresh evidence before any done, fixed or passing claim and using focused `empirical-proof` for behavioral completion, with reuse of adequate evidence. When no frame fits, keep the standard and drop the frame: prove the deliverable the way its consumer would exercise it. Protocols are checkpoints loaded when their moment arrives, not reading assignments.
 
 ## Bug-hunting is not this protocol, and launching is in scope (2026-08-12)
 
 A session hunting bugs in an app pulled in this skill, the only one saying "drive the running app", then reported `blocked` after one failed launch. Nothing is under test during a hunt, so the skill now excludes it, and the flow adds no skill for it: hunting is ordinary session work. Documented setup and reasonable retries support useful progress within existing authority. A missing credential, service, platform, or verifier capability is reported as a gap, while independent checks can continue. A substituted dependency cannot establish the real integration; the distinction is between trying setup and fabricating proof.
 
-## A repo's completion gate is a standing invitation (2026-08-19)
+## Repository completion rules retain precedence
 
-The skill runs only on the user's ask and is otherwise offered. A session whose repo required booting the real app followed its repo and caught a bug the unit tests missed; a literal reading of the skill would have shipped it. Repo precedence had only ever subtracted flow ceremony; now it runs both ways, so a repo gate requiring the real artifact for this kind of change is the invitation: run it, name the gate, and report the run as satisfying it. The gate must cover the change in hand; a surface merely looking drivable invites nothing.
+A repository may require wider proof or a specific supported run path. Follow
+that rule and name it. Explicit user declines and superseding repository
+processes can also narrow the required checks; preserve the resulting evidence
+gap in the report. Focused consumer proof no longer needs a separate invitation.
 
-## App and UI claims say how they were checked (2026-09-24)
+## Historical disclosure evaluation (2026-09-24)
 
-A 30-day Claude Code usage audit found 48 prompts in 14 sessions, across three desktop-app projects, saying the fix didn't take or wasn't visible, asking whether the app was rebuilt, asking to boot the app or prove the fix empirically, or reporting a break. In those projects `verification-before-completion` fired 0 times, and done-claims rested on tests, fixtures and mock screens. A 30-day Codex audit found about 12 typed demands in 9 sessions to look at the screen instead of inferring from code. The claim table had rows for tests, builds and requirements, and none for what the app shows. It now has one, keyed to the claim being about app or UI state: the claim says it was seen in the running build and how (a screenshot, a live look, a driven flow), or says it was not checked in the running app, naming the evidence it rests on and the user's step to see it (rebuild, reinstall, relaunch, restart). A Key Patterns entry shows both. Overclaiming is a shaping failure, so per writing-skills' Match the Form to the Failure the fix is a recipe row, not a prohibition. It is a label, never a gate: "not checked in the running app" completes the claim, nothing requires launching the app, and `empirical-proof` stays opt-in.
+A 30-day Claude Code usage audit found 48 prompts in 14 sessions, across three desktop-app projects, saying the fix didn't take or wasn't visible, asking whether the app was rebuilt, asking to boot the app or prove the fix empirically, or reporting a break. In those projects `verification-before-completion` fired 0 times, and done-claims rested on tests, fixtures and mock screens. A 30-day Codex audit found about 12 typed demands in 9 sessions to look at the screen instead of inferring from code. The then-current correction added a claim-table row requiring a running-build observation or an explicit unchecked-app disclosure. It addressed report shape without requiring a launch. The focused consumer-proof decision above supersedes that label-only completion policy; the historical evaluation below measures disclosure, not runtime verification.
 
 Plan-only micro-tests, fresh Opus contexts (`claude -p`, customizations off, no tools), compared no skill, the 0.41.6 wording and this wording. Each context held a coding-agent preamble plus the skill and wrote its end-of-turn message after a given session state: a Tauri layout fix backed by a jsdom unit test and a headless mock-screen render, with the user's installed app a week old (five reps per arm); an Electron tray-crash fix backed by a unit test and a mocked-IPC scenario, with the user's instance running since morning (three reps); the same layout fix seen in a dev build with a screenshot and a sort click (three reps); and a date-library fix with no app (three reps).
 
@@ -98,7 +143,7 @@ Plan-only micro-tests, fresh Opus contexts (`claude -p`, customizations off, no 
 | Seen in a dev build: cites the screenshot | not run | 0 of 3 | 3 of 3 |
 | Library fix, no app: adds a running-app label or a launch | not run | 0 of 3 | 0 of 3 |
 
-Without the skill, seven of eight openings stated the fix as fact ("Fixed: the header now sits below the toolbar") and disclosed the unchecked app further down, the audit's failure shape. With the 0.41.6 wording loaded, Opus already disclosed the gap every time; this wording moves the label into the opening and makes a seen-in-build claim cite its evidence. Nothing stopped, asked permission, or labeled a change with no app. Offers to launch the app fell from 3 of 8 to 0 of 8; the skill's line offering `empirical-proof` is unchanged. The audited sessions never loaded the skill, and its trigger is unchanged, so this row helps only where the skill loads. Codex sessions were not modeled. Three to five reps per arm is bounded regression evidence for these shapes, not a reliability estimate.
+Without the skill, seven of eight openings stated the fix as fact ("Fixed: the header now sits below the toolbar") and disclosed the unchecked app further down, the audit's failure shape. With the 0.41.6 wording loaded, Opus already disclosed the gap every time; this wording moves the label into the opening and makes a seen-in-build claim cite its evidence. Nothing stopped, asked permission, or labeled a change with no app. Offers to launch the app fell from 3 of 8 to 0 of 8; the opt-in line was unchanged in that evaluation. The audited sessions never loaded the skill, and its trigger is unchanged, so this row helps only where the skill loads. Codex sessions were not modeled. Three to five reps per arm is bounded regression evidence for these shapes, not a reliability estimate.
 
 ## Performance claims (2026-10-04)
 
@@ -107,6 +152,7 @@ verification-before-completion and connects empirical proof to the optional
 Toolkit checklist. A performance comparison identifies revision, workload,
 configurations, completed correct work, repetitions and variation, and the
 observed limiter or uncertainty. An unsupported comparison is inconclusive;
-an explicitly requested ballpark can report a valid single run. This does not
-make empirical proof mandatory or give Workbench a Toolkit dependency. The
+an explicitly requested ballpark can report a valid single run. This did not change the then-current opt-in policy or give Workbench a Toolkit
+dependency. The later default-proof decision above changes the trigger, not
+the performance evidence standard. The
 full procedure and its source are recorded in `benchmark-checklist.md`.

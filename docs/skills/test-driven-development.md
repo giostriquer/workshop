@@ -31,6 +31,11 @@ The skill applies where the repo is silent and never overrides the repo's own ru
 
 ## The cycle
 
+Choose the public interface or observable boundary under test and briefly name
+what it catches and misses. A helper test may cover formatting while missing
+CLI wiring or file output. Use existing task decisions; this is not another
+approval exchange for an agreed boundary.
+
 | Step | What you do | Move on when |
 | --- | --- | --- |
 | **RED** | One minimal test: one behavior, clear name, real code with doubles only at external or slow boundaries. | It is written. |
@@ -65,7 +70,12 @@ No. Constructors, getters, constants, and trivial forwarding earn tests only whe
 The valid implementation and reusable behavior tests. Run probes in a disposable checkout, verify the author's staged, unstaged, and untracked state afterwards, and keep injected defects, mutant copies, and probe tests out of the commit.
 
 **How do I prove a fix for a test-quality finding?**
-Apply that finding's mutant by hand, watch the focused test fail, revert, watch it pass. A probe is one named defect and one test run; mutation-tool sweeps belong to the test-quality review, not to the implementer.
+Apply that finding's mutant by hand, inspect its diff against pristine source
+to confirm the intended change landed with test expectations intact, watch the
+focused test fail at the intended assertion, restore, and watch it pass. A
+failed replacement or setup error does not prove sensitivity. A probe is one
+named defect and one test run; mutation-tool sweeps belong to the test-quality
+review, not to the implementer.
 
 ## It's working if
 

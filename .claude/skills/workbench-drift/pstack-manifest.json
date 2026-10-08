@@ -153,6 +153,32 @@
       "upstreamPath": "pstack/.cursor-plugin/",
       "disposition": "dropped",
       "why": "Upstream registration is not portable; read its version when recording the reviewed source snapshot."
+    },
+    {
+      "upstreamPath": "pstack/skills/principle-prove-it-works/",
+      "localPath": "plugins/workbench/skills/verification-before-completion/",
+      "disposition": "adopted",
+      "why": "Focused proof through the actual affected consumer boundary before behavioral completion.",
+      "adaptations": "Also informs empirical-proof. Reuse adequate current evidence; keep proportional checks, user/repo precedence, and blocked-proof reporting. No dispatcher, fixed harness, model routing, or delivery authority.",
+      "scopedReview": {
+        "commit": "ccb5507cec1546dc88135c1139c811e6c59115ba",
+        "version": "0.15.15",
+        "date": "2026-10-08",
+        "note": "Scoped adoption of existing verification guidance. Source version is not marketplace publication proof; range-review pin is unchanged. See docs/decisions/empirical-proof.md."
+      }
+    },
+    {
+      "upstreamPath": "pstack/skills/poteto-mode/playbooks/bug-fix.md",
+      "localPath": "plugins/workbench/skills/verification-before-completion/",
+      "disposition": "adopted",
+      "why": "Focused proof through the actual affected consumer boundary before behavioral completion.",
+      "adaptations": "Also informs empirical-proof. Reuse adequate current evidence; keep proportional checks, user/repo precedence, and blocked-proof reporting. No dispatcher, fixed harness, model routing, or delivery authority.",
+      "scopedReview": {
+        "commit": "ccb5507cec1546dc88135c1139c811e6c59115ba",
+        "version": "0.15.15",
+        "date": "2026-10-08",
+        "note": "Scoped adoption of existing verification guidance. Source version is not marketplace publication proof; range-review pin is unchanged. See docs/decisions/empirical-proof.md."
+      }
     }
   ]
 }

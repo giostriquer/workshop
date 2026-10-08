@@ -1,5 +1,32 @@
 # Matt Pocock's grilling and architecture skills: decisions in force
 
+## Focused upstream refinements (2026-10-08)
+
+The approved source review at `b0618bc436ad893b3c5e84e55fba86586d34a404`
+contributes three small adaptations. In Toolkit grilling, a yes/no question
+is phrased so yes accepts the recommendation; genuine multi-option choices
+remain choices. In Workbench TDD, each selected test boundary names what it
+catches and misses, using existing task authority without a new approval
+exchange. Hand-applied mutation probes verify the actual source difference
+before trusting RED, both during implementation and test-quality review.
+
+Sources are Matt Pocock's MIT-licensed
+[grilling](https://github.com/mattpocock/skills/blob/b0618bc436ad893b3c5e84e55fba86586d34a404/skills/productivity/grilling/SKILL.md),
+[tdd](https://github.com/mattpocock/skills/blob/b0618bc436ad893b3c5e84e55fba86586d34a404/skills/engineering/tdd/SKILL.md), and
+[diagnosing-bugs](https://github.com/mattpocock/skills/blob/b0618bc436ad893b3c5e84e55fba86586d34a404/skills/engineering/diagnosing-bugs/SKILL.md).
+The latter two workflows are not imported wholesale. Local TDD, isolation,
+focused-test, and review ownership rules remain in force. The source snapshot
+is 44 commits beyond published `v1.3.1`; its manifest version does not make
+those changes released. Scoped adoption records preserve that distinction.
+
+A consuming-agent fixture check caught a mutation helper that exited
+successfully without changing source. An inspected replacement then failed
+at the intended assertion, and restored source passed with the original files
+preserved. Two response-only probes covered the API test-boundary explanation
+and recommendation-aligned grilling with a genuine three-option choice.
+Those two probes executed no API or interview; this small sample supports
+the specific guidance checks, not a general reliability claim.
+
 This is the rationale for five toolkit skills ported from
 [mattpocock/skills](https://github.com/mattpocock/skills) (MIT, Copyright (c)
 2026 Matt Pocock): `grill-me`, `grilling`, `improve-codebase-architecture`,

@@ -79,9 +79,10 @@ followed by the adversarial review once an implementation is complete
 production logic or tests changed). Each stops only for an explicit decline or
 a repo process that supersedes it.
 
-**The expensive tiers are offered, never assumed.** `empirical-proof` and
-`qa-sweep` cost real time and budget. They run on your explicit ask, now or by
-standing rule, not because a session decided the work deserved them.
+**Proof stays focused.** `empirical-proof` supplies default consumer proof for
+behavioral completion and reuses adequate current evidence. It does not add a
+full suite, recording, team, or permanent harness. Broad `qa-sweep` stays
+user-optioned, running only on your explicit ask, now or by standing rule.
 
 ## Not documented here
 

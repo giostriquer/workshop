@@ -9,6 +9,15 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-12 reformat.
 
 
+## workbench 0.48.0: 2026-10-08
+
+- **Behavioral completion requires focused consumer proof.** `verification-before-completion` invokes `empirical-proof` by default for behavioral changes and refactors. Reuse sufficient current evidence; blocked checks remain incomplete, and explicit declines and repository rules retain precedence. Broad QA, recordings, teams, and permanent harnesses remain optional. ([decision](decisions/empirical-proof.md#focused-consumer-proof-is-the-completion-default-2026-10-08))
+- **Tests state their boundary and mutation probes confirm their source change.** TDD explains what a selected test catches and misses without reopening agreed scope. Hand-applied mutants must differ from pristine source with expectations intact before their failures count as evidence. ([decision](decisions/mattpocock-skills.md#focused-upstream-refinements-2026-10-08))
+
+## toolkit 0.15.2: 2026-10-08
+
+- **Yes accepts the grilling recommendation.** Phrase yes/no questions so an affirmative answer selects the recommended action, while genuine multi-option decisions retain distinct choices. ([decision](decisions/mattpocock-skills.md#focused-upstream-refinements-2026-10-08))
+
 ## workbench 0.47.4: 2026-10-07
 
 - **CI watchers execute one bundled runner.** `ci-watcher` and `fix-ci` invoke the same Node command for PR and branch monitoring, with pinned revisions, persisted deadlines and explicit rerun attempts. Failures return before diagnosis; cancelled or missing checks cannot certify a pass, and partial reruns preserve jobs that already passed. Node 18+ and authenticated `gh` are required; missing prerequisites produce a reported gap. ([decision](decisions/fix-ci.md#execute-a-bundled-watcher-instead-of-generating-loops-2026-10-07))
@@ -66,11 +75,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 ## workbench 0.45.2: 2026-09-30
 
 - **PR titles explain the change without opening the description.** Name the affected feature and corrected behavior, including the restart, interruption, or failure condition for retention and recovery fixes. A worked example rejects a vague title even after its scope prefix is corrected; descriptions expand the same before/after claim. ([decision](decisions/file-pr.md#titles-and-descriptions-share-an-evidence-boundary-2026-09-30))
-
-## workbench 0.45.1: 2026-09-30
-
-- **PR titles and descriptions identify the actual contribution.** Ground both in the owning surface, final diff, supported result, and material limits. Check claims before publication, distinguish successive repairs to the same symptom, and refresh both title and body after synchronization or later corrections. ([decision](decisions/file-pr.md#titles-and-descriptions-share-an-evidence-boundary-2026-09-30))
-
-## workbench 0.45.0: 2026-09-30
-
-- **Empirical proof fits apps and their real consumers.** Cover web, desktop, mobile, CLI/TUI, API, MCP, libraries and generated output with general checks and surface-specific direction. Use available native tools and project workflows, keep evidence proportional, and show build identity and coverage gaps without a fixed health gate, probe matrix, transcript format or fan-out requirement. ([decision](decisions/empirical-proof.md#surface-aware-guidance-for-modern-harnesses-2026-09-30))

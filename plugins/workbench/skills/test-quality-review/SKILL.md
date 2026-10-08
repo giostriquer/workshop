@@ -222,6 +222,10 @@ named tests.
    isolated sandbox or disposable checkout that includes the reviewed changes and
    tests. Mutate production code there, preserving test expectations. A documented
    command that edits files in place also runs in isolation.
+   For a hand-applied defect, inspect the mutated source diff against the
+   pristine copy before running: prove the intended production change landed
+   and test expectations stayed intact. An unchanged file or setup failure
+   cannot count as a detected mutant.
 2. After success, failure, or timeout, stop any remaining mutation processes,
    including test processes the mutated tests spawned (search `ps` for the copy's
    path), and compare the author checkout with that baseline. Remove only run-created

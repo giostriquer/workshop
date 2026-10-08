@@ -50,6 +50,8 @@ branch reopens. One question at a time is a supported preference; ask for it.
 **Why does every question carry a recommendation?**
 So you can answer by number ("1 yes, 2 the second option, 3 no, because...")
 and spend your attention on the answers you disagree with.
+For yes/no decisions, yes accepts the recommendation. Genuine multi-option
+decisions keep their explicit choices and identify the recommended option.
 
 **It answered its own question and moved on.**
 That is a failed run, not a liberal reading. Decisions are yours; tell it to

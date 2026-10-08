@@ -62,7 +62,7 @@ commits.
 | `handoff-goal` | emits a goal contract a fresh session pursues autonomously; long-running work only, never pursues it itself |
 | `claim-check` | evidence-graded investigation of a ticket / hunch / question: verdict + readiness dossier; preserves the result before any separately authorized repair |
 | `qa-sweep` | fans a QA team over independent slices, corroborates every verdict-moving finding firsthand |
-| `empirical-proof` | checks a finished change through apps or real consumers: surface-aware checks, evidence and coverage gaps |
+| `empirical-proof` | default focused proof of behavioral changes through apps or real consumers, with evidence reuse and coverage gaps |
 | `code-quality-review` | strict, structure-first maintainability review of a diff |
 | `test-quality-review` | test trustworthiness review: whether tests protect the behavior they claim, backed by a mutation run over the changed code; runs with the adversarial review when logic or tests changed |
 | `trim-comments` | the comment trim at completion, before the review round: removes code-comment slop (narration, banners, commented-out code, stale comments, workaround sermons) from the finished diff, keeps comments that carry what the code can't, offers encodings for constraint comments, and reports correctness-hiding suppressions; dispatched to `comment-trimmer` |

@@ -14,9 +14,16 @@ The first route's former slang name, left in by oversight, became `direct`: impl
 
 A session ran tests despite a repo rule forbidding test runs before manual validation, because the skill's MANDATORY labels had no stated rank against repo rules. A conflicting stated repo or user convention now wins, announced in one line, while the compatible rest of the cycle still applies. Convenience alone never displaces a step, and the cycle's rigor is unchanged where TDD applies.
 
-## Q14: Expensive verification is offered, not automatic (2026-08-12)
+## Q14: Focused proof by default, broad QA by invitation (2026-10-08)
 
-`empirical-proof` and `qa-sweep` fan out agents and boot apps, yet flow text like "empirical-proof if runnable" read as an order to run them whenever a change qualified. That spend is the user's call: they are offered when they fit and run only on an explicit ask, immediate or standing, such as a repo gate requiring the real artifact. `verification-before-completion` stays the cheap always-on claim gate. Q14 refines Q11.
+`verification-before-completion` requires focused `empirical-proof` for behavioral
+completion. Reuse adequate current evidence through the affected consumer
+boundary; no automatic full suite, recording, team, or permanent harness.
+A blocked route remains incomplete and reports attempts and the concrete gap.
+Broad `qa-sweep` remains offered, running only on an explicit ask, immediate or
+standing. Explicit declines and superseding repo rules retain precedence.
+This revises the former opt-in choice, whose cost rationale assumed fan-out;
+see [the verification decision](empirical-proof.md).
 
 ## Worktrees live inside the repository (2026-08-12)
 

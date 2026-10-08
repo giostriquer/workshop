@@ -18,8 +18,8 @@ are not reasons to skip. Everything else fires on relevance.
 
 Repo process takes precedence in both directions: the repo's own `CLAUDE.md`,
 `AGENTS.md`, or `CONTRIBUTING` governs worktrees, test discipline, and
-completion gates, and a repo gate can also invite a tier the flow would
-otherwise only offer.
+completion gates. A repo gate can require wider coverage than the default
+focused consumer proof.
 
 ## When to reach for it
 
@@ -79,10 +79,14 @@ name `file-pr`.
 When no frame fits, keep the standard and drop the frame: prove the
 deliverable the way its real consumer would use it.
 
-**Cost and authority.** `empirical-proof` and `qa-sweep` are the expensive
-tiers: "**Offer them; never default to them.**" They run on the user's ask,
-now or standing. A repo completion gate that requires driving the real
-artifact counts as a standing ask; the session runs it and names the gate.
+**Cost and authority.** Focused `empirical-proof` is part of the default
+verification gate for behavioral changes. Existing checks can already satisfy
+it when they exercise the affected consumer boundary on the relevant artifact
+and state. It adds no automatic full suite, recording, team, or permanent
+harness. A blocked route remains incomplete and names attempts and the gap;
+independent work continues. Explicit declines and superseding repo rules
+still apply. Broad `qa-sweep` remains offered and runs only on an explicit
+ask, immediate or standing.
 
 **Artifacts are disposable.** Working material lives in
 `.workbench/<work_scope>/` (or `.tmp/workbench/<work_scope>/`), typically

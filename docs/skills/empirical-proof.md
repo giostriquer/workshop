@@ -14,10 +14,10 @@ available, alongside existing project automation and documented run paths.
 
 ## When to reach for it
 
-Ask after a finished change when you want proof from the actual software.
-A repo completion rule that requires this check also counts as an invitation.
-Otherwise the session offers it. A drivable surface alone does not make it
-mandatory ([decision](../decisions/workbench-operator-decisions.md)).
+It runs by default when completing a behavioral change or refactor, as part
+of `verification-before-completion`. You can also ask for it directly.
+An explicit decline or superseding repo process changes the required checks;
+the report still names unverified behavior. Broad QA remains a separate ask.
 
 | Need | Route |
 | --- | --- |
@@ -31,7 +31,9 @@ mandatory ([decision](../decisions/workbench-operator-decisions.md)).
 
 The session identifies the expected outcome, exercises the changed path, and
 selects relevant failure cases and nearby regressions. It checks the result,
-including persisted data or integration effects where those matter.
+including persisted data or integration effects where those matter. For a
+refactor, it checks the behavior that must remain unchanged. The report says
+what the chosen route establishes and what it leaves outside the claim.
 
 | Surface | Typical direction |
 | --- | --- |
@@ -86,12 +88,24 @@ For a requested browser video, `toolkit:web-demo-video` supplies the recorder.
 **What if a dependency or UI tool is unavailable?**
 Try reasonable documented setup within existing task authority, including
 starting a real local dependency. Report the gap and continue independent checks.
+The affected behavior's verification remains incomplete; a disclosure alone
+does not make it complete. State the attempts, concrete blocker, and remaining
+check. Do not use an unauthorized account or restart a user-owned session to
+satisfy the gate.
 An environment or verifier failure is not automatically an app defect. A fake
 service can support a narrower test, but not a claim about the real integration.
 
 **Are passing tests enough?**
-They support the behavior they exercise. Report app interaction separately
-from unit tests, builds, source inspection, or mocked behavior.
+Yes, when they exercise the relevant real consumer boundary on the changed
+artifact. A public-interface library test can suffice; a mocked component test
+does not prove the running UI. Reuse valid evidence instead of repeating a run
+merely because this skill was loaded. Evidence changes when the relevant
+revision, inputs, dependencies, configuration, or runtime state changes.
+
+**Does the default require a video, a team, or a new harness?**
+No. Use the smallest meaningful check. A native tool exchange or command output
+can suffice. Full suites stay in PR CI unless otherwise required; broad QA and
+permanent verification infrastructure are separate scope decisions.
 
 **Does it repair bugs?**
 A verification-only request ends at findings. Existing repair authority lets

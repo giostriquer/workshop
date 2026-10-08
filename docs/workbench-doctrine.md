@@ -18,9 +18,9 @@ My environments follow the **workbench** flow (workbench plugin):
   and refactor design goes through `brainstorming`, carrying my route choice:
   direct / plan / handoff-goal. Implementation agency (in-session vs dispatched)
   is mine and the harness's; hand the implementer the plan or goal if one exists.
-- **Finish:** when you consider the implementation ready: verify with evidence (`verification-before-completion`; offer
-  `empirical-proof` for runnable surfaces: run it only if I ask or a standing
-  rule authorizes), a comment trim (`trim-comments`), then an adversarial review
+- **Finish:** while finishing the implementation: verify with evidence
+  (`verification-before-completion`; focused `empirical-proof` for behavioral
+  changes, reusing adequate current evidence), a comment trim (`trim-comments`), then an adversarial review
   at readiness on the trimmed diff (`code-quality-review`, plus
   `test-quality-review` when production logic or tests changed), then outline
   what was done and ask me: PR or merge?

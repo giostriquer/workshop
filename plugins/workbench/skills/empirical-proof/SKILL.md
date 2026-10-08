@@ -1,6 +1,6 @@
 ---
 name: empirical-proof
-description: Use when a finished change to an app, CLI, API, MCP tool, library, or generated artifact needs empirical verification at the user's request or under a repo completion gate. Offer it otherwise. Not for broad QA (qa-sweep), investigating a premise (claim-check), or exploratory bug hunting.
+description: Use when completing a behavioral change or refactor to an app, CLI, API, MCP tool, library, or generated artifact, or when explicitly asked to prove one change. Not for broad QA (qa-sweep), investigating a premise (claim-check), or exploratory bug hunting.
 ---
 # Empirical Proof
 
@@ -8,8 +8,12 @@ Check the finished change the way its user or consumer experiences it. Operate
 software, inspect images, follow state across tools, and compare expected with
 observed behavior using the capabilities available in this session.
 
-This is guidance for a focused proof, not a fixed harness or ceremony. Run it
-when asked or when a repo completion rule requires it; otherwise offer it.
+This is the default focused proof for behavioral completion under
+`verification-before-completion`. Use it without another offer. Reuse existing
+evidence when it already demonstrates the affected behavior on the relevant
+artifact and state; a public-interface test can be the consumer for a library
+claim. Apply explicit user declines and superseding repo rules, recording what
+remains unverified. This guidance adds no fixed harness or ceremony.
 Broad coverage belongs to `qa-sweep`, premises to `claim-check`, and exploratory
 bug hunting to ordinary session work.
 
@@ -17,7 +21,8 @@ bug hunting to ordinary session work.
 
 Turn the requested behavior, diff, and acceptance criteria into observable
 outcomes. For a bug fix, exercise the original symptom on the changed build.
-For a feature, complete the intended flow and inspect its result.
+For a feature, complete the intended flow and inspect its result. For a
+refactor, exercise or compare the behavior that must remain unchanged.
 
 Choose checks that could expose a plausible failure:
 
@@ -31,6 +36,7 @@ Choose checks that could expose a plausible failure:
 Scale this to the change. A layout correction may need a screenshot and a
 resize; an account flow may need validation, persistence, and permissions.
 Select meaningful cases rather than a universal input matrix. Name unrun checks.
+State what the chosen route establishes and what it leaves outside the claim.
 
 ## Choose a route that fits the surface
 
@@ -94,6 +100,12 @@ Report unavailable credentials, services, platforms, or tools and continue
 independent checks. A fake dependency supports a narrower test, not proof of
 the real integration. Distinguish app failures from verifier or environment
 failures before attributing a defect.
+
+An unavailable route leaves that behavior's verification incomplete. Name the
+attempts, concrete blocker, and remaining check; continue independent work.
+Do not stop at the first setup failure, substitute a mock for missing real
+integration evidence, or use an unauthorized account. A requirement to verify
+does not grant external-write or user-session restart authority.
 
 ## Keep evidence proportional to the claim
 

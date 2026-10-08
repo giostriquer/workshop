@@ -23,6 +23,10 @@ Format a round like so:
 ➡️ <your recommended answer>
 ```
 
+For a yes/no decision, word the question so "yes" accepts the recommended
+answer. Keep genuine multi-option decisions as explicit choices with the
+recommendation identified; do not force them into yes/no questions.
+
 Each round the user answers reshapes the tree: settled decisions push the frontier outward and unblock questions that depended on them. Recompute the frontier and ask the next round. A question whose answer depends on another question still open in this round belongs to a _later_ round, not this one.
 
 Finding _facts_ is your job, never the user's. When a frontier question needs a fact from the environment (files, tools, docs), look it up yourself, through a sub-agent where the host has one; don't ask the user for anything you could look up. Don't block on it: a running exploration is an unsettled prerequisite, so only the questions downstream of it wait for the answer; ask the rest of the frontier now. The _decisions_ are the user's: put each to them and wait.

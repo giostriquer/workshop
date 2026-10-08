@@ -54,6 +54,14 @@ decision for the user, not a TDD side effect.
 Harness exists and you're thinking "skip TDD just this once"? Stop. That's
 rationalization. (A stated repo rule is not "just this once": see Precedence.)
 
+## Choose the test boundary
+
+Name the public interface or observable boundary under test and give a short
+note on what it catches and what it misses. Choose one that reaches the actual
+behavior: a helper test may cover row formatting while missing CLI argument
+wiring or file output. Follow existing task and repo decisions; ask only when
+an unresolved scope choice needs the user, not to reapprove an agreed boundary.
+
 ## Test order and existing work
 
 Prefer a failing test before new implementation. If valid implementation already
@@ -69,7 +77,11 @@ or rewrite valid code merely because it preceded its test.
 Mutate production code in a disposable checkout; keep the tests and their
 expectations intact. A probe is one named defect applied by hand and one
 focused test run: to prove a finding's fix, apply that finding's mutant, watch
-the test fail, revert, watch it pass. Mutation-tool sweeps (cargo-mutants,
+the test fail, revert, watch it pass. Before running a hand-applied mutant,
+diff the mutated source against its pristine copy and inspect the intended
+change; unchanged source or a failed replacement does not establish RED.
+Keep test expectations intact and confirm the failure is the intended assertion.
+Mutation-tool sweeps (cargo-mutants,
 Stryker) belong to the test-quality review, never to the implementer proving a
 fix. Before probing, record the author's staged, unstaged, and
 untracked state. After success, failure, or timeout, stop any remaining probe

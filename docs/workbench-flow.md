@@ -51,7 +51,7 @@ flowchart LR
     OG[["USER: PR or merge?<br/>session outlines what was done first;<br/>repo / user rules may pre-authorize"]]:::gate
     L["LAND<br/>file-pr · merge · push;<br/>fix-ci: separate Sonnet 5.5 / Sol watcher"]:::stage
 
-    I -->|"deemed ready = verified<br/>(verification-before-completion;<br/>empirical-proof offered if runnable)"| TR
+    I -->|"deemed ready = verified<br/>(verification-before-completion;<br/>focused empirical-proof for behavior)"| TR
     TR --> AR
     AR -->|"blocking corrections → reviewer verification<br/>automatic follow-ups; not converging → hold"| OG
     OG --> L
@@ -71,7 +71,7 @@ the user's call.
 
 ## Decisions ledger (operator, 2026-08-11 unless noted)
 
-Historical decisions below are refined by the current flow and the [wording-hardening decision](decisions/skill-wording-hardening.md): no repeated authorization and explicit proof opt-in. The [bounded correction-review decision](decisions/bounded-correction-review.md) supersedes the old no-re-review rule: blocking dispositions require reviewer confirmation, and focused follow-up passes run automatically until review stops converging. In delegated epics, use focused local checks plus required gates; each verified wave ends with the next dispatch, delivery gate, closing audit, completion proposal, or concrete blocker.
+Historical decisions below are refined by the current flow and the [wording-hardening decision](decisions/skill-wording-hardening.md): carry existing authority without repeated authorization. The [current proof decision](decisions/empirical-proof.md#focused-consumer-proof-is-the-completion-default-2026-10-08) makes focused consumer proof the default for behavioral completion; broad QA remains opt-in. The [bounded correction-review decision](decisions/bounded-correction-review.md) supersedes the old no-re-review rule: blocking dispositions require reviewer confirmation, and focused follow-up passes run automatically until review stops converging. In delegated epics, use focused local checks plus required gates; each verified wave ends with the next dispatch, delivery gate, closing audit, completion proposal, or concrete blocker.
 
 | # | Decision |
 |---|---|
@@ -88,7 +88,7 @@ Historical decisions below are refined by the current flow and the [wording-hard
 | Q11 | "Deemed ready" = verification-before-completion; empirical-proof for runnable surfaces. |
 | Q12 | Flow artifacts are disposable: saved under `.workbench/<work_scope>/` (or `.tmp/workbench/<work_scope>/`), enduring only for the work; durable only on explicit user ask or an established repo pattern. |
 | Q13 | Implementation inherits repo patterns first. A stated repo/user convention that conflicts with a discipline step wins, and the conflict is announced rather than absorbed silently. TDD is the default only where the repo is silent. (2026-08-12) |
-| Q14 | Expensive verification (`empirical-proof`, `qa-sweep`) is user-optioned. It is offered when it fits and run only on explicit ask or standing authorization, never automatically. `verification-before-completion` and the adversarial review at readiness are the always-on gates. (2026-08-12) |
+| Q14 | Focused `empirical-proof` is the behavioral completion default within `verification-before-completion`; reuse adequate current evidence. Broad `qa-sweep` stays user-optioned. Explicit declines and superseding repo rules apply. (2026-10-08) |
 | Q15 | The adversarial review fires only when the work-stream's implementation is believed complete, right before the PR-or-merge gate, and never mid-implementation (refines Q3). Findings outside the accepted scope become follow-ups unless they prove the change unsafe or incorrect. (2026-08-12) |
 | Q16 | Reversed 2026-08-25: scope is the user's to define, and the stop-and-rescope guard is gone. Adjacent defects found along the way are still recorded as follow-up work, not folded in. (2026-08-12) |
 | Q17 | One evidence home per work scope (refines Q12). Everything a work-stream produces, including dispatched agents' evidence, lands in the same `.workbench/<work_scope>/` folder. Agents receive that path in their contract; per-agent temp dirs and the system temp are not used. (2026-08-12) |

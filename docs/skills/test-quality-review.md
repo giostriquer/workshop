@@ -29,6 +29,11 @@ It runs when a full change to production logic or tests is implemented, verified
 
 **Workspace preservation.** The reviewer records the author's staged, unstaged, and untracked state before mutating and verifies it afterwards, even after failure or timeout. An unresolved gap is `ISSUES_FOUND`.
 
+**Hand-applied defects.** Inspect the mutated source diff against a pristine
+copy before testing, confirming that the intended production change landed
+and test expectations stayed intact. A failed replacement or setup error does
+not count as a detected mutant.
+
 **Survivors.** Every surviving and `NoCoverage` mutant gets a judgment. One that changes behavior a consumer relies on is an Issue naming the assertion that kills it; an equivalent mutant or a wording-only change nobody matches on is an Observation; a new `Stryker disable` comment without a checkable reason is an Issue. The mutation score is never the pass/fail line.
 
 **Property testing and metrics.** Missing property-style coverage is flagged where invariants span many inputs, blocking only when examples plainly cannot cover the risk or policy requires it. Published coverage and CRAP data are risk evidence, never a substitute for reading the tests.

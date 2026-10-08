@@ -34,7 +34,15 @@
       "localPath": "plugins/toolkit/skills/grilling/",
       "disposition": "adopted",
       "why": "Round-based design-tree interviews.",
-      "adaptations": "Host-neutral fact lookup; preserve the distinction from Workbench brainstorming."
+      "adaptations": "Host-neutral fact lookup; preserve the distinction from Workbench brainstorming. Yes accepts the recommendation for yes/no decisions; genuine multi-option choices stay explicit.",
+      "scopedReview": {
+        "commit": "b0618bc436ad893b3c5e84e55fba86586d34a404",
+        "version": "1.3.1",
+        "latestPublishedRelease": "v1.3.1",
+        "commitsAfterRelease": 44,
+        "date": "2026-10-08",
+        "note": "Scoped adaptation only; this source snapshot contains unreleased changes. Does not advance the range-review pin. See docs/decisions/mattpocock-skills.md."
+      }
     },
     {
       "upstreamPath": "skills/engineering/codebase-design/",
@@ -64,8 +72,18 @@
     },
     {
       "upstreamPath": "skills/engineering/diagnosing-bugs/",
-      "disposition": "dropped",
-      "why": "The reviewed change only renames glossary references; local systematic-debugging remains the owner."
+      "disposition": "adopted",
+      "why": "Adapt only confirmation that a hand-applied mutant changed the intended production source before trusting RED.",
+      "localPath": "plugins/workbench/skills/test-driven-development/",
+      "adaptations": "Also informs verification-before-completion and test-quality-review. Preserve pristine comparison, unchanged test expectations, disposable isolation, and the local diagnostic owner; no upstream diagnosis pipeline.",
+      "scopedReview": {
+        "commit": "b0618bc436ad893b3c5e84e55fba86586d34a404",
+        "version": "1.3.1",
+        "latestPublishedRelease": "v1.3.1",
+        "commitsAfterRelease": 44,
+        "date": "2026-10-08",
+        "note": "Scoped adaptation only; this source snapshot contains unreleased changes. Does not advance the range-review pin. See docs/decisions/mattpocock-skills.md."
+      }
     },
     {
       "upstreamPath": "skills/engineering/implement-spec/",
@@ -101,8 +119,18 @@
     },
     {
       "upstreamPath": "skills/engineering/tdd/",
-      "disposition": "dropped",
-      "why": "The reviewed change only renames glossary references; keep the existing Workbench TDD adaptation."
+      "disposition": "adopted",
+      "why": "Adapt only the note explaining what a chosen test boundary catches and misses.",
+      "localPath": "plugins/workbench/skills/test-driven-development/",
+      "adaptations": "Keep local TDD, existing task authority, and focused tests. Do not import mandatory seam reapproval or the upstream implementation pipeline.",
+      "scopedReview": {
+        "commit": "b0618bc436ad893b3c5e84e55fba86586d34a404",
+        "version": "1.3.1",
+        "latestPublishedRelease": "v1.3.1",
+        "commitsAfterRelease": 44,
+        "date": "2026-10-08",
+        "note": "Scoped adaptation only; this source snapshot contains unreleased changes. Does not advance the range-review pin. See docs/decisions/mattpocock-skills.md."
+      }
     },
     {
       "upstreamPath": "skills/engineering/triage/",

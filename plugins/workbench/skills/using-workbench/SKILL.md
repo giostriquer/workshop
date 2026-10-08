@@ -33,8 +33,8 @@ fine.
 its own process document (`CLAUDE.md`, `AGENTS.md`, `CONTRIBUTING`), follow it
 for worktrees, test discipline, and completion gates rather than re-running the
 flow's version of the same ceremony. Precedence is not only subtraction: a repo
-gate can also invite a tier the flow would otherwise only offer, such as
-`empirical-proof`. Existing scope and delivery authorization carries forward. Independent review
+gate can also require wider verification than the focused consumer proof in
+`verification-before-completion`. Existing scope and delivery authorization carries forward. Independent review
 before PR-or-merge follows the explicit waiver/repository exceptions below.
 
 ## The flow at a glance
@@ -55,6 +55,7 @@ SCOPING
       handoff-goal (contract dir; fresh session pursues autonomously)
 
 IMPLEMENTATION (agency = user/harness call; implementer gets the plan/goal if present)
+  identify the affected consumer boundary and observable completion check
   test-driven-development: default where a test harness exists;
       repo conventions take precedence on conflict
   systematic-debugging: sustained unresolved investigations; skip expected RED and obvious fixes
@@ -62,7 +63,7 @@ IMPLEMENTATION (agency = user/harness call; implementer gets the plan/goal if pr
 COMPLETION (full agreed work set implemented and verified; about to ship
 through a PR or the repository's delivery process, not an intermediate checkpoint)
   deemed ready = verified with evidence
-  (verification-before-completion; empirical-proof offered if runnable) →
+  (verification-before-completion; focused empirical-proof for behavioral changes) →
   Comment trim: REQUIRED, not offered (trim-comments, run by the comment-trimmer
   agent; code comments only; encoding offers wait for the USER gate) →
   Initial adversarial review round on the trimmed diff: REQUIRED, not offered
@@ -97,7 +98,7 @@ FEEDBACK
 | A long-running autonomous goal, outliving this session | `handoff-goal` |
 | Implementing with a test harness | `test-driven-development` |
 | An unresolved failure requiring sustained investigation | `systematic-debugging` |
-| About to claim done / ready | `verification-before-completion` (offer `empirical-proof` if runnable) |
+| Finishing a change or about to claim done / ready | `verification-before-completion` (use `empirical-proof` for behavioral changes; reuse adequate current evidence) |
 | The comment trim: **required** once the work-stream is complete, before the adversarial pass, **dispatched** to an agent that did not write the code | `trim-comments`, run by the `comment-trimmer` agent |
 | The initial adversarial pass: **required** on the trimmed diff, right before PR-or-merge, **dispatched** to reviewers that did not write the code | `code-quality-review`, run by the `code-quality-reviewer` agent; plus `test-quality-review`, run by the `test-quality-reviewer` agent, when the diff changes production logic or tests |
 | Checking existing tests or recommending a testing approach | `test-quality-review`, run by the `test-quality-reviewer` agent; give it the question and target |
@@ -117,11 +118,12 @@ Several pieces touch verification: pick by the work's shape, don't read
 them all:
 
 - `verification-before-completion` is the always-on gate that requires fresh evidence
-  before any done/fixed/passing claim. The others deepen it; this one never
-  skips.
+  before any done/fixed/passing claim. For behavioral completion it requires
+  focused proof through the affected consumer boundary.
 - `empirical-proof`: one just-finished change with a drivable surface. For
   generator work, the emitted artifact **is** that surface: generate,
-  build, drive it.
+  build, drive it. This is the default route for behavioral completion, not
+  another permission gate. An existing real-boundary check can already satisfy it.
 - `qa-sweep`: a broad decomposable surface (release, branch, feature area)
   at team scale.
 - `claim-check`: one premise, ticket, or hunch to investigate.
@@ -137,16 +139,19 @@ assignments: load one when its moment arrives, not preemptively.
 **Cost and authority:** two pieces are always-on:
 `verification-before-completion` at every done-claim, and the comment trim
 followed by the adversarial review (`code-quality-review`, plus `test-quality-review` when production
-logic or tests changed) once the implementation is complete. Both are default-on
+logic or tests changed) once the implementation is complete and about to ship
+through a PR or the repo's delivery process. Both are default-on
 and stop only for an explicit user decline or a superseding repo process.
-`empirical-proof` and `qa-sweep` are the expensive tiers.
-**Offer them; never default to them.** They run on the user's explicit ask
-(now or standing) and not otherwise. A repo's own completion gate that requires
-driving the real artifact for a change of this kind **is** that standing ask:
-run it, name the gate that invited it, and report the run as part of satisfying
-the gate rather than offering it first. Most changes don't warrant them, and
-running one uninvited spends the user's time and budget on ceremony they
-didn't order.
+Focused `empirical-proof` is part of the verification gate for behavioral
+changes. Reuse adequate evidence for unchanged relevant state; select the
+smallest real consumer check that supports the claim. It does not automatically
+add a full suite, recording, agent team, or permanent harness. A blocked route
+leaves verification incomplete and names the attempts and concrete gap while
+independent work continues. Explicit user declines and superseding repo rules
+still apply, and no verification rule grants external-write authority.
+Broad `qa-sweep` remains user-optioned: offer it and run only on an explicit
+ask, immediate or standing. Research, document edits, and narrow test/build
+status claims use evidence appropriate to their deliverable.
 
 ## Artifacts are disposable
 
