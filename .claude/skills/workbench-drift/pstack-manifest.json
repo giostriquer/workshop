@@ -82,7 +82,13 @@
       "localPath": "plugins/workbench/skills/empirical-proof/",
       "disposition": "adopted",
       "why": "Real artifact launch, drive, and evidence concepts.",
-      "adaptations": "Also informs toolkit web-demo-video; no generated project verification skill or fixed feature map."
+      "adaptations": "Also informs toolkit web-demo-video. Usable journey readiness includes required initialization, migrations and seed data; preserve missing-prerequisite failures and distinguish setup supplied by stand-ins. No generated project verification skill, fixed feature map, or mandatory data reset.",
+      "scopedReview": {
+        "commit": "1b6d44ff26d4e242f4e8f68c391e6d2f7ca16def",
+        "version": "0.15.20",
+        "date": "2026-10-12",
+        "note": "Operator-approved scoped adaptations after source comparison. Source snapshot is not publication proof; range-review pin remains unchanged."
+      }
     },
     {
       "upstreamPath": "pstack/skills/maintain-verification-skill/",
@@ -178,6 +184,45 @@
         "version": "0.15.15",
         "date": "2026-10-08",
         "note": "Scoped adoption of existing verification guidance. Source version is not marketplace publication proof; range-review pin is unchanged. See docs/decisions/empirical-proof.md."
+      }
+    },
+    {
+      "upstreamPath": "pstack/skills/ketchup/",
+      "localPath": "plugins/toolkit/skills/ketchup/",
+      "disposition": "adopted",
+      "why": "Explicit catch-up on current task state and human-only decisions.",
+      "adaptations": "Self-contained plain-language output, optional existing visuals, read-only gathering, verified versus reported evidence. Continue authorized work after a status interruption; report-only and explicit pause requests stay bounded. Claude and Codex explicit-only controls. No bro dependency or new external-write authority.",
+      "scopedReview": {
+        "commit": "1b6d44ff26d4e242f4e8f68c391e6d2f7ca16def",
+        "version": "0.15.20",
+        "date": "2026-10-12",
+        "note": "Operator-approved scoped adaptations after source comparison. Source snapshot is not publication proof; range-review pin remains unchanged."
+      }
+    },
+    {
+      "upstreamPath": "pstack/skills/blast-radius/",
+      "localPath": "plugins/workbench/skills/claim-check/",
+      "disposition": "adopted",
+      "why": "Test safety assumptions against consumers beyond symbol references.",
+      "adaptations": "Also informs empirical-proof. Conditional wire, storage, cross-language, pinned-dependency and lifecycle checks; smallest discriminating executable proof. No new skill, review gate, compulsory team or broad suite.",
+      "scopedReview": {
+        "commit": "1b6d44ff26d4e242f4e8f68c391e6d2f7ca16def",
+        "version": "0.15.20",
+        "date": "2026-10-12",
+        "note": "Operator-approved scoped adaptations after source comparison. Source snapshot is not publication proof; range-review pin remains unchanged."
+      }
+    },
+    {
+      "upstreamPath": "pstack/skills/poteto-mode/scripts/watch-pr/github.ts",
+      "localPath": "plugins/toolkit/skills/get-pr-comments/",
+      "disposition": "adopted",
+      "why": "Borrow the pagination lesson to prevent incomplete feedback retrieval.",
+      "adaptations": "Use existing gh REST reader with --paginate, consume complete output and check exit status. Report partial retrieval after page failure. No watcher code, orchestration, thread resolution or posting authority imported.",
+      "scopedReview": {
+        "commit": "1b6d44ff26d4e242f4e8f68c391e6d2f7ca16def",
+        "version": "0.15.20",
+        "date": "2026-10-12",
+        "note": "Operator-approved scoped adaptations after source comparison. Source snapshot is not publication proof; range-review pin remains unchanged."
       }
     }
   ]

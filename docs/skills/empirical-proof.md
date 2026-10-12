@@ -35,6 +35,12 @@ including persisted data or integration effects where those matter. For a
 refactor, it checks the behavior that must remain unchanged. The report says
 what the chosen route establishes and what it leaves outside the claim.
 
+For a compatibility or regression claim, it states the assumption that makes
+the change safe and runs a small check that could disprove it. Relevant consumers
+can include persisted data, a wire format, another language, a feature flag, or
+a downstream reader with no direct symbol reference. Dependency versions,
+local patches, and lifecycle timing matter when that assumption depends on them.
+
 | Surface | Typical direction |
 | --- | --- |
 | Web | Browser flow, rendered layout, responsive and keyboard states |
@@ -48,6 +54,12 @@ The route needs to match the claim. An API request can prove backend behavior;
 it cannot show whether a desktop dialog clips. A healthy process can still be
 an old build. A saved screenshot supports a visual claim only after the model
 has inspected it.
+
+Readiness means the intended journey is usable, including required initialization,
+migrations, and data. A health response can arrive before setup finishes. The
+session can reuse a suitable instance; this does not require an empty database
+or a reset. A missing prerequisite calls for authorized setup and a retry of the
+same journey. If it remains missing, the affected check stays incomplete.
 
 Evidence can be a native tool exchange, terminal output, inspected screenshot,
 log, recording, or result readback. Useful evidence identifies the build,
@@ -95,6 +107,12 @@ satisfy the gate.
 An environment or verifier failure is not automatically an app defect. A fake
 service can support a narrower test, but not a claim about the real integration.
 
+**Can a container or local stack prove installation on another target?**
+It proves the behavior exercised there. The report lists setup supplied only
+by the stand-in, such as a preinstalled library, account, or initialized data.
+Those target setup steps remain unverified until run on the real target.
+Missing data does not justify dropping a required journey step to get a pass.
+
 **Are passing tests enough?**
 Yes, when they exercise the relevant real consumer boundary on the changed
 artifact. A public-interface library test can suffice; a mocked component test
@@ -116,6 +134,7 @@ original failure.
 
 - The chosen route exercises the changed behavior on the changed artifact.
 - Checks fit the surface and risk; their observations support the claims.
+- Required setup is usable; safety assumptions and stand-in setup gaps are explicit.
 - Missing platforms, tools, states, and cases remain visible.
 - User-owned sessions and data are preserved; temporary resources and evidence
   have a clear disposition.

@@ -9,6 +9,17 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-12 reformat.
 
 
+## toolkit 0.16.0: 2026-10-12
+
+- **Invoke Anatomy for interactive isometric figures.** The explicit-only launcher loads the complete upstream package at a fixed commit and keeps its source unchanged. Automatic invocation is disabled on Claude Code and Codex; Git and network access are required, with Node.js and Chrome or Chromium for upstream checks. ([decision](decisions/anatomy.md))
+- **Catch up with `ketchup`.** Summarize current work, distinguish verified results from reports and stale evidence, and surface unresolved human decisions. The explicit-only skill preserves task ownership and continues already authorized work after a status request. ([decision](decisions/ketchup.md))
+- **Read every page of PR review comments.** `get-pr-comments` paginates inline feedback, checks retrieval failures, and identifies partial results and unknown missing feedback before summarizing. ([decision](decisions/get-pr-comments.md))
+
+## workbench 0.48.1: 2026-10-12
+
+- **Prove a usable journey after required setup.** `empirical-proof` checks initialization, migrations, and data before exercising the unchanged acceptance journey. Missing prerequisites remain visible, and stand-in environments disclose setup they supply that the target still needs. ([decision](decisions/empirical-proof.md))
+- **Check compatibility beyond symbol references.** `claim-check` and `empirical-proof` name the assumption that makes a change safe, trace relevant persisted, wire, cross-language, configuration, and lifecycle consumers, and select the smallest real check that can refute it. ([decision](decisions/claim-check.md))
+
 ## workbench 0.48.0: 2026-10-08
 
 - **Behavioral completion requires focused consumer proof.** `verification-before-completion` invokes `empirical-proof` by default for behavioral changes and refactors. Reuse sufficient current evidence; blocked checks remain incomplete, and explicit declines and repository rules retain precedence. Broad QA, recordings, teams, and permanent harnesses remain optional. ([decision](decisions/empirical-proof.md#focused-consumer-proof-is-the-completion-default-2026-10-08))
@@ -67,11 +78,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 ## workbench 0.45.4: 2026-09-30
 
 - **PR titles distinguish each change's actual contribution.** Identify the affected workflow or shared subsystem from the diff and callers, then name the operation, mechanism, or condition that separates this PR from other work on the same symptom. Descriptions connect the observed problem to the implementation and its supported effect, including unresolved work. ([decision](decisions/file-pr.md#titles-and-descriptions-share-an-evidence-boundary-2026-09-30))
-
-## workbench 0.45.3: 2026-09-30
-
-- **PR text uses one concise contract.** Replace the drafting worksheet, repeated checks, and claim-check report with a title formula, a description sequence, and one example. Titles retain the affected feature, concrete contribution, and failure condition for fixes. ([decision](decisions/file-pr.md#titles-and-descriptions-share-an-evidence-boundary-2026-09-30))
-
-## workbench 0.45.2: 2026-09-30
-
-- **PR titles explain the change without opening the description.** Name the affected feature and corrected behavior, including the restart, interruption, or failure condition for retention and recovery fixes. A worked example rejects a vague title even after its scope prefix is corrected; descriptions expand the same before/after claim. ([decision](decisions/file-pr.md#titles-and-descriptions-share-an-evidence-boundary-2026-09-30))

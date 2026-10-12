@@ -14,12 +14,14 @@ Use when you need a concise, actionable summary of feedback on the active pull r
 1. Resolve the active PR for the current branch: `gh pr view --json number,url,headRefName,state`.
 2. Fetch the feedback:
    - Conversation comments and review summaries: `gh pr view --json comments,reviews`.
-   - Inline review comments on the diff: `gh api repos/{owner}/{repo}/pulls/{number}/comments`.
+   - Inline review comments on the diff: `gh api --paginate repos/{owner}/{repo}/pulls/{number}/comments`. Consume the full output across all pages.
+   - Check each fetch's exit status before calling retrieval complete. A later page can fail after earlier comments have printed, leaving partial or invalid JSON. If any source fails, summarize usable feedback as partial and name the failed source and error; missing feedback remains unknown.
 3. Group the feedback by **severity** (blocking / should-fix / nit) and **actionability** (a clear change requested vs. an open question).
 4. Return a concise action list ordered by priority, plus the questions that still need a human answer.
 
 ## Output
 
+- Retrieval coverage: complete, or partial with the failed source and remaining gap.
 - Grouped feedback summary (by severity / actionability).
 - Action list ordered by priority.
 - Open questions that still need clarification.

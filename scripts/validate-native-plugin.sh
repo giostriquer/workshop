@@ -255,6 +255,7 @@ spec-reviewer.md
 test-quality-reviewer.md"
 
 TOOLKIT_SKILLS="adopt-global-rules
+anatomy
 benchmark-checklist
 codebase-design
 correct
@@ -265,6 +266,7 @@ grill-me
 grilling
 html-artifact
 improve-codebase-architecture
+ketchup
 me-human
 test-audit
 web-demo-video"

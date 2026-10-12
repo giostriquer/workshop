@@ -67,13 +67,18 @@ When claims come out differently, the verdict may hold a per-claim table.
 
 1. **Resolve the premise.** Read a ticket's claims as written. Turn a hunch
    into atomic claims. Ask only if different readings would change the
-   investigation.
+   investigation. A safety or compatibility premise names the assumption it
+   depends on as a claim to check.
 2. **Check each claim against the current repo.** Subagent briefs stay neutral
    and return evidence, not judgments. When subagents disagree, the session
-   settles it by reading the lines.
+   settles it by reading the lines. It follows relevant consumers beyond symbol
+   references, including wire/storage formats, other languages, flags, downstream
+   readers, pinned dependency behavior, local patches, and lifecycle timing.
 3. **Check provenance.** Does the premise's evidence come from the artifact the
    repo actually follows?
-4. **Build a repro** for any falsifiable code claim.
+4. **Build a repro** for any falsifiable code claim: the smallest executable
+   check of the real affected code or consumer that could disprove the
+   assumption. Record what actually happened and what the check cannot establish.
 5. **Scan for prior or parallel work** in git history, and in the tracker when
    it can be queried.
 6. **Re-check adversarially** any result that came back `confirmed` or
@@ -87,7 +92,8 @@ Depth scales with the claim's blast radius.
 Plain structured text, never a `>` blockquote, in three parts:
 
 1. **Verdict: `<bucket>`.** The key sentence, then the method and its rung,
-   then evidence bullets.
+   then evidence bullets. Safety and compatibility verdicts include their
+   load-bearing assumption and its proof or remaining limit.
 2. **Prior / parallel work: `<status>`.** One of `clean`, `in-flight`,
    `related`, or `blocked`, then anything that bears on the verdict and what
    was searched.

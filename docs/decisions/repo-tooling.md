@@ -18,6 +18,28 @@ Skill and agent descriptions stay unquoted plain scalars; a value that needs `: 
 
 `writing-skills` lives in `.claude/skills/writing-skills/` beside `change-log`, `push`, and `workbench-drift`: tooling the repo runs on itself and ships to nobody. `AGENTS.md` requires it for any skill change. The MIT notice for its superpowers-derived portions sits in the root `LICENSE`, because the obligation follows the code, and it has no `docs/skills/` page, a layer reserved for shipped skills. Shipped skills never name it, since an installed plugin cannot reach a repo-local skill; `self-audit` defers to whatever skill-authoring discipline the environment provides.
 
+**Authoring refinements (2026-10-12).** Adapt Matt Pocock's
+[`writing-for-agents`](https://github.com/mattpocock/skills/blob/49dd158d1076134a641b33efb035946536778336/skills/productivity/writing-for-agents/SKILL.md)
+into this existing skill: references state the branch that needs them, shared
+rules stay inline, a concept's definition and constraints stay together, and
+steps end on observable completion criteria. The upstream MIT attribution is in
+the root `LICENSE`. This adds no skill or documentation layer and changes no
+host layout. Keep the local empirical wording checks and the distinction between
+discipline failures and output-shaping failures; upstream's blanket claims about
+negation and stronger adjectives are not adopted.
+
+The baseline application probe already preserved conditional loading, grouped
+rules, evidence distinctions and authority. These refinements make the authoring
+criteria explicit, without a claim of measured improvement. Scenario evidence
+stays in local scratch; existing preservation, verification and delivery
+requirements remain in force.
+
+A fresh proposed-guidance application also retained those properties and
+produced a usable branch-specific excerpt and evidence-graded report. Neither
+arm discarded the useful draft or inferred repair/publication authority.
+One application per arm supports these scenarios only; it does not establish
+a comparative reliability improvement.
+
 ## The plugin validator is POSIX sh (2026-09-04)
 
 `scripts/validate-native-plugin.sh` is POSIX `sh`, with `awk` for frontmatter and `node` for JSON, and runs from any working directory. Its PowerShell predecessor could not run on macOS, so it was skipped and a skill-list mismatch went unnoticed; a gate that silently does not execute is not a gate. `node` beats `jq` because the repo already needs node and Git Bash on Windows lacks `jq`; `sh` beats `bash` because macOS ships bash 3.2. The `.ps1` was deleted, since two implementations of one gate drift unseen until they disagree. Checks, messages, and the `native plugin validation ok` line are preserved because decision notes cite that string as evidence, and running the validator stays manual, with no CI.

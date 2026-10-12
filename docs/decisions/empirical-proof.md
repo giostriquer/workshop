@@ -2,6 +2,40 @@
 
 Rationale for the `empirical-proof` skill and the verification choices it shares with `verification-before-completion`, both shipped by the workbench plugin; superseded choices are omitted, and git history keeps the originals.
 
+## Usable readiness and the assumption behind a safe change (2026-10-12)
+
+Readiness must establish that the affected journey can run, including its
+required initialization, migrations, and data. A healthy process or database
+can answer before setup finishes. Missing journey prerequisites remain visible
+failures or setup gaps; they do not justify dropping the affected step. When a
+stand-in supplies setup the target will not, list those differences and keep
+the target's setup unverified until exercised there. Reusing a suitable instance
+remains valid; no clean reset or new infrastructure is required.
+
+For regression selection, state the assumption the change's safety depends on
+and check relevant consumers beyond symbol references, including persisted or
+wire data, other languages, pinned dependency behavior, and timing. A small
+probe of the real boundary should be able to falsify that assumption. This
+deepens the existing focused proof rather than adding a blast-radius skill,
+universal checklist, team, or completion gate. Scope and setup authority remain
+unchanged.
+
+These adapt Lauren Tan's MIT-licensed pstack
+[create-verification-skill](https://github.com/cursor/plugins/blob/1b6d44ff26d4e242f4e8f68c391e6d2f7ca16def/pstack/skills/create-verification-skill/SKILL.md)
+and
+[blast-radius](https://github.com/cursor/plugins/blob/1b6d44ff26d4e242f4e8f68c391e6d2f7ca16def/pstack/skills/blast-radius/SKILL.md).
+Project-skill generation, empty-directory resets, the upstream companion
+workflow, and multi-model review are not adopted. Baseline source review found
+the narrower omissions above; scenario checks must distinguish those omissions
+from observed agent failures and make no general reliability claim.
+
+A fresh consumer probe covered delayed initialization, missing saved-filter
+data, setup hidden by a prepared container, and reuse of sufficient library
+evidence. It kept the intended journeys intact, named target setup gaps,
+continued independent checks, and added no reset, team, or broad suite. These
+four responses are bounded planning evidence; the separate cross-language
+fixture described in `claim-check.md` exercised an actual consumer path.
+
 ## Focused consumer proof is the completion default (2026-10-08)
 
 Behavioral changes now require proof through the affected user or consumer

@@ -2,6 +2,34 @@
 
 This is the rationale for the `claim-check` skill, shipped by the workbench plugin; superseded choices are omitted, and git history keeps the originals.
 
+## Search beyond symbol consumers and test the safety assumption (2026-10-12)
+
+A compatibility or safety premise often rests on a small assumption that a
+call-site scan cannot settle: stored bytes remain readable, an installed
+dependency has no side effect, or teardown happens after its consumer finishes.
+Name that assumption as a checkable claim and follow relevant wire/storage,
+cross-language, pinned dependency, and timing boundaries. The smallest probe
+that runs the real affected code and fails if the assumption is false supplies
+more useful evidence than a catalogue of hypothetical risks. Report the
+assumption with its evidence or remaining limit inside the existing verdict.
+
+This adapts Lauren Tan's MIT-licensed pstack
+[blast-radius](https://github.com/cursor/plugins/blob/1b6d44ff26d4e242f4e8f68c391e6d2f7ca16def/pstack/skills/blast-radius/SKILL.md)
+into the existing investigation owner. It adds no separate skill, automatic
+multi-model review, broad test requirement, repair authority, or new report
+section. The current evidence ladder, prior-work search, adversarial recheck,
+and separation of investigation from repair remain intact. Baseline source
+review found omitted search directions, not a demonstrated rate of agent
+failure; bounded scenario evidence does not establish general reliability.
+
+A fresh consumer probe inspected and executed a Python writer followed by a
+JavaScript reader. The writer emitted a renamed field, the reader required
+the original serialized name, and the public path failed with the expected
+missing-field diagnostic. The response refuted the safety premise, named the
+cross-language consumer and prior-work search limits, and implemented no fix.
+This proves the controlled fixture path and the bounded guidance application,
+not real-project migration coverage.
+
 ## Investigate a premise before acting on it (2026-06-15)
 
 Operators kept hand-rolling one drifting request: check a ticket, hunch, or question against the current repo before acting. The skill captures that intent: every claim is a hypothesis, assumed neither true nor false, and "the premise still holds" is as good an outcome as "already handled." Fuzzy input becomes atomic claims first, asking the operator only when competing interpretations would change the investigation. Subagent briefs stay neutral and return evidence, prior work is always swept, and confirmed and obsolete conclusions both get an adversarial recheck. It is a skill because the main session must drive the fan-out.

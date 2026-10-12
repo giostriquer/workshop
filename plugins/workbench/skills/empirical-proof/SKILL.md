@@ -33,6 +33,14 @@ Choose checks that could expose a plausible failure:
   when persistence or integration is part of the claim.
 - Nearby behavior likely to regress because it shares the changed path.
 
+For a compatibility or regression claim, state the assumption that makes the
+change safe and choose the smallest executable check that could falsify it.
+Follow relevant consumers beyond symbol references: wire formats, persisted
+data, other languages, feature flags, and downstream readers. When safety
+depends on a library or lifecycle, check the pinned version and local patches,
+or the timing of callbacks, initialization, and teardown. Run the real affected
+code or consumer; a plausible explanation alone does not establish the result.
+
 Scale this to the change. A layout correction may need a screenshot and a
 resize; an account flow may need validation, persistence, and permissions.
 Select meaningful cases rather than a universal input matrix. Name unrun checks.
@@ -90,9 +98,14 @@ and running behavior. A healthy old server, installed app, PATH executable, or
 connected MCP server can still exercise old code. Git HEAD alone does not
 identify an already running process.
 
-Readiness can be an app window, CLI invocation, MCP exchange, or service
-response. There is no universal health endpoint. Reuse a suitable instance or
-prefer an isolated one. Restarting someone else's session still needs authority.
+Readiness means the affected journey is usable, not just that a process answers.
+Check required initialization, migrations, and seed data before driving it;
+a database health check can pass while application setup is still running.
+Use a surface-appropriate observation: an app window, CLI invocation, MCP
+exchange, or service response that establishes the needed state. There is no
+universal health endpoint or requirement to start with empty data. Reuse a
+suitable instance or prefer an isolated one. Restarting someone else's session
+still needs authority.
 
 Try documented setup and reasonable retries within existing task authority,
 including real local dependencies.
@@ -100,6 +113,14 @@ Report unavailable credentials, services, platforms, or tools and continue
 independent checks. A fake dependency supports a narrower test, not proof of
 the real integration. Distinguish app failures from verifier or environment
 failures before attributing a defect.
+
+If data or another prerequisite is missing, complete authorized setup and retry
+the intended journey. If it remains unavailable, record the failed prerequisite
+and leave that check incomplete; do not weaken the journey to get a pass.
+When using a stand-in for the target, list the setup it supplies that the real
+target will not, such as preinstalled dependencies or initialized data. Those
+steps remain unverified until exercised on the real target; a passing flow in
+the stand-in establishes only the behavior it actually covered.
 
 An unavailable route leaves that behavior's verification incomplete. Name the
 attempts, concrete blocker, and remaining check; continue independent work.

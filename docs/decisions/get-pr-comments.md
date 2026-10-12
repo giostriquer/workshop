@@ -9,3 +9,28 @@ The skill is adapted from the `get-pr-comments` skill in Cursor's MIT-licensed `
 ## Ship it in toolkit, not workbench (2026-08-20)
 
 The skill is self-contained: one read-only `gh` pass with no dependency on any workbench skill, so it belongs with the optional utilities. The plugin split had carried it into workbench without retesting that placement, charging every workbench session always-loaded description context for an optional tool and leaving workbench text pointing at a skill a workbench-only install would lack. Workbench's feedback stage is therefore `receiving-code-review` alone, no workbench text names `get-pr-comments`, and the skill triages into that stage when toolkit is installed.
+
+## Retrieve every inline-comment page (2026-10-12)
+
+The unpaginated REST command could silently omit later inline feedback. The
+pagination lesson from Lauren Tan's MIT-licensed `pstack` PR watcher in
+[cursor/plugins](https://github.com/cursor/plugins) applies to this existing
+reader without adopting the watcher's orchestration or write authority.
+
+Use `gh api --paginate` and consume every returned page. The
+[official CLI manual](https://cli.github.com/manual/gh_api) specifies that it
+follows all pages. A successful first page does not establish complete retrieval:
+`gh` can emit earlier comments before a later HTTP failure, leaving partial or
+invalid JSON. Check the fetch exit status and make complete or partial coverage
+explicit in the summary; preserve usable feedback while naming the failed source
+and remaining gap. No reply, resolution, reaction, or other write authority
+changes.
+
+A focused fixture ran the installed GitHub CLI against a local paginated REST
+endpoint. The previous command returned 30 of 101 inline comments and missed
+the last-page blocker; the revised command retrieved all 101. A later-page
+HTTP 503 returned a nonzero exit after partial output, and an empty result
+completed cleanly. A separate consumer-agent check prioritized the last-page
+blocker and reported the failed retrieval as partial with missing feedback
+unknown. These checks cover CLI pagination and bounded summary scenarios,
+not live GitHub authentication or host discovery.

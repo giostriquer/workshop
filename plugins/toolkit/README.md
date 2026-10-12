@@ -33,6 +33,8 @@ codex plugin add toolkit@workshop
 | Skill | Does |
 | --- | --- |
 | `html-artifact` | creates HTML reports, plans, architecture explanations, and interactive product targets; user-invoked only |
+| `anatomy` | launches pinned, unchanged upstream Anatomy for detailed interactive isometric figures; user-invoked only, with an on-demand fetch |
+| `ketchup` | catches up on meaningful results, current evidence, and decisions waiting on the user; user-invoked only |
 | `web-demo-video` | records a browser walkthrough with reusable CLI capture, scene frames, and optional MP4 |
 | `get-pr-comments` | triages the PR's conversation, review, and inline comments into a prioritized action list; read-only |
 | `adopt-global-rules` | installs the workshop's shipped global CLAUDE.md / AGENTS.md, rules, and Claude output styles onto this machine additively; user-invoked only |
@@ -48,6 +50,18 @@ codex plugin add toolkit@workshop
 | `domain-modeling` | sharpens a project's glossary (`GLOSSARY.md` or legacy `CONTEXT.md`) and offers ADRs for hard-to-reverse decisions |
 
 > **Attribution:** `get-pr-comments` is derived from the `cursor-team-kit` plugin in Cursor's [cursor/plugins](https://github.com/cursor/plugins) (MIT, Copyright (c) 2026 Cursor), adapted per the [get-pr-comments decision](https://github.com/giostriquer/workshop/blob/main/docs/decisions/get-pr-comments.md).
+
+`anatomy` is a launcher for Ryan's MIT-licensed
+[Anatomy](https://github.com/wheresryan22/anatomy). Its complete upstream
+package is fetched unchanged at a pinned commit when invoked; it is not
+bundled here. See the [usage page](../../docs/skills/anatomy.md) and
+[decision](../../docs/decisions/anatomy.md).
+
+`ketchup` adapts Lauren Tan's MIT-licensed pstack skill from
+[cursor/plugins](https://github.com/cursor/plugins). It preserves the current
+task's authority and makes visuals optional. See its
+[usage page](../../docs/skills/ketchup.md) and
+[decision](../../docs/decisions/ketchup.md).
 
 > **Attribution:** `test-audit` is derived from OpenClaw's [openclaw/openclaw](https://github.com/openclaw/openclaw) `.agents/skills/test-audit` (MIT, Copyright (c) 2026 OpenClaw Foundation): adapted per the [test-audit decision](https://github.com/giostriquer/workshop/blob/main/docs/decisions/test-audit.md): user-invoked only, validation and landing made host- and stack-neutral, OpenClaw examples replaced with placeholders.
 

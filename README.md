@@ -152,6 +152,8 @@ installed skill's listing rides in each session's context:
 | Skill | Does |
 | --- | --- |
 | `html-artifact` | HTML reports, plans, architecture explanations, and interactive product targets (user-invoked only) |
+| `anatomy` | runs pinned upstream Anatomy for detailed interactive isometric figures (user-invoked only; fetches its package on demand) |
+| `ketchup` | catches up on current work and human decisions while preserving task ownership (user-invoked only) |
 | `web-demo-video` | reusable browser recording + scene frames for Claude Code and Codex |
 | `get-pr-comments` | triages PR feedback into an action list |
 | `adopt-global-rules` | installs the workshop's shipped global CLAUDE.md / AGENTS.md, rules, and Claude output styles onto a machine, additively (user-invoked only) |

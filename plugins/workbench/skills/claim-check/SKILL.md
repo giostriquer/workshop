@@ -116,7 +116,9 @@ mistake. Then:
 
 1. **Resolve the premise** (above) and state the atomic claims you are about to
    check. Resolve materially different interpretations with the operator; do not
-   request confirmation of a clear claim list merely to begin.
+   request confirmation of a clear claim list merely to begin. For a safety or
+   compatibility premise, name the assumption the conclusion depends on as one
+   of those claims.
 2. **Check each claim against the current repo.** Fan-out is the recommended
    tool (especially for code and doc *scanning*) but you orchestrate it and may
    search directly when that is tighter. A subagent brief must be **neutral and
@@ -125,6 +127,12 @@ mistake. Then:
    snippet, a commit). Keep each brief scoped to one claim or one scan. **When
    subagents disagree, do not average them: read the disputed lines yourself and
    settle it on the evidence. The disagreement is usually the signal.**
+   Follow relevant consumers a symbol search misses: wire formats, persisted
+   fields, other languages, feature flags, and downstream readers. When the
+   assumption depends on a library, inspect its pinned version and local
+   patches; when it depends on ordering, trace callbacks, initialization, and
+   teardown. Investigate boundaries connected to the claim, not a universal
+   checklist of hypothetical risks.
 3. **Check the provenance of the premise's evidence, not just the claim.** Ask
    where the premise's own evidence came from (a doc, a spec, a table, a repro)
    and whether that is the *same artifact the repo actually conforms against*. A
@@ -134,6 +142,10 @@ mistake. Then:
 4. **For a falsifiable code claim, build the repro.** Writing and running a
    throwaway repro or falsification test *is* the search: "unknown means go
    search," and a failing-then-passing probe is the strongest evidence there is.
+   Choose the smallest executable probe that runs the real affected code or
+   consumer and fails if the load-bearing assumption is false. Record its
+   actual result and what remains untested; source reasoning does not replace
+   an available discriminating run.
    During investigation the **fix** stays separate from the **harness that proves
    or breaks the claim**. Preserve the verdict before any subsequent authorized repair.
 5. **Scan for prior or parallel work**: the case the premise itself cannot see.
@@ -166,7 +178,9 @@ buries the verdict). It has three parts and nothing else:
    hops, one per caveat or limit on the evidence, so parallel cases and
    caveats sit side by side and can be compared. For `mis-scoped`, add a
    one-line **corrected framing**; for `inconclusive`, name the wall and the
-   one input that would breach it.
+   one input that would breach it. For a safety or compatibility premise,
+   include the load-bearing assumption and its proof or remaining limit among
+   these evidence bullets.
 2. **Prior / parallel work: `<status>`:** the status is one word, so the
    landscape reads at a glance: `clean` (the search found nothing that
    addresses or constrains it), `in-flight` (parallel work on the same ground

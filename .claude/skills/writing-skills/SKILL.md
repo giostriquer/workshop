@@ -23,7 +23,10 @@ The skill's own rule is not the expected answer merely because it is a rule.
 
 **REQUIRED BACKGROUND:** You MUST understand workbench:test-driven-development before using this skill. That skill defines the fundamental RED-GREEN-REFACTOR cycle. This skill adapts TDD to documentation.
 
-**Official guidance:** For Anthropic's official skill authoring best practices, see anthropic-best-practices.md. This document provides additional patterns and guidelines that complement the TDD-focused approach in this skill.
+**Official guidance:** When changing skill discovery, supporting-file layout, or
+bundled tool instructions, consult the relevant sections of
+[anthropic-best-practices.md](anthropic-best-practices.md) for Anthropic's authoring
+patterns. Apply this repo's governing rules where its conventions differ.
 
 ## What is a Skill?
 
@@ -243,7 +246,7 @@ When searching, dispatch subagent with template...
 [20 lines of repeated instructions]
 
 # ✅ GOOD: Reference other skill
-Always use subagents (50-100x context savings). REQUIRED: Use [other-skill-name] for workflow.
+When the task calls for an independent review, use [review-skill-name] for its workflow.
 ```
 
 **Compress examples:**
@@ -293,6 +296,17 @@ Use skill name only, with explicit requirement markers:
 
 **Why no @ links:** `@` syntax force-loads files immediately, consuming 200k+ context before you need them.
 
+A reference should name the target and what it supplies, with an observable
+condition for loading it. Give each distinct branch its trigger; synonyms for
+the same branch do not add coverage. For example, when editing a flowchart, read
+`graphviz-conventions.dot` for node and edge conventions. Load branch-specific
+material when that condition applies. Keep requirements every branch needs
+inline, including shared authority and preservation rules.
+
+When a necessary reference is missed, first test whether its pointer makes the
+trigger clear before copying the target's contents inline. Verify the target
+exists and contains the promised guidance.
+
 ## Flowchart Usage
 
 ```dot
@@ -319,7 +333,8 @@ digraph when_flowchart {
 - Linear instructions → Numbered lists
 - Labels without semantic meaning (step1, helper2)
 
-See `graphviz-conventions.dot` in this directory for graphviz style rules.
+When adding or changing a flowchart, read `graphviz-conventions.dot` in this
+directory for its node and edge conventions.
 
 **Visualizing for your human partner:** Use `render-graphs.js` in this directory to render a skill's flowcharts to SVG:
 ```bash
@@ -352,6 +367,12 @@ You're good at porting - one great example is enough.
 
 ## File Organization
 
+Keep the common steps visible. Place substantial reference material used by only
+some branches behind a conditional pointer, as described above. Keep a concept's
+definition, rules and exceptions together under one heading; avoid scattering
+them across the workflow. File length alone does not justify hiding a shared
+requirement or creating another document.
+
 ### Self-Contained Skill
 ```
 defense-in-depth/
@@ -378,6 +399,20 @@ pptx/
 When: Reference material too large for inline
 
 Invoke bundled scripts through their interpreter in the prose (`bash scripts/tool.sh`, `node scripts/tool.js`), never by bare path: some harness plugin packagers strip executable bits, and a bare `scripts/tool.sh` fails there with `Permission denied`.
+
+## Steps and Completion Criteria
+
+For each substantive step, state the observable condition that permits moving
+on: a required input resolved, an artifact with specified fields, or a result
+checked against the task contract. Replace vague bounds such as "understand
+thoroughly" with the evidence needed to tell complete from incomplete. For
+example: "Each changed behavior has a result and supporting evidence, or a named
+verification gap." The criterion covers the agreed scope; it grants no new
+authority and does not turn missing evidence into success.
+
+Test the resulting actions with a realistic scenario. Sharpen an unclear
+completion criterion before adding steps, splitting the document, or choosing
+stronger adjectives. Preserve effective existing wording when it already works.
 
 ## Evidence before shipping skill changes
 
@@ -666,6 +701,9 @@ Use the checklist below to track the checks relevant to this change.
 - [ ] Common mistakes section
 - [ ] No narrative storytelling
 - [ ] Supporting files only for tools or heavy reference
+- [ ] Reference pointers identify their target, purpose and applicable branch
+- [ ] Shared requirements remain inline; each concept's rules stay together
+- [ ] Substantive steps have observable completion criteria
 
 **Deployment:**
 - [ ] Commit/push only under existing explicit authority; keep a reviewable local diff otherwise

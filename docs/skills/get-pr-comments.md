@@ -29,10 +29,13 @@ When a PR has feedback and you want to know what it actually asks you to change.
 1. Resolve the current branch's PR: `gh pr view --json
    number,url,headRefName,state`.
 2. Fetch conversation comments and reviews with `gh pr view --json
-   comments,reviews`, and inline comments with `gh api
-   repos/{owner}/{repo}/pulls/{number}/comments`.
+   comments,reviews`, and every page of inline comments with `gh api --paginate
+   repos/{owner}/{repo}/pulls/{number}/comments`. Read all returned comments
+   and check each fetch's exit status.
 3. Group by severity and actionability.
-4. Return the ordered action list and the open questions.
+4. Return retrieval coverage (complete or partial), the ordered action list and
+   the open questions. If a fetch fails, retain usable feedback and identify the
+   failed source and error; omitted feedback remains unknown.
 
 With no PR for the branch, or `gh` unauthenticated, it says so rather than
 guessing.
@@ -47,7 +50,12 @@ explicit instruction. ([decision](../decisions/get-pr-comments.md))
 answering an inline comment in its thread rather than as a top-level comment.
 
 **Will it catch comments pinned to diff lines?** Yes; that is the second call,
-since `gh pr view` alone misses them.
+since `gh pr view` alone misses them. It follows every inline-comment page, so a
+busy PR's later comments are included.
+
+**What if a later page fails?** Earlier pages can still have printed, and the
+output may be invalid JSON. The summary marks retrieval partial, identifies the
+failure, and uses usable feedback without claiming there are no other comments.
 
 **Does it treat bot reviews differently?** No. Whether a suggestion is right for
 the codebase is `receiving-code-review`'s call.
@@ -58,6 +66,8 @@ the codebase is `receiving-code-review`'s call.
 
 - You get one ordered list: blocking items first, nits marked as nits, open
   questions kept apart from requested changes.
+- The summary states whether retrieval completed or which source remains
+  incomplete.
 - **Negative signal:** a reply, resolved thread or reaction you did not ask for,
   or a changed working tree.
 

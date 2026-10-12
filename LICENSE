@@ -30,3 +30,12 @@ notices apply to those portions as required by that license. They are adapted
 from upstream, with every local change recorded; the provenance and review
 process are documented at
 https://github.com/giostriquer/workshop/blob/main/docs/decisions/workbench-system.md
+
+---
+
+The conditional context pointers and completion-contract guidance in
+`writing-skills` adapts Matt Pocock's `writing-for-agents` skill
+(https://github.com/mattpocock/skills), Copyright (c) 2026 Matt Pocock, under
+the MIT License. The above permission and warranty notices apply to those
+portions. Adaptations are documented at
+https://github.com/giostriquer/workshop/blob/main/docs/decisions/repo-tooling.md

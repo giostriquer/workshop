@@ -1,0 +1,6 @@
+interface:
+  display_name: "Ketchup"
+  short_description: "Catch up on current work and decisions waiting on you"
+
+policy:
+  allow_implicit_invocation: false

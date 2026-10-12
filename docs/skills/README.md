@@ -19,7 +19,7 @@ wrong.
 and lands. Start with [using-workbench](using-workbench.md), which maps the
 whole flow and tells you which piece owns which moment.
 
-**`toolkit`** is optional. Twelve utilities you install alongside workbench when
+**`toolkit`** is optional. Utilities you install alongside workbench when
 you want them, and skip to keep sessions lean.
 
 ## Find the skill by the moment
@@ -55,6 +55,8 @@ you want them, and skip to keep sessions lean.
 | What you want | The skill |
 | --- | --- |
 | An HTML report, plan, architecture explanation, or interactive product target | [html-artifact](html-artifact.md), user-invoked only |
+| A detailed interactive isometric figure using upstream Anatomy | [anatomy](anatomy.md), user-invoked only |
+| A catch-up on ongoing work and the decisions that need you | [ketchup](ketchup.md), user-invoked only |
 | A recorded walkthrough of UI work, with frames the model reads back | [web-demo-video](web-demo-video.md) |
 | To triage a PR's scattered feedback into one action list | [get-pr-comments](get-pr-comments.md) |
 | To install the workshop's global CLAUDE.md / AGENTS.md and rules on a machine | [adopt-global-rules](adopt-global-rules.md) |

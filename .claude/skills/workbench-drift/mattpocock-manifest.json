@@ -1,6 +1,6 @@
 {
   "system": "mattpocock-adaptations",
-  "description": "Five carried skills, scoped PR-writing guidance, and explicitly reviewed exclusions. Unreviewed skills remain unmapped so future changes surface.",
+  "description": "Carried skills, scoped authoring and PR-writing guidance, and explicitly reviewed exclusions. Unreviewed skills remain unmapped so future changes surface.",
   "upstream": {
     "repo": "https://github.com/mattpocock/skills",
     "ref": "main",
@@ -171,6 +171,21 @@
       "upstreamPath": "skills/in-progress/README.md",
       "disposition": "dropped",
       "why": "Upstream promotion inventory only; no broad exclusion of future in-progress skills."
+    },
+    {
+      "upstreamPath": "skills/productivity/writing-for-agents/",
+      "localPath": ".claude/skills/writing-skills/",
+      "disposition": "adopted",
+      "why": "Make branch-specific context and step completion explicit in the existing authoring owner.",
+      "adaptations": "Conditional target-and-purpose pointers, shared authority and preservation rules inline, concept co-location, observable completion criteria. Keep local outcome-based wording checks; no blanket rules about negation or stronger adjectives, new shipped skill, or host layout change.",
+      "scopedReview": {
+        "commit": "49dd158d1076134a641b33efb035946536778336",
+        "version": "1.3.1",
+        "latestPublishedRelease": "v1.3.1",
+        "commitsAfterRelease": 46,
+        "date": "2026-10-12",
+        "note": "Operator-approved scoped adaptation. This source snapshot includes unreleased commits; range-review pin remains unchanged."
+      }
     }
   ]
 }
