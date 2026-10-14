@@ -88,7 +88,7 @@ user-optioned, running only on your explicit ask, now or by standing rule.
 
 ## Not documented here
 
-Five skills run only inside this repository and ship in no plugin:
-`change-log`, `mine-transcripts`, `push`, `workbench-drift`, and `writing-skills`. They live in `.claude/skills/` and
+Six skills run only inside this repository and ship in no plugin:
+`change-log`, `mine-transcripts`, `push`, `release`, `workbench-drift`, and `writing-skills`. They live in `.claude/skills/` and
 are maintenance tooling for the scaffold itself, not part of what adopters
 install.
