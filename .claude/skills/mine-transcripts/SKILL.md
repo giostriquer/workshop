@@ -36,9 +36,16 @@ Every command takes `--days N` (default 30) or `--since YYYY-MM-DD [--until YYYY
   counts as a follow-up when its prompt's opening (Claude) or its task name (Codex)
   names a later pass, such as `follow-up pass 1`, `round 2`, `re-review` or a
   correction delta.
-- A Codex reviewer is identified by its spawn header (`You are the <name>. Your
-  contract:`, workbench 0.42.0 on); older Codex spawns by task name and the rubric
-  they read.
+- `identity` separates **confirmed** roles (registered agent metadata or a readable
+  `You are the <name>. Your contract:` header) from **candidates** inferred from task
+  names or definition/rubric reads. Timing buckets stay separate; `--rows` includes
+  `identity_source`. Unknown roles are counted without a guessed reviewer type.
+  Encrypted Codex dispatches may have no readable contract: reading a rubric alone
+  does not make an implementation or audit helper a reviewer. Manually verify
+  candidates before drawing routing or performance conclusions.
+- Session/round durations are not mutation-lane times. Judge mutation budgets from
+  the actual campaign records within each round, not the whole session. Long
+  sessions may cover many unrelated changes.
 - The version is the one the agent read (`.../workbench/<ver>/skills/<rubric>/SKILL.md`
   or `.../agents/<name>.md`). Otherwise it is the version the dispatching session had
   loaded (`parent`), always so for ci-watcher on Claude. Long-lived sessions run old

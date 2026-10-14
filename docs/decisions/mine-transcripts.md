@@ -1,5 +1,21 @@
 # mine-transcripts: decisions in force
 
+## Role evidence is separate from inference (2026-10-14)
+
+Reading a reviewer rubric does not establish that a thread was dispatched as a
+reviewer. A two-week audit found implementation and general-audit sessions inside
+the reviewer timing table. Newer Codex dispatch bodies may be encrypted, so a
+missing readable contract is uncertainty, not permission to upgrade a guess.
+
+Reports separate confirmed roles (registered agent metadata or an explicit
+contract) from candidates (task names or definition/rubric reads), including their
+timing buckets and spend labels. Unknown roles remain counted without a guessed
+reviewer type. Codex reads current nested spawn metadata and retains a readable
+contract from before the reporting window without including that earlier time.
+An explicit non-reviewer contract wins over heuristics. Synthetic CLI fixtures
+cover both hosts, encrypted dispatches, conflicting names and date boundaries;
+default output still contains only neutral labels.
+
 This is the rationale for the repo-local `mine-transcripts` skill in `.claude/skills/`, which ships in no plugin; superseded choices are omitted, and git history keeps the originals.
 
 ## Transcript mining is committed tooling, not a per-question rebuild (2026-09-24)

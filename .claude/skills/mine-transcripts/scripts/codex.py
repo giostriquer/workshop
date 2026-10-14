@@ -67,9 +67,12 @@ def _scan_file(path, window, keep_text):
             return None
         p = meta.get("payload") or {}
         th = Thread("codex", p.get("id") or os.path.basename(path), _origin(p.get("source")))
-        th.parent = p.get("parent_thread_id")
+        source = p.get("source")
+        spawn = ((source.get("subagent") or {}).get("thread_spawn") or {}) if isinstance(source, dict) else {}
+        th.parent = p.get("parent_thread_id") or spawn.get("parent_thread_id")
         th.cwd = p.get("cwd")
-        th.name = (p.get("agent_path") or "").rsplit("/", 1)[-1]
+        th.name = (p.get("agent_path") or spawn.get("agent_path") or "").rsplit("/", 1)[-1]
+        th.agent_type = p.get("agent_role") or spawn.get("agent_role")
         th.automated = p.get("source") == "exec"
         start_ordinal = p.get("subagent_history_start_ordinal")
         tokens_before = tokens_last = None
@@ -82,6 +85,9 @@ def _scan_file(path, window, keep_text):
                 continue  # history copied from the parent into a forked subagent
             ts = ts_of(m.group(1).decode())
             kind, ptype = m.group(3), m.group(4)
+            if (th.origin == "sub" and th.contract is None and ts is not None and ts < window.start
+                    and kind == b"response_item" and ptype == b"message" and b'"role":"user"' in raw[:400]):
+                _contract(th, _load(raw).get("payload") or {})
             if kind == b"event_msg" and ptype == b"token_count":
                 if ts is not None and ts < window.start:
                     tokens_before = raw
@@ -139,9 +145,7 @@ def _user_message(th, raw, ts, keep_text):
             th.skills.append((ts, qualified, "user"))
         return
     if th.origin != "main":
-        if th.contract is None:
-            m = CONTRACT_RE.match("\n".join(texts))
-            th.contract = m.group(1) if m else None
+        _contract(th, p)
         return
     text = AMBIENT_RE.sub("", "\n".join(texts)).strip()
     human = kinds and all(k == "user.text" for k in kinds)
@@ -149,6 +153,14 @@ def _user_message(th, raw, ts, keep_text):
     # A text that still opens with a tag is machine-sent: <heartbeat> automations, picker replies.
     if (human or legacy) and text and not text.startswith("<"):
         th.note_prompt(ts, text, keep_text)
+
+
+def _contract(th, payload):
+    if th.contract is None:
+        texts = [c.get("text", "") for c in payload.get("content") or [] if isinstance(c, dict)]
+        match = CONTRACT_RE.match("\n".join(texts))
+        if match:
+            th.contract = match.group(1)
 
 
 def _token_delta(before, last):

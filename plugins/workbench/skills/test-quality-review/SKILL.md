@@ -204,9 +204,11 @@ mutation target, whatever a dispatch names as scope: gate, oracle or parser
 logic that lives in a test file is reviewed through the checklist (a setup that
 passes trivially, a helper that cannot fail) and at most five hand-applied
 defects for that file. When the diff removes or relaxes an assertion, the
-lines that assertion pinned join the scope. A survivor on a line the diff did
-not change is a pre-existing gap: record it under Strategy notes, not as an
-Issue. Resolve the scope with rename detection (`git diff -M`) and, for content
+lines that assertion pinned join the scope. Lost protection introduced by the
+test diff is an Issue even when production is unchanged; establish that loss
+from the old assertion or before/after mutant evidence. A gap that already
+existed before both the production and test diff belongs under Strategy notes.
+Resolve the scope with rename detection (`git diff -M`) and, for content
 that left one file and appeared in another, a byte comparison of the removed and
 added text. Content that moved without an edit has no changed lines: the tests
 that exercised it before the move still characterize it, and mutating it audits
@@ -222,6 +224,12 @@ named tests.
    isolated sandbox or disposable checkout that includes the reviewed changes and
    tests. Mutate production code there, preserving test expectations. A documented
    command that edits files in place also runs in isolation.
+   Before the first baseline, inspect the selected tests' external state: a source
+   copy does not redirect application data, configuration, databases or child
+   processes. Set supported run-owned temporary roots or isolated services and
+   verify the resolved destinations before writes; verify containment on the
+   baseline. Carry those settings into every mutant and child process. If this
+   cannot be established, stop that execution path and report the setup gap.
    For a hand-applied defect, inspect the mutated source diff against the
    pristine copy before running: prove the intended production change landed
    and test expectations stayed intact. An unchanged file or setup failure
@@ -234,6 +242,10 @@ named tests.
    the commit set. The disposable copy itself stays for the task's later rounds
    and goes after the final round's verdict. Never reset the checkout or delete
    unrelated files for cleanup.
+   Unexpected writes outside the isolated runtime are this review's preservation
+   gap even if the faulty test predates the diff. Stop affected runs, record owned
+   changes and unresolved paths, and respect existing cleanup authority. Never
+   delete shared state or another session's data to obtain a clean verdict.
 3. Report the preservation result. Injected defects, mutant copies, temporary probe
    tests, and temporary run output do not belong in staged changes or deliverables.
    If preservation or cleanup remains unresolved, return `ISSUES_FOUND` with the
@@ -252,11 +264,15 @@ named tests.
   its configuration. A command for another feature is not evidence for this diff.
   Explicit user waivers and superseding repository processes retain precedence.
 - Setup is installing and configuring the named tools for the inputs they parse.
-  In-scope content the named tool does not mutate (a template, a fixture, a
-  generated artifact, a file of constant exports) gets `not applicable: <files and
-  reason>` on the Mutation run line and mutation thinking in the review; its
+  In-scope inputs the named tool does not parse, such as an unsupported template
+  format, get `not applicable: <files and reason>` on the Mutation run line and
+  mutation thinking in the review; their
   evidence is that record, not a hand-built harness (a custom instrumenter
   script, a mutant loop, or probe lanes).
+  Classify by actual syntax and tool support, not by labels such as fixture,
+  generated file or constant export. Parsed runtime expressions with no supported
+  mutant, such as an `as const` object, use the bounded hand-defect rule below.
+  Do not rewrite production syntax just to make it mutable.
 - Missing or broken tooling is setup work. Install a compatible tool and required
   runner dependencies, or repair the config, in the disposable copy or a dedicated
   tool prefix. Use the project's package manager and runtime; record versions and
@@ -281,6 +297,24 @@ named tests.
   Scope both mutation targets and tests; create or adapt a run-specific config in
   the isolated copy when the existing config targets unrelated work. Preserve the
   author's config.
+  For Bun, a verified combination is StrykerJS 10, `@hughescr/stryker-bun-runner`
+  1.6, Bun >=1.4, Node >=22 and TypeScript 6 for config parsing. Check installed
+  package requirements when choosing other versions. Load the community runner
+  explicitly and bound test files as well as mutation ranges:
+
+  ```json
+  {
+    "appendPlugins": ["@hughescr/stryker-bun-runner"],
+    "testRunner": "bun",
+    "coverageAnalysis": "perTest",
+    "testFiles": ["tests/parser.test.ts"],
+    "mutate": ["src/parser.ts:10-25"]
+  }
+  ```
+
+  Credit per-test coverage only after the selected nonempty baseline and coverage
+  records agree. Keep runner errors and unattributed crashes separate from kills;
+  an error is not evidence that an assertion caught the mutant.
 - Stryker's `command` runner is the fallback when no compatible framework
   runner works in the copy, with `coverageAnalysis: "off"` and an explicit
   command that selects relevant bounded test files and propagates failures,
@@ -298,6 +332,17 @@ named tests.
   stryker run --mutate <path:start-end,...> --reporters clear-text --cleanTempDir always --tempDirName <new directory outside the worktree>
   ```
 
+  With Stryker 10, `--incremental --incrementalFile <scratch report.json>` preserves
+  partial results on supported interruptions; retain logs too and verify the report
+  was written. Reuse requires matching source, tests, helpers, snapshots, config,
+  dependencies, tool/runner versions and runtime. The tool does not detect every
+  change, especially static mutants or test changes under the command runner.
+  If relevant inputs changed or provenance is missing, use `--incremental --force`
+  with the current `--mutate` ranges, never an unrelated full sweep. Report fresh
+  and reused outcomes separately; old out-of-scope entries are not current evidence.
+  Resuming partial work does not restart the round's budget or authorize a second
+  completed campaign over the same scope.
+
 - For Rust, run `cargo mutants --in-place` from the crate or workspace inside the
   disposable copy, as a single job, with `--copy-target` and `--jobs` unset and
   `--output` outside the copy: the clone's build cache serves every mutant, where
@@ -306,12 +351,16 @@ named tests.
   quote source globs passed to `--file`, and use `--in-diff <patch>` for changed
   hunks where applicable, and `--re` on the function names behind a changed
   test instead of the whole file. Select relevant test packages
-  with `--test-package` when needed; pass focused Cargo test targets after `--`,
-  for example `cargo mutants --file 'src/parser.rs' -- --test parser`.
+  with `--test-package` when needed. Constrain both build and test phases with
+  `--cargo-arg` for Cargo target flags, for example
+  `cargo mutants --in-place --file 'src/parser.rs' --cargo-arg=--test=parser --output <outside-copy>`.
+  Trailing arguments after `--` apply only to the test phase; use a further `--`
+  for test-binary filters when needed. Verify the effective build command selects
+  the intended targets, not just the eventual test execution.
   Verify a passing, nonempty baseline using the same tests and feature flags.
   Inspect effective config so workspace defaults do not expand the test scope.
   Report caught / missed / timeout / unviable counts; review missed mutants as
-  survivors and count timeouts with the caught. Do not infer coverage from
+  survivors and keep timeouts separate from caught. Do not infer coverage from
   cargo-mutants outcomes.
 - **One run per scope, one campaign at a time.** A completed run is the
   round's evidence for its scope; the same scope does not run again in the
@@ -319,14 +368,18 @@ named tests.
   reconcile its counts. A survivor the reviewer wants to check by hand gets
   one hand-applied defect in the copy. Campaigns run one at a time on the
   host: a second Stryker or cargo-mutants process never starts while one is
-  running. Timeouts from a run that shared the host with another campaign are
-  load, not detection: record their lines as `partial` with the
+  running. Timeouts from a run that shared the host with another campaign cannot
+  establish detection: record their lines as `partial` with the
   single-campaign command under Strategy notes.
-- A per-mutant timeout (Stryker `Timeout`, cargo-mutants `timeout`) from a run
-  that had the host to itself is a detected mutant: the mutated program never
-  finished the tests, which a CI run would catch. Count it with the killed;
-  never diagnose, rerun, or carry it as unknown. Only a run that exceeds its
-  own limit (the baseline, or a whole invocation) is a setup problem.
+- Keep per-mutant timeouts distinct from assertion kills in the evidence, whatever
+  the tool's score counts. Record a known hit-limit or loop reason as timeout
+  detection; an unexplained deadline, resource kill or runner error is inconclusive.
+  No competing campaign does not rule out ordinary host load or a bad deadline.
+  Inspect existing logs within the remaining budget when useful; do not rerun a
+  completed campaign or request a waiver to settle a timeout. At the deadline,
+  record inconclusive lines as `partial` with their reason and command under
+  Strategy notes. Timeouts alone do not block delivery. A baseline or whole
+  invocation exceeding its limit is a setup problem, repaired only within budget.
 - Diagnose and repair an unmatched glob, an empty or failing baseline, an
   instrumentation failure, or an invocation that exceeded its limit, then
   rerun. Zero mutants over content
@@ -372,7 +425,7 @@ named tests.
   mutants alone does not establish either. For other languages, use the
   project's mutation tool when it has one; otherwise hand-applied defects on the
   changed lines are the evidence.
-- Hand-applied defects, in any language, cover what the named tool leaves: a
+- Hand-applied defects, in any language, cover parsed runtime behavior the named tool leaves: a
   line it makes no mutant for (a JSX attribute, an `as const` object, a tuple
   comparison), a test file's own helpers, a survivor checked by hand, a test
   excluded for its run time, or a follow-up round under a project rule that
@@ -433,13 +486,15 @@ Follow-up pass: [0 initial, or the follow-up's number]
   commands, lane time as minutes of the round's budget, report path and outcome
   counts; Stryker: killed / timeout / survived /
   no coverage (unavailable with the command runner) / errors; cargo-mutants:
-  caught / missed / timeout / unviable; or "partial: <covered scope> /
+  caught / missed / timeout / unviable, timeout reasons and inconclusive outcomes,
+  with fresh and reused results separated; or "partial: <covered scope> /
   <uncovered scope>" when the time budget ended first; or "blocked: <failure,
   attempted repair, remaining scope>"; or "waived: <authority and scope>"; or
   "not applicable: <source evidence of no executable behavior, or files the
   tool does not parse>"]
 - Workspace preservation: [verified against pre-run staged, unstaged, and untracked
-  state; or "unresolved: <paths and reason>"; or "not applicable: no setup or run"]
+  state and isolated runtime destinations; or "unresolved: <paths and reason>";
+  or "not applicable: no setup or run"]
 
 ### Delta walk
 [On revision rounds: prior finding ID, disposition, and supporting evidence.]

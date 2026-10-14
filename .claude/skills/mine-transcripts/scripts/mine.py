@@ -28,8 +28,7 @@ from common import (  # noqa: E402
 KINDS = {"tq": ("test-quality-reviewer", "test-quality-review"),
          "cq": ("code-quality-reviewer", "code-quality-review"),
          "ci": ("ci-watcher", None)}
-# Generic agents that count as a reviewer when they open a rubric. workflow-subagent is left out on
-# purpose: workflow agents that read a rubric are verifying it, not reviewing a diff.
+# Generic rubric readers are candidates; workflow agents may be verifying the rubric itself.
 RUBRIC_AGENT_TYPES = {"general-purpose", "claude"}
 
 
@@ -141,33 +140,36 @@ def cmd_skills(args):
 # ---------------------------------------------------------------- reviewers
 
 def classify(th):
+    """Return a possible reviewer kind and the evidence identifying it."""
+    if th.contract:
+        return next((kind for kind, (agent, _) in KINDS.items() if agent == th.contract), None), "contract"
+    base = (th.agent_type or "").split(":")[-1]
+    for kind, (agent, _) in KINDS.items():
+        if base == agent:
+            return kind, "agent-type"
     if th.host == "claude":
-        base = (th.agent_type or "").split(":")[-1]
-        for kind, (agent, _) in KINDS.items():
-            if base == agent:
-                return kind
         if th.agent_type in RUBRIC_AGENT_TYPES:
             rubrics = {v[4] for v in th.versions if v[3] == "skills"}
             for kind in ("tq", "cq"):
                 if KINDS[kind][1] in rubrics:
-                    return kind
-        return None
-    if th.contract:  # the spawn header names the agent (0.42.0 on); only older spawns need the guesses below
-        return next((kind for kind, (agent, _) in KINDS.items() if agent == th.contract), None)
+                    return kind, "rubric-read"
+        return None, "agent-type" if base else "unknown"
+    if base and base not in {"default", "worker", "explorer"}:
+        return None, "agent-type"
     agents = {v[4] for v in th.versions if v[3] == "agents"} | th.agent_hints
     for kind, (agent, _) in KINDS.items():
         if agent in agents:
-            return kind
+            return kind, "agent-read"
     n = th.name.lower()
     rubrics = {v[4] for v in th.versions if v[3] == "skills"}
     tq, cq = KINDS["tq"][1] in rubrics, KINDS["cq"][1] in rubrics
     if "watch" in n or ("ci_" in n and "fix" not in n):
-        return "ci"
+        return "ci", "task-name"
     if ("test" in n and "review" in n) or "test_quality" in n or "tqr" in n:
-        return "tq"
+        return "tq", "task-name"
     if any(x in n for x in ("review", "audit_diff", "adversarial")):
-        return "tq" if tq and not cq else "cq"
-    return "tq" if tq else "cq" if cq else None
+        return ("tq" if tq and not cq else "cq"), "task-name"
+    return ("tq" if tq else "cq", "rubric-read") if tq or cq else (None, "unknown")
 
 
 def rubric_version(th, kind, index):
@@ -189,12 +191,9 @@ def cmd_reviewers(args):
     window, threads, _, index = load(args)
     banner("reviewers", args, window, threads)
     kinds = [k.strip() for k in args.kinds.split(",") if k.strip() in KINDS]
-    dispatches, excluded = [], Counter()
+    dispatches, excluded, unknown = [], Counter(), Counter()
     for th in threads:
         if th.origin not in ("sub", "workflow"):
-            continue
-        kind = classify(th)
-        if kind not in kinds:
             continue
         if th.project in ("self", "scratch") and not args.all_projects:
             excluded[f"{th.project} project"] += 1
@@ -202,12 +201,19 @@ def cmd_reviewers(args):
         if not th.rounds:
             excluded["no dispatch prompt in window"] += 1
             continue
+        kind, identity_source = classify(th)
+        if identity_source == "unknown":
+            unknown[th.host] += 1
+        if kind not in kinds:
+            continue
         version, source = rubric_version(th, kind, index)
         durations = [minutes(e - s) for s, e, _ in th.rounds]
         first_is_followup = later_pass_prompt(th.first_prompt) if th.host == "claude" else later_pass_name(th.name)
         followups = [d for d, r in zip(durations[1:], th.rounds[1:]) if r[2] == "followup"]
         dispatches.append({
             "host": th.host, "kind": kind, "project": th.project,
+            "identity": "confirmed" if identity_source in {"contract", "agent-type"} else "candidate",
+            "identity_source": identity_source,
             "start": dt.datetime.fromtimestamp(th.first).strftime("%Y-%m-%d %H:%M"),
             "version": version, "version_source": source,
             "wall": minutes(th.last - th.first), "active": minutes(th.active()),
@@ -227,30 +233,34 @@ def cmd_reviewers(args):
             return (1, ())
         return (0, vkey(b.lstrip("<>=")) + ((1,) if b.startswith(">=") else (0,)))
 
-    headers = ["bucket", "host", "disp", "w/fu", "wall med", "wall p90", "active med",
+    headers = ["bucket", "host", "identity", "disp", "w/fu", "wall med", "wall p90", "active med",
                "init n", "init med", "init p90", "fu n", "fu med"]
     for kind in kinds:
         groups = defaultdict(list)
         for x in dispatches:
             if x["kind"] == kind:
-                groups[(bucket(x["version"]), x["host"])].append(x)
+                groups[(bucket(x["version"]), x["host"], x["identity"])].append(x)
         rows = []
-        for (b, host), xs in sorted(groups.items(), key=lambda kv: (order(kv[0][0]), kv[0][1])):
+        for (b, host, identity), xs in sorted(groups.items(), key=lambda kv: (order(kv[0][0]), *kv[0][1:])):
             wall, active = summary(x["wall"] for x in xs), summary(x["active"] for x in xs)
             init = summary(x["initial"] for x in xs)
             fu = summary(f for x in xs for f in x["followups"])
-            rows.append([b, host, len(xs), sum(1 for x in xs if x["followups"]),
+            rows.append([b, host, identity, len(xs), sum(1 for x in xs if x["followups"]),
                          fmt(wall["median"]), fmt(wall["p90"]), fmt(active["median"]),
                          init["n"] if init else 0, fmt(init and init["median"]), fmt(init and init["p90"]),
                          fu["n"] if fu else 0, fmt(fu and fu["median"])])
         print(f"\n{KINDS[kind][0]} (minutes)")
         print(table(headers, rows) if rows else "  no dispatches")
     sources = Counter(x["version_source"] for x in dispatches)
+    print("\nidentity: confirmed = explicit contract or registered role; candidate = name or definition read. "
+          "Candidates need manual role verification; session durations are not mutation-lane times.")
+    if unknown:
+        print("unknown role: " + ", ".join(f"{host} {n}" for host, n in sorted(unknown.items())))
     print("\nversion source: " + ", ".join(f"{k} {v}" for k, v in sorted(sources.items()))
           + "  (read = the agent opened its rubric or agent file; parent = the dispatching session's loaded version)")
     if excluded:
         print("excluded: " + ", ".join(f"{k} {v}" for k, v in sorted(excluded.items()))
-              + "  (--all-projects keeps them)")
+              + "  (--all-projects includes self/scratch projects)")
     if args.rows:
         for x in sorted(dispatches, key=lambda x: x["start"]):
             print(json.dumps({k: (round(v, 1) if isinstance(v, float) else
@@ -312,7 +322,11 @@ def agent_label(th, labeler):
     if th.host == "codex":
         if th.origin == "guardian":
             return "guardian (auto-review)"
-        return KINDS[classify(th)][0] if classify(th) else "other subagent"
+        kind, source = classify(th)
+        if kind:
+            prefix = "" if source in {"contract", "agent-type"} else "candidate "
+            return prefix + KINDS[kind][0]
+        return "other subagent"
     at = th.agent_type or "unknown"
     return labeler.name(at if ":" in at or at in BUILTIN_AGENTS or at == "unknown" else f"custom:{at}")
 

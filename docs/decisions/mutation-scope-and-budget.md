@@ -285,3 +285,39 @@ control plans kept. Every plan computed an estimate, so the wording fixes the
 threshold and puts the estimate on the report line rather than introducing
 the habit. Three reps per arm is regression evidence for this dispatch shape,
 not a reliability estimate.
+
+## Evidence and isolation corrections (2026-10-14)
+
+A two-week transcript sample found useful behavioral findings and correction
+proof, alongside avoidable Rust builds and test writes outside disposable source
+copies. A focused CLI probe confirmed that trailing `--test` selects the test
+phase but leaves cargo-mutants' build phase broad. Use `--cargo-arg` for target
+flags that both phases need. Before the baseline, redirect supported runtime
+data/config roots and verify containment; a clean source tree alone is not
+preservation. Unresolved writes from the review cannot receive a preservation PASS.
+
+Keep raw timeout counts separate from assertion kills. Known hit-limit evidence
+can establish loop detection; an unexplained deadline remains inconclusive, even
+without a second campaign. Bounded inspection uses the existing budget. Neither
+uncertain timeouts nor partial scope create a waiver request or another campaign.
+This supersedes the earlier unconditional timeout-as-detection rule above.
+
+An unchanged production line can lose protection when the diff weakens its test.
+Report that regression as an Issue when the removed protection is established;
+only gaps that predate the test diff remain advisory. Constant exports are not
+uniformly inapplicable: Stryker 10 generated five mutants for an ordinary exported
+object and none for its `as const` form. Use the existing bounded hand-defect rule
+for parsed runtime expressions the tool cannot mutate, without rewriting syntax
+or building a custom instrumenter. Unsupported templates keep their existing rule.
+
+Qualify compatible framework runners before falling back to the command runner.
+The Bun runner 1.6 upgrade corrects coverage and result classification; old cached
+outcomes cannot establish fresh evidence after a runner change. Stryker 10's
+partial incremental reports preserve completed work, but reuse requires unchanged
+source, tests, helpers, snapshots, configuration, dependencies and runtime. Force
+the affected scope when these inputs change, retain explicit fresh/reused counts,
+and keep the existing round deadline. No broader sweep or larger budget is added.
+
+Tool references: [Cargo argument forwarding](https://mutants.rs/cargo-args.html),
+[Bun runner upgrade notes](https://github.com/hughescr/stryker-bun-runner/blob/1.6.0/README.md#upgrading-from-14),
+and [Stryker incremental limits](https://stryker-mutator.io/docs/stryker-js/incremental/).

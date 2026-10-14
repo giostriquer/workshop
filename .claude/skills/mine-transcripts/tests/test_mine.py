@@ -435,5 +435,127 @@ class LaterPassPatterns(unittest.TestCase):
                 self.assertEqual(common.later_pass_name(name), expected)
 
 
+class ReviewerIdentityOverFixture(unittest.TestCase):
+    """Role evidence must survive the reader and CLI without becoming a routing guess."""
+
+    def setUp(self):
+        self.root = tempfile.mkdtemp(prefix="mine-identity-")
+        self.addCleanup(shutil.rmtree, self.root, ignore_errors=True)
+        self.codex_home = os.path.join(self.root, "codex")
+        self.claude_home = os.path.join(self.root, "claude")
+        self.day = os.path.join(self.codex_home, "sessions", "2026", "09", "02")
+
+    def codex_agent(self, name, *, role=None, contract=None, contract_time=None, rubric=True, end_minute=2):
+        records = x_sub(name, name, [x_event(at(10, 0), 1, "task_started")])
+        meta = records[0]["payload"]
+        meta.pop("agent_path")
+        meta.pop("parent_thread_id")
+        meta["source"]["subagent"]["thread_spawn"] = {
+            "parent_thread_id": "c-main", "agent_path": f"/root/{name}", "agent_role": role}
+        if contract:
+            records.insert(1, x_user(contract_time or at(10, 0), 0,
+                                     f"You are the {contract}. Your contract:\nReview the webapp.", []))
+        else:
+            records.append({"timestamp": at(10, 0), "type": "response_item",
+                            "payload": {"type": "agent_message", "encrypted_content": "opaque-placeholder"}})
+        if rubric:
+            records.append(x_exec(at(10, 1), 2, f"cat {CODEX_CACHE}/0.48.2/skills/test-quality-review/SKILL.md"))
+        records.append(x_event(at(10, end_minute), 3, "task_complete"))
+        write_jsonl(os.path.join(self.day, f"rollout-{name}.jsonl"), records)
+
+    def run_cli(self, command="reviewers"):
+        env = {**os.environ, "CLAUDE_CONFIG_DIR": self.claude_home, "CODEX_HOME": self.codex_home, "TZ": "UTC"}
+        args = [sys.executable, "-B", os.path.join(SCRIPTS, "mine.py"), command, *WINDOW]
+        if command == "reviewers":
+            args.append("--rows")
+        result = subprocess.run(args, env=env, capture_output=True, text=True, timeout=30)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        rows = [json.loads(line) for line in result.stdout.splitlines() if line.startswith("{")]
+        return result.stdout, rows
+
+    def test_rubric_read_is_candidate_even_with_encrypted_dispatch(self):
+        self.codex_agent("implement_storage")
+        output, rows = self.run_cli()
+        self.assertEqual(len(rows), 1)
+        self.assertEqual((rows[0]["kind"], rows[0]["identity"], rows[0]["identity_source"]),
+                         ("tq", "candidate", "rubric-read"))
+        self.assertIn("candidate", output)
+        self.assertNotIn("opaque-placeholder", output)
+        self.assertNotIn("implement_storage", output)
+        spend, _ = self.run_cli("spend")
+        self.assertIn("candidate test-quality-reviewer", spend)
+
+    def test_registered_role_is_confirmed_without_readable_contract(self):
+        self.codex_agent("check_diff", role="workbench:test-quality-reviewer")
+        _, rows = self.run_cli()
+        self.assertEqual(len(rows), 1)
+        self.assertEqual((rows[0]["kind"], rows[0]["identity"], rows[0]["identity_source"]),
+                         ("tq", "confirmed", "agent-type"))
+        spend, _ = self.run_cli("spend")
+        self.assertRegex(spend, r"(?m)^test-quality-reviewer\s+1\s")
+        self.assertNotIn("candidate test-quality-reviewer", spend)
+
+    def test_registered_nonreviewer_role_wins_over_name_and_rubric(self):
+        self.codex_agent("test_quality_review", role="workbench:pattern-reviewer")
+        _, rows = self.run_cli()
+        self.assertEqual(rows, [])
+
+    def test_nested_name_keeps_parent_version_and_followup_timing(self):
+        write_jsonl(os.path.join(self.day, "rollout-parent.jsonl"), [
+            x_meta(at(9, 0), "c-main", "cli"),
+            x_skill(at(9, 1), 1, "test-quality-review", "0.47.1"),
+        ])
+        self.codex_agent("test_quality_rereview", rubric=False)
+        _, rows = self.run_cli()
+        self.assertEqual(len(rows), 1)
+        self.assertEqual((rows[0]["kind"], rows[0]["identity"], rows[0]["identity_source"]),
+                         ("tq", "candidate", "task-name"))
+        self.assertEqual((rows[0]["version"], rows[0]["version_source"]), ("0.47.1", "parent"))
+        self.assertIsNone(rows[0]["initial"])
+        self.assertEqual(rows[0]["followups"], [2.0])
+
+    def test_nonreviewer_contract_wins_over_name_and_rubric(self):
+        self.codex_agent("test_quality_review", contract="pattern-reviewer")
+        _, rows = self.run_cli()
+        self.assertEqual(rows, [])
+
+    def test_contract_before_window_keeps_identity_but_not_duration(self):
+        self.codex_agent("test_quality_review", contract="code-quality-reviewer", contract_time=BEFORE)
+        _, rows = self.run_cli()
+        self.assertEqual(len(rows), 1)
+        self.assertEqual((rows[0]["kind"], rows[0]["identity"], rows[0]["identity_source"]),
+                         ("cq", "confirmed", "contract"))
+        self.assertEqual(rows[0]["active"], 2.0)
+        self.assertEqual(rows[0]["wall"], 2.0)
+        self.assertEqual(rows[0]["start"], "2026-09-02 10:00")
+        self.assertEqual(rows[0]["initial"], 2.0)
+        self.assertEqual(rows[0]["followups"], [])
+
+    def test_confirmed_and_candidate_counts_stay_in_separate_buckets(self):
+        self.codex_agent("review_one", role="test-quality-reviewer")
+        self.codex_agent("review_two", end_minute=6)
+        output, rows = self.run_cli()
+        self.assertEqual(sorted(row["identity"] for row in rows), ["candidate", "confirmed"])
+        self.assertRegex(output, r"(?m)^0\.48\.2\s+codex\s+confirmed\s+1\s+0\s+2\.0\s+2\.0\s+2\.0\s+1\s+2\.0\s+2\.0\s")
+        self.assertRegex(output, r"(?m)^0\.48\.2\s+codex\s+candidate\s+1\s+0\s+6\.0\s+6\.0\s+6\.0\s+1\s+6\.0\s+6\.0\s")
+
+    def test_unidentified_encrypted_dispatch_is_counted_as_unknown(self):
+        self.codex_agent("helper", rubric=False)
+        output, rows = self.run_cli()
+        self.assertEqual(rows, [])
+        self.assertIn("unknown role: codex 1", output)
+
+    def test_claude_generic_rubric_reader_is_also_candidate(self):
+        parent = os.path.join(self.claude_home, "projects", "-Users-me-acme", "sess-1", "subagents")
+        path = os.path.join(parent, "agent-generic.jsonl")
+        write_jsonl(path, [c_user(at(10, 0), "Implement storage."),
+                           c_assistant(at(10, 1), "r1", c_read(f"{CACHE}/0.48.2/skills/test-quality-review/SKILL.md"))])
+        with open(os.path.join(parent, "agent-generic.meta.json"), "w") as fh:
+            json.dump({"agentType": "general-purpose"}, fh)
+        _, rows = self.run_cli()
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["identity"], "candidate")
+
+
 if __name__ == "__main__":
     unittest.main()

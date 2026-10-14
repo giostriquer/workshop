@@ -9,6 +9,10 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-12 reformat.
 
 
+## workbench 0.48.3: 2026-10-14
+
+- **Keep mutation evidence scoped and trustworthy.** Test-quality review verifies runtime-data isolation before its baseline, constrains Rust build and test targets, and distinguishes timeout uncertainty from assertion kills. It catches protection lost through test changes, clarifies constant-export coverage, and adds qualified Bun runner and incremental-report guidance while preserving existing budgets. ([decision](decisions/mutation-scope-and-budget.md#evidence-and-isolation-corrections-2026-10-14))
+
 ## workbench 0.48.2: 2026-10-14
 
 - **Keep lane names stable across handoffs.** `epic-orchestration` assigns each lane one unique, short name and reuses it in paste labels, pointers, reports and the ledger. Worksets and delivery phases remain separate, and inherited composite labels map to a canonical name while preserving sessions and artifact references. ([decision](decisions/epic-orchestration.md#lane-names-stay-stable-across-handoffs-2026-10-14))
@@ -74,7 +78,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 ## workbench 0.45.6: 2026-10-01
 
 - **Every PR push includes the latest target branch.** Filing and CI repairs refresh the actual target repository and branch, merge missing commits even without conflicts, and recheck the target after validation. Sessions resolve conflicts settled by existing requirements and validate the combined result; unresolved decisions and failed synchronization leave the push pending. ([decision](decisions/file-pr.md#synchronize-the-actual-target-before-every-push-2026-10-01))
-
-## workbench 0.45.5: 2026-09-30
-
-- **CI failures return to the parent before diagnostics.** The watcher reports any failed check or job on the pinned revision, even when it is not listed as required or its workflow is still running. It returns with the available evidence; the parent collects logs and decides the next action. ([decision](decisions/fix-ci.md#return-failures-before-diagnostics-or-required-check-filtering-2026-09-30))

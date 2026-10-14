@@ -59,7 +59,9 @@ and are never parsed.
 - **`session_meta`** (line 1): `id`, `parent_thread_id`, `forked_from_id`, `cwd`,
   `agent_path` (`/root/<task_name>`), `source`. A string source (`cli`, `vscode`,
   `exec`) is a main thread, `exec` being automation; `{"subagent":{"thread_spawn":..}}`
-  is a spawned subagent; `{"subagent":{"other":"guardian"}}` is the auto-review
+  is a spawned subagent; its nested `thread_spawn` can also carry `parent_thread_id`,
+  `agent_path` and `agent_role`. A recognized reviewer role is explicit evidence;
+  generic roles and task names are not. `{"subagent":{"other":"guardian"}}` is the auto-review
   approver. Lines whose ordinal is below `subagent_history_start_ordinal` are history
   copied from the parent: skip them. Some guardian files are all history.
 - **`turn_context`**: `model`, `effort`.
@@ -77,5 +79,7 @@ and are never parsed.
   (`~/.codex/plugins/cache/...`, `.codex/skills/`, `.agents/skills/`). `spawn_agent`
   and `send_message` payloads are encrypted in the parent. From workbench 0.42.0 the
   child's spawn message, a user message, opens `You are the <name>. Your contract:`,
-  which names the agent; an older spawn is recognized by its task name and by the
-  rubric or agent file it reads.
+  which names the agent. Retain a readable header before the date window for role
+  identity without counting its earlier time. Newer child `agent_message` records
+  may also hold encrypted content; do not decode or guess that contract. Task names
+  and rubric/agent-file reads produce candidates, never confirmed roles.
