@@ -246,3 +246,27 @@ Audit returns now state report acceptance, auditor assignment completion or
 remaining work, and epic closure separately in both the notice and its visible
 handoff. The matching auditor closeout acknowledgment and rationale are in
 [epic-auditor](epic-auditor.md#explicit-audit-acceptance-and-assignment-completion-2026-09-26).
+
+## Lane names stay stable across handoffs (2026-10-14)
+
+The operator reported correct delegations whose paste labels combined a lane,
+multiple worksets and a delivery phase. Labels such as `Parser / L3+L4` and
+`L8-R C2 / PR` made the destination harder to identify. Requiring a separate
+paste label per destination did not define what the destination's name was.
+
+Each lane now has one short alphanumeric name, unique within the epic and
+recorded in its ledger and contract. Handoffs reuse that exact name through
+corrections, delivery, audit and recovery. Scope, role and phase remain separate
+details. Existing simple names are retained; an inherited composite label gets
+a recorded mapping to one canonical name without replacing the session or
+renaming its artifacts. The dispatch pointer names the lane as well, so it
+remains identifiable when copied without its surrounding label.
+
+This changes routing presentation, not lane grouping, scope or authority.
+
+A focused consuming-agent probe of the previous wording retained a composite
+destination during recovery. With the revised skill, four scenarios used simple,
+consistent names across five destinations: grouped worksets, correction delivery,
+composite-label recovery and a mixed implementation/auditor batch. Session and
+artifact continuity and authority boundaries were preserved. These are bounded
+simulated regression checks, not a reliability estimate or live epic proof.

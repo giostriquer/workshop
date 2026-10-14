@@ -9,6 +9,10 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-12 reformat.
 
 
+## workbench 0.48.2: 2026-10-14
+
+- **Keep lane names stable across handoffs.** `epic-orchestration` assigns each lane one unique, short name and reuses it in paste labels, pointers, reports and the ledger. Worksets and delivery phases remain separate, and inherited composite labels map to a canonical name while preserving sessions and artifact references. ([decision](decisions/epic-orchestration.md#lane-names-stay-stable-across-handoffs-2026-10-14))
+
 ## toolkit 0.16.0: 2026-10-12
 
 - **Invoke Anatomy for interactive isometric figures.** The explicit-only launcher loads the complete upstream package at a fixed commit and keeps its source unchanged. Automatic invocation is disabled on Claude Code and Codex; Git and network access are required, with Node.js and Chrome or Chromium for upstream checks. ([decision](decisions/anatomy.md))
@@ -74,7 +78,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 ## workbench 0.45.5: 2026-09-30
 
 - **CI failures return to the parent before diagnostics.** The watcher reports any failed check or job on the pinned revision, even when it is not listed as required or its workflow is still running. It returns with the available evidence; the parent collects logs and decides the next action. ([decision](decisions/fix-ci.md#return-failures-before-diagnostics-or-required-check-filtering-2026-09-30))
-
-## workbench 0.45.4: 2026-09-30
-
-- **PR titles distinguish each change's actual contribution.** Identify the affected workflow or shared subsystem from the diff and callers, then name the operation, mechanism, or condition that separates this PR from other work on the same symptom. Descriptions connect the observed problem to the implementation and its supported effect, including unresolved work. ([decision](decisions/file-pr.md#titles-and-descriptions-share-an-evidence-boundary-2026-09-30))

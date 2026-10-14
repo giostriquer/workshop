@@ -156,6 +156,20 @@ the smallest check that addresses it and disclose unavailable coverage.
 
 ## Write the lane contract
 
+**Lane identity.** Give each implementation or auditor lane one canonical name:
+a short alphanumeric token, unique within the epic, such as `L3`, `Parser` or
+`A2`. Reuse an established simple name; otherwise assign it once and record it
+in the ledger and contract before dispatch. Use that exact name in paste labels,
+pointer blocks, dispatches, report headings and status updates throughout
+corrections, delivery, audit rounds and recovery. Keep role, worksets, tickets,
+phase and PR details in separate fields or prose. A lane covering several
+worksets still has one name; separate lanes each have their own name and handoff.
+
+For an inherited composite label, choose one canonical name and record the old
+label's mapping to it in the ledger before the next handoff. Continue the same
+session and preserve existing artifact paths and references. The mapping is
+recovery metadata; subsequent destination labels use only the canonical name.
+
 Group lanes by file ownership so concurrent work does not compete over a shared
 contract. Name affected producers, fixture builders and consumer checks for
 shared-interface changes. Parallel lanes must have neither conflicting file
@@ -165,6 +179,8 @@ under `FORKS/DEVIATIONS`. Coordination cannot override epic exclusions.
 
 The initial dispatch is a complete brief that works without tracker access:
 
+- **Lane:** canonical name from the ledger, with role and assigned worksets
+  recorded separately.
 - **Scope:** governing epic source and amendments, assigned criteria, ticket
   objectives and source anchors, finish line, exclusions, and decisions the
   lane can make or must return.
@@ -226,13 +242,14 @@ round. Do not issue work whose trigger has not fired.
 The final reply contains one complete handoff unit per destination, including
 returns to an existing lane after accepting its correction. Each unit has its
 own `Paste this into <LANE>:` label immediately above its fenced, paste-ready
-pointer. Multiple ready lanes may go out in one reply: repeat the complete
-label-and-block pair for each destination.
+pointer. `<LANE>` is exactly the canonical name recorded in the ledger, for
+example `Paste this into Parser:`. Multiple ready lanes may go out in one reply:
+repeat the complete label-and-block pair for each destination.
 
 `Paste this into <LANE>:`
 
 ```
-<Role, what is authorized, fresh or existing session>. Read and execute:
+Lane <LANE>. <Role, what is authorized, fresh or existing session>. Read and execute:
 <absolute dispatch path>
 <lines governing instructions require verbatim, if any>
 ```
@@ -376,7 +393,8 @@ An owner return has these parts, in order:
 
 Before sending the final reply, check that every lane-facing disposition has
 its actual file, its own `Paste this into <LANE>:` label and its fenced pointer
-in the reply. Progress updates and answers that carry no lane-facing disposition
+in the reply, with the same canonical name in the label, pointer and ledger.
+Progress updates and answers that carry no lane-facing disposition
 can stay brief prose.
 
 **Audit returns name what is finished.** In the return file and the operator-facing

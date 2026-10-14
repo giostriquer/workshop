@@ -45,9 +45,9 @@ includes or links the shared report template. Amendments state only what changed
 and reference the active contract. Every handback of implementation or audit work
 still contains the complete populated report. Each destination gets its own
 `Paste this into <LANE>:` label immediately above a fenced pointer naming the
-role, authority, fresh or existing session, and file path. When several lanes
-are ready, the owner repeats that complete label-and-block pair for each lane
-in one reply. Returns to existing lanes after corrections use the same format.
+same lane, role, authority, fresh or existing session, and file path. When several
+lanes are ready, the owner repeats that complete label-and-block pair for each
+lane in one reply. Returns to existing lanes after corrections use the same format.
 
 Everything is dispatchable the moment it is written. A prompt whose trigger has
 not fired is not written yet; the session watches for the trigger.
@@ -119,6 +119,21 @@ its original revision and input attribution.
 By **file ownership, not topic**: all changes to a hot file go in one lane.
 Lanes go out together only when they share no files and none waits on another
 in-flight lane's output.
+
+**How are lanes named?**
+
+Each lane has one short alphanumeric name, unique within the epic, such as `L3`,
+`Parser` or `A2`. The ledger and contract record it, and every handoff reuses it
+exactly: `Paste this into Parser:`. The copied pointer also names `Parser`.
+Worksets, tickets, role, correction round and delivery phase are separate
+details, so a lane's name stays the same through delivery and recovery. A lane
+covering several worksets still has one name; separate lanes get separate names
+and paste blocks.
+
+Existing simple names stay. If an older label combined several names or phase
+details, the owner records its mapping to one canonical name in the ledger and
+uses that name from then on. The existing session, artifact paths and references
+are preserved.
 
 **How does it connect to the rest of the workbench?**
 
