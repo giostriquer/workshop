@@ -1,5 +1,7 @@
 # qa-sweep
 
+[Canonical skill](../../plugins/workbench/skills/qa-sweep/SKILL.md)
+
 ## What it does
 
 `qa-sweep` runs QA over a surface too broad for one session to cover: a

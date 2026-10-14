@@ -3,15 +3,11 @@
 Usage pages for every skill shipped in a plugin: what each one does, when to
 reach for it, what surprises people, and how to tell it worked.
 
-**What these pages are not.** They are not rationale, history, or design
-records. When you want to know *why* a skill is shaped the way it is, read
-[`docs/decisions/`](../decisions/), which is where the arguments and the field
-failures live. These pages answer the reader's question ("should I use this,
-and how?"), not the maintainer's ("why is it like this?").
-
-The spec is always the authority. A `SKILL.md` is the whole artifact; if a page
-here ever disagrees with the skill it documents, the skill wins and the page is
-wrong.
+For execution, read the canonical `SKILL.md` in
+[`plugins/workbench/skills/`](../../plugins/workbench/skills/) or
+[`plugins/toolkit/skills/`](../../plugins/toolkit/skills/). Each page links its
+spec. For rationale, use [`docs/decisions/`](../decisions/). The spec is the
+authority when these sources disagree.
 
 ## Two plugins
 
@@ -27,7 +23,7 @@ you want them, and skip to keep sessions lean.
 | The moment | The skill |
 | --- | --- |
 | Getting oriented; "which skill do I use for X?" | [using-workbench](using-workbench.md) |
-| Something to verify, hunt, or check | [audit](audit.md): sizes it, then dispatches an engine |
+| Something to verify, hunt, or check | [audit](audit.md): uses the requested coverage and selects inline review or an investigation engine |
 | One premise, ticket, or hunch to settle | [claim-check](claim-check.md) |
 | A broad surface worth team-scale coverage | [qa-sweep](qa-sweep.md) |
 | Designing a feature or a refactor | [brainstorming](brainstorming.md) |
@@ -46,7 +42,7 @@ you want them, and skip to keep sessions lean.
 | A multi-ticket epic whose lanes other sessions implement | [epic-orchestration](epic-orchestration.md) |
 | Implementing a lane dispatched through epic-orchestration | [epic-implementation](epic-implementation.md) |
 | Auditing a lane dispatched through epic-orchestration | [epic-auditor](epic-auditor.md) |
-| Asking or telling another Claude Code or Codex session on this machine | [session-messaging](session-messaging.md) |
+| Asking or telling another local session on this machine | [session-messaging](session-messaging.md) |
 | Cleaning up a repo's stale worktrees, branches, caches or processes, or an epic's leftovers, when you ask | [epic-cleanup](epic-cleanup.md) |
 | Looking back at how the process itself ran | [self-audit](self-audit.md) |
 
@@ -59,7 +55,7 @@ you want them, and skip to keep sessions lean.
 | A catch-up on ongoing work and the decisions that need you | [ketchup](ketchup.md), user-invoked only |
 | A recorded walkthrough of UI work, with frames the model reads back | [web-demo-video](web-demo-video.md) |
 | To triage a PR's scattered feedback into one action list | [get-pr-comments](get-pr-comments.md) |
-| To install the workshop's global CLAUDE.md / AGENTS.md and rules on a machine | [adopt-global-rules](adopt-global-rules.md) |
+| To install the workshop's host-specific global instructions and rules on a machine | [adopt-global-rules](adopt-global-rules.md) |
 | To use a system as a real human user and report what got in the way | [me-human](me-human.md) |
 | To gate a new test, or audit and prune tests that don't earn their keep | [test-audit](test-audit.md), user-invoked only |
 | To bump dependencies knowing what each bump breaks, surface conflicts and advisories, or drop unused ones | [dependency-audit](dependency-audit.md), user-invoked only |
@@ -71,12 +67,16 @@ you want them, and skip to keep sessions lean.
 | Check the evidence behind a measured performance comparison | [benchmark-checklist](benchmark-checklist.md) |
 | To settle a project's glossary terms (`GLOSSARY.md` or `CONTEXT.md`), or record an ADR | [domain-modeling](domain-modeling.md) |
 
-## Two things worth knowing up front
+## Invocation and completion
 
-**Almost nothing here is compulsory.** Skills fire on relevance, not on
-obligation. The exceptions are the two default-on completion gates:
+**Invocation.** Skills load on relevance unless marked user-invoked only.
+Claude Code and Codex enforce that policy through their respective metadata.
+Muse's native loader has an [accepted policy gap](../decisions/plugin-surfaces.md#muse-implicit-invocation-hole-accepted-2026-10-14).
+
+**Completion.** Workbench has two default-on requirements:
 `verification-before-completion` at every done-claim, and the comment trim
-followed by the adversarial review once an implementation is complete
+followed by the adversarial review when the full agreed implementation is
+verified and about to ship through a PR or the repository delivery process
 (`trim-comments`, then `code-quality-review`, plus `test-quality-review` when
 production logic or tests changed). Each stops only for an explicit decline or
 a repo process that supersedes it.
@@ -89,6 +89,5 @@ user-optioned, running only on your explicit ask, now or by standing rule.
 ## Not documented here
 
 Six skills run only inside this repository and ship in no plugin:
-`change-log`, `mine-transcripts`, `push`, `release`, `workbench-drift`, and `writing-skills`. They live in `.claude/skills/` and
-are maintenance tooling for the scaffold itself, not part of what adopters
-install.
+`change-log`, `mine-transcripts`, `push`, `release`, `workbench-drift`, and `writing-skills`. Their canonical files live in `.claude/skills/`, with complete mirrors in
+`.codex/skills/`. See the [repository map](../../README.md#repository-map).

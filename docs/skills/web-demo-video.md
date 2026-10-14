@@ -1,8 +1,11 @@
 # web-demo-video
 
+[Canonical skill](../../plugins/toolkit/skills/web-demo-video/SKILL.md)
+
 Records a real browser walkthrough with a reusable capture helper and
-Microsoft's Playwright CLI. Claude Code and Codex use the same capture commands;
-each host uses its own terminal, image viewer, and permission mechanism.
+Microsoft's Playwright CLI. Claude Code, Codex, and Muse use the same
+capture commands; each host uses its own terminal, image viewer, and
+permission mechanism.
 
 The skill ships a recorder interface instead of requiring a copied harness or
 a new JavaScript scenario for each demo. Native browser actions drive the flow.

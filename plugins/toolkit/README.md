@@ -1,9 +1,7 @@
 # toolkit
 
 Optional utilities from
-[Workshop](https://github.com/giostriquer/workshop): the grab-bag of optional tools next
-to the [`workbench`](../workbench/README.md). Install it when you want these; skip
-it to keep sessions lean. The set grows with more optional utilities over time.
+[Workshop](https://github.com/giostriquer/workshop), alongside [`workbench`](https://github.com/giostriquer/workshop/blob/main/plugins/workbench/README.md). Install the skills you need for artifacts, review, architecture, or machine setup.
 
 ## Install
 
@@ -21,6 +19,17 @@ codex plugin marketplace add giostriquer/workshop --ref main
 codex plugin add toolkit@workshop
 ```
 
+**Muse:**
+
+```sh
+muse plugins marketplace add workshop https://github.com/giostriquer/workshop
+muse plugins install toolkit@workshop
+```
+
+Muse's native loader currently ignores user-invoked-only skill policy. See
+[the host limitation and per-machine workaround](https://github.com/giostriquer/workshop/blob/main/docs/decisions/plugin-surfaces.md#muse-implicit-invocation-hole-accepted-2026-10-14)
+for skills marked user-invoked only below.
+
 **Cursor**: Team Marketplace (Teams/Enterprise, admin): import
 `giostriquer/workshop`, then install `toolkit` from **Customize**.
 
@@ -32,36 +41,36 @@ codex plugin add toolkit@workshop
 
 | Skill | Does |
 | --- | --- |
-| `html-artifact` | creates HTML reports, plans, architecture explanations, and interactive product targets; user-invoked only |
-| `anatomy` | launches pinned, unchanged upstream Anatomy for detailed interactive isometric figures; user-invoked only, with an on-demand fetch |
-| `ketchup` | catches up on meaningful results, current evidence, and decisions waiting on the user; user-invoked only |
-| `web-demo-video` | records a browser walkthrough with reusable CLI capture, scene frames, and optional MP4 |
-| `get-pr-comments` | triages the PR's conversation, review, and inline comments into a prioritized action list; read-only |
-| `adopt-global-rules` | installs the workshop's shipped global CLAUDE.md / AGENTS.md, rules, and Claude output styles onto this machine additively; user-invoked only |
-| `me-human` | dogfoods a system from a human user's perspective by trying before asking, escalating on bugs, and stopping at the scope edge; user-invoked only |
-| `test-audit` | gates a test before it lands, and audits or prunes existing tests that are low-value, duplicative, or coupled to implementation; user-invoked only |
-| `dependency-audit` | audits a project's dependencies read-only (safe bumps, bumps with their caveats and the code they touch, conflicts, advisories, removal candidates with evidence), then applies the groups you pick in batches through the package manager; user-invoked only |
-| `grill-me` | interviews you about a plan, design, or idea in rounds of questions with recommended answers until every branch is settled; user-invoked only |
-| `grilling` | the round-based interview that `grill-me` and `improve-codebase-architecture` run |
-| `improve-codebase-architecture` | surveys a codebase for deepening opportunities, writes an offline HTML report, then grills the candidate you pick; user-invoked only |
-| `codebase-design` | the deep-module vocabulary (module, interface, depth, seam, adapter, leverage, locality) and its principles |
-| `correct` | turns evidenced recurring mistakes into proportionate prevention and verifies it; explicit requests only |
-| `benchmark-checklist` | validates measured performance comparisons, with a lightweight path for requested ballparks |
-| `domain-modeling` | sharpens a project's glossary (`GLOSSARY.md` or legacy `CONTEXT.md`) and offers ADRs for hard-to-reverse decisions |
+| [`html-artifact`](skills/html-artifact/SKILL.md) | creates HTML reports, plans, architecture explanations, and interactive product targets; user-invoked only |
+| [`anatomy`](skills/anatomy/SKILL.md) | launches pinned, unchanged upstream Anatomy for detailed interactive isometric figures; user-invoked only, with an on-demand fetch |
+| [`ketchup`](skills/ketchup/SKILL.md) | catches up on meaningful results, current evidence, and decisions waiting on the user; user-invoked only |
+| [`web-demo-video`](skills/web-demo-video/SKILL.md) | records a browser walkthrough with reusable CLI capture, scene frames, and optional MP4 |
+| [`get-pr-comments`](skills/get-pr-comments/SKILL.md) | triages the PR's conversation, review, and inline comments into a prioritized action list; read-only |
+| [`adopt-global-rules`](skills/adopt-global-rules/SKILL.md) | installs the workshop's shipped host-specific global instructions, rules, and Claude output styles onto this machine additively; user-invoked only |
+| [`me-human`](skills/me-human/SKILL.md) | dogfoods a system from a human user's perspective by trying before asking, escalating on bugs, and stopping at the scope edge; user-invoked only |
+| [`test-audit`](skills/test-audit/SKILL.md) | gates a test before it lands, and audits or prunes existing tests that are low-value, duplicative, or coupled to implementation; user-invoked only |
+| [`dependency-audit`](skills/dependency-audit/SKILL.md) | audits a project's dependencies read-only (safe bumps, bumps with their caveats and the code they touch, conflicts, advisories, removal candidates with evidence), then applies the groups you pick in batches through the package manager; user-invoked only |
+| [`grill-me`](skills/grill-me/SKILL.md) | interviews you about a plan, design, or idea in rounds of questions with recommended answers until every branch is settled; user-invoked only |
+| [`grilling`](skills/grilling/SKILL.md) | the round-based interview that `grill-me` and `improve-codebase-architecture` run |
+| [`improve-codebase-architecture`](skills/improve-codebase-architecture/SKILL.md) | surveys a codebase for deepening opportunities, writes an offline HTML report, then grills the candidate you pick; user-invoked only |
+| [`codebase-design`](skills/codebase-design/SKILL.md) | the deep-module vocabulary (module, interface, depth, seam, adapter, leverage, locality) and its principles |
+| [`correct`](skills/correct/SKILL.md) | turns evidenced recurring mistakes into proportionate prevention and verifies it; explicit requests only |
+| [`benchmark-checklist`](skills/benchmark-checklist/SKILL.md) | validates measured performance comparisons, with a lightweight path for requested ballparks |
+| [`domain-modeling`](skills/domain-modeling/SKILL.md) | sharpens a project's glossary (`GLOSSARY.md` or legacy `CONTEXT.md`) and offers ADRs for hard-to-reverse decisions |
 
 > **Attribution:** `get-pr-comments` is derived from the `cursor-team-kit` plugin in Cursor's [cursor/plugins](https://github.com/cursor/plugins) (MIT, Copyright (c) 2026 Cursor), adapted per the [get-pr-comments decision](https://github.com/giostriquer/workshop/blob/main/docs/decisions/get-pr-comments.md).
 
 `anatomy` is a launcher for Ryan's MIT-licensed
 [Anatomy](https://github.com/wheresryan22/anatomy). Its complete upstream
 package is fetched unchanged at a pinned commit when invoked; it is not
-bundled here. See the [usage page](../../docs/skills/anatomy.md) and
-[decision](../../docs/decisions/anatomy.md).
+bundled here. See the [usage page](https://github.com/giostriquer/workshop/blob/main/docs/skills/anatomy.md) and
+[decision](https://github.com/giostriquer/workshop/blob/main/docs/decisions/anatomy.md).
 
 `ketchup` adapts Lauren Tan's MIT-licensed pstack skill from
 [cursor/plugins](https://github.com/cursor/plugins). It preserves the current
 task's authority and makes visuals optional. See its
-[usage page](../../docs/skills/ketchup.md) and
-[decision](../../docs/decisions/ketchup.md).
+[usage page](https://github.com/giostriquer/workshop/blob/main/docs/skills/ketchup.md) and
+[decision](https://github.com/giostriquer/workshop/blob/main/docs/decisions/ketchup.md).
 
 > **Attribution:** `test-audit` is derived from OpenClaw's [openclaw/openclaw](https://github.com/openclaw/openclaw) `.agents/skills/test-audit` (MIT, Copyright (c) 2026 OpenClaw Foundation): adapted per the [test-audit decision](https://github.com/giostriquer/workshop/blob/main/docs/decisions/test-audit.md): user-invoked only, validation and landing made host- and stack-neutral, OpenClaw examples replaced with placeholders.
 
@@ -76,13 +85,13 @@ bare machine:
 npx github:giostriquer/workshop --dry-run   # plan; drop --dry-run to apply
 ```
 
-## Not included
-
 `correct` and `benchmark-checklist` adapt Lauren Tan's MIT-licensed pstack
 guidance in [cursor/plugins](https://github.com/cursor/plugins). The benchmarking
 questions originate in [Brendan Gregg's checklist](https://www.brendangregg.com/blog/2018-06-30/benchmarking-checklist.html).
-See the [correction decision](../../docs/decisions/correct.md) and
-[benchmark decision](../../docs/decisions/benchmark-checklist.md).
+See the [correction decision](https://github.com/giostriquer/workshop/blob/main/docs/decisions/correct.md) and
+[benchmark decision](https://github.com/giostriquer/workshop/blob/main/docs/decisions/benchmark-checklist.md).
+
+## Scope
 
 No MCP servers, no hooks, no dispatchers: skills activate on their own triggers
 or your invocation.

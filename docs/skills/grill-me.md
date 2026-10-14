@@ -1,5 +1,7 @@
 # grill-me
 
+[Canonical skill](../../plugins/toolkit/skills/grill-me/SKILL.md)
+
 ## What it does
 
 `grill-me` interviews you about a plan, design, decision, or idea until you and
@@ -74,7 +76,7 @@ unique across every directory it scans, so point it at one set, not both.
 - Nothing in a round needs another question in the same round answered first,
   and later rounds ask things the first could not have.
 - It looks facts up instead of asking you for them.
-- You disagreed with at least one recommendation.
+- Recommendations explain their trade-offs and leave each decision to you.
 - It stops at the end and asks you to confirm, instead of starting work.
 
 ## Where it fits
@@ -82,7 +84,3 @@ unique across every directory it scans, so point it at one set, not both.
 A standalone you can run anywhere, outside the workbench flow. What you grilled
 can feed [brainstorming](brainstorming.md) or a spec afterward, in the same
 conversation, so the context you built carries over.
-
-`grill-me` ships in the optional **toolkit** plugin. Its
-[canonical skill](../../plugins/toolkit/skills/grill-me/SKILL.md) is the
-authority for behavior.

@@ -1,5 +1,7 @@
 # handoff-goal
 
+[Canonical skill](../../plugins/workbench/skills/handoff-goal/SKILL.md)
+
 ## What it does
 
 `handoff-goal` packages a goal into a **self-contained goal contract**: a

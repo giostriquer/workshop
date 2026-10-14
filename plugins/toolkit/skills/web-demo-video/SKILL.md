@@ -56,7 +56,7 @@ evidence; overlays and runtime errors must stay visible.
 
 `captureStatus: captured` means recording completed; `visualReview: pending`
 is intentional. Only inspected images support a visual correctness claim.
-Claude Code uses Read for PNGs; Codex uses its available image tool. Native
+Claude Code and Muse use their file-reading tool for PNGs; Codex uses its available image tool. Native
 browser tools can help discovery or small visual checks when present. Use
 their own documented recording capability only when exposed; neither host
 guarantees it. Follow the host's browser and permission rules.

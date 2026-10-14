@@ -1,13 +1,14 @@
 # The workbench flow
 
-Canonical mental model of the **workbench** system's workflow: how work enters,
-gets scoped, gets implemented, and lands. Filled teal boxes are **user gates**
-(the user decides when a choice is still open); existing choices and authorization carry forward. The session drives authorized work. Decisions and rationale:
-[`decisions/workbench-system.md`](decisions/workbench-system.md).
+Workflow overview for **workbench**: entry, scoping, implementation, and
+delivery. The [canonical orientation skill](../plugins/workbench/skills/using-workbench/SKILL.md)
+and each owning skill define execution. Filled teal boxes mark decisions the
+user supplies only when the request has left them open; existing choices and
+authorization carry forward.
 
-**Canonical pair:** this file (mermaid, diffable) and
-[`workbench-flow.html`](workbench-flow.html) (HTML rendering) are maintained
-together: a flow change updates both or neither. Canonical skill definitions live in `plugins/workbench/skills/`.
+This Markdown diagram and its [HTML view](workbench-flow.html) summarize the
+same flow. Update both when the workflow changes. Rationale lives in
+[workbench-system](decisions/workbench-system.md).
 
 ## Entry & scoping: two optional doors
 
@@ -19,13 +20,14 @@ flowchart TD
 
     A0([something to verify, hunt, or check]):::term --> A1
     A1[["SCOPE: use the request; ask if ambiguous:<br/>quick · static review · deep · team sweep"]]:::gate
-    A1 --> A2["AUDIT: the audit skill dispatches the engine"]:::stage
+    A1 --> A2["AUDIT: inline review or the selected engine"]:::stage
     A2 --> A3[["REPORT: preserve evidence and uncertainty<br/>ask only for missing intent or access"]]:::gate
     A3 -->|audit was the ask| A4([report · done]):::term
-    A3 -->|"work revealed: feature / refactor shape"| B2
-    A3 -->|"work revealed: confirmed fix"| RG
+    A3 -->|"unresolved design"| B2
+    A3 -->|"authorized repair; settled design"| I0([continue implementation]):::term
+    A3 -->|"confirmed fix; route still open"| RG
 
-    B0([an idea]):::term --> B1["GROUND: a couple of questions;<br/>the codebase answers most"]:::stage
+    B0([an idea]):::term --> B1["GROUND: inspect the codebase;<br/>ask for unresolved intent"]:::stage
     B1 -->|what the code can't answer| B2["BRAINSTORM for unresolved design;<br/>review the design at meaningful checkpoints"]:::stage
     B2 --> RG[["ROUTE: carry the user's choice;<br/>ask only if unsettled"]]:::gate
 
@@ -49,7 +51,7 @@ flowchart LR
     TR["COMMENT TRIM<br/>trim-comments, dispatched to comment-trimmer;<br/>code comments only; encoding offers wait for the user"]:::stage
     AR["ADVERSARIAL REVIEW ON THE TRIMMED DIFF<br/>code quality; test quality in parallel<br/>when logic or tests changed"]:::stage
     OG[["USER: PR or merge?<br/>session outlines what was done first;<br/>repo / user rules may pre-authorize"]]:::gate
-    L["LAND<br/>file-pr · merge · push;<br/>fix-ci: separate Sonnet 5.5 / Sol watcher"]:::stage
+    L["LAND<br/>file-pr · merge · push;<br/>fix-ci: separate CI watcher"]:::stage
 
     I -->|"deemed ready = verified<br/>(verification-before-completion;<br/>focused empirical-proof for behavior)"| TR
     TR --> AR
@@ -58,37 +60,18 @@ flowchart LR
     L -.->|"feedback: receiving-code-review;<br/>verified fixes re-enter"| I
 ```
 
-## Not in the flow: removed deliberately
+## Read the owning contract
 
-The superpowers pipeline this system replaced: the `using-superpowers`
-dispatcher and its SessionStart hook, `subagent-driven-development`,
-`executing-plans`, `writing-plans`, `requesting-code-review`,
-`dispatching-parallel-agents`, `using-git-worktrees`,
-`finishing-a-development-branch`. Per-piece rationale lives in the workbench
-manifest (`.claude/skills/workbench-drift/manifest.json`: repo-local fork
-tooling). The removal is of *forced process*: execution agency itself stays
-the user's call.
+| Need | Source |
+| --- | --- |
+| Choose a skill for the task | [Skills handbook](skills/README.md) |
+| Understand review timing, proof, and delivery authority | [using-workbench](../plugins/workbench/skills/using-workbench/SKILL.md) |
+| Understand why this workflow exists | [Workbench decisions](decisions/workbench-system.md) |
+| Understand repository layout and maintenance tools | [Repository map](../README.md#repository-map) |
 
-## Decisions ledger (operator, 2026-08-11 unless noted)
-
-Historical decisions below are refined by the current flow and the [wording-hardening decision](decisions/skill-wording-hardening.md): carry existing authority without repeated authorization. The [current proof decision](decisions/empirical-proof.md#focused-consumer-proof-is-the-completion-default-2026-10-08) makes focused consumer proof the default for behavioral completion; broad QA remains opt-in. The [bounded correction-review decision](decisions/bounded-correction-review.md) supersedes the old no-re-review rule: blocking dispositions require reviewer confirmation, and focused follow-up passes run automatically until review stops converging. In delegated epics, use focused local checks plus required gates; each verified wave ends with the next dispatch, delivery gate, closing audit, completion proposal, or concrete blocker.
-
-| # | Decision |
-|---|---|
-| Q1 | Brainstorming always precedes feature/refactor design; owns what the codebase can't answer about an idea. |
-| Q2 | TDD is the default where a test harness exists; silent skip where none. |
-| Q3 | Initial adversarial review fires at model-deemed readiness. |
-| Q4 | Comment trimming rides that review, per repo rules. Refined 2026-09-24: the trim is its own dispatched stage (`trim-comments`, run by `comment-trimmer`) before that review, which runs on the trimmed diff ([decision](decisions/trim-comments.md#moved-into-workbench-as-a-delivery-stage-2026-09-24)). |
-| Q5 | Blocking dispositions require reviewer confirmation; at most two automatic follow-ups, then hold if unresolved. Refined 2026-09-24: follow-ups run automatically with no count, and review holds only when it stops converging ([decision](decisions/bounded-correction-review.md#convergence-replaces-the-follow-up-pass-count-2026-09-24)). |
-| Q6 | Review precedes landing; landing is outline-then-ask, with a rules bypass. |
-| Q7 | The confirm gate pauses only when the audit flagged uncertainty. |
-| Q8 | Audit sizes: quick look (inline) · deep (claim-check) · team sweep (qa-sweep). |
-| Q9 | Audit-revealed work routes by shape: feature/refactor → brainstorm; confirmed fix → route. |
-| Q10 | PLAN resolves through the user's stack: plugin skill → repo skill → repo standards → harness plan mode. |
-| Q11 | "Deemed ready" = verification-before-completion; empirical-proof for runnable surfaces. |
-| Q12 | Flow artifacts are disposable: saved under `.workbench/<work_scope>/` (or `.tmp/workbench/<work_scope>/`), enduring only for the work; durable only on explicit user ask or an established repo pattern. |
-| Q13 | Implementation inherits repo patterns first. A stated repo/user convention that conflicts with a discipline step wins, and the conflict is announced rather than absorbed silently. TDD is the default only where the repo is silent. (2026-08-12) |
-| Q14 | Focused `empirical-proof` is the behavioral completion default within `verification-before-completion`; reuse adequate current evidence. Broad `qa-sweep` stays user-optioned. Explicit declines and superseding repo rules apply. (2026-10-08) |
-| Q15 | The adversarial review fires only when the work-stream's implementation is believed complete, right before the PR-or-merge gate, and never mid-implementation (refines Q3). Findings outside the accepted scope become follow-ups unless they prove the change unsafe or incorrect. (2026-08-12) |
-| Q16 | Reversed 2026-08-25: scope is the user's to define, and the stop-and-rescope guard is gone. Adjacent defects found along the way are still recorded as follow-up work, not folded in. (2026-08-12) |
-| Q17 | One evidence home per work scope (refines Q12). Everything a work-stream produces, including dispatched agents' evidence, lands in the same `.workbench/<work_scope>/` folder. Agents receive that path in their contract; per-agent temp dirs and the system temp are not used. (2026-08-12) |
+Broad QA remains user-requested. Focused consumer proof supports behavioral
+completion; a blocked check stays incomplete. Independent review runs when the
+full agreed change is verified and ready for delivery. Each discipline owns its
+blocking findings and follow-ups; unchanged evidence and completed stages stay
+valid until a relevant change invalidates them. Explicit declines and
+superseding repository rules retain precedence.

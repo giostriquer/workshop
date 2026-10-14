@@ -1,5 +1,7 @@
 # verification-before-completion
 
+[Canonical skill](../../plugins/workbench/skills/verification-before-completion/SKILL.md)
+
 ## What it does
 
 This skill requires evidence before any claim that work is complete, fixed, or

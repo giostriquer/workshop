@@ -1,5 +1,7 @@
 # adopt-global-rules
 
+[Canonical skill](../../plugins/toolkit/skills/adopt-global-rules/SKILL.md)
+
 ## What it does
 
 Installs **the workshop's shipped global agent configuration** onto the machine
@@ -17,6 +19,7 @@ already there rather than replacing it.
 | --- | --- | --- | --- |
 | Claude Code | `~/.claude/CLAUDE.md` | `~/.claude/rules/<rule>.md` | `~/.claude/output-styles/<style>.md` |
 | Codex | `~/.codex/AGENTS.md` | `~/.codex/AGENTS.md`, one block each | None; `AGENTS.md` carries the guidance inline |
+| Muse | `~/.config/muse/AGENTS.md` | `~/.config/muse/AGENTS.md`, one block each | None; `AGENTS.md` carries the guidance inline |
 
 The pack ships the `model-floor` rule and the `bluf-ste` output style
 (answer-first responses in plain technical English). Installing a style does
@@ -92,8 +95,9 @@ derived from another's.
 
 **Does it work on Gemini / opencode / Cursor?**
 
-No; only Claude Code and Codex ship as targets. Adding a host is a manifest
-entry plus its `globals/<HOST>.md`, not a code change.
+No; Claude Code, Codex, and Muse ship as targets. Adding a host is a
+manifest entry plus its `globals/<HOST>.md`, not a code change. The Muse
+target assumes the default XDG config home (`~/.config`).
 
 ## It's working if
 

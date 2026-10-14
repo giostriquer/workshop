@@ -1,5 +1,7 @@
 # benchmark-checklist
 
+[Canonical skill](../../plugins/toolkit/skills/benchmark-checklist/SKILL.md)
+
 ## What it does
 
 `benchmark-checklist` checks whether a measured performance result supports
@@ -54,6 +56,3 @@ does not authorize optimization or shipping.
 The stated claim can be checked against the actual workload and raw results.
 Errors, skipped work, tuning differences, noise, and unmeasured user impact
 remain visible instead of becoming a confident winner.
-
-The [canonical skill](../../plugins/toolkit/skills/benchmark-checklist/SKILL.md)
-is the authority for behavior.

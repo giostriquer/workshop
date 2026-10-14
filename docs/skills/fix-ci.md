@@ -1,5 +1,7 @@
 # fix-ci
 
+[Canonical skill](../../plugins/workbench/skills/fix-ci/SKILL.md)
+
 ## What it does
 
 `fix-ci` sees the current branch's CI through to a verdict and fixes what
@@ -41,7 +43,8 @@ checks should be seen through to green.
    deadline, known required
    checks, and paths to the bundled runner and scratch state file. On
    Claude Code it is dispatched by name with no model, since its agent file
-   pins the model. Codex registers no agents, so the spawn uses the arguments
+   pins the model; on Muse, by its approved scoped definition
+   (`workbench/ci-watcher`) with no model. Codex registers no agents, so the spawn uses the arguments
    the agent file's Dispatch line names, and its message pastes that file's
    body ahead of the inputs.
    It invokes `scripts/watch-ci.mjs` from the loaded `fix-ci` skill, using
@@ -193,9 +196,9 @@ rerunning, and tells you plainly what happened and what it chose.
 - The final report names the verdict, target SHA, expected checks, watcher model,
   and PR or run link.
 - The fix commit touches only what the failure required.
-- The first fix lands while other checks from the same run are still running.
-- On Claude Code your session wakes once per watcher, for its report. On Codex
-  each `wait_agent` call returns only at the report or its ten-minute timeout.
+- A detected failure reaches the parent without waiting for unrelated pending checks.
+- Watcher waits follow the host's limits and status-update requirements; the
+  parent does not duplicate GitHub polling.
 - **Negative signal:** a force-push, an amended commit, a skipped test, a third
   attempt on one cause, a second watcher on the same head other than the
   one after a flake rerun, or a Codex watcher handed anything but a head to

@@ -1,5 +1,7 @@
 # correct
 
+[Canonical skill](../../plugins/toolkit/skills/correct/SKILL.md)
+
 ## What it does
 
 `correct` investigates recurring repository mistakes and turns them into
@@ -58,6 +60,3 @@ Its architecture reference ships alongside it in Toolkit.
 - The remedy prevents the mistake while preserving legitimate callers.
 - Negative and positive checks support the enforcement claim.
 - Scope, private evidence, and unrelated work were preserved.
-
-The [canonical skill](../../plugins/toolkit/skills/correct/SKILL.md) is the
-authority for behavior.

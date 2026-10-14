@@ -58,7 +58,7 @@ If every plugin is `current`, nothing ships: leave the tree as it is and go to s
 
 ## 3. Bump and write the notes
 
-- `bump <plugin> <version>` for each plugin that needs it. It edits the four
+- `bump <plugin> <version>` for each plugin that needs it. It edits the host
   plugin manifests and the marketplace entry, and nothing else.
 - Apply the repo `change-log` skill for each new version, dated today. A raised
   version renames its unreleased section. Write the bullets from the diff since

@@ -117,7 +117,7 @@ its checkpoint/exit wording accordingly; do not emit conflicting commit requirem
 > - **Stop and ask** on: outcome-changing ambiguity; a required gate that FAILs and can't be fixed in scope; an approval gate reached; no progress in `<N>` iterations; or (the tripwire) **you notice you're tempted to change this file, the acceptance checks, or the scope to make "done" reachable.** That temptation means escalate, not edit.
 >
 > ## Activation
-> On a runtime with durable goal support (e.g. Codex `create_goal`), activate only under its user-authorization rules, with this objective:
+> On a runtime with durable goal support (e.g. Codex `create_goal`, Muse goals), activate only under its user-authorization rules, with this objective:
 > `Complete and verify the objective in <dir>/goal.md by executing and maintaining <dir>/plan.md; re-read both after every compaction.`
 > Elsewhere, adopt this contract directly and start at the `in progress` phase's first unchecked box in `plan.md` (no phase in progress → the first `pending` one).
 

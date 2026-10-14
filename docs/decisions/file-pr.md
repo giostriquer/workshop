@@ -224,3 +224,13 @@ stale metadata. The cases cover distinct changes to one symptom, shared ownershi
 refactoring, and reproduction-only work. These results preserve regression
 coverage but do not establish a reliability gain or permanent guarantee. Scenario
 material stays in ignored scratch.
+
+## Conditional screenshots (2026-09-16)
+
+Rendered UI changes get screenshots from the real running revision, paired
+before and after when existing UI changes. Non-rendered changes get no section;
+an unavailable app leaves a reported gap. Reuse the template's screenshot
+section or put it after Architecture, before verification and footer sections.
+Body references place native `gh --attach` uploads in that section. Captures
+stay in scratch, never in the repository; repair partial uploads without filing
+another PR. The skill carries the exact command and template rules.

@@ -75,7 +75,7 @@ def export_plugin(source, destination):
     with tempfile.TemporaryDirectory(prefix=".codex-export-", dir=destination.parent) as temporary:
         staged = Path(temporary) / manifest["name"]
         # Other host manifests would advertise this Codex-only copy to those hosts.
-        excluded = {".claude-plugin", ".cursor-plugin", "plugin.json"}
+        excluded = {".claude-plugin", ".cursor-plugin", ".muse-plugin", "plugin.json"}
         shutil.copytree(source, staged, ignore=lambda directory, names: excluded.intersection(names)
                         if Path(directory) == source else set())
         for relative, text in normalized.items():

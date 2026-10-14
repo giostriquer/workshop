@@ -1,6 +1,6 @@
 # Workshop
 
-Ready-to-use AI agents and skills for Claude Code, Codex, Cursor, Google Antigravity, and OpenCode, extracted from real projects and packaged as installable plugins. You get review agents that catch problems in specs, tests, and code, plus workflow skills for handoffs and reports.
+Installable skills and agents for Claude Code, Codex, Cursor, Google Antigravity, OpenCode, and Muse. Workbench supplies the development workflow; Toolkit adds optional utilities. Both come from use in real projects.
 
 ## Install
 
@@ -21,6 +21,24 @@ codex plugin marketplace add giostriquer/workshop
 codex plugin add workbench@workshop
 codex plugin add toolkit@workshop   # optional
 ```
+
+Muse install:
+
+```sh
+muse plugins marketplace add workshop https://github.com/giostriquer/workshop
+muse plugins install workbench@workshop
+muse plugins install toolkit@workshop   # optional
+muse plugins approve workbench          # activates the six agent definitions
+```
+
+Muse reads the same marketplace catalog and each plugin's native
+`.muse-plugin/plugin.json`. Skills are active on install; agent definitions
+stay inactive until approved, per Muse's review step for third-party
+plugins. One parity hole: Muse's native loader does not yet honor the
+user-invoked-only skill policy, so those skills are model-invocable on Muse
+until it does; `muse skills user-only plugin:<plugin>:<skill> --scope plugin`
+restores the policy per machine (see
+[the decision note](docs/decisions/plugin-surfaces.md)).
 
 For Cursor, the plugin ships in the Cursor plugin format (`.cursor-plugin/`). Import this repo as a **Team Marketplace** (Teams/Enterprise, admin): **Dashboard → Settings → Plugins → Team Marketplaces → Add Marketplace → Import from Repo**, point it at `giostriquer/workshop`, then install `workbench` (and optionally `toolkit`) from **Customize** in the sidebar.
 
@@ -55,7 +73,7 @@ packaging them for submission. Repository-source checks still use
 
 ### Global Rules Adoption - Optional
 
-To install the workshop's shipped global agent configuration (its CLAUDE.md, AGENTS.md, rules, and Claude output styles) on a machine, additively, without overwriting what
+To install the workshop's shipped global agent configuration (its per-host instruction documents, rules, and Claude output styles, for Claude Code, Codex, and Muse) on a machine, additively, without overwriting what
 is already there: run `/adopt-global-rules` after installing `toolkit`. On a machine
 with no plugin installed, the same installer runs standalone:
 
@@ -63,144 +81,52 @@ with no plugin installed, the same installer runs standalone:
 npx github:giostriquer/workshop --dry-run   # plan; drop --dry-run to apply
 ```
 
-## The plugins
+## Choose a plugin
 
-### `workbench`: use right away
+| Plugin | Contents | Reference |
+| --- | --- | --- |
+| **workbench** | Investigation, design, implementation, verification, review, and delivery skills, plus review and CI agents | [Catalog and agent contracts](plugins/workbench/README.md) |
+| **toolkit** | Optional tools for artifacts, architecture, dependencies, feedback, and machine setup | [Catalog](plugins/toolkit/README.md) |
 
-Five read-only review agents, the `comment-trimmer`, fourteen everyday skills, and the
-eight-skill **workbench** process layer: ready immediately after install, nothing to configure.
+Start with [using-workbench](docs/skills/using-workbench.md) for the workflow,
+or the [skills handbook](docs/skills/README.md) to choose a skill by task.
+Neither plugin installs hooks or a dispatcher. Skill descriptions and explicit
+invocation determine when skills load; host limitations are noted above.
 
-**Agents**: the reviewers inspect and report, never edit your files; `comment-trimmer`
-edits code comments in the diff and nothing else:
+## Repository map
 
-| Agent | Works on |
+| Location | Purpose and authority |
 | --- | --- |
-| `spec-reviewer` | design specs and plans |
-| `code-quality-reviewer` | a diff's maintainability and structure |
-| `test-quality-reviewer` | test code; loads the `test-quality-review` rubric |
-| `pattern-reviewer` | code-pattern conformance |
-| `ci-watcher` | the branch's PR CI |
-| `comment-trimmer` | a finished diff's code comments, trimmed before the review round; loads the `trim-comments` rubric |
+| `plugins/<plugin>/skills/<name>/SKILL.md` | Canonical shipped skill, with its supporting files beside it |
+| `plugins/workbench/agents/` | Canonical shipped agent contracts and dispatch instructions |
+| `plugins/<plugin>/` manifests | Host packaging over the same skill and agent sources |
+| `.claude/skills/` | Canonical repo-only maintenance skills |
+| `.codex/skills/` | Complete mirrors of those maintenance skills; Codex policy sidecars are host-specific |
+| `docs/skills/` | Reader-facing usage handbook; the skill spec wins on disagreement |
+| `docs/decisions/` | Rationale for current choices; amend the owning note when a choice changes |
+| `docs/change-log.md` | Bounded release notes for plugin versions |
+| `scripts/` | Repository validation, export, and focused test tooling |
+| `attic/` | Inactive drafts and retired pieces, shipped by no plugin; see its [index](attic/README.md) |
 
-**Everyday skills:**
+The repo-only skills are `change-log`, `mine-transcripts`, `push`, `release`,
+`workbench-drift`, and `writing-skills`. They are not installed with either
+plugin. There are no repo-scoped agent definitions.
 
-| Skill | Does |
-| --- | --- |
-| `file-pr` | files the branch's PR, tends it to green-and-mergeable |
-| `fix-ci` | delegates CI watching to Sonnet 5.5 (Claude Code) or Sol (Codex), fixes red in-session |
-| `handoff-goal` | hands a long-running goal to a fresh autonomous session |
-| `claim-check` | deep verdict on a ticket / hunch / premise |
-| `qa-sweep` | team-scale QA over a broad surface, corroborated |
-| `empirical-proof` | default focused proof of behavioral changes through their app or real consumer |
-| `code-quality-review` | strict structure-first review of a diff |
-| `test-quality-review` | whether a diff's tests protect behavior, backed by a mutation run |
-| `trim-comments` | the comment trim before the review round: removes code-comment slop from the finished diff and offers encodings for constraint comments |
-| `model-reference` | the model fleet reference table + hard routing invariants |
-| `epic-orchestration` | owns a multi-ticket epic whose lanes other sessions implement (user-invoked only) |
-| `epic-implementation` | uses the shared [lane report template](plugins/workbench/skills/epic-orchestration/references/lane-report.md) in lanes dispatched through epic-orchestration |
-| `epic-auditor` | uses the shared [audit report template](plugins/workbench/skills/epic-orchestration/references/audit-report.md) in auditor lanes dispatched through epic-orchestration |
-| `session-messaging` | lets a Claude Code or Codex session message another one on the machine through Session Orchestrator's `so post` |
-| `epic-cleanup` | on your explicit ask: lists a repo's stale worktrees, branches, caches, stray processes and Docker image candidates for you to pick from, or removes an epic's leftovers; keeps active worktrees and shared images |
+## Maintainer entry points
 
-**Workbench**: the process layer, implementing [the workbench flow](docs/workbench-flow.md):
+Follow [AGENTS.md](AGENTS.md) for maintenance rules. Read the affected canonical
+spec first, its usage page when behavior changes, and its decision note for
+rationale. Load supporting references when the spec's branch requires them.
 
-| Skill | Does |
-| --- | --- |
-| `audit` | investigations scoped from the request; ask only for unresolved scope or intent |
-| `brainstorming` | design dialogue ending at your route pick |
-| `test-driven-development` | TDD, default where a test harness exists; repo conventions take precedence |
-| `systematic-debugging` | four-phase investigation for persistent or unclear failures |
-| `verification-before-completion` | evidence before any "done" claim |
-| `receiving-code-review` | rigor on arriving review feedback |
-| `using-workbench` | on-demand flow orientation |
-| `self-audit` | on your explicit ask: retrospective on the process that ran the session, read from its transcript, ending in a paste-ready defect note |
+- [Workflow map](docs/workbench-flow.md), with an [HTML view](docs/workbench-flow.html).
+- [Repo tooling decisions](docs/decisions/repo-tooling.md): mirrors, validation, drift tracking, and releases.
+- [Plugin surfaces](docs/decisions/plugin-surfaces.md): packaging and host differences.
+- [Handbook contract](docs/decisions/docs-skills-returns-as-usage-handbook.md): what belongs in usage pages.
+- [Decision-note convention](docs/decisions/decisions-one-note-per-piece.md): one owning note per piece.
+- [Release notes](docs/change-log.md): shipped plugin changes.
 
-Five workbench skills derive from [obra/superpowers](https://github.com/obra/superpowers)
-by Jesse Vincent (MIT), adapted per
-[`docs/decisions/workbench-system.md`](docs/decisions/workbench-system.md): no hooks,
-no dispatcher, descriptions as honest triggers. Upstream drift tracking
-(`workbench-drift`, `.claude/skills/`) is repo-local maintenance tooling, not
-shipped in the plugin.
-
-`code-quality-review`, `code-quality-reviewer` and `ci-watcher` derive from
-Cursor's [cursor/plugins](https://github.com/cursor/plugins) (`thermos` and
-`cursor-team-kit`, MIT), adapted per
-[`docs/decisions/code-quality-review.md`](docs/decisions/code-quality-review.md)
-and [`docs/decisions/fix-ci.md`](docs/decisions/fix-ci.md).
-
-`trim-comments` derives from OpenClaw's
-[openclaw/openclaw](https://github.com/openclaw/openclaw)
-(`.agents/skills/deslop`, MIT, Copyright (c) 2026 OpenClaw Foundation), with
-its comment keep-list and its constraint-comment and suppression rules from the
-`pstack` plugin in Cursor's [cursor/plugins](https://github.com/cursor/plugins)
-(`no-comments` and `comment-sicko`, MIT, Copyright (c) 2026 Lauren Tan),
-adapted per
-[`docs/decisions/trim-comments.md`](docs/decisions/trim-comments.md).
-
-`empirical-proof` adapts Lauren Tan's `pstack` verification guidance from
-Cursor's [cursor/plugins](https://github.com/cursor/plugins) (MIT, Copyright
-(c) 2026 Lauren Tan). The [decision](docs/decisions/empirical-proof.md) records
-the surface-aware approach for Codex and Claude Code.
-
-Details in [`plugins/workbench/README.md`](plugins/workbench/README.md).
-
-### `toolkit`: optional, install when you want it
-
-Utilities kept out of `workbench` so integrators control token load: every
-installed skill's listing rides in each session's context:
-
-| Skill | Does |
-| --- | --- |
-| `html-artifact` | HTML reports, plans, architecture explanations, and interactive product targets (user-invoked only) |
-| `anatomy` | runs pinned upstream Anatomy for detailed interactive isometric figures (user-invoked only; fetches its package on demand) |
-| `ketchup` | catches up on current work and human decisions while preserving task ownership (user-invoked only) |
-| `web-demo-video` | reusable browser recording + scene frames for Claude Code and Codex |
-| `get-pr-comments` | triages PR feedback into an action list |
-| `adopt-global-rules` | installs the workshop's shipped global CLAUDE.md / AGENTS.md, rules, and Claude output styles onto a machine, additively (user-invoked only) |
-| `me-human` | dogfood a system from a human user's perspective (user-invoked only) |
-| `test-audit` | gates a test before it lands, and audits or prunes low-value, duplicative, or implementation-coupled tests (user-invoked only) |
-| `dependency-audit` | audits dependencies before changing any (bumps with the code they break, conflicts, advisories, removal candidates), then applies the groups you pick through the package manager (user-invoked only) |
-| `grill-me` | interviews you about a plan or idea until every branch is settled (user-invoked only) |
-| `grilling` | the round-based interview behind `grill-me` and `improve-codebase-architecture` |
-| `improve-codebase-architecture` | surveys a codebase for deepening opportunities, then grills the one you pick (user-invoked only) |
-| `codebase-design` | the deep-module design vocabulary |
-| `correct` | prevents recurring repository mistakes through ownership, interfaces, types and checks, on an explicit request |
-| `benchmark-checklist` | checks completed work, comparability, variation and relevance behind performance claims |
-| `domain-modeling` | keeps a project's glossary (`GLOSSARY.md` or legacy `CONTEXT.md`) and ADRs current |
-
-`get-pr-comments` derives from `cursor-team-kit` in Cursor's
-[cursor/plugins](https://github.com/cursor/plugins) (MIT), adapted per
-[`docs/decisions/get-pr-comments.md`](docs/decisions/get-pr-comments.md).
-
-`test-audit` derives from OpenClaw's
-[openclaw/openclaw](https://github.com/openclaw/openclaw)
-(`.agents/skills/test-audit`, MIT, Copyright (c) 2026 OpenClaw Foundation),
-adapted per [`docs/decisions/test-audit.md`](docs/decisions/test-audit.md).
-
-`grill-me`, `grilling`, `improve-codebase-architecture`, `codebase-design` and
-`domain-modeling` derive from Matt Pocock's
-[mattpocock/skills](https://github.com/mattpocock/skills) (MIT, Copyright (c)
-2026 Matt Pocock), with improvements from the `pstack` plugin in Cursor's
-[cursor/plugins](https://github.com/cursor/plugins) (MIT, Copyright (c) 2026
-Lauren Tan), adapted per
-[`docs/decisions/mattpocock-skills.md`](docs/decisions/mattpocock-skills.md).
-
-Details in [`plugins/toolkit/README.md`](plugins/toolkit/README.md).
-
-`correct` and `benchmark-checklist` adapt Lauren Tan's MIT-licensed `pstack`
-guidance in [cursor/plugins](https://github.com/cursor/plugins), with the
-benchmarking method attributed to Brendan Gregg. See the
-[correction decision](docs/decisions/correct.md) and
-[benchmark decision](docs/decisions/benchmark-checklist.md).
-
-`web-demo-video` adapts Lauren Tan's `pstack` verification workflow from
-Cursor's [cursor/plugins](https://github.com/cursor/plugins) (MIT, Copyright
-(c) 2026 Lauren Tan), and uses Microsoft's
-[Playwright CLI](https://github.com/microsoft/playwright-cli) as its recorder.
-The [decision](docs/decisions/web-demo-video.md) records the cross-host design.
-
-## Going deeper
-
-- [`docs/workbench-flow.md`](docs/workbench-flow.md): the workbench system's canonical mental model (with an [HTML rendering](docs/workbench-flow.html)).
-- [`docs/skills/`](docs/skills/) is the usage handbook, with one page per shipped skill covering what it does, when to reach for it, and the questions people actually hit. Start at its [index](docs/skills/README.md).
-- [`docs/decisions/`](docs/decisions/) is the rationale layer, explaining why each agent and skill exists and the calls made along the way. The specs themselves are self-contained.
+Run `sh scripts/validate-native-plugin.sh` for package and mirror checks.
+For an implementation change, run the affected focused tests under `scripts/`
+or the owning maintenance skill. Full CI suites are not a local default.
+Upstream attribution remains in each plugin's README and LICENSE; repo-only
+adaptations are attributed in the root [LICENSE](LICENSE).

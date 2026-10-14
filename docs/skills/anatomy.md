@@ -1,5 +1,7 @@
 # anatomy
 
+[Canonical skill](../../plugins/toolkit/skills/anatomy/SKILL.md)
+
 Use Anatomy when you want a detailed isometric machine or instrument that
 explains how something works: an interactive SVG figure with carefully drawn
 parts, motion, and a readout tied to the model it illustrates.
@@ -26,5 +28,3 @@ before building. A small architecture map or ordinary report generally fits
 The result should be a generated figure in the task's output area, with the
 checks that ran and any gaps stated. Fetching the skill alone is not completion.
 Keep the upstream MIT license with reused kit and example code.
-
-**Spec:** [`SKILL.md`](../../plugins/toolkit/skills/anatomy/SKILL.md).

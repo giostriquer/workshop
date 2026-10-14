@@ -29,6 +29,17 @@
         "target": ".codex/AGENTS.md"
       },
       "mcpConfigs": [".codex/config.toml"]
+    },
+    {
+      "id": "muse",
+      "label": "Muse",
+      "detect": ".config/muse",
+      "mode": "file",
+      "target": ".config/muse/AGENTS.md",
+      "globalDoc": {
+        "file": "globals/MUSE.md",
+        "target": ".config/muse/AGENTS.md"
+      }
     }
   ],
   "rules": [

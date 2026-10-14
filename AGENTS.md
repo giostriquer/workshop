@@ -28,7 +28,7 @@ The one per-skill layer is `docs/skills/`, which contains **usage** pages for sh
 
 ## Cross-host parity
 
-Canonical definitions live in the shipped plugins (`workbench` for the process core, `toolkit` for optional utilities). This repo's own host dirs (`.claude/`, `.codex/`) carry only the small set the repo runs (`change-log`, `push`, `release`, `workbench-drift`, `writing-skills`, `mine-transcripts`, `wiki-maintainer`); `.claude/` is canonical for those. Parked pieces live in `attic/` (see `attic/README.md`): in the repo, shipped by no plugin, discovered by no host. Two tiers: `attic/skills/` and `attic/agents/` for in-progress pieces still intended to ship; `attic/deprecated/` for retired pieces kept as history.
+Canonical definitions live in the shipped plugins (`workbench` for the process core, `toolkit` for optional utilities). This repo's own host dirs (`.claude/`, `.codex/`) carry only the small set the repo runs (`change-log`, `push`, `release`, `workbench-drift`, `writing-skills`, `mine-transcripts`, `wiki-maintainer`); `.claude/` is canonical for those. Muse discovers project skills from `.agents/skills`, `.codex/skills`, and `.claude/skills` in that precedence order, so a Muse session here runs the `.codex/` mirror of a shared skill: keep the mirrors byte-identical to canonical (the validator gates it; Codex `agents/` sidecars are the mirror's own). Muse loads no project agent files (observed with Muse 1.4.8), so `wiki-maintainer` does not run there. Parked pieces live in `attic/` (see `attic/README.md`): in the repo, shipped by no plugin, discovered by no host. Two tiers: `attic/skills/` and `attic/agents/` for in-progress pieces still intended to ship; `attic/deprecated/` for retired pieces kept as history.
 
 ## Reviewer sessions
 

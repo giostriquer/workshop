@@ -214,6 +214,18 @@ equivalent) carries only its own next job, such as a new pinned head for a
 watcher. Any other job goes where its skill puts it, and a job for another
 workbench agent gets a new spawn with that agent's contract.
 
+## Workbench agents on Muse
+
+Muse registers a plugin's agent files as scoped definitions,
+`workbench/<name>`, once the operator approves them (`muse plugins approve
+workbench`); its skills need no approval. Dispatch as on Claude Code: by the
+scoped id its Dispatch line names, with no model and nothing pasted, since the
+approved definition carries the contract. A definition that is missing, still
+awaiting approval, or reported unavailable by the runtime cannot be
+dispatched: report that gap. Do not spawn a
+generic agent with a pasted contract instead; that is the Codex route, for a
+host that registers nothing.
+
 ## Boundaries
 
 - **Orientation, not compulsion, except for two standing gates.** When needed

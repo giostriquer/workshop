@@ -1,5 +1,7 @@
 # dependency-audit
 
+[Canonical skill](../../plugins/toolkit/skills/dependency-audit/SKILL.md)
+
 ## What it does
 
 `dependency-audit`, in the optional `toolkit` plugin, audits a project's

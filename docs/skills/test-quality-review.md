@@ -1,5 +1,7 @@
 # test-quality-review
 
+[Canonical skill](../../plugins/workbench/skills/test-quality-review/SKILL.md)
+
 ## What it does
 
 This skill reviews implemented test code for **trustworthiness**: whether each test protects the behavior it claims to protect. It reads the tests with the production code they exercise, because **"a test that compiles, runs green, and asserts almost nothing passes every other review gate."**
@@ -21,26 +23,41 @@ It runs when a full change to production logic or tests is implemented, verified
 
 **Checklist.** Trivially-passing setup, weak or absent assertions, tautological or saturated mocks, wrong-path testing, missing edge cases, brittle coupling, non-determinism, and test-code complexity. A finding names a concrete way the test fails to protect its claimed behavior.
 
-**Mutation scope** ([decision](../decisions/mutation-scope-and-budget.md)). When the change set changes logic or tests, the reviewer runs StrykerJS for `.ts`, `.tsx`, `.js`, and `.jsx` production code and `cargo-mutants` for Rust (both for mixed changes; a language with nothing in scope gets no run and no setup). The scope is the production lines whose content changed plus, behind a changed test file, the production functions its added, changed or removed cases call, not the whole file; a test file and its helpers are never a mutation target, whatever a dispatch names (gate or parser logic inside a test file gets the checklist and at most five hand-applied defects); when the diff removes or relaxes an assertion, the lines it pinned join the scope. Lost protection introduced by a changed or removed assertion is an Issue even when production is unchanged; establish the loss from the old assertion or before/after mutant evidence. Gaps that predate both the production and test diff stay under Strategy notes. Moved content is out of scope: content that moved without an edit has no changed lines, so a move's scope is the wiring the diff changed (the references, exports, and bindings that now point at it) plus any lines the move also edited.
+**Scope.** Mutate changed production behavior and the functions behind changed
+test cases, including protection lost through a removed assertion. A pure move
+keeps only changed wiring in scope. Pre-existing gaps remain strategy notes;
+test files and their helpers are not mutation-tool targets.
 
-**Setup and budget.** Missing tools are installed and broken config repaired in isolation, never in the author's manifests, lockfiles, or config. The disposable copy is the cheapest the host offers (a filesystem clone or a detached worktree with the author's dependencies linked, its `.git` pointer removed), and one copy holds every run of a round, tool runs and hand-applied defects alike; `cargo mutants` runs `--in-place` inside it as a single job, never through its own temporary copy. Use `--cargo-arg=--test=parser` (or the relevant Cargo target flag) to constrain both build and test phases; trailing arguments constrain only the test phase. The mutation lane has a 30-minute total budget for the initial round, setup included, and 15 minutes for a follow-up round; a single invocation stops at 15 minutes. Those are ceilings, not targets: every run is estimated first (mutants × baseline ÷ concurrency, from the counts the tool prints before mutants execute), and an estimate over 10 minutes ends the run and narrows the scope. A completed run is the round's evidence for its scope: the same scope never runs again under another runner, coverage setting or test set, campaigns run one at a time on the host, and a survivor re-checked by hand is one hand-applied defect. A test that takes longer than 60 seconds on its own stays out of the tool's test set, and the lines only it reaches get one hand-applied defect run against it. Hand-applied defects run one at a time in that copy, at most five per changed file per round. If the budget ends with in-scope lines uncovered, the reviewer records `partial: <covered scope> / <uncovered scope>`, puts the exact command for the uncovered scope under Strategy notes, and opens no further copy; a partial run never holds delivery.
+**Execution.** The reviewer uses qualified framework runners where available,
+or a focused command fallback with coverage limits disclosed. Setup and runs
+stay in one disposable copy, with supported isolated runtime data and config
+roots verified before writes. Source isolation alone does not protect app data.
+The [canonical rubric](../../plugins/workbench/skills/test-quality-review/SKILL.md)
+owns exact tool recipes, estimates, budgets, and reuse requirements.
 
-**Tool support.** Unsupported input formats get `not applicable: <files and reason>` plus mutation thinking, without a custom instrumenter. Generated files, fixtures and constant exports are classified by actual syntax, not their names. Ordinary exported objects can produce mutants; parsed runtime expressions such as an `as const` object can need the bounded hand-defect fallback. Zero mutants alone never establishes inapplicability, and production syntax is not rewritten to create mutants.
+**Limits.** Initial rounds have a thirty-minute ceiling including setup;
+follow-ups have fifteen and cover the correction delta. Campaigns run one at a
+time and completed scope is not rerun under another runner. Unsupported syntax,
+slow tests, and parsed behavior tools cannot mutate use the rubric's bounded
+fallbacks. Hand-applied defects need an inspected production diff and unchanged
+test expectations before a failure counts.
 
-**Runners and saved results.** Prefer a qualified framework runner with complete per-test coverage. The skill includes a bounded Bun runner configuration; verify selected baseline tests and coverage before crediting it. The command fallback remains available when framework setup fails, with `NoCoverage: unavailable`. Stryker 10 can preserve partial incremental results. Reuse requires matching source, tests, helpers, snapshots, config, dependencies, runner and runtime; force the current scope when those inputs change or provenance is absent. Report fresh and reused results separately. A restart does not renew the time budget.
+| Result | What it means for the review |
+| --- | --- |
+| Behavioral survivor or newly lost protection | Issue with the assertion needed to catch it |
+| Equivalent mutant or irrelevant wording change | Observation |
+| Partial run or uncertain timeout | Scope and reason disclosed in strategy notes; no waiver or extension |
+| Required run blocked after bounded setup | `ISSUES_FOUND`, with attempts and remaining work |
+| Run waived by the user or a superseding repository rule | Explicit waiver, not a passing run |
+| Unresolved writes outside the review's isolated state | Preservation gap and `ISSUES_FOUND` |
 
-**Timeouts.** Keep timeout outcomes separate from assertion kills. Record a known hit-limit or loop reason as timeout detection; unexplained deadlines, resource kills and runner errors remain inconclusive. Inspect available logs only within the existing budget, then record uncertain scope as `partial`. Neither timeouts nor partial coverage require a waiver, extension or repeat campaign. A required run that never happened after bounded setup remains `blocked` and `ISSUES_FOUND`; `waived` records only a superseding repository rule or user instruction.
+Known loop or hit-limit evidence can support timeout detection; unexplained
+deadlines are not assertion kills. Saved results require unchanged relevant
+inputs and explicit fresh/reused counts. A restart does not renew the budget.
 
-**Workspace preservation.** Before the baseline, inspect external state reached by the selected tests, set supported isolated data/config roots or services, and verify destinations before writes and containment during the baseline. A disposable source copy does not isolate application data. Record the author's staged, unstaged, and untracked state and verify it afterwards, including failure and timeout paths. Unexpected external writes from this review remain its preservation gap even if the underlying test is old. Stop affected runs, respect cleanup authority and report unresolved preservation as `ISSUES_FOUND`.
-
-**Hand-applied defects.** Inspect the mutated source diff against a pristine
-copy before testing, confirming that the intended production change landed
-and test expectations stayed intact. A failed replacement or setup error does
-not count as a detected mutant.
-
-**Survivors.** Every surviving and `NoCoverage` mutant gets a judgment. One that changes behavior a consumer relies on is an Issue naming the assertion that kills it; an equivalent mutant or a wording-only change nobody matches on is an Observation; a new `Stryker disable` comment without a checkable reason is an Issue. The mutation score is never the pass/fail line.
-
-**Property testing and metrics.** Missing property-style coverage is flagged where invariants span many inputs, blocking only when examples plainly cannot cover the risk or policy requires it. Published coverage and CRAP data are risk evidence, never a substitute for reading the tests.
+**Judgment.** Mutation score and coverage are evidence, not pass thresholds.
+Property-style checks matter where examples cannot cover the risk. The report
+names concrete defects, protected behavior, runner limits and preservation.
 
 ## Common questions
 

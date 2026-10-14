@@ -1,5 +1,7 @@
 # ketchup
 
+[Canonical skill](../../plugins/toolkit/skills/ketchup/SKILL.md)
+
 Use `ketchup` when you return to a long-running task and want the meaningful
 changes, current status, and decisions that actually need you. Invoke
 `/toolkit:ketchup` in Claude Code, or select Ketchup with `$` or `/skills` in
@@ -37,5 +39,3 @@ For a transfer to a new session, use
 **It's working if:** you can distinguish what is confirmed from what is merely
 reported, understand each decision without digging through the transcript,
 and see who owns the next step.
-
-**Spec:** [`SKILL.md`](../../plugins/toolkit/skills/ketchup/SKILL.md).

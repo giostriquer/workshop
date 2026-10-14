@@ -66,3 +66,11 @@ required compatibility and distinct adapters remain valid. Type checks prefer
 an existing schema that validates the entire claimed shape rather than a cast
 or a partial type predicate. No schema library is prescribed. The existing
 reviewer loads this rubric, so no extra reviewer or Toolkit dependency is added.
+
+## Verdicts are explicit (2026-09-17)
+
+Review reports open with `## Verdict: PASS` or `## Verdict: ISSUES_FOUND`,
+followed by the reviewed revision and findings. Earlier prose verdicts forced
+both sessions and tooling to infer whether review passed. Sharing the two
+labels with test review makes the outcome readable without merging the rubrics.
+PASS means no in-scope blocking finding; a missing verdict does not imply PASS.

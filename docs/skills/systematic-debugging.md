@@ -1,5 +1,7 @@
 # systematic-debugging
 
+[Canonical skill](../../plugins/workbench/skills/systematic-debugging/SKILL.md)
+
 ## What it does
 
 This skill investigates an unresolved failure through four phases (root-cause investigation, pattern analysis, hypothesis testing, implementation) and carries through to the fix: a failing test, a single fix at the root cause, and verification. Its rule is **"NO ROOT-CAUSE CLAIM WITHOUT INVESTIGATION EVIDENCE."** An authorized temporary mitigation may come before diagnosis, labeled as mitigation, with the investigation still owed.

@@ -1,5 +1,7 @@
 # codebase-design
 
+[Canonical skill](../../plugins/toolkit/skills/codebase-design/SKILL.md)
+
 ## What it does
 
 `codebase-design` fixes the words used to design a module and states the
@@ -83,7 +85,3 @@ structure can hint at modules but does not make them.
 The vocabulary layer under the design skills, and the bench a chosen candidate
 is designed on. Its sibling [domain-modeling](domain-modeling.md) does the same
 job for the problem domain's words.
-
-`codebase-design` ships in the optional **toolkit** plugin. Its
-[canonical skill](../../plugins/toolkit/skills/codebase-design/SKILL.md) is the
-authority for behavior.

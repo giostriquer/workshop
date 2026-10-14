@@ -1,5 +1,7 @@
 # me-human
 
+[Canonical skill](../../plugins/toolkit/skills/me-human/SKILL.md)
+
 ## What it does
 
 `me-human` puts the session in the stance of a **human user putting a system to

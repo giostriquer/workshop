@@ -147,7 +147,8 @@ in-scope defects and start a new run instead of overwriting the failed attempt.
 
 ## Host differences
 
-Claude Code uses Bash for these commands and Read for PNG inspection. The
+Claude Code uses Bash for these commands and Read for PNG inspection. Muse
+uses its shell and file-reading tool the same way. The
 installed skill's base directory supplies `UI_DEMO_SKILL`. Codex uses its
 terminal and available image-viewing tool, resolving the script next to the
 listed `SKILL.md`. Keep artifacts inside the permitted workspace. A denied

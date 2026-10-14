@@ -1,6 +1,6 @@
 ---
 name: session-messaging
-description: Use when the operator asks this session to ask, tell, consult or hand something to another Claude Code or Codex session running on this machine, or when a prompt carries a message headed `so <id> from …`. Not for epic handoffs, which epic-orchestration carries.
+description: Use when the operator asks this session to ask, tell, consult or hand something to another Claude Code, Codex, or Muse session running on this machine, or when a prompt carries a message headed `so <id> from …`. Not for epic handoffs, which epic-orchestration carries.
 ---
 
 # Session Messaging
@@ -10,6 +10,9 @@ Orchestrator command. A message you send starts a turn in the other session,
 and its answer starts a new turn here. Send with `so` even where your tool has
 its own way to message another session: `so` reaches Claude Code and Codex
 sessions alike, and Session Orchestrator keeps count of what it carries.
+`so` does not list Muse sessions: a Muse peer is reached through Muse's own
+session messaging (`muse session-message`, or the peer tools the session
+exposes), never by inventing a `so` address for it.
 
 ## Send
 
@@ -19,8 +22,8 @@ sessions alike, and Session Orchestrator keeps count of what it carries.
    `so post --to <address> --text '<message>'`
    For a long message, write it to a file and send `--file <path>` instead.
    The command stands alone: no pipes, `&&`, heredocs, redirection or `$(…)`.
-3. In Codex, `so post` has to run outside the sandbox, which cannot reach the
-   store. Where your approval policy lets you ask, request escalated
+3. A sandboxed host (Codex, Muse) may be unable to reach the store from
+   inside the sandbox, so `so post` has to run outside it. Where your approval policy lets you ask, request escalated
    permissions for it and suggest the prefix rule `["so", "post"]`, so the
    operator can allow every later `so post` at once. Where it does not, run it
    as written: a rule the operator set may already let it out.
@@ -49,4 +52,4 @@ no answer.
 | `refused: …` (exit 3) | You two have exchanged six messages since the operator last spoke | Stop and tell the operator what is still open. Wait for the operator. |
 | `undelivered <id>: …` (exit 1) | Queued, and the channel did not take it | Tell the operator. Send nothing again: a second copy may arrive too. |
 | `error: …` (exit 2) | Nothing was sent | Correct the address from `so ls --live` and send once. |
-| `Operation not permitted` (Codex) | The sandbox stopped `so post` | Tell the operator `so post` needs to run outside the sandbox. |
+| `Operation not permitted` (sandboxed host) | The sandbox stopped `so post` | Tell the operator `so post` needs to run outside the sandbox. |

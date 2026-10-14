@@ -12,11 +12,11 @@
 # everyday skills, and the workbench flow layer) and toolkit (optional
 # artifact-making utilities). The repo's own working set (.claude/, .codex/,
 # .opencode/) and the attic are outside this validator's scope: .claude/ is
-# canonical for the pieces this repo runs (change-log, push, writing-skills,
-# wiki-maintainer, and the repo-only workbench-drift and mine-transcripts),
-# mirrored nowhere.
-# One check reaches past that scope: no git-tracked text file anywhere in the
-# repo may contain an em dash (U+2014).
+# canonical for repo-local maintenance skills; .codex/ carries their mirrors.
+# Two checks reach past that scope: no git-tracked text file anywhere in the
+# repo may contain an em dash (U+2014), and the .codex/ copies of the shared
+# repo-local skills must not drift from their .claude/ canonical (see the
+# repo-local mirror check at the end).
 
 set -eu
 
@@ -280,20 +280,51 @@ assert_plugin() {
     claude="$root/.claude-plugin/plugin.json"
     codex="$root/.codex-plugin/plugin.json"
     cursor="$root/.cursor-plugin/plugin.json"
+    muse="$root/.muse-plugin/plugin.json"
     antigravity="$root/plugin.json"
 
-    for f in "$claude" "$codex" "$cursor" "$antigravity"; do read_json "$f"; done
+    for f in "$claude" "$codex" "$cursor" "$muse" "$antigravity"; do read_json "$f"; done
 
     [ "$(jget "$claude" name)" = "$name" ] || fail "$name plugin name must be $name"
     [ "$(jget "$codex" name)" = "$name" ] || fail "Codex $name plugin name must be $name"
     [ "$(jget "$cursor" name)" = "$name" ] || fail "Cursor $name manifest name must be $name"
+    [ "$(jget "$muse" name)" = "$name" ] || fail "Muse $name manifest name must be $name"
     [ "$(jget "$antigravity" name)" = "$name" ] || fail "Antigravity $name manifest name must be $name"
 
     version=$(jget "$claude" version)
     [ -n "$version" ] || fail "$name plugin manifest has no version"
     [ "$(jget "$codex" version)" = "$version" ] || fail "Codex $name manifest version must match Claude manifest"
     [ "$(jget "$cursor" version)" = "$version" ] || fail "Cursor $name manifest version must match Claude manifest"
+    [ "$(jget "$muse" version)" = "$version" ] || fail "Muse $name manifest version must match Claude manifest"
     [ "$(jget "$antigravity" version)" = "$version" ] || fail "Antigravity $name manifest version must match Claude manifest"
+
+    # Muse enumerates native skills instead of scanning the skills directory.
+    [ "$(jget "$muse" schemaVersion)" = "1" ] || fail "Muse $name manifest schemaVersion must be 1"
+    [ "$(jget "$muse" compat.source)" = "native" ] || fail "Muse $name manifest compat.source must be native"
+    [ "$(jget "$muse" compat.manifestDir)" = ".muse-plugin" ] || fail "Muse $name manifest compat.manifestDir must be .muse-plugin"
+    assert_same_list "$expected_skills" "$(json pluck "$muse" capabilities.skills id)" "Muse $name skills"
+    node_check '
+const fs = require("fs");
+const doc = JSON.parse(fs.readFileSync(process.argv[1], "utf8"));
+const name = process.argv[2];
+const caps = doc.capabilities ?? {};
+const families = ["skills", "commands", "hooks", "mcpServers", "reminders"];
+for (const k of Object.keys(caps)) {
+  if (!families.includes(k)) {
+    console.error(`Muse ${name} manifest declares unsupported capability family ${k}`); process.exit(1);
+  }
+}
+for (const k of families.slice(1)) {
+  if (!Array.isArray(caps[k]) || caps[k].length !== 0) {
+    console.error(`Muse ${name} manifest capabilities.${k} must be an empty array`); process.exit(1);
+  }
+}
+for (const s of caps.skills ?? []) {
+  if (s.path !== `skills/${s.id}/SKILL.md`) {
+    console.error(`Muse ${name} skill ${s.id} path must be skills/${s.id}/SKILL.md`); process.exit(1);
+  }
+}
+' "$muse" "$name"
 
     for f in "$claude" "$codex"; do
         ! jhas "$f" mcpServers || fail "$name manifests must not contain mcpServers"
@@ -413,6 +444,22 @@ for (const e of mp.plugins) {
 for name in workbench toolkit; do
     [ ! -d "plugins/$name/.opencode-plugin" ] \
         || fail "plugins/$name/.opencode-plugin must not exist: opencode has no manifest convention; adoption is skills.paths or copying into a scanned directory"
+done
+
+# Muse 1.4.8 probes marketplace.json, .agents/plugins/marketplace.json,
+# and .claude-plugin/marketplace.json; .muse-plugin/marketplace.json is ignored.
+[ ! -e ".muse-plugin/marketplace.json" ] \
+    || fail ".muse-plugin/marketplace.json must not exist: Muse does not probe it for a marketplace catalog; its marketplace rides .claude-plugin/marketplace.json"
+
+# Muse 1.4.8 resolves project skills in .agents > .codex > .claude order,
+# so a stale Codex mirror also changes Muse's behavior. Codex agents/ policy
+# sidecars have no canonical counterpart.
+for spec in .claude/skills/*/SKILL.md; do
+    skill=${spec%/SKILL.md}
+    skill=${skill##*/}
+    _diff=$(diff -r -x agents ".claude/skills/$skill" ".codex/skills/$skill" 2>&1) \
+        || fail "repo-local mirror drift: .codex/skills/$skill differs from canonical .claude/skills/$skill (Muse runs the .codex copy):
+$_diff"
 done
 
 # ── em dash ban ───────────────────────────────────────────────────────────

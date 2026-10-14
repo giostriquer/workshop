@@ -1,5 +1,7 @@
 # epic-auditor
 
+[Canonical skill](../../plugins/workbench/skills/epic-auditor/SKILL.md)
+
 ## What it does
 
 Keeps an epic auditor lane's audit results in one complete, copyable report

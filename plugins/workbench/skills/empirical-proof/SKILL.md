@@ -78,7 +78,12 @@ computer-use tools. Chrome integration and native computer use have separate
 setup and availability; consult current documentation as needed. Built-in
 computer use needs an interactive session and is unavailable in `claude -p`.
 
-Follow the host's interaction rules on either harness.
+**Muse:** use the shell, file and image reading, MCP, and subagent or
+workflow surfaces the session exposes, under its sandbox and approval rules.
+A listed tool or skill does not establish a connected provider or target
+access; prove the surface answers before relying on it.
+
+Follow the host's interaction rules on any harness.
 
 For UI work, keep a coherent session: observe, act, then inspect the resulting
 state. Use fresh screenshots or semantic UI state to target actions. Inspect

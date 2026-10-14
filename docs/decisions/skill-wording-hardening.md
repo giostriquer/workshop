@@ -15,17 +15,24 @@ Correct the audit's concrete behavioral hazards with narrow changes to the origi
 - Empirical proof and QA retain real-client preparation, health checks, scenario coverage, raw transcripts, source/baseline comparison, independent corroboration, and cleanup. Missing proof remains unresolved or blocked; only contrary evidence disproves a claim. A recorded verdict does not cancel separately authorized repairs.
 - Claim-check retains its evidence ladder, independent probes, contest test, and verdict/prior-work/readiness dossier. Review retains its structural rubric and concrete remedies. Scope and demonstrated consequences determine blockers; material new risk receives follow-up review.
 - Handoff retains the frozen goal.md / status-only plan.md architecture, full templates, refutation checks, integrity rules, baseline capture, red-team pass, and phase review/checkpoint exits. Explicit no-commit rules are reflected throughout the emitted contract, and authorized migrations preserve evidence.
-- Delivery retains log inspection, reproduction, focused verification, concrete commands, templates, and bounded retries: two CI-fix attempts and two PR base resyncs. Epic orchestration retains its lane prompts, report format, validation checklist, traceability, and blind closing audit.
+- Delivery retains log inspection, reproduction, focused verification, concrete commands, templates, and bounded retries: two CI-fix attempts per failing cause. Target synchronization now has no retry
+  cap; see [the delivery correction](file-pr.md#remove-the-synchronization-retry-cap-2026-10-06). Epic orchestration retains its lane prompts, report format, validation checklist, traceability, and blind closing audit.
 
 ## Specific corrections
 
 Carry existing scope, design, route, and delivery authorization forward; batch independent questions and pause only dependent work. Do not require users to certify factual uncertainty. Keep requested audits broad enough for cross-cutting static review. PR attribution follows governing instructions, with neutral attribution as the default. Diagnostic examples test presence without revealing secrets. Validation belongs at distinct trust boundaries, not every layer by reflex.
 
-CI monitoring is delegated to a separate read-only watcher: Claude Opus or Codex gpt-5.6-sol, never Astra or Fable. Even a parent already using the designated model delegates the wait. Reports identify the target revision and expected checks; unavailable dispatch is a stated capability gap. Fixing remains with the implementer. This explicit assignment overrides the general inheritance preference.
+CI monitoring is delegated to a separate read-only watcher. The agent contract
+and `model-reference` own current host-specific routing. Even a parent using
+the designated model delegates the wait. Reports identify the pinned revision
+and expected checks; unavailable dispatch stays a capability gap. Fixing remains
+with the implementer.
 
 Epic dispatch and orchestration validation use focused local tests and mandatory local gates; PR CI runs full suites by default. A wider local run needs an explicit requirement or named unresolved integration risk. Each returned wave requires a verified acknowledgment followed by ready lane prompts, a named delivery gate, a blind audit dispatch, an evidence-backed completion proposal, or a concrete blocker. Existing external-write authority still governs ticket publication.
 
-Toolkit retains its artifact recipes. Recordings are offered instead of run uninvited; installation and upload require existing authority; overlays remain visible by default. Dogfooding is a perspective, not identity denial. Report templates do not invent missing fields. Architecture artifacts use self-contained assets and verified paths. Historical model grades remain explicitly uncalibrated examples; a new model name is not a new measurement.
+Toolkit retains its artifact recipes. Recorded walkthroughs follow the request or repository requirement; installation
+and upload require existing authority. The current capture contract lives in
+`web-demo-video`, which replaced the earlier harness. Dogfooding is a perspective, not identity denial. Report templates do not invent missing fields. Architecture artifacts use self-contained assets and verified paths. Historical model grades remain explicitly uncalibrated examples; a new model name is not a new measurement.
 
 ## Authoring and validation
 

@@ -94,7 +94,9 @@ verified for the current fleet; the legacy rows above do not establish that.
 Every CI watch uses a separate **Sonnet 5.5 (`claude-sonnet-5-5`) agent at
 `xhigh` effort on Claude Code** or **`gpt-6.1-sol` agent at `xhigh` reasoning
 effort on Codex**, spawned
-without the parent's history. Never use Astra, Fable, or Haiku to watch CI.
+without the parent's history. On Muse, dispatch the approved
+`workbench/ci-watcher` definition by its scoped id with no model override;
+Muse resolves the definition's model pin on its own fleet. Never use Astra, Fable, or Haiku to watch CI.
 Select the model and effort explicitly; do not inherit a more capable parent.
 Parents already using Sonnet/Sol still delegate to a separate designated agent.
 Missing dispatch is a reported monitoring gap, not permission for parent
@@ -105,6 +107,9 @@ polling or a prohibited fallback. See `fix-ci` for the workflow.
 Every `test-quality-reviewer` and every `comment-trimmer` dispatch uses a
 separate **Opus (`opus`) agent at `xhigh` effort on Claude Code** or
 **`gpt-6.1-sol` agent at `xhigh` reasoning effort on Codex**, spawned without the
-parent's history, and the host's default model on any other host. Select the
-model and effort explicitly; do not inherit the parent's. See
+parent's history, and the host's default model on any other host. On Muse,
+dispatch the approved `workbench/test-quality-reviewer` or
+`workbench/comment-trimmer` definition by its scoped id with no model
+override; Muse likewise resolves the definition's model pin on its own fleet.
+Select the model and effort explicitly; do not inherit the parent's. See
 `test-quality-review` and `trim-comments` for when each runs.

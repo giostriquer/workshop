@@ -1,5 +1,11 @@
 # Matt Pocock's grilling and architecture skills: decisions in force
 
+This is the rationale for five toolkit skills ported from
+[mattpocock/skills](https://github.com/mattpocock/skills) (MIT, Copyright (c)
+2026 Matt Pocock): `grill-me`, `grilling`, `improve-codebase-architecture`,
+`codebase-design` and `domain-modeling`. Superseded choices are omitted, and
+git history keeps the originals.
+
 ## Focused upstream refinements (2026-10-08)
 
 The approved source review at `b0618bc436ad893b3c5e84e55fba86586d34a404`
@@ -26,12 +32,6 @@ preserved. Two response-only probes covered the API test-boundary explanation
 and recommendation-aligned grilling with a genuine three-option choice.
 Those two probes executed no API or interview; this small sample supports
 the specific guidance checks, not a general reliability claim.
-
-This is the rationale for five toolkit skills ported from
-[mattpocock/skills](https://github.com/mattpocock/skills) (MIT, Copyright (c)
-2026 Matt Pocock): `grill-me`, `grilling`, `improve-codebase-architecture`,
-`codebase-design` and `domain-modeling`. Superseded choices are omitted, and
-git history keeps the originals.
 
 ## Port two entry points and the skills they load (2026-09-24)
 
@@ -94,7 +94,7 @@ both-installed state on hosts where it is unverified. On Claude Code, with
 `mattpocock-skills` enabled, every probe that loaded a dependency loaded the
 toolkit copy.
 
-## Generalized for five hosts and for adopters (2026-09-24)
+## Host-neutral adaptations (2026-09-24)
 
 - **Sub-agents.** "Spawn a sub-agent" became "through a sub-agent where the host
   has one". Design-it-twice gained a sequential fallback for hosts without
@@ -107,8 +107,8 @@ toolkit copy.
   `improve-codebase-architecture` reads ADRs from the same place.
 - **Slash mentions.** `/codebase-design` in prose became the plain name.
 
-Everything else is upstream text. The `❓` and `➡️` markers in the grilling
-round stay, because answering a round by number depends on that shape.
+The `❓` and `➡️` markers in the grilling round stay, because answering a
+round by number depends on that shape. Later adaptations are recorded below.
 
 ## The report keeps its own contract and follows html-artifact's delivery standard (2026-09-24)
 
@@ -125,10 +125,8 @@ SRI hashes blocked the scripts, and the report rendered unstyled with no
 diagrams. The agent never saw it, because it never renders the page. The port
 adopts `html-artifact`'s standard: one file that works offline, inline CSS,
 inline SVG or HTML diagrams, no scripts, dark mode first. Mermaid's automatic
-layout is the cost: graph diagrams are laid out by hand. `html-artifact`'s
-render-and-inspect pass was not adopted. The report is a temp file for one
-reader, and removing the scripts removes the failure class that pass would
-catch.
+layout is the cost: graph diagrams are laid out by hand. The survey keeps its own report procedure. Removing remote scripts eliminates
+that dependency failure; it does not establish rendered layout correctness.
 
 ## Improvements taken from pstack's architect (2026-09-24)
 
@@ -169,36 +167,14 @@ otherwise name a workbench skill that a toolkit-only install lacks.
 
 ## Validation (2026-09-24)
 
-These probes are bounded regression evidence, not a reliability estimate. They
-ran as fresh `claude -p` sessions (`claude-opus-5-5`, effort high) with the
-user's normal configuration. The installed toolkit was disabled, and a copy of
-the changed toolkit was loaded with `--plugin-dir`. `mattpocock-skills` stayed
-enabled, so every run also exercised the name collision. The architecture
-fixture was a small TypeScript `webapp` repo with six commits, a `CONTEXT.md`,
-and one ADR saying pricing stays in an owned pricing service. It had an
-`OrderService` that only forwards to `OrderRepo`, and a `PricingClient` returning
-a raw `Response` whose `total_cents` wire field two handlers parsed, with a
-diverging default. `open` was denied, so no browser window appeared.
-
-| Question | Result |
-| --- | --- |
-| `/toolkit:grill-me` on a plan: loads `toolkit:grilling`, asks one numbered round with a recommendation per question, writes nothing, waits | 4 of 4 (three on a queue-migration plan, one on a hiring decision); 4 to 7 questions per round |
-| `/toolkit:improve-codebase-architecture`: loads the toolkit `codebase-design` | 3 of 3 (two through the Skill tool, one by reading the toolkit copy's files); 0 loaded the `mattpocock-skills` copy |
-| Finds the pricing seam as the `Strong` top pick, framed as ports and adapters within the ADR | 3 of 3 |
-| Finds the `OrderService` pass-through | 3 of 3 |
-| Report is offline and dark (no `<script>`, no remote URL) | 3 of 3; upstream arm 0 of 2 (Tailwind and Mermaid CDNs, light) |
-| Every card cites `file:line` evidence and names its Gaps | 3 of 3 (14 distinct references each); upstream arm 0 of 2 (2 and 0 references, no gaps) |
-| Glossary held (no "component", "service layer", "boundary") and stops with "Which of these would you like to explore?" | 3 of 3 |
-| After "Let's explore your top recommendation": loads `toolkit:grilling`, asks a round in seam, adapter and port terms, changes no files | 3 of 3 |
-| After "Going with all your recommendations": loads `toolkit:domain-modeling` and edits `CONTEXT.md` inline, terms only | 1 of 2; it sharpened Line item and Quote and left the error type out as implementation detail. The other first re-asked two recommendations it had made conditional, so no term was settled yet |
-| An unrelated coding task (add a `formatMoney` helper) in the same fixture loads none of the five skills | 0 of 3 loaded any |
-
-On Codex, `codex debug prompt-input` (CLI 0.155.1) ran with the five skills
-copied in as repository skills under probe names. The two entry points were
-absent from the model-visible list and the three dependencies present.
-Flipping `grill-me`'s sidecar to `allow_implicit_invocation: true` made it
-appear. Codex behavior itself was not probed, nor were Cursor, Antigravity and
-OpenCode.
+Fresh Claude scenarios checked Toolkit dependency selection with both plugin
+sets installed, evidence-backed survey candidates, offline output, interview
+rounds, and glossary changes only after terms were settled. Some runs asked
+follow-up questions when recommendations remained conditional. The browser was
+not opened, so offline structure was checked without claiming rendered quality.
+Codex prompt-input probes checked entry-point and dependency visibility, not
+full skill behavior. Other hosts were not exercised in that initial port.
+These are bounded regression checks; the original probe details remain in Git.
 
 ## Agent contributions with partial context (2026-10-04)
 

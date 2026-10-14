@@ -1,5 +1,7 @@
 # claim-check
 
+[Canonical skill](../../plugins/workbench/skills/claim-check/SKILL.md)
+
 ## What it does
 
 `claim-check` takes a **premise** (a tracker ticket, a hunch, or a bare

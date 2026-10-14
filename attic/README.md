@@ -18,9 +18,9 @@ Two tiers, one rule each:
   plus any support files) and its parked origin doc (`origin.md`). A retired
   skill whose spec evolved into a live skill keeps only `origin.md`.
 
-Live agents and skills carry no doc layer (rationale lives in
-`docs/decisions/`); the `origin.md` files here are the parked historical
-origin docs of retired pieces, kept with their specs.
+Live skills have usage pages in `docs/skills/`; rationale lives in
+`docs/decisions/`. Agents have no separate usage pages. The `origin.md` files
+here are historical records kept with retired specs.
 
 ## Contents
 
@@ -40,7 +40,7 @@ origin docs of retired pieces, kept with their specs.
 | `deprecated/skills/handoff-pr` | 2026-08-11 | Evolved into the shipped `file-pr` skill; origin doc only: the pre-evolution spec lives in git history (`plugins/toolkit/skills/handoff-pr/`, pre-2026-08-11). |
 | `deprecated/skills/handoff-review` | 2026-08-10 | Retired from the `toolkit` plugin (last shipped in 0.16.5); spec + origin doc preserved. |
 | `deprecated/skills/research` | 2026-08-11 | Onboarding plugin deleted; spec + origin doc preserved. Thin orchestrator for the `research` agent (also parked below). |
-| `deprecated/skills/structure-view` | 2026-08-05 | Renamed to the shipped `arch-map` skill; origin doc only: the design-first birth and Round 1 field notes under the old name. |
+| `deprecated/skills/structure-view` | 2026-08-05 | Renamed to `arch-map`, later consolidated into the shipped `html-artifact`; origin doc only: the design-first birth and Round 1 field notes under the old name. |
 | `deprecated/skills/visual-advisor` | 2026-08-11 | Onboarding plugin deleted; spec + origin doc preserved. Visual taste advisor, counterpart to `visual-implementer` (also parked below). |
 | `deprecated/agents/doc-indexer` | 2026-08-11 | Onboarding plugin deleted; spec + origin doc preserved. Docs routing/audit helper for `wiki-maintainer`. |
 | `deprecated/agents/research` | 2026-08-11 | Onboarding plugin deleted; spec + origin doc preserved. Forward-looking research notes with structured scoring. |

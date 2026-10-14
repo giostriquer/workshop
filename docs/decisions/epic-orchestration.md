@@ -270,3 +270,44 @@ consistent names across five destinations: grouped worksets, correction delivery
 composite-label recovery and a mixed implementation/auditor batch. Session and
 artifact continuity and authority boundaries were preserved. These are bounded
 simulated regression checks, not a reliability estimate or live epic proof.
+
+## Correction-review authority (2026-09-24)
+
+Lane corrections and owner validation are not reviewer passes. Focused
+reviewer follow-ups run under the owning discipline while review converges;
+the owner rules only when a lane reports a convergence hold. It records the
+next action and reason without waiving reviewer confirmation or missing proof.
+The operator retains decisions outside approved scope and explicit waivers.
+See [correction review](bounded-correction-review.md).
+
+## Dispatch freshness (2026-09-21)
+
+Before a new dispatch batch, refresh the integration target and inspect the
+exact revision. Remove obsolete tickets, narrow partial work, and bind each
+remaining assignment to current evidence. A failed refresh or unresolved claim
+holds that dispatch. Preserve dirty checkouts, unpublished commits and active
+lane worktrees. An independent simultaneous batch can share one refresh; later
+batches refresh again. An active lane continues under its existing contract
+unless relevant changes invalidate its work or a delivery rule requires sync.
+
+## Lane readiness includes producers and dependencies (2026-09-15)
+
+Disjoint files do not make a producer and consumer independent. Group by file
+ownership, then identify shared contracts, fixture builders and consumer checks
+before parallel dispatch. Acceptance uses actual producer output and supported
+saved versions where those determine behavior, and verifies that recovery is
+available. Name required local gates separately from focused tests; use filters
+for iteration and complete affected files and identified consumer checks before
+handback, with gaps disclosed. Completion review waits for the full agreed
+implementation. Delivery follows `file-pr`, including merged-PR detection and
+the session's established report format.
+
+## Delegation respects skill ownership (2026-09-14)
+
+Dispatches specify scope, inputs, outcomes and evidence, and name the skills
+that own execution details. Copying watcher routing into a lane contract had
+turned a host-specific rule into an assumed provider. Operator-carried lane
+handoffs remain distinct from optional helpers within the owner session.
+Helpers inherit its model by default; a smaller model in the same harness
+handles only trivial, cheaply verifiable work. The owner retains judgment,
+rulings and authorization.

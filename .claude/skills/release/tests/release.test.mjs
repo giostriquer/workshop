@@ -20,7 +20,7 @@ const manifest = (name, version) => `{
   "author": { "name": "Acme" }
 }
 `;
-const MANIFESTS = ['.claude-plugin/plugin.json', '.codex-plugin/plugin.json', '.cursor-plugin/plugin.json', 'plugin.json'];
+const MANIFESTS = ['.claude-plugin/plugin.json', '.codex-plugin/plugin.json', '.cursor-plugin/plugin.json', '.muse-plugin/plugin.json', 'plugin.json'];
 
 const marketplace = (alpha, beta) => `{
   "name": "workshop",
@@ -254,7 +254,7 @@ test('a plugin missing from the released ref is new', (t) => {
 
 const versionFiles = (plugin) => ['.claude-plugin/marketplace.json', ...MANIFESTS.map((rel) => `plugins/${plugin}/${rel}`)];
 
-test('bump writes the version into all four manifests and only that plugin\'s marketplace entry', (t) => {
+test('bump writes the version into all five manifests and only that plugin\'s marketplace entry', (t) => {
   const f = fixture(t);
   const before = Object.fromEntries([...versionFiles('alpha'), ...versionFiles('beta')].map((rel) => [rel, f.read(rel)]));
   const r = f.run('bump', 'beta', '1.3.0');

@@ -1,5 +1,7 @@
 # trim-comments
 
+[Canonical skill](../../plugins/workbench/skills/trim-comments/SKILL.md)
+
 ## What it does
 
 `trim-comments` is workbench's comment-trim stage: a pass over a finished

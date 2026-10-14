@@ -1,9 +1,13 @@
 # session-messaging
 
+[Canonical skill](../../plugins/workbench/skills/session-messaging/SKILL.md)
+
 ## What it does
 
-Lets a Claude Code or Codex session message another session running on the
-same machine, outside any epic, through Session Orchestrator's `so` command.
+Lets a Claude Code, Codex, or Muse session message another session
+running on the same machine, outside any epic, through Session Orchestrator's
+`so` command. `so` lists Claude Code and Codex peers; a Muse peer is
+reached through Muse's own session messaging instead.
 The sender finds the peer with `so ls --live` and sends with `so post`; the
 message starts a turn in the other session, and its answer comes back the same
 way. The skill also tells a session what to do when a message arrives, and

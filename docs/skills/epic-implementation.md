@@ -1,5 +1,7 @@
 # epic-implementation
 
+[Canonical skill](../../plugins/workbench/skills/epic-implementation/SKILL.md)
+
 ## What it does
 
 Keeps an implementation lane's final handbacks in the exact report format

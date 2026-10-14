@@ -14,7 +14,8 @@ Node 18 or later and authenticated `gh`. Repairs, reruns and pushes belong to
 the parent.
 
 **Dispatch:** on Claude Code, by name with no model, since this file pins Sonnet 5.5
-at `xhigh`. On Codex, `spawn_agent` with `model: "gpt-6.1-sol"`,
+at `xhigh`. On Muse, by the scoped definition `workbench/ci-watcher` with
+no model. On Codex, `spawn_agent` with `model: "gpt-6.1-sol"`,
 `reasoning_effort: "xhigh"`, `fork_turns: "none"` and the message
 `using-workbench` describes under *Workbench agents on Codex*.
 Inputs: repository, PR number or branch, full pinned SHA, absolute runner path,

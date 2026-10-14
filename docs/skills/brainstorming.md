@@ -1,5 +1,7 @@
 # brainstorming
 
+[Canonical skill](../../plugins/workbench/skills/brainstorming/SKILL.md)
+
 ## What it does
 
 `brainstorming` turns an idea into an approved design through dialogue. It
@@ -111,8 +113,9 @@ settled. Architectural work keeps its written design and self-review first.
 
 - It announces the path before the first question.
 - It reads the project before asking questions it could answer itself.
-- You see two or three approaches with a recommendation, not a single option.
-- The written design has no TBDs, and the self-review ran.
+- Architectural work presents two or three approaches with a recommendation,
+  then a written design with no TBDs and a completed self-review.
+- Bounded work uses a short in-chat design; a spike reports its result.
 - Negative signal: dependent implementation starts while an outcome-changing
   decision is unresolved, or full ceremony runs for a fix an audit already
   pinned down.

@@ -1,5 +1,7 @@
 # improve-codebase-architecture
 
+[Canonical skill](../../plugins/toolkit/skills/improve-codebase-architecture/SKILL.md)
+
 ## What it does
 
 `improve-codebase-architecture` surveys a codebase for **deepening
@@ -114,7 +116,9 @@ load one set.
   "component" or "service".
 - Every card cites `file:line` evidence, and names what it could not trace.
 - Candidates cluster in recently changed files unless you named a direction.
-- No code changed. The only new file is the report in your temp directory.
+- The survey changes no code or glossary; it writes the report in your temp
+  directory. A chosen candidate's later interview can update the glossary and
+  offer an ADR.
 - It stops after the report and asks which candidate to explore.
 - Rejecting a candidate for a durable reason gets you an ADR offer.
 
@@ -126,7 +130,3 @@ from [codebase-design](codebase-design.md), walks your decisions with
 [domain-modeling](domain-modeling.md). What it produces is a decision about one
 candidate, which enters your build flow at [brainstorming](brainstorming.md)
 or a spec.
-
-`improve-codebase-architecture` ships in the optional **toolkit** plugin. Its
-[canonical skill](../../plugins/toolkit/skills/improve-codebase-architecture/SKILL.md)
-is the authority for behavior.

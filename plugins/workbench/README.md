@@ -1,10 +1,10 @@
 # workbench
 
 A direct-use plugin from [Workshop](https://github.com/giostriquer/workshop):
-five read-only review agents, the `comment-trimmer`, fourteen everyday skills, and the
-eight-skill **workbench** process layer. No setup: works in any repo. Optional artifact-making utilities
-(doc pages, demo videos, architecture maps) live in the sibling
-[`toolkit`](../toolkit/README.md) plugin: install it only if you want them.
+review and CI agents, a comment trimmer, and skills for investigation through
+delivery. Individual skills document their tool and access requirements.
+Optional artifact and maintenance utilities live in the sibling
+[`toolkit`](https://github.com/giostriquer/workshop/blob/main/plugins/toolkit/README.md) plugin: install it only if you want them.
 
 ## Install
 
@@ -24,18 +24,38 @@ codex plugin marketplace add giostriquer/workshop --ref main
 codex plugin add workbench@workshop
 ```
 
+**Muse:**
+
+```sh
+muse plugins marketplace add workshop https://github.com/giostriquer/workshop
+muse plugins install workbench@workshop
+muse plugins approve workbench
+```
+
+Skills are active on install; the `approve` step activates the six agent
+definitions (`workbench/<name>`), which parents then dispatch by that scoped
+id with no model, as on Claude Code. On Muse 1.4.8 an approved
+definition is listed but the runtime still reports it unavailable at spawn
+time, so dispatching skills report that gap until a Muse release admits
+them (see the repository's plugin-surfaces decision).
+
+Muse's native loader currently ignores user-invoked-only skill policy. See
+[the host limitation and per-machine workaround](https://github.com/giostriquer/workshop/blob/main/docs/decisions/plugin-surfaces.md#muse-implicit-invocation-hole-accepted-2026-10-14)
+for skills marked user-invoked only below.
+
 **Cursor**: Team Marketplace (Teams/Enterprise, admin): **Dashboard → Settings →
 Plugins → Team Marketplaces → Add Marketplace → Import from Repo**
 (`giostriquer/workshop`), then install `workbench` from **Customize**.
 
-**Google Antigravity:** Copy or link this folder into your workspace's `.agents/plugins/workbench/` (that workspace only) or into `~/.gemini/config/plugins/workbench/` (every workspace). Antigravity scans both; there is no registry file to edit. All twenty-two skills are discovered and loaded on demand; the review agents are not: Antigravity's plugin format covers skills, rules, MCP servers, and hooks.
+**Google Antigravity:** Copy or link this folder into your workspace's `.agents/plugins/workbench/` (that workspace only) or into `~/.gemini/config/plugins/workbench/` (every workspace). Antigravity scans both; there is no registry file to edit. The skills are discovered and loaded on demand; the review agents are not: Antigravity's plugin format covers skills, rules, MCP servers, and hooks.
 
 **OpenCode:** No marketplace file exists on this surface; opencode loads skills by scanning directories. Point your global config's `"skills": { "paths": [...] }` at this folder's `skills/` directory in a clone of the repo, or copy individual skill folders into `~/.config/opencode/skill/`. The agents are not carried on this surface.
 
-After install: agents resolve as `workbench:<agent>`; skills are invoked by name.
-Codex exposes all twenty-two skills but registers no plugin agents, so a Codex
+On Claude Code, agents resolve as `workbench:<agent>`; on Muse, approved
+definitions use `workbench/<agent>`. Skills are invoked by name.
+Codex exposes the skills but registers no plugin agents, so a Codex
 parent reads an agent file from the installed plugin and pastes its body into
-the spawn message (`using-workbench`, *Workbench agents on Codex*). Antigravity discovers and progressively loads the skills from `skills/`. OpenCode loads the same twenty-two from its `skills.paths` scan roots.
+the spawn message (`using-workbench`, *Workbench agents on Codex*). Antigravity discovers and progressively loads the skills from `skills/`. OpenCode loads the same skills from its `skills.paths` scan roots.
 
 ## Agents: read-only reviewers and the comment-trimmer
 
@@ -46,31 +66,32 @@ commits.
 
 | Agent | Works on |
 | --- | --- |
-| `spec-reviewer` | a design spec or implementation plan, before you build |
-| `code-quality-reviewer` | a diff's maintainability and structure; loads the `code-quality-review` rubric |
-| `test-quality-reviewer` | test code for trustworthiness and risk coverage; loads the `test-quality-review` rubric; separate Opus (Claude) or Sol (Codex) reviewer |
-| `pattern-reviewer` | a diff's conformance to the project's implementation patterns |
-| `ci-watcher` | PR or branch CI through the bundled Node 18+ watcher command; separate Sonnet 5.5 (Claude Code) or Sol (Codex) agent invokes it and reports its verdict |
-| `comment-trimmer` | a finished diff's code comments, trimmed before the review round; loads the `trim-comments` rubric; separate Opus (Claude) or Sol (Codex) agent; returns constraint-comment encoding offers, never applies them |
+| [`spec-reviewer`](agents/spec-reviewer.md) | a design spec or implementation plan, before you build |
+| [`code-quality-reviewer`](agents/code-quality-reviewer.md) | a diff's maintainability and structure; loads the `code-quality-review` rubric |
+| [`test-quality-reviewer`](agents/test-quality-reviewer.md) | test code for trustworthiness and risk coverage; loads the `test-quality-review` rubric; separate Opus (Claude) or Sol (Codex) reviewer |
+| [`pattern-reviewer`](agents/pattern-reviewer.md) | a diff's conformance to the project's implementation patterns |
+| [`ci-watcher`](agents/ci-watcher.md) | PR or branch CI through the bundled Node 18+ watcher command; separate Sonnet 5.5 (Claude Code) or Sol (Codex) agent invokes it and reports its verdict |
+| [`comment-trimmer`](agents/comment-trimmer.md) | a finished diff's code comments, trimmed before the review round; loads the `trim-comments` rubric; separate Opus (Claude) or Sol (Codex) agent; returns constraint-comment encoding offers, never applies them |
 
 ## Everyday skills
 
 | Skill | Does |
 | --- | --- |
-| `file-pr` | files the branch's PR from the repo's own template, then tends it to green-and-mergeable; never merges |
-| `fix-ci` | watch-and-fix loop on the branch's CI: diagnose the failing log, minimal fix, push, re-watch; two attempts max |
-| `handoff-goal` | emits a goal contract a fresh session pursues autonomously; long-running work only, never pursues it itself |
-| `claim-check` | evidence-graded investigation of a ticket / hunch / question: verdict + readiness dossier; preserves the result before any separately authorized repair |
-| `qa-sweep` | fans a QA team over independent slices, corroborates every verdict-moving finding firsthand |
-| `empirical-proof` | default focused proof of behavioral changes through apps or real consumers, with evidence reuse and coverage gaps |
-| `code-quality-review` | strict, structure-first maintainability review of a diff |
-| `test-quality-review` | test trustworthiness review: whether tests protect the behavior they claim, backed by a mutation run over the changed code; runs with the adversarial review when logic or tests changed |
-| `trim-comments` | the comment trim at completion, before the review round: removes code-comment slop (narration, banners, commented-out code, stale comments, workaround sermons) from the finished diff, keeps comments that carry what the code can't, offers encodings for constraint comments, and reports correctness-hiding suppressions; dispatched to `comment-trimmer` |
-| `epic-orchestration` | owns a multi-ticket epic: writes the lane prompts the operator dispatches by hand, validates each report against the repo, authorizes the PR; never implements; user-invoked only |
-| `epic-implementation` | uses the shared [lane report template](skills/epic-orchestration/references/lane-report.md) across amendments, recovery and delivery; only for lanes dispatched through epic-orchestration |
-| `epic-auditor` | uses the shared [audit report template](skills/epic-orchestration/references/audit-report.md) across audit follow-ups, amendments and recovery; only for auditor lanes dispatched through epic-orchestration |
-| `epic-cleanup` | on an explicit cleanup request: lists a repository's stale worktrees, merged or gone branches, caches, temp files, stray processes and Docker image candidates with evidence and removes only what you pick, or removes an epic's obsolete artifacts, owned worktrees and disposable images; protects active worktrees and shared images |
-| `model-reference` | reference table for the model fleet across cost, intelligence, taste, code, and speed, plus the hard routing invariants; a lookup, not a dispatch step |
+| [`file-pr`](skills/file-pr/SKILL.md) | files the branch's PR from the repo's own template, then tends it to green-and-mergeable; never merges |
+| [`fix-ci`](skills/fix-ci/SKILL.md) | watch-and-fix loop on the branch's CI: diagnose the failing log, minimal fix, push, re-watch; two fix attempts per failing cause; synchronization has no retry cap |
+| [`handoff-goal`](skills/handoff-goal/SKILL.md) | emits a goal contract a fresh session pursues autonomously; long-running work only, never pursues it itself |
+| [`claim-check`](skills/claim-check/SKILL.md) | evidence-graded investigation of a ticket / hunch / question: verdict + readiness dossier; preserves the result before any separately authorized repair |
+| [`qa-sweep`](skills/qa-sweep/SKILL.md) | fans a QA team over independent slices, corroborates every verdict-moving finding firsthand |
+| [`empirical-proof`](skills/empirical-proof/SKILL.md) | default focused proof of behavioral changes through apps or real consumers, with evidence reuse and coverage gaps |
+| [`code-quality-review`](skills/code-quality-review/SKILL.md) | strict, structure-first maintainability review of a diff |
+| [`test-quality-review`](skills/test-quality-review/SKILL.md) | test trustworthiness review: whether tests protect the behavior they claim, backed by a mutation run over the changed code; runs with the adversarial review when logic or tests changed |
+| [`trim-comments`](skills/trim-comments/SKILL.md) | the comment trim at completion, before the review round: removes code-comment slop (narration, banners, commented-out code, stale comments, workaround sermons) from the finished diff, keeps comments that carry what the code can't, offers encodings for constraint comments, and reports correctness-hiding suppressions; dispatched to `comment-trimmer` |
+| [`epic-orchestration`](skills/epic-orchestration/SKILL.md) | owns a multi-ticket epic: writes the lane prompts the operator dispatches by hand, validates each report against the repo, authorizes the PR; never implements; user-invoked only |
+| [`epic-implementation`](skills/epic-implementation/SKILL.md) | uses the shared [lane report template](skills/epic-orchestration/references/lane-report.md) across amendments, recovery and delivery; only for lanes dispatched through epic-orchestration |
+| [`epic-auditor`](skills/epic-auditor/SKILL.md) | uses the shared [audit report template](skills/epic-orchestration/references/audit-report.md) across audit follow-ups, amendments and recovery; only for auditor lanes dispatched through epic-orchestration |
+| [`epic-cleanup`](skills/epic-cleanup/SKILL.md) | on an explicit cleanup request: lists a repository's stale worktrees, merged or gone branches, caches, temp files, stray processes and Docker image candidates with evidence and removes only what you pick, or removes an epic's obsolete artifacts, owned worktrees and disposable images; protects active worktrees and shared images |
+| [`session-messaging`](skills/session-messaging/SKILL.md) | asks or tells another local session through the available messaging route; epic handoffs stay with epic-orchestration |
+| [`model-reference`](skills/model-reference/SKILL.md) | reference table for the model fleet across cost, intelligence, taste, code, and speed, plus the hard routing invariants; a lookup, not a dispatch step |
 
 ## Workbench: the process layer
 
@@ -81,14 +102,14 @@ surface, and `using-workbench` answers "how does this flow work?" on demand.
 
 | Skill | Does |
 | --- | --- |
-| `audit` | uses the requested scope (quick · static review · deep · sweep), runs the engine, reports uncertainty, and asks only for unresolved decisions |
-| `brainstorming` | design dialogue for features and refactors, ending at your route pick: direct / plan / handoff-goal |
-| `test-driven-development` | RED-GREEN-REFACTOR, default where a test harness exists; repo conventions take precedence |
-| `systematic-debugging` | four-phase root-cause discipline for persistent or unclear failures |
-| `verification-before-completion` | the "deemed ready" gate: fresh evidence before any done / fixed / passing claim |
-| `receiving-code-review` | verify feedback against the codebase before implementing; reasoned pushback, no performative agreement |
-| `using-workbench` | on-demand orientation map of the flow; orients, never coerces |
-| `self-audit` | retrospective on the process that ran the session, read from its transcript: trace, classify, propose, close with a paste-ready defect note; reports, never edits a skill |
+| [`audit`](skills/audit/SKILL.md) | uses the requested scope (quick · static review · deep · sweep), runs inline or through the selected engine, reports uncertainty, and asks only for unresolved decisions |
+| [`brainstorming`](skills/brainstorming/SKILL.md) | design dialogue for features and refactors, ending at your route pick: direct / plan / handoff-goal |
+| [`test-driven-development`](skills/test-driven-development/SKILL.md) | RED-GREEN-REFACTOR, default where a test harness exists; repo conventions take precedence |
+| [`systematic-debugging`](skills/systematic-debugging/SKILL.md) | four-phase root-cause discipline for persistent or unclear failures |
+| [`verification-before-completion`](skills/verification-before-completion/SKILL.md) | the "deemed ready" gate: fresh evidence before any done / fixed / passing claim |
+| [`receiving-code-review`](skills/receiving-code-review/SKILL.md) | verify feedback against the codebase before implementing; reasoned pushback, no performative agreement |
+| [`using-workbench`](skills/using-workbench/SKILL.md) | orientation map, including the verification and completion-review requirements |
+| [`self-audit`](skills/self-audit/SKILL.md) | retrospective on the process that ran the session, read from its transcript: trace, classify, propose, close with a paste-ready defect note; reports, never edits a skill |
 
 
 > **Attribution:** five of the workbench skills (`brainstorming`, `test-driven-development`, `systematic-debugging`, `verification-before-completion`, `receiving-code-review`) are derived from [obra/superpowers](https://github.com/obra/superpowers) by **Jesse Vincent** (MIT): adapted per the [workbench-system decision](https://github.com/giostriquer/workshop/blob/main/docs/decisions/workbench-system.md): descriptions rewritten as honest triggers, pipeline coupling removed, no hooks. The lineage of every piece, including what was deliberately dropped and why, lives in the [workbench manifest](https://github.com/giostriquer/workshop/blob/main/.claude/skills/workbench-drift/manifest.json).
@@ -97,7 +118,7 @@ surface, and `using-workbench` answers "how does this flow work?" on demand.
 
 > **Attribution:** `trim-comments` is derived from OpenClaw's [openclaw/openclaw](https://github.com/openclaw/openclaw) `.agents/skills/deslop` (MIT, Copyright (c) 2026 OpenClaw Foundation), with its comment keep-list and its constraint-comment and suppression rules adapted from the `pstack` plugin's `no-comments` skill and `comment-sicko` agent in Cursor's [cursor/plugins](https://github.com/cursor/plugins) (MIT, Copyright (c) 2026 Lauren Tan): adapted per the [trim-comments decision](https://github.com/giostriquer/workshop/blob/main/docs/decisions/trim-comments.md): narrowed to code comments, dispatched as a workbench delivery stage before the review round, diff scope made host- and stack-neutral.
 
-## Not included
+## Scope
 
 No MCP servers, no hooks, no dispatchers: skills activate on their own
-triggers or your invocation, never at session start.
+triggers or your invocation, with no SessionStart hook.

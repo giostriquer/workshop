@@ -31,6 +31,7 @@ class ExportTests(unittest.TestCase):
             ".codex-plugin/plugin.json": json.dumps({"name": "acme", "skills": "./skills"}),
             ".claude-plugin/plugin.json": '{"name":"acme"}',
             ".cursor-plugin/plugin.json": '{"name":"acme"}',
+            ".muse-plugin/plugin.json": '{"name":"acme"}',
             "plugin.json": '{"name":"acme"}',
             "skills/example/SKILL.md": SKILL,
             "skills/example/agents/openai.yaml": SIDECAR,
@@ -54,7 +55,7 @@ class ExportTests(unittest.TestCase):
         self.assertEqual(self.snapshot(self.source), before)
         exported = self.snapshot(self.destination)
         expected = {key: value for key, value in before.items()
-                    if key not in {".claude-plugin/plugin.json", ".cursor-plugin/plugin.json", "plugin.json"}}
+                    if key not in {".claude-plugin/plugin.json", ".cursor-plugin/plugin.json", ".muse-plugin/plugin.json", "plugin.json"}}
         expected["skills/example/SKILL.md"] = ("---\nname: example\ndescription: Use when asked.\n---\n" + BODY).encode()
         self.assertEqual(exported, expected)
         metadata = yaml.safe_load(exported["skills/example/agents/openai.yaml"])

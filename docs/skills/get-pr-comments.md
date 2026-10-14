@@ -1,5 +1,7 @@
 # get-pr-comments
 
+[Canonical skill](../../plugins/toolkit/skills/get-pr-comments/SKILL.md)
+
 ## What it does
 
 `get-pr-comments`, in the optional `toolkit` plugin, turns a PR's scattered

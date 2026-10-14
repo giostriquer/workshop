@@ -20,7 +20,7 @@ output out of commits. The reviewer reports preservation alongside mutation
 results, including unresolved cleanup. Authors retain tests for required behavior,
 strengthening existing cases where suitable instead of adding a test per mutant.
 
-Update the paired usage pages and prepare the patch release. This change adds no
+The paired usage pages carry the same boundary. This change adds no
 mutation tool, score threshold, test harness, or repository layout change.
 
 ## Verification

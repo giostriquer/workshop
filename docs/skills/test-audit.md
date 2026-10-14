@@ -1,5 +1,7 @@
 # test-audit
 
+[Canonical skill](../../plugins/toolkit/skills/test-audit/SKILL.md)
+
 ## What it does
 
 `test-audit`, in the optional `toolkit` plugin, holds tests to one value bar: a

@@ -3,8 +3,8 @@
 // this machine, additively.
 //
 // Three kinds of content:
-//   globals/       a whole instruction document, authored per host (Claude and
-//                  Codex want different things said), installed as one managed
+//   globals/       a whole instruction document, authored per host (each host
+//                  wants different things said), installed as one managed
 //                  block.
 //   rules/         discrete single-source rules fanned out to every host.
 //   output-styles/ whole files for hosts that have a first-class surface for

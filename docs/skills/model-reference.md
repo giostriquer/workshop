@@ -1,5 +1,7 @@
 # model-reference
 
+[Canonical skill](../../plugins/workbench/skills/model-reference/SKILL.md)
+
 ## What it does
 
 `model-reference` is a lookup for the model fleet: a table grading each model on
@@ -25,51 +27,21 @@ dispatch.
 | Which implementation route the work takes | `brainstorming`'s route gate |
 | Handing a defined goal to a fresh session | `handoff-goal` |
 
-## The table
+## Reading the reference
 
-The scores are legacy illustrations without dated calibration, kept to explain
-the axes. Do not route current work from them; the fable-5.1 row has not been
-re-graded. Edit the table when the fleet changes; each new or re-graded row
-needs an operator-supplied calibration: date, task set, method, and observed
-trade-offs. Until then, use the host's available capabilities and the session's
-current model under your standing rules.
+The [table and axis definitions](../../plugins/workbench/skills/model-reference/SKILL.md#the-table)
+live only in the canonical skill. Its scores are legacy illustrations without
+dated calibration, not a basis for current routing. A new or regraded row needs
+an operator-supplied date, task set, method, and observed trade-offs. Until then,
+use available host capabilities and the session's model under standing rules.
 
-Scores are 1-10, higher is better.
-
-| model | cost | intelligence | taste | code | speed |
-|---|---|---|---|---|---|
-| gpt-6-astra | 3 | 10 | 9 | 8.5 | 5 |
-| gpt-6.1-sol | 7 | 9 | 8 | 8 | 6 |
-| gpt-6-luna | 10 | 3 | 3 | 3 | 9 |
-| fable-5.1 | 1 | 9.5 | 9.5 | 9 | 4 |
-| opus-5.5 | 6 | 9.5 | 9.5 | 9.5 | 6 |
-| sonnet-5.5 | 7 | 7.5 | 7.5 | 7.5 | 8 |
-| grok-4.7 | 5 | 7.5 | 7.5 | 7.5 | 7 |
-
-One row per model, graded at the effort you actually run it at.
-
-- **Cost** is subscription-limit burn, not dollars. Higher is cheaper: a 10
-  barely touches the weekly limit.
-- **Speed** is wall-clock turnaround on the same task.
-- **Intelligence** is how hard a problem the model can carry unsupervised.
-- **Taste** covers user-facing surfaces only: UI/UX, copy, API shape, docs,
-  research, audits.
-- **Code** is how correct and well-built the implementation comes out.
-
-**Reading a calibrated table** (only after the rows are verified for your
-fleet):
-
-- Routine work goes to the cheap end: luna for truly mechanical bulk, sol when
-  it still needs judgment.
-- Judgment-heavy, taste-critical, or silent-failure work goes to opus-5.5 by
-  default; fable-5.1 only where the work needs more intelligence than opus-5.5
-  carries.
-- A shipping taste surface needs taste of 7 or more.
-- Speed breaks ties, never quality.
+Cost means subscription-limit burn, speed means turnaround on the same task,
+code means implementation quality, and taste covers user-facing work. Changing
+a model's effort requires recalibration rather than a second score row.
 
 ## The invariants
 
-These hold for any fleet ([decision](../decisions/model-routing-stays-in-harness.md)).
+These hold for any fleet ([decision](../decisions/model-reference.md#routing-stays-inside-the-running-harness-2026-09-17)).
 
 | Invariant | In practice |
 | --- | --- |
@@ -97,6 +69,10 @@ selected explicitly, not inherited:
   gpt-6.1-sol on Codex, both at `xhigh` effort and spawned without the parent's
   history; the host's default model elsewhere.
 
+On Muse both exceptions dispatch the agent's approved scoped definition
+(`workbench/<name>`) with no model override; Muse resolves the definition's
+model pin on its own fleet.
+
 **The table lists models I don't have.**
 
 Expected. Keep the axes, reading notes, and invariants; replace the rows with
@@ -118,7 +94,8 @@ work. Between rows level on that axis, take the faster one.
 
 ## It's working if
 
-- A model choice points at a row and an axis, not a habit.
+- A model choice follows current host availability and standing rules; any
+  score-based comparison has dated calibration.
 - A row that stops matching behavior gets re-graded, not worked around.
 - Output that misses the bar gets rerun a tier up rather than shipped.
 - Negative signal: the skill runs before every dispatch, or produces a

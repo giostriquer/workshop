@@ -1,0 +1,146 @@
+{
+  "system": "workbench",
+  "description": "Provenance manifest for the method skill set: workbench plugin skills and the repo-local writing-skills, derived from obra/superpowers, with every upstream piece's disposition recorded. Consumed by the workbench-drift skill via scripts/drift-check.mjs. See docs/decisions/workbench-system.md.",
+  "upstream": {
+    "repo": "https://github.com/obra/superpowers",
+    "ref": "main",
+    "track": "releases",
+    "tagPattern": "v*",
+    "license": "MIT",
+    "author": "Jesse Vincent (obra)",
+    "watchPaths": [
+      "skills",
+      "hooks"
+    ],
+    "trackingNote": "Drift is measured against upstream's published releases, never the branch tip. Unreleased commits on `ref` are work in progress: they get reported as a count and excluded from review and from mirroring. Set track to \"branch\" only if upstream stops tagging releases.",
+    "lastReviewed": {
+      "commit": "5bf4e78011075bcfc0dc295f0724994cd123ee71",
+      "release": "v6.4.1",
+      "date": "2026-09-24",
+      "note": "Review of v6.3.0 → v6.4.1 completed. Adopted verbatim: upstream's two interpreter-invocation fixes, `bash ./find-polluter.sh` in systematic-debugging and writing-skills' `node ./render-graphs.js` plus its File Organization rule. Not adopted: test-driven-development's whole-suite paragraph, which re-tightens the precedence layer and contradicts the carried focused-checks line; brainstorming's Establish Shared Understanding section, which overlaps the carried purpose/constraints/success-criteria guidance, and its rewritten HARD-GATE and anti-pattern, which tie approval stages to writing-plans (dropped); visual-companion.md, not carried. New upstream skill diagnosing-superpowers recorded as dropped, its transcript method adapted into self-audit. Dropped-piece churn reviewed as FYI with every disposition standing; zero unmapped entries."
+    }
+  },
+  "adaptationFilter": "docs/decisions/workbench-system.md#2-the-adaptation-filter: defang the description; de-pipeline the body; carry only needed references; provenance footer. Applies to every adoption, initial and future. Preserve the targeted wording corrections in docs/decisions/skill-wording-hardening.md; do not reintroduce destructive recovery or repeated authorization.",
+  "nativePieces": [
+    {
+      "name": "audit",
+      "localPath": "plugins/workbench/skills/audit/",
+      "why": "Door A's protocol from the flow model (operator-approved 2026-08-11): ask the workload size (quick look inline / deep audit via claim-check / team sweep via qa-sweep), run the confirm-the-flags exchange when the audit flagged uncertainty, route the exit by shape (feature/refactor → brainstorming; confirmed fix → route pick). These behaviors exist in no upstream or toolkit piece.",
+      "status": "unproven: born from the whiteboard, not lived use; expect tuning after real runs. Not tracked for upstream drift (no upstream lineage)."
+    },
+    {
+      "name": "using-workbench",
+      "localPath": "plugins/workbench/skills/using-workbench/",
+      "why": "Orientation reference (operator-approved 2026-08-11): the flow's connective tissue must be answerable on demand and ship inside the payload, without a hook or dispatcher. The anti-using-superpowers explains on request and never enforces at session start. It pairs with the rules-layer doctrine snippet (docs/workbench-doctrine.md), which is deliberately not part of the plugin.",
+      "status": "native; reference-only. Not tracked for upstream drift (no upstream lineage)."
+    }
+  ],
+  "pieces": [
+    {
+      "upstreamPath": "skills/brainstorming/",
+      "localPath": "plugins/workbench/skills/brainstorming/",
+      "disposition": "adopted",
+      "why": "Socratic requirements/design exploration before creative work: on invitation, not compulsion.",
+      "adaptations": "Description rewritten from 'You MUST use this before any creative work' to an honest conditional trigger; pipeline hand-offs (writing-plans, plan mode coupling) scrubbed. v6.3.0 review: the three-path classifier (spike / bounded / architectural), the one-way ratchet, the red-flags table, and the per-path checklists were adopted; they scale ceremony down, which is the opposite of pressure tuning. Adapted on the way in: every path terminates at the workbench route gate instead of writing-plans (a dropped piece), a spike terminates at a recommendation with no route pick, 'your human partner' rewritten to 'the user', and the After-the-Design section scoped to the architectural path. Ignored: the upstream description's 'You MUST' framing, and visual-companion.md; we carry SKILL.md only. Current wording refinements are recorded in docs/decisions/skill-wording-hardening.md and supersede conflicting historical wording here; preserve the original procedures and supporting examples."
+    },
+    {
+      "upstreamPath": "skills/test-driven-development/",
+      "localPath": "plugins/workbench/skills/test-driven-development/",
+      "disposition": "adopted",
+      "why": "RED→GREEN→REFACTOR discipline when implementing features and bugfixes.",
+      "adaptations": "Description defanged; references to the subagent/plan pipeline scrubbed. Precedence layer added 2026-08-12 (operator Q13): repo/user conventions override conflicting steps, announced; TDD is the default only where the repo is silent: see docs/decisions/tdd-default-not-mandate.md. The anti-rationalization armor is deliberate content; upstream drift must not re-tighten precedence. Current wording refinements are recorded in docs/decisions/skill-wording-hardening.md and supersede conflicting historical wording here; preserve the original procedures and supporting examples. writing-good-tests.md adds a Choose the Test Shape section (2026-09-17, docs/decisions/test-shape-and-mutation-review.md); upstream drift must not remove it. Preserve mutation isolation, workspace preservation, test selection, and the pre-commit artifact check (2026-09-21, docs/decisions/mutation-artifact-boundary.md)."
+    },
+    {
+      "upstreamPath": "skills/systematic-debugging/",
+      "localPath": "plugins/workbench/skills/systematic-debugging/",
+      "disposition": "adopted",
+      "why": "Root-cause discipline before proposing fixes.",
+      "adaptations": "Description defanged; cross-references to dropped pieces scrubbed. Current wording refinements are recorded in docs/decisions/skill-wording-hardening.md and supersede conflicting historical wording here; preserve the original procedures and supporting examples. v6.4.1 review: root-cause-tracing.md's `bash ./find-polluter.sh` invocation adopted verbatim, because the script ships without its executable bit and the bare path exited 126; find-polluter.sh stays byte-identical to upstream."
+    },
+    {
+      "upstreamPath": "skills/verification-before-completion/",
+      "localPath": "plugins/workbench/skills/verification-before-completion/",
+      "disposition": "adopted",
+      "why": "Evidence before completion claims: same ethos as toolkit's empirical-proof.",
+      "adaptations": "Description defanged; where the body suggests dispatching reviewers, redirected to code-quality-review / empirical-proof. Current wording refinements are recorded in docs/decisions/skill-wording-hardening.md and supersede conflicting historical wording here; preserve the original procedures and supporting examples. Local addition (2026-09-24), keep through upstream reviews: an \"App or UI state\" row in Common Failures and a matching Key Patterns entry. A claim about what an app shows says it was seen in the running build and how, or was not checked in the running app, naming the evidence it rests on and the user's step to see it (rebuild, reinstall, relaunch, restart). A label, never a gate. See docs/decisions/empirical-proof.md. Local addition (2026-10-04): retain the measured-performance comparison row and the independent evidence floor, including completed correct work, error counts, comparable repeated runs and spread, uncertainty, and the requested one-run ballpark case. See docs/decisions/empirical-proof.md."
+    },
+    {
+      "upstreamPath": "skills/writing-skills/",
+      "localPath": ".claude/skills/writing-skills/",
+      "disposition": "adopted",
+      "why": "The RED→GREEN skill-authoring loop; the operator authors skills constantly. Repo-local, shipped in no plugin.",
+      "adaptations": "Retains the upstream authoring procedure, examples, discovery guidance, and baseline/change/retest loop. Local adaptations preserve existing code, judge outcomes and misapplication as well as compliance, label sample limits, and allow related changes to be tested together. Review upstream changes through the adaptation filter; do not re-mirror away these corrections. See docs/decisions/skill-wording-hardening.md. v6.4.1 review: the interpreter-invocation fix adopted verbatim, `node ./render-graphs.js` and the File Organization rule that skill text runs bundled scripts through their interpreter, never by bare path.",
+      "localDeltas": [
+        "Description includes auditing existing skills. Outcome-oriented evaluation and safe recovery are local adaptations to retain.",
+        "Preserve the 2026-10-04 measured-evaluation contract: attempted tasks and observable outcomes, comparable contexts, trial/error/missing counts, variation, and bounded reliability claims. See docs/decisions/skill-wording-hardening.md."
+      ]
+    },
+    {
+      "upstreamPath": "skills/receiving-code-review/",
+      "localPath": "plugins/workbench/skills/receiving-code-review/",
+      "disposition": "adopted",
+      "why": "Technical rigor on review feedback: verify, never performatively agree. Complements get-pr-comments and the adversarial-review flow. Operator call 2026-08-11.",
+      "adaptations": "Description defanged; cross-references to requesting-code-review redirected to code-quality-review. Current wording refinements are recorded in docs/decisions/skill-wording-hardening.md and supersede conflicting historical wording here; preserve the original procedures and supporting examples."
+    },
+    {
+      "upstreamPath": "skills/using-superpowers/",
+      "localPath": null,
+      "disposition": "dropped",
+      "why": "The enforcement dispatcher ('1% chance → MUST', red-flags table): the pressure system this fork exists to remove. Nothing replaces it; defanged descriptions are the entire activation surface."
+    },
+    {
+      "upstreamPath": "hooks/",
+      "localPath": null,
+      "disposition": "dropped",
+      "why": "SessionStart injection (+ Cursor variant, cmd shim): the pressure delivery mechanism. method ships no hooks."
+    },
+    {
+      "upstreamPath": "skills/subagent-driven-development/",
+      "localPath": null,
+      "disposition": "dropped",
+      "why": "Operator process is direct main-session implementation with an end-of-task adversarial review, not per-task subagent dispatch."
+    },
+    {
+      "upstreamPath": "skills/executing-plans/",
+      "localPath": null,
+      "disposition": "dropped",
+      "why": "Plan-execution machinery of the spec→plan→subagent pipeline."
+    },
+    {
+      "upstreamPath": "skills/requesting-code-review/",
+      "localPath": null,
+      "disposition": "dropped",
+      "why": "Replaced by toolkit's code-quality-review skill and the reviewer agents."
+    },
+    {
+      "upstreamPath": "skills/dispatching-parallel-agents/",
+      "localPath": null,
+      "disposition": "dropped",
+      "why": "Parallel dispatch is native harness behavior when wanted. Operator call 2026-08-11."
+    },
+    {
+      "upstreamPath": "skills/writing-plans/",
+      "localPath": null,
+      "disposition": "dropped",
+      "why": "Plans are written on request without a skill; the trigger otherwise feeds the pipeline. Operator call 2026-08-11."
+    },
+    {
+      "upstreamPath": "skills/using-git-worktrees/",
+      "localPath": null,
+      "disposition": "dropped",
+      "why": "Primary host has native worktree support. Operator call 2026-08-11."
+    },
+    {
+      "upstreamPath": "skills/finishing-a-development-branch/",
+      "localPath": null,
+      "disposition": "dropped",
+      "why": "Superseded by file-pr (file-and-tend) and the push skill."
+    },
+    {
+      "upstreamPath": "skills/diagnosing-superpowers/",
+      "localPath": null,
+      "disposition": "dropped",
+      "why": "Session diagnosis feeding superpowers bug reports: an intake interview, seven parallel analysts, a scrubbed-bundle export and a GitHub issue pipeline, under a rule that it never diagnoses a skill. Its transcript method was borrowed into workbench self-audit instead (2026-09-24): read the on-disk transcript, pre-compaction history and subagent transcripts included; discover the host's format at run time; cite path:line or drop the finding; read huge JSONL records by line number and small fields. self-audit proposes changes, so the no-diagnosis rule stayed behind with the pipeline. See docs/decisions/self-audit.md."
+    }
+  ]
+}

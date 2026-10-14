@@ -1,5 +1,7 @@
 # receiving-code-review
 
+[Canonical skill](../../plugins/workbench/skills/receiving-code-review/SKILL.md)
+
 ## What it does
 
 `receiving-code-review` governs how you act on review feedback: "Verify before

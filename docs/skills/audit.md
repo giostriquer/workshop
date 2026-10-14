@@ -1,5 +1,7 @@
 # audit
 
+[Canonical skill](../../plugins/workbench/skills/audit/SKILL.md)
+
 ## What it does
 
 `audit` turns "something to check" into a sized, engine-run,

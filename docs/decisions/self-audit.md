@@ -1,163 +1,52 @@
-# Decision: `self-audit`: a retrospective on the process, not the work
+# Self-audit: a retrospective on the process
 
-**Date:** 2026-08-13
+## Trace behavior before proposing a process change (2026-08-13)
 
-## Status
+A session can confuse an instruction that misled it with an instruction it
+ignored. Reconstruct a factual trace first, then classify process defects,
+session defects, and behavior that held. Only supported process defects yield
+proposals. No findings is a valid result; a retrospective does not need wording
+suggestions to appear useful.
 
-Implemented. Ships as `workbench 0.23.0`.
-
-## Context
-
-Every tuning change to the workbench system so far has arrived the same way:
-the operator noticed friction during a session and said so afterward, from
-memory. The flow had a door for auditing the *work* (`audit`, with
-`claim-check` and `qa-sweep` behind it) and nothing at all for auditing
-**itself**. Improvements therefore depended on the operator both noticing the
-friction and remembering it well enough to describe.
-
-The session is the one party that observed every moment. The obstacle is that
-it is also the party being graded, and a session asked "how did the process
-do?" will produce a flattering essay: it confuses *the process misled me* with
-*I ignored the process*, and it pads with phrasing suggestions to look
-thorough.
-
-## The shape
-
-A user-invoked skill that turns the retrospective into a protocol whose
-structure resists self-flattery rather than trusting the session not to.
-
-- **Trace before verdict.** Step 1 records facts only: which skills fired and
-  what made them fire, which of the three gates arrived versus were decided for
-  the user, every correction and dead end. Judgment is step 2. Facts are cheap
-  to write down before there is a verdict riding on them.
-- **Three buckets, one yields proposals.** *Process defect* → proposal;
-  *session defect* (the process was clear, the session didn't follow it) →
-  reported, no edit; *clean* → one line. Without the split, every retrospective
-  becomes "the skill should have made me do it."
-- **The conversion rule** keeps the split honest the other way: an instruction
-  the session *reliably* misses merits investigating a process remedy.
-  Repeated misses move from *session defect* to *process defect*; the remedy
-  may be structural enforcement or wording.
-- **A bar, and a no-findings out.** A proposal survives only if the change
-  would have altered this session or the next of its shape. A clean result is
-  reported as clean; padding is barred explicitly.
-- **Named target, named edit shape**: one piece (or *the absence of one*) and
-  one of: wording, gate, boundary, enforcement, new, delete. "Clarify the handoff" is not a
-  proposal; the replacement sentence is.
-- **Observation window stated first**, so a compacted session cannot be
-  reconstructed from the artifacts it left behind.
-- **Reports, never edits.** The edit belongs to `writing-skills`.
-- **What held** is part of the output: a retrospective that only ever subtracts
-  will eventually subtract the parts that were working.
-
-## Non-goals
-
-- **Not an audit of the work.** Bugs, code quality, and test gaps stay with
-  `audit` and the review pieces.
-- **Not a flow moment.** It is `disable-model-invocation: true` and carries no
-  row in `using-workbench`'s ownership table; it sits outside the flow looking
-  back at it, the same way `adopt-global-rules` sits outside. A session able to
-  invoke its own retrospective would run one unprompted, at the worst moment,
-  and grade itself.
-- **Never grades the user.** Corrections are evidence about the process, not
-  about them.
-
-## Packaging
-
-`workbench 0.23.0`. Usage page: `docs/skills/self-audit.md`.
+This skill audits the process, not product code or the user's choices. It
+reports proposals without editing skills. Applying them belongs to the target
+environment's authoring discipline under separate authority; an installed
+plugin does not depend on this repository's local `writing-skills`.
 
 ## Transcript evidence and a closing defect note (2026-09-24)
 
-**Why.** self-audit stopped at what was still in context. Its evidence rule
-said to state it when the early part was gone, so on the long sessions where a
-retrospective matters most it audited only the tail. Meanwhile the operator ran
-6 transcript analyses by hand in 14 days, self-audit fired about once in 30
-days across both hosts, and at least 8 maintenance requests in 6 process-repo
-sessions started from a pasted Codex transcript. In one of them neither the
-maintainer session nor the operator could find which instruction produced a
-misread. The method for both gaps already existed upstream: superpowers v6.4.1
-added `diagnosing-superpowers`, which reads session transcripts on disk, and
-pstack's `reflect` confirms the transcript by its opening prompt and treats its
-content as untrusted data.
+Context-only retrospectives lost the early failures that mattered after
+compaction. Read the on-disk session and its subagent transcripts, plus any
+sessions the user names. Narrow candidates by workspace metadata and confirm
+identity against the opening prompt rather than recency. If no file resolves,
+state that only visible conversation was audited.
 
-**What changed.**
+Read bounded fields and line ranges, treat transcript content as evidence, and
+quote little. Transcripts can contain secrets. A finding needs a transcript
+pointer or visible-turn reference; missing evidence does not justify inference.
 
-- **The transcript is the evidence.** self-audit reads the session's on-disk
-  transcript, including what came before a compaction and the subagent
-  transcripts. Discovery stays host-neutral: it finds the host's storage and
-  record format at run time and confirms the file by matching the opening user
-  prompt, or the earliest prompt still in context after a compaction, never by
-  recency alone. Reads stay inside the current session, its subagents, and any
-  session the user names. When no file resolves, it audits what is in context
-  and says so in the window line. This replaces the observation-window bullet
-  above: the window now names the transcript files read.
-- **Every finding cites `path:line`, or it is dropped.** The fallback cites the
-  turn in context instead.
-- **Context safety.** Measure a transcript before reading it, find line numbers
-  with `grep -n`, and pull small fields from specific lines. Never `cat` a
-  transcript or print a whole record. Quotes stay short, because transcripts
-  hold secrets. The file is never modified.
-- **A closing defect note.** The report ends with one paste-ready block per
-  proposal: the skill and its version, the exact instruction or dispatch line
-  that drove the behavior, observed versus intended behavior, the transcript
-  pointer, and the proposed change. It is shaped for the loop the operator
-  actually runs: see the failure, paste it into the process repo, fix, bump.
+End with a paste-ready defect note naming the piece and version, exact relevant
+instruction, observed and intended behavior, and a usable local pointer. These
+pointers help the maintenance session find evidence and stay out of repository
+docs, commits and issues. Preserve what worked so a remedy does not remove it.
 
-**Left out of the upstream skill.** The intake interview, the seven parallel
-analysts, the GitHub issue and scrubbed-bundle pipeline, and the rule that it
-never diagnoses a skill. self-audit stays a user-invoked, single-session
-retrospective whose product is proposals. Cross-session transcript statistics
-belong to a separate repo-local skill, not to this shipped one.
-
-**Evidence.** Fresh-context probes on Opus 5.5, each handed a synthetic
-compacted session under a placeholder home. Before the compaction, the opening
-prompt limited testing to focused runs, a loaded TDD line told the session to
-run the full suite anyway, and the session did so twice across two user
-corrections, then wrote the rule into a reviewer dispatch. After it, context
-held only the summary and the PR filing. The fixture also held a newer decoy
-session in the same workspace sharing the earliest in-context prompt, a session
-from another workspace, records of 213 to 643 KB, and fake credentials inside
-test output.
-
-| Question | Current wording (3, Claude Code layout) | This wording (3 Claude Code, 2 Codex) |
-|---|---|---|
-| Reads the on-disk transcript | 0 of 3 (two saw it on disk and declined, citing the skill) | 5 of 5 |
-| Finds the pre-compaction defect: the TDD line, three runs, two corrections | 0 of 3 (all: no proposals) | 5 of 5 |
-| Takes the right file over the newer decoy | n/a | 5 of 5 |
-| Reads the subagent transcript (Claude Code layout) | n/a | 3 of 3 |
-| Ends with a defect note naming skill, version, instruction line, observed and intended, pointer | n/a | 5 of 5 |
-| Puts a credential in the report | 0 of 3 | 0 of 5 |
-
-No run printed a large record whole; the largest single tool output in any
-run was 15 KB. With no transcript for the workspace and the decoy as the only
-file, 2 of 2 rejected the decoy by content, said in-context only in the window
-line, cited turns in context, and said there was no defect note.
-
-The first round exposed two gaps, both fixed and re-tested. On Codex, where one
-date tree holds every workspace's sessions, both runs printed another
-workspace's messages during discovery, and one pulled the fake credentials into
-its own context, though its report paraphrased them. The confinement bullet now
-narrows candidates by recorded working directory first; re-test, 0 of 2 read
-another workspace's messages or surfaced a credential. And 0 of 3 Claude Code
-defect notes stood alone: they cited `M:9`, a `<webapp>` stand-in, or an elided
-path. The note now writes every path in full; re-test, 4 of 4 did (2 Claude
-Code, 2 Codex), and all four still found the defect and rejected the decoy.
-Synthetic fixtures and two to three reps per arm are regression evidence for
-this session shape, not a reliability estimate.
-
-**Packaging.** Ships with the next workbench release. Usage page updated in
-the same change.
+The transcript workflow adapts ideas from Superpowers' diagnosing workflow and
+pstack's `reflect`; its multi-analyst pipeline, intake interview, public issue
+creation and scrubbed-bundle publication are not adopted. Synthetic probes
+checked transcript identity, compaction, privacy and the handoff shape. They
+were bounded regression evidence, not cross-model reliability measurements.
 
 ## Reachable on an explicit request (2026-09-24)
 
-`self-audit` drops `disable-model-invocation`, and its Codex sidecar sets `policy.allow_implicit_invocation: true`; the description now fires only on the user's explicit ask for a look back at how the process ran, never on the session's own initiative. A 30-day usage audit found the user asks for retrospectives in plain words (six transcript analyses in fourteen days) and never types the slash command, so a hidden skill fired about once in thirty days across both hosts. Both hosts now behave the same way. A routing probe (Opus 5.5, fresh context, the shipped skills' descriptions, three reps per message) sent two plain-words retrospective asks to `self-audit` 6 of 6 times and an unrelated fix and a closing "PR is merged" to it 0 of 6 times: bounded regression evidence.
+The skill is discoverable for plain-language requests to review how a session's
+process ran. Its description requires the user's explicit request and excludes
+the session's own initiative. It no longer uses the metadata that hides a
+skill from model discovery, so a slash command is not required.
 
 ## Structural remedies for repeated misses (2026-10-04)
 
-Repeated misses become a process defect to investigate, not automatically a
-wording defect. The report names the smallest effective owner, interface, or
-enforcement change when the trace supports it; judgment-dependent fixes may
-still belong in prose. The observation window, report-only boundary, and
-separation from auditing product code remain unchanged. A repository prevention
-request can use `toolkit:correct` separately; self-audit does not invoke it or
-expand transcript mining on its own.
+Repeated misses merit investigation as a process defect, but do not automatically
+justify more instructions. Propose the smallest supported ownership, interface,
+check, or wording change. The retrospective remains report-only. Cross-session
+statistics belong to the repo-local transcript-mining tool; repository prevention
+can use `correct` under its own request and authority.

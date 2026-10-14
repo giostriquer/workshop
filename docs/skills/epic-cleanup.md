@@ -1,5 +1,7 @@
 # epic-cleanup
 
+[Canonical skill](../../plugins/workbench/skills/epic-cleanup/SKILL.md)
+
 ## What it does
 
 Cleans up on request, in one of two modes.

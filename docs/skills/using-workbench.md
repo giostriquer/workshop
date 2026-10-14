@@ -1,5 +1,7 @@
 # using-workbench
 
+[Canonical skill](../../plugins/workbench/skills/using-workbench/SKILL.md)
+
 ## What it does
 
 `using-workbench` is the orientation map for the workbench system: how work
@@ -7,7 +9,7 @@ enters, who owns each moment, which skill to invoke, and where working material
 and worktrees go. It runs no loop and reaches no verdict: "**Orientation, not
 compulsion, except for two standing gates.**"
 
-Those two gates are the only parts that bind. `verification-before-completion`
+Those two completion requirements apply by default. `verification-before-completion`
 fires at every done/fixed/passing claim. The comment trim (`trim-comments`,
 run by the `comment-trimmer` agent) and then the adversarial review
 (`code-quality-review`, plus `test-quality-review` when the diff changes
@@ -109,7 +111,10 @@ body into the spawn message, under `You are the <name>. Your contract:` and
 before the run's inputs. A follow-up to that agent carries only its own next
 job. On Claude Code the registered agent carries its contract and model, so the
 parent passes no model and pastes nothing
-([decision](../decisions/plugin-surfaces.md)).
+([decision](../decisions/plugin-surfaces.md)). Muse works the Claude
+Code way: it registers each agent as a scoped definition (`workbench/<name>`)
+once you approve it with `muse plugins approve workbench`, and the parent
+dispatches that id with no model and nothing pasted.
 
 ## Common questions
 
@@ -125,9 +130,9 @@ adversarial review. Both stop only for your explicit decline or a superseding
 repo process
 ([decision](../decisions/code-quality-review.md)).
 
-**Do dispatched subagents inherit these conventions?**
+**Do dispatched subagents need to load this orientation?**
 
-No; they skip the orientation. The dispatching session puts the scope
+No; they skip this skill and follow their dispatch and applicable instructions. The dispatching session puts the scope
 folder's path in each agent's contract, and names `file-pr` in any dispatch
 that will open or push to a PR.
 

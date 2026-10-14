@@ -1,34 +1,18 @@
-# Workbench doctrine: the rules-layer snippet
+# Optional workflow pointer for your instructions
 
-The one piece of workbench that lives *outside* the plugin: a short, neutral
-standing rule for the operator's own rules layer (global `~/.claude/rules/` /
-`CLAUDE.md`, distributed by toolkit:adopt-global-rules, or pasted into a
-project's `CLAUDE.md`). It makes a fresh session know the flow exists; the
-`using-workbench` skill carries the detail on demand. This is deliberately informational,
-with no MUST-language or red-flags tables; that layer is what workbench removed.
-
-Copy from here:
+Use this short pointer when you want an instruction file to direct sessions to
+Workbench. The installed `using-workbench` skill owns the current flow and
+completion requirements; copying the full procedure here would create another
+version to maintain.
 
 ```markdown
-# Workbench flow
+# Workbench
 
-My environments follow the **workbench** flow (workbench plugin):
-
-- **Start:** investigations go through `audit` using my requested scope; unresolved feature
-  and refactor design goes through `brainstorming`, carrying my route choice:
-  direct / plan / handoff-goal. Implementation agency (in-session vs dispatched)
-  is mine and the harness's; hand the implementer the plan or goal if one exists.
-- **Finish:** while finishing the implementation: verify with evidence
-  (`verification-before-completion`; focused `empirical-proof` for behavioral
-  changes, reusing adequate current evidence), a comment trim (`trim-comments`), then an adversarial review
-  at readiness on the trimmed diff (`code-quality-review`, plus
-  `test-quality-review` when production logic or tests changed), then outline
-  what was done and ask me: PR or merge?
-  Existing repo/user authority carries forward. Re-review only material new risk; do not repeat unchanged checks or decisions.
-- **Flow artifacts are disposable**: plans, audit reports, design docs live
-  under `.workbench/<work_scope>/` (or `.tmp/workbench/<work_scope>/`) and last
-  only for the work; promote to durable only when I ask or the repo has an
-  established pattern.
-- Details on demand via the `using-workbench` skill. These are defaults, not
-  gates I haven't asked for, never force process.
+Use the installed `using-workbench` skill for workflow orientation before
+coding, auditing, planning, debugging, or delivery. Follow the repository's
+process and carry existing scope, choices, and authorization forward.
 ```
+
+For Workshop's complete host-specific global pack, use
+[adopt-global-rules](skills/adopt-global-rules.md). This optional snippet is not
+that pack's source. For a reading overview, see the [workflow map](workbench-flow.md).

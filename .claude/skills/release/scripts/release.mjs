@@ -4,7 +4,7 @@
 //   plan                    per marketplace plugin: released (origin/main) and working
 //                           versions, changes since the commit that set the released
 //                           version, and a status: current, needs-bump, bumped, invalid, new
-//   bump <plugin> <x.y.z>   writes the version into the plugin's four manifests and its
+//   bump <plugin> <x.y.z>   writes the version into the plugin's host manifests and its
 //                           marketplace entry, editing only the version text
 //   refresh                 updates the marketplace and each user-scope Workshop plugin in
 //                           Claude Code and Codex; exits 1 when a host command fails
@@ -20,7 +20,7 @@ import { join } from "node:path";
 
 const RELEASED = "origin/main";
 const MARKETPLACE = ".claude-plugin/marketplace.json";
-const MANIFESTS = [".claude-plugin/plugin.json", ".codex-plugin/plugin.json", ".cursor-plugin/plugin.json", "plugin.json"];
+const MANIFESTS = [".claude-plugin/plugin.json", ".codex-plugin/plugin.json", ".cursor-plugin/plugin.json", ".muse-plugin/plugin.json", "plugin.json"];
 const CHANGE_LOG = "docs/change-log.md";
 // Files a host or the OS adds to an installed copy.
 const HOST_FILES = new Set([".in_use", ".DS_Store"]);

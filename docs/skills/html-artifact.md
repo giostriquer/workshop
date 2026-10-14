@@ -1,5 +1,7 @@
 # html-artifact
 
+[Canonical skill](../../plugins/toolkit/skills/html-artifact/SKILL.md)
+
 Creates or revises a shareable HTML artifact: a report, plan, architecture
 explanation, or interactive product target. It chooses the composition and
 visual language for what the reader needs to understand, decide, or try.
@@ -78,7 +80,3 @@ A colleague can find the main decision, follow its evidence, and understand the
 changed mechanism or product behavior without reconstructing the source
 conversation. The page is readable at its delivery size, its controls work as
 described, and visual polish has not changed the facts.
-
-`html-artifact` ships in the optional **toolkit** plugin. Its
-[canonical skill](../../plugins/toolkit/skills/html-artifact/SKILL.md) is the
-authority for behavior.

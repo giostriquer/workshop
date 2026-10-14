@@ -11,7 +11,7 @@ import test from 'node:test';
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 // Everything the validator reads, plus .gitignore, which decides what `git add -A` tracks.
-const inputs = ['scripts/validate-native-plugin.sh', 'plugins', '.claude-plugin', '.agents/plugins', '.cursor-plugin', '.gitignore'];
+const inputs = ['scripts/validate-native-plugin.sh', 'plugins', '.claude-plugin', '.agents/plugins', '.cursor-plugin', '.claude/skills', '.codex/skills', '.gitignore'];
 const EM_DASH = String.fromCharCode(0x2014); // built, so this file never contains one
 const OK = 'native plugin validation ok';
 
@@ -154,4 +154,65 @@ test('disable-model-invocation must be spelled literally true or false', async (
         new RegExp(`disable-model-invocation must be the literal true or false, not '${spelling}'`));
     });
   }
+});
+
+const museManifest = 'plugins/workbench/.muse-plugin/plugin.json';
+
+test('a missing Muse manifest fails', (t) => {
+  const copy = copyRepo(t);
+  unlinkSync(copy.file(museManifest));
+  assertFails(copy.validate(), /missing JSON file: plugins\/workbench\/\.muse-plugin\/plugin\.json/);
+});
+
+test('the Muse manifest is held to the plugin version and skill enumeration', async (t) => {
+  const copy = copyRepo(t);
+  const doc = JSON.parse(copy.read(museManifest));
+  const mutate = (fn) => {
+    const next = structuredClone(doc);
+    fn(next);
+    copy.write(museManifest, JSON.stringify(next, null, 2) + '\n');
+  };
+  for (const [label, fn, pattern] of [
+    ['a wrong plugin name fails', (d) => { d.name = 'acme'; }, /Muse workbench manifest name must be workbench/],
+    ['an unsupported schema version fails', (d) => { d.schemaVersion = 2; }, /Muse workbench manifest schemaVersion must be 1/],
+    ['a non-native source fails', (d) => { d.compat.source = 'acme'; }, /Muse workbench manifest compat.source must be native/],
+    ['a wrong manifest directory fails', (d) => { d.compat.manifestDir = '.acme-plugin'; }, /Muse workbench manifest compat.manifestDir must be .muse-plugin/],
+    ['a drifted version fails', (d) => { d.version = '0.0.0'; }, /Muse workbench manifest version must match Claude manifest/],
+    ['a skill dropped from the enumeration fails', (d) => { d.capabilities.skills.shift(); }, /Muse workbench skills file list mismatch/],
+    ['a skill path off the canonical form fails', (d) => { d.capabilities.skills[0].path = 'skills/audit/index.md'; }, /Muse workbench skill audit path must be skills\/audit\/SKILL\.md/],
+    ['an unsupported capability family fails', (d) => { d.capabilities.agents = []; }, /Muse workbench manifest declares unsupported capability family agents/],
+    ['a non-empty unshipped family fails', (d) => { d.capabilities.hooks = [{ id: 'x' }]; }, /Muse workbench manifest capabilities\.hooks must be an empty array/],
+  ]) {
+    await t.test(label, () => {
+      mutate(fn);
+      assertFails(copy.validate(), pattern);
+    });
+  }
+});
+
+test('a root Muse marketplace file fails: Muse does not probe it', (t) => {
+  const copy = copyRepo(t, { before: (c) => c.write('.muse-plugin/marketplace.json', '{}\n') });
+  assertFails(copy.validate(), /\.muse-plugin\/marketplace\.json must not exist/);
+});
+
+test('a drifted repo-local mirror fails: Muse runs the .codex copy', (t) => {
+  const copy = copyRepo(t);
+  copy.write('.codex/skills/push/SKILL.md', copy.read('.codex/skills/push/SKILL.md') + '\ndrift\n');
+  assertFails(copy.validate(), /repo-local mirror drift: \.codex\/skills\/push differs from canonical \.claude\/skills\/push/);
+});
+
+
+test('every repo-local skill needs its complete Codex mirror', (t) => {
+  const copy = copyRepo(t);
+  copy.write('.claude/skills/acme-guide/SKILL.md', '---\nname: acme-guide\ndescription: Use when checking a sample.\n---\n');
+  assertFails(copy.validate(), /repo-local mirror drift: \.codex\/skills\/acme-guide/);
+
+  copy.write('.codex/skills/acme-guide/SKILL.md', copy.read('.claude/skills/acme-guide/SKILL.md'));
+  copy.write('.claude/skills/acme-guide/references/example.md', 'Supporting reference\n');
+  assertFails(copy.validate(), /repo-local mirror drift: \.codex\/skills\/acme-guide/);
+
+  copy.write('.codex/skills/acme-guide/references/example.md', 'Supporting reference\n');
+  assertPasses(copy.validate());
+  copy.write('.codex/skills/acme-guide/references/example.md', 'Outdated reference\n');
+  assertFails(copy.validate(), /repo-local mirror drift: \.codex\/skills\/acme-guide/);
 });

@@ -1,5 +1,7 @@
 # grilling
 
+[Canonical skill](../../plugins/toolkit/skills/grilling/SKILL.md)
+
 ## What it does
 
 `grilling` is the interview loop behind [grill-me](grill-me.md) and the
@@ -76,7 +78,3 @@ A primitive, kept in one place so every skill that needs an interview uses the
 same one. [grill-me](grill-me.md) is its user-invoked front door, and
 [improve-codebase-architecture](improve-codebase-architecture.md) runs it once
 you have picked a candidate.
-
-`grilling` ships in the optional **toolkit** plugin. Its
-[canonical skill](../../plugins/toolkit/skills/grilling/SKILL.md) is the
-authority for behavior.

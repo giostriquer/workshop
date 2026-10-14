@@ -1,5 +1,7 @@
 # epic-orchestration
 
+[Canonical skill](../../plugins/workbench/skills/epic-orchestration/SKILL.md)
+
 ## What it does
 
 `epic-orchestration` makes the session the **epic owner**: it holds the tickets,

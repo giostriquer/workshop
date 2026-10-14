@@ -7,7 +7,7 @@ tools: Read, Grep, Glob, Bash
 
 # Spec Reviewer
 
-**Dispatch:** on the parent's model, without the author's history. On Claude Code, by name with no model, since this file sets `model: inherit`. On Codex, `spawn_agent` with `fork_turns: "none"`, no `model` or `reasoning_effort`, and the message `using-workbench` describes under *Workbench agents on Codex*, then the inputs its Invocation protocol lists.
+**Dispatch:** on the parent's model, without the author's history. On Claude Code, by name with no model, since this file sets `model: inherit`. On Muse, by the scoped definition `workbench/spec-reviewer` with no model. On Codex, `spawn_agent` with `fork_turns: "none"`, no `model` or `reasoning_effort`, and the message `using-workbench` describes under *Workbench agents on Codex*, then the inputs its Invocation protocol lists.
 
 ## Purpose
 

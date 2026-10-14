@@ -1,5 +1,7 @@
 # file-pr
 
+[Canonical skill](../../plugins/workbench/skills/file-pr/SKILL.md)
+
 ## What it does
 
 `file-pr` turns a finished branch into a pull request, then tends it until it

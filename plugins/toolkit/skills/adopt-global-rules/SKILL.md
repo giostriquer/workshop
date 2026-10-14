@@ -41,10 +41,19 @@ Where each lands:
 claude   globals/CLAUDE.md → ~/.claude/CLAUDE.md    rules → ~/.claude/rules/<id>.md
                                                     styles → ~/.claude/output-styles/<id>.md
 codex    globals/AGENTS.md → ~/.codex/AGENTS.md     rules → ~/.codex/AGENTS.md
+muse     globals/MUSE.md   → ~/.config/muse/AGENTS.md
+                                                    rules → ~/.config/muse/AGENTS.md
 ```
 
 Codex has no rules directory and no output styles, so everything it gets lands
-in `AGENTS.md` as separate blocks.
+in `AGENTS.md` as separate blocks. Muse is the same shape: no rules directory
+and no output-style surface, so its document and rules land as blocks in its
+user `AGENTS.md`. That target assumes the default XDG config home
+(`~/.config`); a machine that sets `XDG_CONFIG_HOME` elsewhere keeps its Muse
+configuration there instead, and the muse host will not find it. Muse also
+reads `~/.claude/CLAUDE.md`, so the claude host's document reaches Muse
+sessions too, but its rules directory does not: the muse host is what carries
+the rules there.
 
 ## Run the plan
 

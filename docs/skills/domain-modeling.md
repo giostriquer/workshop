@@ -1,5 +1,7 @@
 # domain-modeling
 
+[Canonical skill](../../plugins/toolkit/skills/domain-modeling/SKILL.md)
+
 ## What it does
 
 `domain-modeling` builds and sharpens a project's domain language while you
@@ -76,7 +78,3 @@ vocabulary.
 A model-invoked reference that usually runs underneath another skill. Its
 sibling [codebase-design](codebase-design.md) owns the module's shape; this
 one owns the domain's words.
-
-`domain-modeling` ships in the optional **toolkit** plugin. Its
-[canonical skill](../../plugins/toolkit/skills/domain-modeling/SKILL.md) is the
-authority for behavior.

@@ -1,5 +1,7 @@
 # test-driven-development
 
+[Canonical skill](../../plugins/workbench/skills/test-driven-development/SKILL.md)
+
 ## What it does
 
 This skill governs the order of code and tests while you implement a feature or bugfix: write the failing test, watch it fail, write the minimal code that passes, refactor. Its core principle: **"A regression test must fail for the intended defect. Characterization of correct existing behavior may pass immediately."**

@@ -1,5 +1,7 @@
 # empirical-proof
 
+[Canonical skill](../../plugins/workbench/skills/empirical-proof/SKILL.md)
+
 ## What it does
 
 `empirical-proof` checks a finished change through the way its user or consumer
@@ -7,10 +9,6 @@ experiences it. It covers web, desktop, and mobile apps, CLIs and TUIs, APIs,
 MCP tools, libraries, and generated artifacts. The skill guides what to test
 and how to choose a route; it does not prescribe a harness, a health endpoint,
 a scenario count, or a team for every proof.
-
-Modern models can operate software, inspect screenshots, follow a flow across
-tools, and read back its effects. The session uses those capabilities when
-available, alongside existing project automation and documented run paths.
 
 ## When to reach for it
 
@@ -85,12 +83,14 @@ Yes. Use available native app/computer tools or existing project automation.
 Mobile checks can use a simulator, emulator, or device. State which platform
 and build were exercised; a web preview does not prove native integration.
 
-**What differs between Codex and Claude Code?**
+**What differs between Codex, Claude Code, and Muse?**
 The shared approach is the same. Use the tools actually exposed and connected
 in the session. Codex's browser/computer surfaces depend on its host. Claude
 Code's Chrome integration and native computer use have separate availability
 and setup; built-in computer use needs an interactive session and is not
-available in `claude -p`. The skill does not assume either host has every tool.
+available in `claude -p`. On Muse, a listed tool or skill does not by
+itself establish a connected provider; prove the surface answers first. The
+skill does not assume any host has every tool.
 
 **Do I need to create a temporary harness?**
 Usually an existing project workflow, native tool, real client, or terminal

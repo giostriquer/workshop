@@ -1,5 +1,7 @@
 # self-audit
 
+[Canonical skill](../../plugins/workbench/skills/self-audit/SKILL.md)
+
 ## What it does
 
 `self-audit` looks back over the session and audits **the process that ran

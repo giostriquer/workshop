@@ -1,6 +1,6 @@
 # Plugin surfaces: decisions in force
 
-Rationale for how the `workbench` and `toolkit` plugins reach Cursor, Google Antigravity, and OpenCode alongside their Claude Code and Codex marketplaces; superseded choices are omitted and git history keeps the originals.
+Rationale for how the `workbench` and `toolkit` plugins reach Cursor, Google Antigravity, OpenCode, and Muse alongside their Claude Code and Codex marketplaces; superseded choices are omitted and git history keeps the originals.
 
 ## Cursor as a parallel marketplace (2026-06-30)
 
@@ -13,6 +13,43 @@ Antigravity treats any directory with a root `plugin.json` as a plugin and finds
 ## OpenCode: skills by directory scan, nothing to register (2026-08-21)
 
 OpenCode has no marketplace or content manifest: its `plugin` config takes npm or JS/TS hook modules, and skills load by scanning `~/.config/opencode/skill/` and any `skills.paths` roots for `SKILL.md`. The existing layout already fits, so adoption is pointing global `skills.paths` at a clone's two `skills/` directories or copying skill folders into the scanned directory. No `.opencode-plugin/` manifest or registry entry exists, because either would be inert fiction, the mistake the Antigravity surface first made, and the validator refuses one. The validator also requires each skill's frontmatter `name` to match its folder in lowercase-hyphen form, OpenCode's loader rule and one Claude Code shares. The review agents are not converted to OpenCode's different agent format, since another mirror adds drift, and no npm shim injects `skills.paths` when a config edit does the same. Neither OpenCode nor Antigravity is an `adopt-global-rules` host target; adding one is a separate decision.
+
+## Muse: a native per-plugin manifest on the Claude marketplace catalog (2026-10-14)
+
+Muse (probed with Muse 1.4.8) has plugins and marketplaces of its own, shaped close to Claude Code's. It could already install both plugins before this surface existed: `muse plugins marketplace add` reads a catalog from `marketplace.json`, `.agents/plugins/marketplace.json`, or `.claude-plugin/marketplace.json`, and its Claude-compatible importer then reads each plugin's `.claude-plugin/plugin.json` and scans `skills/`. The Muse marketplace therefore rides the existing Claude catalog, and the validator refuses a root `.muse-plugin/marketplace.json`: Muse does not probe that path, so the file would be inert fiction of the kind the OpenCode section records. Each plugin instead carries a native `.muse-plugin/plugin.json` (`schemaVersion: 1`, `compat.source: "native"`), which Muse prefers when present. The native manifest enumerates skills (`{id, path}`) instead of scanning the directory, so the validator holds the enumeration and each canonical path to the same expected list as the directory, and the version to the other manifests'. Its capability families are exactly `skills`, `commands`, `hooks`, `mcpServers`, and `reminders`; neither plugin ships the last four, and the validator keeps them empty and rejects any other family. Muse reports one warning per plugin, `multiple-manifests` for ignoring the other hosts' manifests; that is inherent to a multi-host package and accepted. All 39 skills pass `muse skills validate` under its `agent-skills-common-subset` profile with no unknown or unsupported fields.
+
+The release helper includes the Muse manifest in version updates and version-only
+change detection. Codex-only submission exports exclude `.muse-plugin/`, so
+transformed skills cannot be advertised as a native Muse package. Focused fixtures
+check both consumers as well as manifest validation.
+
+Muse registers agents, unlike Codex. Each `agents/<name>.md` imports as an agent definition `workbench/<name>` under either manifest family, held at `review_needed` until the operator runs `muse plugins approve workbench`; skills need no approval. Dispatch is therefore the Claude Code shape, written once in `using-workbench` under *Workbench agents on Muse* and named per agent in its Dispatch line: by the scoped id, with no model and nothing pasted. A missing or unapproved definition is a reported gap, never a generic spawn with a pasted contract, which remains only the Codex route. The `model-reference` exceptions say Muse resolves the definition's model pin on its own fleet; what the Claude-model names in agent frontmatter map to there was not observed, so no Muse model id is pinned anywhere. Plan-only probes of the new wording, one fresh-context parent per question, each asked for the exact spawn it would make:
+
+| Question | This wording |
+|---|---|
+| Muse watcher after a push: scoped id `workbench/ci-watcher`, run inputs only, no contract pasted | 1 of 1 |
+| Muse watcher with the definition still `review_needed`: no spawn, no parent polling, gap reported with the approve command | 1 of 1 |
+| Muse `file-pr` test review: scoped id `workbench/test-quality-reviewer` with the base branch, no contract pasted | 1 of 1 |
+
+One rep per question is regression evidence for these dispatch shapes, not a reliability estimate, and the parents wrote plans rather than spawning, so it says nothing about how an imported definition behaves at run time. A run-time smoke test after a real install found the current limit of that: in `muse exec` the six definitions appear in the session's reviewed catalog and `muse plugins inspect` reports them `trusted_enabled` with no diagnostics, yet both a native subagent spawn and a Workflow `agentType` delegation for `workbench/pattern-reviewer` were rejected as `agent_definition_unavailable`, while a `general-purpose` spawn in the same mode succeeded. No CLI surface gives a deeper cause. Until a Muse release admits them, the dispatch rule degrades as written: the parent reports the monitoring or review gap instead of substituting a generic agent. Interactive-session spawning was not tested. Revisit this paragraph on the first Muse release where an approved definition spawns; nothing in the repo needs to change for that, since the Dispatch lines already name the scoped ids.
+
+## Muse implicit-invocation hole, accepted (2026-10-14)
+
+The native plugin loader in Muse 1.4.8 ignores `disable-model-invocation`. The same `SKILL.md` reports `user-invocable-only` installed as a user skill and under the Claude-compatible plugin importer, but `on` under a native manifest, so the eleven user-invoked-only skills are model-invocable on Muse through the native surface. `enabledDefault: false` in the manifest is not the missing policy either: it yields activation `off`, not user-invocable-only. This is the Codex parity failure one host over, with no sidecar equivalent to ship. The alternatives were dropping the native manifest for the Claude-compatible importer (policy and agents both hold; the cost is the display name and five more import warnings) or shipping those skills disabled. The operator chose the native manifest anyway, so this surface knowingly does not hold invocation parity until the Muse loader honors the key, at which point the frontmatter already in the skills makes it hold with no repo change. Per machine, `muse skills user-only plugin:<plugin>:<skill> --scope plugin` restores the policy; the README's Muse install notes say so. A validator gate refusing the native manifest was considered and declined in the same decision, since the manifest is the surface the operator wants; the hole is recorded here instead of gated.
+
+## Muse: adopt-global-rules host, and repo-local skill precedence (2026-10-14)
+
+Muse is an `adopt-global-rules` host target (the separate decision the OpenCode section anticipated). Its user instruction document is `~/.config/muse/AGENTS.md`, canary-proved by loading a marker file there in a scratch home and reading it back from the session log; `XDG_CONFIG_HOME` is honored, and the pack's home-relative target assumes the default `~/.config`, as its other hosts assume their default homes. Muse has no rules directory and no output-style surface, so the host is `file` mode like Codex: `globals/MUSE.md`, authored for its sandbox and approval flow, and the shared rules land as fenced blocks in the same file. A separate host is needed because, while Muse reads `~/.claude/CLAUDE.md`, a canary in `~/.claude/rules/` was not loaded, so the claude host's rules never reach a Muse session. The adopted file was verified end to end: a dry run, an apply, an idempotent re-run, and a scratch-home session loading the result.
+
+For project skills Muse scans `.agents/skills`, `.codex/skills`, and
+`.claude/skills`, in that precedence order (probed with the same skill id in
+all three); `.muse/skills` and a bare `skills/` are not scanned. Repo-local
+maintenance skills are canonical in `.claude/skills/` and fully mirrored into
+`.codex/skills/`, whose copy Muse selects. The validator compares every complete
+folder, excluding Codex's host-specific `agents/` sidecars. See
+[repo tooling](repo-tooling.md#repo-local-discovery-and-documentation-ownership-2026-10-14)
+for the mirror and agent-scope decision. Muse 1.4.8 did not load project agent
+files in the probe; this repository now has no repo-scoped agent definitions.
 
 ## Codex implicit-invocation parity (2026-09-24)
 

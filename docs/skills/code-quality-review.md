@@ -1,8 +1,12 @@
 # code-quality-review
 
+[Canonical skill](../../plugins/workbench/skills/code-quality-review/SKILL.md)
+
 ## What it does
 
-A strict maintainability review of a finished change: abstraction quality, structure, pattern drift, file sprawl, and spaghetti growth. Its posture is ambition: it hunts for **"code judo" moves: restructurings that preserve behavior while making the implementation dramatically simpler**, so whole branches, helpers, or layers disappear.
+A maintainability review of a finished change: ownership, abstraction quality,
+structure, pattern drift, and unnecessary complexity. It looks for simpler
+structures that preserve behavior and reports concrete consequences.
 
 It is **default-on**. Once the full agreed work set is implemented, verified, and about to ship through a PR or the repository's delivery process, it runs whether or not anyone asked. Only two things stop it: the user explicitly declining, or the repo's own process superseding it. A small diff, a clean-looking change, time pressure, or the session's own judgment are not exits. Edits, subtasks, and checkpoints never trigger it.
 
@@ -29,7 +33,8 @@ the accepted change and preserve required compatibility and distinct adapters.
 At external inputs, review favors an existing schema that validates the entire
 claimed type over casts or partial predicates; no library is mandated.
 
-The baseline is a deep audit that restructures the change without altering behavior: **"Be extremely thorough and rigorous. Measure twice, cut once."** On top sit nine standards. Rule 0 is ambition: delete complexity rather than rearrange it. Rules 1 to 7 fight a file pushed past 1,000 lines, ad-hoc branches bolted into unrelated flows, rubber-stamped "it works" code, magic and thin wrappers, loose types and silent fallbacks, logic in the wrong layer or duplicated helpers, and needless sequential or non-atomic orchestration. Rule 8 reports what the [comment trim](trim-comments.md) left: comments your repo's rules say to remove, a lint or type suppression that hides a correctness rule, and a "do not remove" comment a test, type, or lint could enforce.
+The rubric looks for behavior-preserving simplifications and structural defects.
+It has nine standards. Rule 0 is ambition: delete complexity rather than rearrange it. Rules 1 to 7 fight a file pushed past 1,000 lines, ad-hoc branches bolted into unrelated flows, rubber-stamped "it works" code, magic and thin wrappers, loose types and silent fallbacks, logic in the wrong layer or duplicated helpers, and needless sequential or non-atomic orchestration. Rule 8 reports what the [comment trim](trim-comments.md) left: comments your repo's rules say to remove, a lint or type suppression that hides a correctness rule, and a "do not remove" comment a test, type, or lint could enforce.
 
 **Scope decides what a finding costs** ([decision](../decisions/workbench-operator-decisions.md)). Strictness applies inside the accepted work (ticket, plan, or agreed change), which the dispatch hands the reviewer as its accepted scope, and every finding carries a label:
 
@@ -68,7 +73,7 @@ No. Crossing it makes the review ask whether to decompose first; it blocks only 
 The `trim-comments` stage, run by the `comment-trimmer` agent before this round, edits the diff's code comments. This review flags what remains, per your repo's rules, and the implementer acts on it; it never deletes a comment itself. With no comment rules in the repo, it still flags a suppression that hides a correctness rule and a constraint comment that a test, type, or lint could enforce; one the trim already offered to encode waits for your answer at the outline, so the review notes it rather than raising it again. A comment that only restates the code is `pattern-reviewer`'s check, which flags it by default wherever that agent runs.
 
 **Can I run it inline in the session that wrote the code?**
-No. That session holds every justification behind the code, so the code-judo move is exactly what it cannot see. Dispatch the `code-quality-reviewer` agent, which loads this skill as its rubric and, if needed, gathers the diff itself: the working tree against the base's merge base, untracked files included. Hand it the accepted scope, the ask as the ticket or plan put it, not your view of the code. It runs on your session's model, without your history. On Codex, spawn it as the agent file's Dispatch line says, which forks none of your history, and paste the file's body into the spawn message ahead of the three inputs, since Codex registers no plugin agents. With no subagent mechanism, hand the diff to a fresh session and say so in the report. An author's own pass is never this gate.
+No. That session holds every justification behind the code, so a fresh reviewer tests those assumptions independently. Dispatch the `code-quality-reviewer` agent, which loads this skill as its rubric and, if needed, gathers the diff itself: the working tree against the base's merge base, untracked files included. Hand it the accepted scope, the ask as the ticket or plan put it, not your view of the code. It runs on your session's model, without your history. On Codex, spawn it as the agent file's Dispatch line says, which forks none of your history, and paste the file's body into the spawn message ahead of the three inputs, since Codex registers no plugin agents. With no subagent mechanism, hand the diff to a fresh session and say so in the report. An author's own pass is never this gate.
 
 ## It's working if
 
