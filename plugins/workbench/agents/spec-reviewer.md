@@ -2,7 +2,6 @@
 name: spec-reviewer
 description: Pre-implementation review of design specs and implementation plans. Use before dispatching implementers, not during the implementation review loop.
 model: inherit
-tools: Read, Grep, Glob, Bash
 ---
 
 # Spec Reviewer

@@ -1,7 +1,6 @@
 ---
 name: test-quality-reviewer
 description: Review implemented test code for trustworthiness, risk coverage, and mutation evidence. Use when a verified change to production logic or tests is ready for delivery, or dispatch directly to audit existing tests or propose a test strategy. Loads its rubric from the test-quality-review skill.
-tools: Read, Grep, Glob, Bash
 model: opus
 effort: xhigh
 ---

@@ -1,7 +1,6 @@
 ---
 name: comment-trimmer
 description: Trim code-comment slop from a finished diff by applying the trim-comments skill, editing comments only. Use as the comment-trim stage at completion, dispatched before the adversarial review round, or when asked to trim a diff's code comments. Never fires on its own mid-implementation, where tidying your own comments is ordinary editing.
-tools: Read, Edit, Grep, Glob, Bash
 model: opus
 effort: xhigh
 ---

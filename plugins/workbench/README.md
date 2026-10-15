@@ -59,10 +59,11 @@ the spawn message (`using-workbench`, *Workbench agents on Codex*). Antigravity 
 
 ## Agents: read-only reviewers and the comment-trimmer
 
-The reviewers inspect and report; none can edit your files (reviewers use
-`Read, Grep, Glob, Bash`; `ci-watcher` uses `Bash, Read`). `comment-trimmer`
-also has `Edit`: it edits the diff's code comments, never code, and never
-commits.
+The reviewers inspect and report, and their instructions forbid editing your
+files. `comment-trimmer` edits the diff's code comments, never code, and never
+commits. No agent pins a tool allowlist, because Muse rejects a definition
+whose list names Claude Code tools, so these limits live in each agent's
+instructions.
 
 | Agent | Works on |
 | --- | --- |

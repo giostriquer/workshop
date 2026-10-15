@@ -1,7 +1,6 @@
 ---
 name: pattern-reviewer
 description: Review code changes for conformance with the project's implementation patterns. Use for diff-driven pattern compliance checks after implementation work and after code-quality review.
-tools: Read, Grep, Glob, Bash
 model: inherit
 ---
 

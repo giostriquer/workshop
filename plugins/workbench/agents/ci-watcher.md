@@ -1,7 +1,6 @@
 ---
 name: ci-watcher
 description: Watch PR CI for the current branch and report pass/fail with relevant failure links. Use when waiting for CI results or CI has failed, dispatched by fix-ci or file-pr, one watcher per pinned head.
-tools: Bash, Read
 model: claude-sonnet-5-5
 effort: xhigh
 ---
