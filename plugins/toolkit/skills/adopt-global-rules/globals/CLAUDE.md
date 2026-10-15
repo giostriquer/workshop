@@ -1,5 +1,6 @@
 ## Attribution and external comments
 
+- Task-tracker operations the requested task needs (Linear, or whichever task manager the work uses) are preauthorized, including comments.
 - Routine GitHub reads and checks are preauthorized. Once the user authorizes a GitHub write, perform it without asking again.
 - Explicit task restrictions take precedence.
 - GitHub PR comments and replies still require explicit authorization; do not infer it from a request to inspect, review, summarize, implement, commit, push, or prepare a pull request.
