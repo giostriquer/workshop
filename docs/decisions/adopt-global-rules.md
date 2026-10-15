@@ -42,7 +42,7 @@ An installed plugin receives only its own directory, so pack and installer live 
 
 ## Global documents per host, rules single-source (2026-08-12)
 
-Each host's global document is authored separately because hosts need different things said: the Codex copy carries a sandbox-escalation instruction meaningless on Claude Code. Drift between near-identical sections is the accepted cost. Rules are one body fanned out to every applicable host, and hosts are manifest data, not code.
+Each host's global document is authored separately because hosts can need different things said: a Codex sandbox-escalation instruction would mean nothing on Claude Code. The three copies currently carry the same text. Drift between near-identical sections is the accepted cost. Rules are one body fanned out to every applicable host, and hosts are manifest data, not code.
 
 ## Ownership by marker; the pack wins on a re-run (2026-08-12)
 
@@ -58,12 +58,14 @@ The script detects, writes, and reports deterministically, returning everything 
 
 ## The communication style ships as a Claude output style (2026-08-14)
 
-The BLUF and Simplified Technical English guidance moved from `globals/CLAUDE.md` into the `bluf-ste` output style, a third content kind for hosts that declare a target. A style is a dedicated, switchable channel, and shipping it retires a hand-written duplicate reconciliation missed. Codex has no such surface, so `globals/AGENTS.md` keeps the guidance inline. The marker sits below YAML frontmatter so the host still parses it.
+The BLUF and Simplified Technical English guidance moved from `globals/CLAUDE.md` into the `bluf-ste` output style, a third content kind for hosts that declare a target. A style is a dedicated, switchable channel, and shipping it retires a hand-written duplicate reconciliation missed. Codex and Muse have no such surface, and since 2026-10-15 their global documents do not carry the guidance either. The marker sits below YAML frontmatter so the host still parses it.
 
 ## Output styles install, never activate (2026-08-14)
 
 The installer writes the style but never edits `settings.json` or switches the active style: how a session talks is the user's preference. The run reports it as installed, not activated, and names `/output-style`. An existing unmarked `bluf-ste.md` is a collision the user resolves.
 
-## Shipped globals: GitHub reads free, one authorization per task, focused tests (2026-09-24)
+## Shipped globals: adopter defaults, no personal grants (2026-10-15)
 
-The shipped `globals/CLAUDE.md` and `globals/AGENTS.md` keep the rule that a pull request or tracker comment needs explicit approval, and add three adopter-facing defaults: routine GitHub reads and checks need no approval, a GitHub write the user authorized carries through the rest of that task without a second ask, and local test runs stay focused while the pull request's CI runs the full suite. The operator's own instruction file grants more, including tracker preauthorization, and stays personal: managed blocks are pack-owned and a re-run overwrites a drifted block, so a personal grant in the pack would silently replace every adopter's approval rule on their next run. `AGENTS.md` keeps its GitHub CLI sandbox-escalation section.
+The three shipped global documents carry the same adopter-facing defaults. Routine GitHub reads and checks are preauthorized. A GitHub write the user authorized needs no second ask. A pull request comment or reply needs explicit authorization. A session keeps going through steps that need no input, and stops before destructive work or changes outside the repository. Local test runs stay focused, and the pull request's CI runs the full suite. The operator dropped the GitHub CLI and Muse sandbox-escalation sections.
+
+The documents install on every adopter's machine, so they say "the user", never the operator's "I" or "me". The operator's own grants, including tracker preauthorization, stay personal, outside the managed block. Managed blocks are pack-owned and a re-run overwrites a drifted block, so a personal grant in the pack would silently replace every adopter's approval rule on their next run.
