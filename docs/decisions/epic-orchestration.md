@@ -2,6 +2,27 @@
 
 This note is the rationale for the `epic-orchestration` skill, shipped in the `workbench` plugin; superseded choices are omitted and git history keeps the originals.
 
+## Handoffs are read as written, by their file (2026-10-16)
+
+Session Orchestrator reads an orchestrator's handoffs from its own text, and
+long-running orchestrators drifted from the template after compaction: a shared
+"send these to the existing sessions" lead-in over bold lane names, colon-ended
+openings, and dispatch paths relative to the orchestrator's checkout, which a lane
+in another worktree cannot resolve. None of those spellings appears in any version
+of this skill; the tooling now recognizes a fenced dispatch by its file, and a file
+that names its own lane needs no other signal.
+
+So each dispatch file lives under the scope folder's `dispatches/` and opens with
+`Lane: <LANE>`, the pointer's path is absolute, and the skill says these lines are
+read as written and asks for a reread of the section after compaction. In fresh
+sonnet sessions writing two existing lanes' amendments, with the old wording no
+file opened with its lane and half the files left `dispatches/` when no earlier
+example showed it (5 of 10); with the new wording all 10 runs wrote both files
+under `dispatches/`, opened each with its `Lane:` line, and every handoff was
+recognized with an absolute path, including runs seeded with a drifted earlier
+reply. Those checks are regression coverage for the template's slots, not a
+measured reduction of drift in long sessions.
+
 ## Coordination and verification tooling stays local (2026-09-28)
 
 Migration sessions created useful inventory scripts, progress reports and

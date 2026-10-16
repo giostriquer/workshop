@@ -45,11 +45,14 @@ folder. The initial lane contract carries scope, setup, tickets with anchors and
 behavioral bars, required reading, outcomes, evidence, rules and authority. It
 includes or links the shared report template. Amendments state only what changed
 and reference the active contract. Every handback of implementation or audit work
-still contains the complete populated report. Each destination gets its own
-`Paste this into <LANE>:` label immediately above a fenced pointer naming the
-same lane, role, authority, fresh or existing session, and file path. When several
-lanes are ready, the owner repeats that complete label-and-block pair for each
-lane in one reply. Returns to existing lanes after corrections use the same format.
+still contains the complete populated report. Each dispatch file sits under the
+scope folder's `dispatches/` and opens with `Lane: <LANE>`. Each destination gets
+its own `Paste this into <LANE>:` label immediately above a fenced pointer naming
+the same lane, role, authority, fresh or existing session, and the file's absolute
+path. When several lanes are ready, the owner repeats that complete label-and-block
+pair for each lane in one reply. Returns to existing lanes after corrections use
+the same format. Session Orchestrator, when installed, files those handoffs from
+the owner's text, so the labels, pointers and `Lane:` lines are worth writing exactly.
 
 Everything is dispatchable the moment it is written. A prompt whose trigger has
 not fired is not written yet; the session watches for the trigger.

@@ -231,7 +231,9 @@ corroboration; assignment closeout follows **Audit returns name what is finished
 ## Dispatching
 
 Write each ready lane prompt, amendment, acceptance, ruling, audit brief or
-authorization to its own file in the epic's scope folder, indexed by the ledger.
+authorization to its own file in the `dispatches/` folder of the epic's scope
+folder, indexed by the ledger. Each file opens with `Lane: <LANE>` on its first
+line, the canonical name, then its brief.
 Acceptance and hold notices reference the active contract, identify the revision
 and disposition, and state the lane's current authorized action or hold.
 Each hold names who can release it and its governing source. Resolve your own
@@ -253,6 +255,12 @@ Lane <LANE>. <Role, what is authorized, fresh or existing session>. Read and exe
 <absolute dispatch path>
 <lines governing instructions require verbatim, if any>
 ```
+
+The dispatch path is absolute, because the lane reads it from its own worktree.
+The label, the pointer and the file's `Lane:` line are read as written by the
+tooling that carries handoffs, so returns to several existing lanes still use
+the complete label-and-block pair for each. After a context compaction or a
+resume, reread this section before writing the next handoff.
 
 The pointer contains no repeated brief. Put operator decisions outside it.
 The file and its populated pointer together complete the handoff; a saved file,
