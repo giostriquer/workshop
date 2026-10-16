@@ -2,6 +2,30 @@
 
 Rationale for how the `workbench` and `toolkit` plugins reach Cursor, Google Antigravity, OpenCode, and Muse alongside their Claude Code and Codex marketplaces; superseded choices are omitted and git history keeps the originals.
 
+## License notices travel with copied content (2026-10-16)
+
+The public-repository license audit found that standalone skill-copy instructions
+left the plugin-root license behind, the Superpowers copyright notice omitted
+2025, and GitHub classified the combined root license and attribution prose as
+`NOASSERTION`.
+
+Keep standard MIT text in the root and each plugin's `LICENSE`. Move the existing
+attribution, complete upstream copyright notices, and shared MIT terms into an
+adjacent `THIRD_PARTY_NOTICES.md`. Preserve the upstream scope and source links.
+This separates machine-readable license text from detailed attribution without
+changing the permissions granted. The Superpowers notice includes its original
+year, 2025.
+
+An individual skill copy includes its owning plugin's `LICENSE` and
+`THIRD_PARTY_NOTICES.md` inside the copied folder. Whole-plugin installations
+and Codex exports retain both at the plugin root. The npm package explicitly
+includes the root notices alongside the automatically included license, plus
+Toolkit's license and notices with its nested installer payload.
+
+Verify notice retention through actual exports, the npm package, and standalone
+copies. A local match to GitHub's MIT template verifies the source correction;
+GitHub's displayed classification can only be checked after publication.
+
 ## Cursor as a parallel marketplace (2026-06-30)
 
 Cursor has its own marketplace convention, so the repo carries a third parallel surface: a root `.cursor-plugin/marketplace.json` listing each plugin by short `source` name under `metadata.pluginRoot: "plugins"`, and a per-plugin `.cursor-plugin/plugin.json` with version and metadata. Each Cursor manifest keeps the same version as its Claude and Codex counterparts, and the validator refuses drift, so an additive packaging surface ships at the versions in flight instead of forcing a bump. Each plugin carries its own MIT `LICENSE`. Neither plugin ships Cursor rules, so the manifests declare none. Install goes through Cursor's Team Marketplace import-from-repo flow, because custom-repo marketplaces are a Teams/Enterprise admin feature.

@@ -38,14 +38,14 @@ Skill and agent descriptions stay unquoted plain scalars; a value that needs `: 
 
 ## `writing-skills` is repo-local (2026-08-20)
 
-`writing-skills` lives in `.claude/skills/writing-skills/` beside `change-log`, `push`, and `workbench-drift`: tooling the repo runs on itself and ships to nobody. `AGENTS.md` requires it for any skill change. The MIT notice for its superpowers-derived portions sits in the root `LICENSE`, because the obligation follows the code, and it has no `docs/skills/` page, a layer reserved for shipped skills. Shipped skills never name it, since an installed plugin cannot reach a repo-local skill; `self-audit` defers to whatever skill-authoring discipline the environment provides.
+`writing-skills` lives in `.claude/skills/writing-skills/` beside `change-log`, `push`, and `workbench-drift`: tooling the repo runs on itself and ships to nobody. `AGENTS.md` requires it for any skill change. The MIT notice for its Superpowers-derived portions sits in the root `THIRD_PARTY_NOTICES.md` alongside `LICENSE`, because the obligation follows the code, and it has no `docs/skills/` page, a layer reserved for shipped skills. Shipped skills never name it, since an installed plugin cannot reach a repo-local skill; `self-audit` defers to whatever skill-authoring discipline the environment provides.
 
 **Authoring refinements (2026-10-12).** Adapt Matt Pocock's
 [`writing-for-agents`](https://github.com/mattpocock/skills/blob/49dd158d1076134a641b33efb035946536778336/skills/productivity/writing-for-agents/SKILL.md)
 into this existing skill: references state the branch that needs them, shared
 rules stay inline, a concept's definition and constraints stay together, and
 steps end on observable completion criteria. The upstream MIT attribution is in
-the root `LICENSE`. This adds no skill or documentation layer and changes no
+the root `THIRD_PARTY_NOTICES.md`. This adds no skill or documentation layer and changes no
 host layout. Keep the local empirical wording checks and the distinction between
 discipline failures and output-shaping failures; upstream's blanket claims about
 negation and stronger adjectives are not adopted.

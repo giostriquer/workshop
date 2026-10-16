@@ -102,8 +102,9 @@ uses the same explicit policy, with its own manifest.
 
 ## Licensing and attribution
 
-The Superpowers-derived text is MIT-licensed by Jesse Vincent. The Workbench
-README and LICENSE carry shipped attribution; repo-only adaptations use the
-root LICENSE. Skill provenance and the drift manifests preserve the source
-mapping. Toolkit's separate adaptations carry their own attribution. Usage
-pages explain how to use a skill, not its origin story.
+The Superpowers-derived text is MIT-licensed by Jesse Vincent, Copyright (c)
+2025 Jesse Vincent. The Workbench README and `THIRD_PARTY_NOTICES.md` carry
+shipped attribution alongside its standard MIT `LICENSE`; repo-only adaptations
+use the root notices and license. Skill provenance and the drift manifests
+preserve the source mapping. Toolkit's separate adaptations carry their own
+attribution. Usage pages explain how to use a skill, not its origin story.

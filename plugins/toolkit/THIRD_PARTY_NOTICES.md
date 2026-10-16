@@ -1,0 +1,101 @@
+# Third-party notices
+
+Keep this file with [LICENSE](LICENSE) when copying or redistributing this
+package. For a standalone skill copy, put both files inside the copied skill
+folder.
+
+The MIT permission and warranty terms at the end of this file apply to each
+upstream copyright notice below.
+
+---
+
+Portions of this plugin (the `get-pr-comments` skill) are derived from
+Cursor's plugins (https://github.com/cursor/plugins): the `cursor-team-kit`
+plugin's `get-pr-comments` skill, Copyright (c) 2026 Cursor, and are used under
+the MIT License. The MIT permission and warranty notices apply to those
+portions as required by that license. Adaptations are documented at
+https://github.com/giostriquer/workshop/blob/main/docs/decisions/get-pr-comments.md
+
+---
+
+Portions of this plugin (the `test-audit` skill) are derived from OpenClaw
+(https://github.com/openclaw/openclaw): the `.agents/skills/test-audit` skill,
+Copyright (c) 2026 OpenClaw Foundation, and are used under the MIT License. The
+above permission and warranty notices apply to those portions as required by
+that license. Adaptations are documented at
+https://github.com/giostriquer/workshop/blob/main/docs/decisions/test-audit.md
+
+---
+
+Portions of this plugin (the `grill-me`, `grilling` and
+`improve-codebase-architecture`
+skills and their bundled reference files) are derived from Matt Pocock's
+skills (https://github.com/mattpocock/skills), Copyright (c) 2026 Matt Pocock,
+and are used under the MIT License. The MIT permission and warranty notices
+apply to those portions as required by that license. Adaptations are
+documented at
+https://github.com/giostriquer/workshop/blob/main/docs/decisions/mattpocock-skills.md
+
+---
+
+Portions of this plugin (parts of the `improve-codebase-architecture`
+skill and its reference files) are adapted from Cursor's
+plugins (https://github.com/cursor/plugins): the `pstack` plugin's `architect`,
+`how` and `principle-exhaust-the-design-space` skills, Copyright (c) 2026
+Lauren Tan, and are used under the MIT License. The MIT permission and
+warranty notices apply to those portions as required by that license.
+Adaptations are documented at
+https://github.com/giostriquer/workshop/blob/main/docs/decisions/mattpocock-skills.md
+
+---
+
+The `web-demo-video` workflow adapts the `pstack` plugin's
+`create-verification-skill` from Cursor's plugins
+(https://github.com/cursor/plugins), Copyright (c) 2026 Lauren Tan, under the
+MIT License. The MIT permission and warranty notices apply to those
+portions. The recording helper uses Microsoft's Playwright CLI as an external
+tool; no upstream implementation is bundled. Adaptations are documented at
+https://github.com/giostriquer/workshop/blob/main/docs/decisions/web-demo-video.md
+
+---
+
+The `correct` and `benchmark-checklist` skills adapt the `pstack` plugin's
+`correct`, `benchmark-checklist`, `principle-explain-the-number`, and performance
+playbook guidance from Cursor's plugins (https://github.com/cursor/plugins),
+Copyright (c) 2026 Lauren Tan, under the MIT License. The MIT permission and
+warranty notices apply to those portions. The benchmarking questions are
+attributed to Brendan Gregg's methodology at
+https://www.brendangregg.com/blog/2018-06-30/benchmarking-checklist.html.
+Adaptations are documented at
+https://github.com/giostriquer/workshop/blob/main/docs/decisions/correct.md and
+https://github.com/giostriquer/workshop/blob/main/docs/decisions/benchmark-checklist.md
+
+---
+
+The `ketchup` skill adapts the `pstack` skill of the same name from Cursor's
+plugins (https://github.com/cursor/plugins), Copyright (c) 2026 Lauren Tan,
+under the MIT License. The MIT permission and warranty notices apply to
+those portions. Adaptations are documented at
+https://github.com/giostriquer/workshop/blob/main/docs/decisions/ketchup.md
+
+---
+
+## MIT license terms
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

@@ -12,7 +12,10 @@
   },
   "engines": { "node": ">=18" },
   "files": [
+    "THIRD_PARTY_NOTICES.md",
     "bin/",
+    "plugins/toolkit/LICENSE",
+    "plugins/toolkit/THIRD_PARTY_NOTICES.md",
     "plugins/toolkit/skills/adopt-global-rules/"
   ]
 }

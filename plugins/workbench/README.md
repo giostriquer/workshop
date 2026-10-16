@@ -53,6 +53,10 @@ Plugins → Team Marketplaces → Add Marketplace → Import from Repo**
 
 **OpenCode:** No marketplace file exists on this surface; opencode loads skills by scanning directories. Point your global config's `"skills": { "paths": [...] }` at this folder's `skills/` directory in a clone of the repo, or copy individual skill folders into `~/.config/opencode/skill/`. The agents are not carried on this surface.
 
+For each standalone skill copy, also copy this plugin's [LICENSE](LICENSE) and
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) into the copied skill folder.
+Keep both files with full-plugin copies and exports as well.
+
 On Claude Code, agents resolve as `workbench:<agent>`; on Muse, approved
 definitions use `workbench/<agent>`. Skills are invoked by name.
 Codex exposes the skills but registers no plugin agents, so a Codex

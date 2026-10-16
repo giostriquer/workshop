@@ -51,7 +51,12 @@ For OpenCode there is no marketplace or manifest to register: opencode loads ski
 { "skills": { "paths": ["<clone>/plugins/workbench/skills", "<clone>/plugins/toolkit/skills"] } }
 ```
 
-or copy individual `plugins/<plugin>/skills/<skill>/` folders into `~/.config/opencode/skill/`. The workbench agents are not carried on this surface (opencode's agent format differs; see [the decision note](docs/decisions/plugin-surfaces.md)).
+Alternatively, copy an individual `plugins/<plugin>/skills/<skill>/` folder into
+`~/.config/opencode/skill/`. Also copy that plugin's `LICENSE` and
+`THIRD_PARTY_NOTICES.md` into the copied skill folder so its permission terms
+and upstream attribution travel with it. The workbench agents are not carried
+on this surface (opencode's agent format differs; see
+[the decision note](docs/decisions/plugin-surfaces.md)).
 
 ### Codex submission packages
 
@@ -132,5 +137,8 @@ rationale. Load supporting references when the spec's branch requires them.
 Run `sh scripts/validate-native-plugin.sh` for package and mirror checks.
 For an implementation change, run the affected focused tests under `scripts/`
 or the owning maintenance skill. Full CI suites are not a local default.
-Upstream attribution remains in each plugin's README and LICENSE; repo-only
-adaptations are attributed in the root [LICENSE](LICENSE).
+The root and each plugin carry a standard MIT `LICENSE` and an accompanying
+`THIRD_PARTY_NOTICES.md`. Keep both when redistributing either a full package
+or an individual skill. Repo-only attribution is in the root
+[third-party notices](THIRD_PARTY_NOTICES.md); plugin attribution is in each
+plugin's notices and README.

@@ -9,6 +9,14 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-12 reformat.
 
 
+## workbench 0.50.1: 2026-10-16
+
+- **Keep license notices with copied skills.** The package separates standard MIT text from complete upstream attribution in `THIRD_PARTY_NOTICES.md`, restores the 2025 Superpowers copyright year, and requires both files with standalone skill copies. Full-plugin installations and Codex exports retain both files. ([decision](decisions/plugin-surfaces.md#license-notices-travel-with-copied-content-2026-10-16))
+
+## toolkit 0.18.1: 2026-10-16
+
+- **Preserve attribution across installation routes.** Standard MIT text and the existing upstream notices now ship as `LICENSE` and `THIRD_PARTY_NOTICES.md`; standalone-copy instructions require both in the copied skill folder. The standalone npm installer also retains its license and notices. ([decision](decisions/plugin-surfaces.md#license-notices-travel-with-copied-content-2026-10-16))
+
 ## workbench 0.50.0: 2026-10-16
 
 - **Settle architecture before defining the workset.** Brainstorming explicitly covers architectural decisions and loads `codebase-design` when ownership, interfaces, state, dependencies, or extraction remain unresolved. The selected design carries constraints, exclusions, and verification into implementation and review; bounded work stays bounded and settled decisions stay settled. ([decision](decisions/workbench-system.md#architecture-before-the-workset-2026-10-16))
@@ -69,12 +77,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 ## workbench 0.47.3: 2026-10-07
 
 - **CI watching names its own Haiku exclusion.** `model-reference` and `ci-watcher` list Haiku beside Astra and Fable as models that never watch CI, instead of relying on the global Haiku ban the operator rule no longer carries. ([decision](decisions/model-reference.md#claude-ci-watching-uses-sonnet-55-2026-09-29))
-
-## workbench 0.47.2: 2026-10-06
-
-- **Keep synchronizing when the PR target advances.** `file-pr` and `fix-ci` continue merging and validating concurrent target or feature-head updates without a synchronization retry cap. The two-attempt limit remains scoped to fixes for the same CI failure; synchronization neither consumes nor resets it. ([decision](decisions/file-pr.md#remove-the-synchronization-retry-cap-2026-10-06))
-
-## workbench 0.47.1: 2026-10-05
-
-- **PR bodies explain the full impact of a change.** `file-pr` follows the behavior activated by flags and defaults, then explains workflow changes, compatibility, breaking changes, side effects, rollout, and rollback. Known failures and unverified critical workflows appear in the change description, with detailed evidence in the repository's verification field. ([decision](decisions/file-pr.md#clear-technical-prose-and-reviewer-evidence-2026-10-05))
-- **PR writing uses precise technical English.** Titles, bodies, and delivery reports use ASD-STE100 Simplified Technical English as a guiding style without claiming formal compliance. Compact visuals, paired evidence, and recovery guidance adapt Matt Pocock's PR skill while preserving repository templates and delivery rules. ([decision](decisions/file-pr.md#clear-technical-prose-and-reviewer-evidence-2026-10-05))

@@ -37,6 +37,10 @@ for skills marked user-invoked only below.
 
 **OpenCode:** No marketplace file exists on this surface; opencode loads skills by scanning directories. Point your global config's `"skills": { "paths": [...] }` at this folder's `skills/` directory in a clone of the repo, or copy individual skill folders into `~/.config/opencode/skill/`.
 
+For each standalone skill copy, also copy this plugin's [LICENSE](LICENSE) and
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) into the copied skill folder.
+Keep both files with full-plugin copies and exports as well.
+
 ## Skills
 
 The architecture survey requires Workbench's `codebase-design` and
