@@ -208,7 +208,7 @@ Apply the baseline prompt above, plus these explicit review rules:
    - If related updates can leave state half-applied, push for a more atomic structure.
    - Do not over-index on micro-optimizations, but do flag avoidable orchestration complexity that makes the implementation more brittle.
 
-8. **Report what the comment trim left, per the repository's rules.** The `trim-comments` stage edits the diff's comments before this round; what remains is findings like any other, and the implementer acts on them. A comment that only restates the code, with no repository rule against it, is `pattern-reviewer`'s built-in comment-noise check, which applies wherever that agent runs; this review does not flag it.
+8. **Report what the comment trim left, per the repository's rules.** The `trim-comments` stage edits the diff's comments before this round; what remains is findings like any other, and the implementer acts on them. Cosmetic narration belongs to `trim-comments`; it does not acquire a blocking structural consequence merely because it survived that pass.
    - Where the repository's rules say which comments to remove, flag the ones the diff adds that those rules cover.
    - Flag a lint or type suppression (`eslint-disable`, `@ts-ignore`, `@ts-expect-error`, `# type: ignore`, `#[allow(...)]`) that silences a rule protecting correctness or safety. Look the rule up and ask for the fix it wants.
    - Flag a constraint comment (`do not remove`, `keep in sync with`, `do not change this wording`) that a test, type, or lint rule could enforce, and name the cheapest one. One the trim already returned as an encoding offer waits for the outline gate: note it, and do not raise it again as a finding.

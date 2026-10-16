@@ -228,6 +228,7 @@ brainstorming
 claim-check
 code-quality-review
 codebase-design
+contract-review
 domain-modeling
 empirical-proof
 epic-auditor
@@ -252,7 +253,7 @@ verification-before-completion"
 WORKBENCH_AGENTS="ci-watcher.md
 code-quality-reviewer.md
 comment-trimmer.md
-pattern-reviewer.md
+contract-reviewer.md
 spec-reviewer.md
 test-quality-reviewer.md"
 

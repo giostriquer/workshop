@@ -109,7 +109,13 @@
       "localPath": "plugins/workbench/skills/code-quality-review/",
       "disposition": "adopted",
       "why": "Pass accepted scope before independent review.",
-      "adaptations": "Keep local review authority, same-reviewer corrections, and model routing."
+      "adaptations": "Keep local review authority, same-reviewer corrections, and model routing. Also informs contract-review intent, reachable-failure evidence and rejection of preference-only findings. No model ensemble, majority weighting or lead-author dismissal of blockers.",
+      "scopedReview": {
+        "commit": "cdb3c41c9f2f6d41f050e3dc25e15e325493d499",
+        "version": "0.15.25",
+        "date": "2026-10-16",
+        "note": "Operator-approved behavior/contract reviewer adaptation. Reviewed intent prompt, rubric and lead judgment only; full-range pin unchanged."
+      }
     },
     {
       "upstreamPath": "pstack/skills/how/references/explorer-prompt.md",
@@ -204,12 +210,12 @@
       "localPath": "plugins/workbench/skills/claim-check/",
       "disposition": "adopted",
       "why": "Test safety assumptions against consumers beyond symbol references.",
-      "adaptations": "Also informs empirical-proof. Conditional wire, storage, cross-language, pinned-dependency and lifecycle checks; smallest discriminating executable proof. No new skill, review gate, compulsory team or broad suite.",
+      "adaptations": "Also informs empirical-proof. Conditional wire, storage, cross-language, pinned-dependency and lifecycle checks; smallest discriminating executable proof. No compulsory team or broad suite. Also informs contract-review consumer tracing and focused evidence within accepted scope; no broad audit or automatic full-suite run.",
       "scopedReview": {
-        "commit": "1b6d44ff26d4e242f4e8f68c391e6d2f7ca16def",
-        "version": "0.15.20",
-        "date": "2026-10-12",
-        "note": "Operator-approved scoped adaptations after source comparison. Source snapshot is not publication proof; range-review pin remains unchanged."
+        "commit": "cdb3c41c9f2f6d41f050e3dc25e15e325493d499",
+        "version": "0.15.25",
+        "date": "2026-10-16",
+        "note": "Operator-approved consumer-contract review adaptation. Scoped source snapshot; full-range pin unchanged."
       }
     },
     {

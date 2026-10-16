@@ -156,8 +156,11 @@ which keeps handbacks in the shared
 When the full agreed work set is ready to ship, the lane runs
 [trim-comments](trim-comments.md), committing its edits inside the lane's
 range, then [code-quality-review](code-quality-review.md), plus
-`test-quality-review` when production logic or tests changed; a dispatch names
-those skills by name, never by a plugin version or a cache path. Authorization
+`test-quality-review` when production logic or tests changed and `contract-review`
+when observable behavior, consumer contracts or cross-component wiring changed.
+Applicable reviews run in parallel on the same range and revision. The behavior
+reviewer receives accepted outcomes, approved design and exclusions, and existing
+verification evidence. Dispatch uses each agent's contract, never a pinned cache path. Authorization
 sends the lane to [file-pr](file-pr.md), states whether that review has run,
 and carries the trim's open encoding offers to you; one you approve goes back
 to the lane as a correction.

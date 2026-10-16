@@ -93,3 +93,12 @@ routing evidence. Duplicating them in the usage page produced drift twice, so
 the handbook now links the canonical table instead. Historical names, scores,
 and sync edits remain in git; active dispatch pins live in the agent contracts
 and the skill's explicit exceptions.
+
+## Contract-review routing (2026-10-16)
+
+The operator selected Opus 5.5 at `xhigh` for Claude Code and GPT-6.1 Sol at
+`xhigh` for Codex. Other harnesses retain the parent's model and effort,
+including when importing Claude frontmatter. `contract-reviewer` owns the exact
+dispatch settings; its [role decision](pattern-reviewer-comment-noise.md) records
+the skill/agent split. The existing watcher, test-review and trim routes stay as
+documented.

@@ -23,7 +23,9 @@ gates: they fire on relevance, not compulsion.
 at each done/fixed/passing claim, and independent review before PR-or-merge:
 first the comment trim (`trim-comments`, run by the dispatched `comment-trimmer`
 agent), then, on the trimmed diff, `code-quality-review`, plus `test-quality-review` (a separate Opus agent on Claude,
-`gpt-6.1-sol` on Codex) when the diff changes production logic or tests. Run each stage unless **the user explicitly declines it**, or **the repo's
+`gpt-6.1-sol` on Codex) when the diff changes production logic or tests, and
+`contract-review` for changed observable behavior, consumer contracts or
+cross-component wiring. Run each applicable stage unless **the user explicitly declines it**, or **the repo's
 own process supersedes it**. Those are the only two outs: a small diff, a
 confident implementation, a tidy-looking change, or time pressure are not
 among them, and neither is the session's own judgment that this one looks
@@ -68,11 +70,12 @@ through a PR or the repository's delivery process, not an intermediate checkpoin
   Comment trim: REQUIRED, not offered (trim-comments, run by the comment-trimmer
   agent; code comments only; encoding offers wait for the USER gate) →
   Initial adversarial review round on the trimmed diff: REQUIRED, not offered
-  (code-quality-review; plus test-quality-review in parallel when the
-  diff changes production logic or tests). One round includes both required stages.
+  (code-quality-review; test-quality-review when production logic or tests changed;
+  contract-review when observable behavior, consumer contracts or cross-component
+  wiring changed). Run applicable stages in parallel within one initial round.
   Give each the same accepted scope and revision in a separate prompt. Each owns
   its findings, verdict, follow-ups, and pass record. A missing stage runs without
-  repeating a completed one; counting one code review does not waive test review.
+  repeating a completed one; one verdict does not waive another applicable stage.
   The trim and each review stage are dispatched to a context that did not write
   the code, never self-served. A missing stage keeps the gate pending. Each is
   skipped only on an explicit user decline or a superseding repo process; they
@@ -104,6 +107,7 @@ FEEDBACK
 | Finishing a change or about to claim done / ready | `verification-before-completion` (use `empirical-proof` for behavioral changes; reuse adequate current evidence) |
 | The comment trim: **required** once the work-stream is complete, before the adversarial pass, **dispatched** to an agent that did not write the code | `trim-comments`, run by the `comment-trimmer` agent |
 | The initial adversarial pass: **required** on the trimmed diff, right before PR-or-merge, **dispatched** to reviewers that did not write the code | `code-quality-review`, run by the `code-quality-reviewer` agent; plus `test-quality-review`, run by the `test-quality-reviewer` agent, when the diff changes production logic or tests |
+| Changed behavior, consumer contracts or cross-component wiring, at completion | `contract-review`, run by `contract-reviewer`, given accepted outcomes, approved design and exclusions, diff/base and revision, and verification evidence; behavior and contract review, not convention compliance |
 | Checking existing tests or recommending a testing approach | `test-quality-review`, run by the `test-quality-reviewer` agent; give it the question and target |
 | Landing | outline gate → `file-pr` for opening or pushing to a PR; merge or branch-only push; `fix-ci`. Delegated PR delivery names `file-pr` |
 | Review feedback arrives | `receiving-code-review` |
@@ -130,9 +134,7 @@ them all:
 - `qa-sweep`: a broad decomposable surface (release, branch, feature area)
   at team scale.
 - `claim-check`: one premise, ticket, or hunch to investigate.
-- `file-pr`: landing, not verification; it assumes the gates already ran,
-  except the comment trim and the adversarial review, which it will not file a
-  code PR without.
+- `file-pr`: landing, not verification; it assumes the verificaiton and all reviewer gates already ran.
 
 When no frame fits the work's shape, keep the standard and drop the frame:
 prove the deliverable the way its real consumer would exercise it, and
@@ -141,8 +143,9 @@ assignments: load one when its moment arrives, not preemptively.
 
 **Cost and authority:** two pieces are always-on:
 `verification-before-completion` at every done-claim, and the comment trim
-followed by the adversarial review (`code-quality-review`, plus `test-quality-review` when production
-logic or tests changed) once the implementation is complete and about to ship
+followed by the applicable adversarial reviews (code quality; test quality for
+logic or tests; behavior and contracts through `contract-review` for observable
+behavior, consumer contracts or cross-component wiring) once the implementation is complete and about to ship
 through a PR or the repo's delivery process. Both are default-on
 and stop only for an explicit user decline or a superseding repo process.
 Focused `empirical-proof` is part of the verification gate for behavioral
@@ -222,8 +225,8 @@ workbench agent gets a new spawn with that agent's contract.
 Muse registers a plugin's agent files as scoped definitions,
 `workbench/<name>`, once the operator approves them (`muse plugins approve
 workbench`); its skills need no approval. Dispatch as on Claude Code: by the
-scoped id its Dispatch line names, with no model and nothing pasted, since the
-approved definition carries the contract. A definition that is missing, still
+scoped id its Dispatch line names, following that line's model and effort
+settings, with nothing pasted: the approved definition carries the contract. A definition that is missing, still
 awaiting approval, or reported unavailable by the runtime cannot be
 dispatched: report that gap. Do not spawn a
 generic agent with a pasted contract instead; that is the Codex route, for a

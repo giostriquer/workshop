@@ -35,7 +35,7 @@ you want them, and skip to keep sessions lean.
 | About to claim something is done | [verification-before-completion](verification-before-completion.md) |
 | Checking one finished change through its app or real consumer | [empirical-proof](empirical-proof.md) |
 | Trimming a finished diff's code comments before the review round | [trim-comments](trim-comments.md), run by the `comment-trimmer` agent |
-| The adversarial pass before PR-or-merge | [code-quality-review](code-quality-review.md), plus [test-quality-review](test-quality-review.md) when production logic or tests changed |
+| The adversarial pass before PR-or-merge | [code quality](code-quality-review.md), [test quality](test-quality-review.md) for changed logic/tests, and [contract review](contract-review.md) for changed behavior, consumer contracts or wiring |
 | Checking whether existing tests protect the behavior they claim to | [test-quality-review](test-quality-review.md) |
 | Picking a model | [model-reference](model-reference.md) |
 | Turning a branch into a PR and seeing it green | [file-pr](file-pr.md) |
@@ -77,8 +77,9 @@ Muse's native loader has an [accepted policy gap](../decisions/plugin-surfaces.m
 `verification-before-completion` at every done-claim, and the comment trim
 followed by the adversarial review when the full agreed implementation is
 verified and about to ship through a PR or the repository delivery process
-(`trim-comments`, then `code-quality-review`, plus `test-quality-review` when
-production logic or tests changed). Each stops only for an explicit decline or
+(`trim-comments`, then the applicable code, test, and behavior/contract reviews;
+`test-quality-review` when production logic or tests changed, `contract-review` for changed observable
+behavior, consumer contracts or cross-component wiring). Each stops only for an explicit decline or
 a repo process that supersedes it.
 
 **Proof stays focused.** `empirical-proof` supplies default consumer proof for

@@ -20,7 +20,7 @@ Mostly you don't: it fires at completion, right before PR-or-merge. You can also
 | --- | --- |
 | Completed work needs its structural pass before landing | `code-quality-review` (fires by default) |
 | A harsh maintainability audit right now | `code-quality-review`, invoked directly |
-| Conformance to documented project patterns | `pattern-reviewer` agent |
+| Does the implementation deliver the agreed behavior and preserve affected consumer contracts? | [`contract-review`](contract-review.md), run by `contract-reviewer` |
 | Does the change actually work? | `verification-before-completion`, `empirical-proof` |
 | Reviewing a spec or plan before implementation | `spec-reviewer` agent |
 
@@ -70,7 +70,7 @@ No. A focused follow-up on a verified correction runs without asking, however ma
 No. Crossing it makes the review ask whether to decompose first; it blocks only when the review demonstrates a concrete maintainability consequence, never on the line count alone.
 
 **Who trims the comments?**
-The `trim-comments` stage, run by the `comment-trimmer` agent before this round, edits the diff's code comments. This review flags what remains, per your repo's rules, and the implementer acts on it; it never deletes a comment itself. With no comment rules in the repo, it still flags a suppression that hides a correctness rule and a constraint comment that a test, type, or lint could enforce; one the trim already offered to encode waits for your answer at the outline, so the review notes it rather than raising it again. A comment that only restates the code is `pattern-reviewer`'s check, which flags it by default wherever that agent runs.
+The `trim-comments` stage, run by the `comment-trimmer` agent before this round, edits the diff's code comments. This review flags what remains, per your repo's rules, and the implementer acts on it; it never deletes a comment itself. With no comment rules in the repo, it still flags a suppression that hides a correctness rule and a constraint comment that a test, type, or lint could enforce; one the trim already offered to encode waits for your answer at the outline, so the review notes it rather than raising it again. Cosmetic narration belongs to the comment trim, not a separate pattern-compliance review.
 
 **Can I run it inline in the session that wrote the code?**
 No. That session holds every justification behind the code, so a fresh reviewer tests those assumptions independently. Dispatch the `code-quality-reviewer` agent, which loads this skill as its rubric and, if needed, gathers the diff itself: the working tree against the base's merge base, untracked files included. Hand it the accepted scope, the ask as the ticket or plan put it, not your view of the code. It runs on your session's model, without your history. On Codex, spawn it as the agent file's Dispatch line says, which forks none of your history, and paste the file's body into the spawn message ahead of the three inputs, since Codex registers no plugin agents. With no subagent mechanism, hand the diff to a fresh session and say so in the report. An author's own pass is never this gate.

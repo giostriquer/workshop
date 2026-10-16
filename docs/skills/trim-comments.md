@@ -62,14 +62,13 @@ moment.
 | --- | --- |
 | The branch is done; trim its code comments before the review | `trim-comments` (fires by default at completion) |
 | The completion review of a finished diff, structure first. Its standard 8 reports what the trim left: comments a repo rule covers, suppressions that hide a correctness or safety rule, and constraint comments a test, type or lint could enforce | [code-quality-review](code-quality-review.md) |
-| Comments that only restate the code, reported as pattern drift with or without a repo rule | `pattern-reviewer` agent |
 | Code-level slop: needless defensive checks and `try`/`catch`, type-laundering casts, one-use helpers, unowned shims and fallbacks, style drift | [code-quality-review](code-quality-review.md) |
 | Whether the diff's tests protect behavior | [test-quality-review](test-quality-review.md) |
 | Triaging a PR's review comments | [get-pr-comments](get-pr-comments.md) (toolkit) |
 | Which existing tests should exist at all | [test-audit](test-audit.md) (toolkit) |
 
-The line with the review: `trim-comments` edits, then `code-quality-review` and
-`pattern-reviewer` report what remains, and the implementer acts on it. The
+The line with the review: `trim-comments` edits, then `code-quality-review`
+reports remaining concerns within its rubric, and the implementer acts on them. The
 trim lets the review spend its attention on structure and correctness instead
 of comment noise. It never replaces the review, and code-level slop belongs to
 `code-quality-review`.
@@ -102,7 +101,7 @@ The agent never commits, stages or pushes. If your work is already delivered
 as commits (an epic lane, or a branch the session committed under its existing
 authority), the session commits the trim's edits as their own comment-only
 commit before the review. Otherwise they stay in your working tree. Either way
-both reviewers read the same revision: the working tree against the merge
+all applicable reviewers read the same revision: the working tree against the merge
 base, untracked files included.
 
 **It ended with `BLOCKED`.**
@@ -182,6 +181,6 @@ have run, unless you waived them.
 
 Between verification and the review round. `verification-before-completion`
 backs the done claim, `trim-comments` trims the diff's code comments, then
-`code-quality-review` (plus `test-quality-review` when logic or tests changed)
-reviews the trimmed diff, the session outlines the work with any encoding
-offers and asks PR or merge, and `file-pr` lands it.
+the applicable code, test, and behavior/contract reviews inspect the trimmed diff.
+The session outlines the work with any encoding offers and asks PR or merge,
+and `file-pr` lands it.

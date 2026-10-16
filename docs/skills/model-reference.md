@@ -57,7 +57,7 @@ These hold for any fleet ([decision](../decisions/model-reference.md#routing-sta
 
 Not as fleet policy. A floor or ban list belongs in your own always-injected
 rules file; `adopt-global-rules` ships one example, `model-floor.md`. The skill
-names models only in two exceptions, for separate agents whose model is
+names models in three exceptions, for separate agents whose model is
 selected explicitly, not inherited:
 
 - **CI watching:** Sonnet 5.5 (`claude-sonnet-5-5`) on Claude Code or
@@ -69,9 +69,15 @@ selected explicitly, not inherited:
   gpt-6.1-sol on Codex, both at `xhigh` effort and spawned without the parent's
   history; the host's default model elsewhere.
 
-On Muse both exceptions dispatch the agent's approved scoped definition
+On Muse these two exceptions dispatch the agent's approved scoped definition
 (`workbench/<name>`) with no model override; Muse resolves the definition's
 model pin on its own fleet.
+
+- **Contract review:** `contract-reviewer` uses Opus 5.5 on Claude Code and
+  GPT-6.1 Sol on Codex, both at `xhigh` and without the author's history.
+  Other harnesses use the parent's model and effort. Muse dispatch explicitly
+  overrides the shared definition's Claude settings with the parent's values.
+  See [contract-review](contract-review.md); the agent owns exact dispatch settings.
 
 **The table lists models I don't have.**
 

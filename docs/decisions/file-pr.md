@@ -234,3 +234,15 @@ section or put it after Architecture, before verification and footer sections.
 Body references place native `gh --attach` uploads in that section. Captures
 stay in scratch, never in the repository; repair partial uploads without filing
 another PR. The skill carries the exact command and template rules.
+
+## Landing consumes completed gates (2026-10-16)
+
+The operator clarified that `file-pr` assumes verification and reviewer gates
+already ran. It checks their records and returns missing stages to completion
+before filing, preserving completed verdicts. Its checklist includes the
+conditional behavior/contract review; it does not become a verification engine.
+
+Review found that the preparation step still unconditionally reran local checks.
+It now reuses adequate current evidence after a no-op synchronization, while
+retaining fresh checks for invalidated coverage and explicit delivery gates.
+Missing evidence returns to completion. The usage page follows that boundary.

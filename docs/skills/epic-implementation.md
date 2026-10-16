@@ -43,7 +43,8 @@ remain explicit evidence gaps.
 
 The reply contains the populated report fields. Evidence links support those
 fields. Missing checks or evidence are marked explicitly; delivery state (PR,
-CI and merge) goes in `CHECKS`.
+CI and merge) goes in `CHECKS`. `REVIEW` and `REVIEW CLOSURE` retain separate
+code, test, and behavior/contract verdicts when applicable.
 For `blocked`, `need-follow-up` and `need-guidance`, `NEXT STEP` names the needed
 action or decision, owner and recommendation. Omit it for `ready-for-validation`.
 

@@ -277,14 +277,18 @@ runs; excluding its harness does not waive the evidence.
 
 When the full agreed work set is verified and ready to ship, the lane uses
 `trim-comments`, then `code-quality-review` over the trimmed range, plus
-`test-quality-review` when production logic or tests changed. Trim edits belong
+`test-quality-review` when production logic or tests changed and `contract-review`
+when observable behavior, consumer contracts or cross-component wiring changed.
+Give the behavior reviewer the accepted outcomes, approved design and exclusions,
+range and revision, and verification evidence; follow its Dispatch line. Applicable
+reviews run in parallel. Trim edits belong
 in RANGE as `trim-comments`' *Who runs it* requires. Intermediate validation
 reports and requests for rulings do not trigger review.
 
 Retain the reviewed revision and the review record: finding IDs, dispositions,
 reviewer confirmations, evidence for rejections and correction pass number.
 Return findings to their owning reviewer under that discipline's follow-up
-rules; preserve the other review's result. A pending required review or
+rules; preserve unaffected reviews' results. A pending required review or
 unconfirmed blocking disposition holds delivery unless the operator explicitly
 waives it or repository rules supersede the gate.
 

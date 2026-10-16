@@ -55,3 +55,12 @@ convergence behavior. Seven delivery cases retained pairing, missing-stage
 completion, separate pass records, and bounded CI repair without reopening
 review. Static checks found no peer-discipline references in either skill or
 companion agent. These are bounded planning probes, not a reliability estimate.
+
+## Behavior and contracts join the applicable round (2026-10-16)
+
+The `contract-review` skill dispatches `contract-reviewer` in the initial round when observable
+behavior, consumer contracts or cross-component wiring changes. It owns its
+verdict, findings and convergence record. Code and test review remain independent;
+completed stages are preserved. The completion workflow dispatches missing stages;
+`file-pr` checks their evidence before landing and returns gaps to completion.
+See [the role decision](pattern-reviewer-comment-noise.md#review-the-agreed-behavior-and-affected-consumers-2026-10-16).

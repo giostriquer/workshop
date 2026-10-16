@@ -71,11 +71,15 @@ permission and warranty notices apply to those portions as required by that
 license. Adaptations are documented at
 https://github.com/giostriquer/workshop/blob/main/docs/decisions/empirical-proof.md
 
-The safety-assumption and consumer-discovery guidance in `claim-check` and
-`empirical-proof` adapts pstack's `blast-radius` skill from Cursor's plugins
+The safety-assumption and consumer-discovery guidance in `claim-check`,
+`empirical-proof`, and `contract-review` adapts pstack's `blast-radius` skill
+from Cursor's plugins
 (https://github.com/cursor/plugins), Copyright (c) 2026 Lauren Tan, under the
 MIT License and the MIT permission and warranty notices. Adaptations are
-documented in those skills' decision notes.
+documented in those skills' decision notes and
+https://github.com/giostriquer/workshop/blob/main/docs/decisions/pattern-reviewer-comment-noise.md
+The `contract-review` skill also adapts pstack's `interrogate` intent, evidence
+and finding-filter guidance under the same copyright and MIT terms.
 
 ---
 

@@ -19,9 +19,10 @@ Codex*), with the base branch or diff range. On a host without subagents, use
 `code-quality-review`'s fresh-session route.
 
 It runs once the full agreed work set is verified and about to ship, before
-the one initial review round and never instead of it: `code-quality-review`,
-plus `test-quality-review` when production logic or tests changed, remains the
-required correctness and safety review and runs on the trimmed diff. Never
+the one initial review round and never instead of it. Code quality, test quality
+when production logic or tests changed, and `contract-review` for changed
+observable behavior, consumer contracts or cross-component wiring review the
+trimmed diff in their own disciplines. Never
 mid-implementation: there, tidying your own comments is ordinary editing, not
 this stage. It is default-on with the same two outs as that review
 (`using-workbench`'s completion requirements).
@@ -31,7 +32,7 @@ NOTHING_TO_TRIM | BLOCKED`; a report without that line reads as `BLOCKED`.
 `BLOCKED` leaves the stage pending: fix its cause and re-dispatch once, or ask
 the user.
 
-**How the trim reaches the round.** Both reviewers read one revision: the
+**How the trim reaches the round.** All applicable reviewers read one revision: the
 working tree against the base's merge base, untracked files included. Where
 the work is delivered as commits (an epic lane, or a session that has already
 committed its work under its existing authority), commit the trim's edits as

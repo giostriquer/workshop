@@ -5,10 +5,11 @@ description: Always use before opening a PR or pushing to a branch with an open 
 
 # File PR
 
-## MUST: the comment trim and the adversarial review run before the PR is filed
+## Completion evidence before filing
 
-Before filing, the branch diff has had its comment trim and then its
-adversarial review, each dispatched to a context that did not write the code:
+This skill handles landing. Verification and review belong to completion and
+should already be recorded before filing. Check the evidence covers this scope
+and revision, including the applicable independently dispatched stages:
 
 1. The `trim-comments` skill, run by the `comment-trimmer` agent as that skill
    describes. It goes first, so the review sees the trimmed diff.
@@ -17,12 +18,18 @@ adversarial review, each dispatched to a context that did not write the code:
    given the PR's base branch in a separate, test-scoped prompt, run by the
    `test-quality-reviewer` agent, dispatched by name with no model (on Codex, paste
    the agent file and use its Dispatch line, per `using-workbench`'s *Workbench
-   agents on Codex*). It can run in parallel with the second.
+   agents on Codex*).
+4. When observable behavior, consumer contracts or cross-component wiring changed:
+   the `contract-review` skill, dispatched to `contract-reviewer` as that skill
+   describes, given the accepted outcomes, approved design and
+   exclusions, diff/base and revision, and verification evidence. Follow the
+   agent's Dispatch line. The applicable reviews run in parallel after trimming.
 
-If any has not run, run it now and act on its result first, carrying the
-trim's encoding offers to the user as `trim-comments` describes.
+If verification or a required stage is missing, hold filing and return that gap
+to the completion workflow. Resume landing after it is resolved; do not restart
+completed stages. Carry the trim's encoding offers as `trim-comments` describes.
 Record each required verdict against the same trimmed scope and revision;
-each review skill owns its own findings, follow-ups, and pass record.
+each review discipline owns its own findings, follow-ups, and pass record.
 
 **Violating the letter of this gate is violating the spirit of it.** The
 review exists to be run by someone who did not write the code; a session that
@@ -37,7 +44,7 @@ following cases do not require a new review:
 - **The agreed scope already has completed review.** Each required stage returned
   and its reviewer confirmed every blocking disposition. Preserve the reviewed
   scope, revision, and closure evidence. Pending findings return to their owning
-  review skill, which owns follow-up and closure. Filing or updating the PR does
+  review discipline, which owns follow-up and closure. Filing or updating the PR does
   not itself repeat a completed stage. A later comment trim preserves review
   coverage as its skill states.
 
@@ -51,7 +58,7 @@ mention it afterward.
 | The reasoning | What is actually true |
 |---|---|
 | "This is trivial: one file, small diff." | Trivial is not an exemption. Only *no code changed* is. A one-line change to a conditional is code. |
-| "It's just a refactor, behavior is identical." | A refactor is the change class this review exists for. Structure is its entire subject. |
+| "It's just a refactor, behavior is identical." | Behavior-preserving refactors still need code-quality review of structure. The behavior/contract stage has its own trigger. |
 | "It's config / a version bump / generated output." | Config that changes behavior is code. If the diff changes what runs, the gate applies. |
 | "I reviewed it carefully as I wrote it." | The author is the one context that cannot run this review. That is stated in `code-quality-review`, not implied. |
 | "I ran the rubric over my own diff and found nothing." | A self-served pass is not this gate. It is reported as an author's pass or not at all. |
@@ -69,7 +76,7 @@ mention it afterward.
 - Treating urgency, a waiting reviewer, or a direct "open the PR" as a waiver.
 - Filing as a draft to defer the gate.
 
-**Each of these means: dispatch the review, then file.**
+**Each of these means: complete the missing gate before resuming filing.**
 
 File a finished branch as a PR and see it through: a template-true body, `gh pr
 create`, then an autonomous tend loop that fixes red CI (via the `fix-ci` skill) and
@@ -322,18 +329,19 @@ Reusing the merged head branch requires an explicit instruction.
    a resolvable conflict is work to complete. Run affected validation and any
    review whose prior coverage the integration changes invalidate before delivery.
    Never rebase published commits and never force-push.
-3. **Run focused local checks and required local gates.** *Discover* what this repo gates a PR on
-   rather than assuming a toolchain: read its CI workflow definitions, hook config,
-   build/package script targets, and contributor docs. Run the **fast static
-   checks** (format, lint, type-check) separately from the tests; they are usually
-   the cheapest to fail: against the freshly-synced base. Run affected tests; full
-   suites normally run in PR CI. A wider local run needs an explicit local gate or
-   a specific unresolved integration risk, not merely the existence of a CI job.
-   If any commit bypassed hooks (`--no-verify`), the formatter and linter never ran
-   on it, establish their result manually unless unchanged relevant evidence already
-   covers them. **Fix in-scope failures before filing** and disclose baseline issues. A PR opened on a
-   known-red baseline wastes the tend loop's bounded attempts. Record the exact
-   commands and results for the report.
+3. **Confirm focused checks and required local gates.** Discover the repo's gates
+   from its CI workflows, hooks, build/package scripts, and contributor docs.
+   Reuse current evidence that covers the synchronized candidate and relevant
+   environment; a no-op sync does not invalidate it. Run fresh checks when
+   integration or corrections invalidate coverage, or the repo explicitly requires
+   them at delivery. Missing completion evidence returns to completion as above.
+   When checks need to run, run fast static checks (format, lint, type-check)
+   separately before affected tests. Full suites normally run in PR CI; a wider
+   local run needs an explicit local gate or a specific unresolved integration
+   risk, not merely an existing CI job. If commits bypassed hooks (`--no-verify`),
+   confirm their required checks have evidence too. **Fix in-scope failures before
+   filing** and disclose baseline issues. Record commands and results, including
+   which evidence was reused.
 4. **Identify the ticket.** Scan the branch name, commit messages, and any existing
    description for a ClickUp / Linear / Jira id or URL. Exactly one candidate →
    carry its full **link** (never synthesize a URL from a bare id). Multiple

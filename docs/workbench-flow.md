@@ -55,7 +55,7 @@ flowchart LR
 
     I["IMPLEMENT<br/>in-session or dispatched: user / harness call;<br/>handed the plan / goal if present"]:::stage
     TR["COMMENT TRIM<br/>trim-comments, dispatched to comment-trimmer;<br/>code comments only; encoding offers wait for the user"]:::stage
-    AR["ADVERSARIAL REVIEW ON THE TRIMMED DIFF<br/>code quality; test quality in parallel<br/>when logic or tests changed"]:::stage
+    AR["ADVERSARIAL REVIEW ON THE TRIMMED DIFF<br/>code quality; test quality for logic/tests;<br/>contract-review for changed behavior or wiring"]:::stage
     OG[["USER: PR or merge?<br/>session outlines what was done first;<br/>repo / user rules may pre-authorize"]]:::gate
     L["LAND<br/>file-pr · merge · push;<br/>fix-ci: separate CI watcher"]:::stage
 

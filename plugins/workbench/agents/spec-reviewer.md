@@ -251,7 +251,7 @@ If the spec contradicts current code, flag the contradiction explicitly rather t
 
 This agent reviews specs and plans. It does not:
 
-- review implementation code (that belongs to `pattern-reviewer` and the in-loop implementation review)
+- review implementation code (that belongs to `contract-reviewer` and the in-loop implementation review)
 - update documentation (a separate documentation-maintenance responsibility)
 - write or modify specs or plans (that belongs to the author)
 

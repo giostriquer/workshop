@@ -113,3 +113,12 @@ dispatch the approved `workbench/test-quality-reviewer` or
 override; Muse likewise resolves the definition's model pin on its own fleet.
 Select the model and effort explicitly; do not inherit the parent's. See
 `test-quality-review` and `trim-comments` for when each runs.
+
+## Contract-review exception
+
+`contract-review` dispatches `contract-reviewer` on **Opus 5.5 at `xhigh` on
+Claude Code** and **GPT-6.1 Sol at `xhigh` on Codex**, without the author's
+history. Other harnesses use the parent's model and effort. In particular, Muse
+must override the shared definition's Claude settings with the parent's values.
+The agent's Dispatch line is the source for exact arguments. An unavailable
+required route leaves the review blocked; it does not select a fallback model.

@@ -36,7 +36,7 @@ muse plugins approve workbench
 
 Skills are active on install; the `approve` step activates the six agent
 definitions (`workbench/<name>`), which parents then dispatch by that scoped
-id with no model, as on Claude Code. On Muse 1.4.8 an approved
+id with the model and effort settings in each agent's Dispatch line. On Muse 1.4.8 an approved
 definition is listed but the runtime still reports it unavailable at spawn
 time, so dispatching skills report that gap until a Muse release admits
 them (see the repository's plugin-surfaces decision).
@@ -76,7 +76,7 @@ instructions.
 | [`spec-reviewer`](agents/spec-reviewer.md) | a design spec or implementation plan, before you build |
 | [`code-quality-reviewer`](agents/code-quality-reviewer.md) | a diff's maintainability and structure; loads the `code-quality-review` rubric |
 | [`test-quality-reviewer`](agents/test-quality-reviewer.md) | test code for trustworthiness and risk coverage; loads the `test-quality-review` rubric; separate Opus (Claude) or Sol (Codex) reviewer |
-| [`pattern-reviewer`](agents/pattern-reviewer.md) | a diff's conformance to the project's implementation patterns |
+| [`contract-reviewer`](agents/contract-reviewer.md) | a finished change's agreed behavior, integration and consumer compatibility; loads the `contract-review` rubric |
 | [`ci-watcher`](agents/ci-watcher.md) | PR or branch CI through the bundled Node 18+ watcher command; separate Sonnet 5.5 (Claude Code) or Sol (Codex) agent invokes it and reports its verdict |
 | [`comment-trimmer`](agents/comment-trimmer.md) | a finished diff's code comments, trimmed before the review round; loads the `trim-comments` rubric; separate Opus (Claude) or Sol (Codex) agent; returns constraint-comment encoding offers, never applies them |
 
@@ -91,6 +91,7 @@ instructions.
 | [`qa-sweep`](skills/qa-sweep/SKILL.md) | fans a QA team over independent slices, corroborates every verdict-moving finding firsthand |
 | [`empirical-proof`](skills/empirical-proof/SKILL.md) | default focused proof of behavioral changes through apps or real consumers, with evidence reuse and coverage gaps |
 | [`code-quality-review`](skills/code-quality-review/SKILL.md) | strict, structure-first maintainability review of a diff |
+| [`contract-review`](skills/contract-review/SKILL.md) | agreed behavior, integration and affected consumer contracts, checked by `contract-reviewer` |
 | [`test-quality-review`](skills/test-quality-review/SKILL.md) | test trustworthiness review: whether tests protect the behavior they claim, backed by a mutation run over the changed code; runs with the adversarial review when logic or tests changed |
 | [`trim-comments`](skills/trim-comments/SKILL.md) | the comment trim at completion, before the review round: removes code-comment slop (narration, banners, commented-out code, stale comments, workaround sermons) from the finished diff, keeps comments that carry what the code can't, offers encodings for constraint comments, and reports correctness-hiding suppressions; dispatched to `comment-trimmer` |
 | [`epic-orchestration`](skills/epic-orchestration/SKILL.md) | owns a multi-ticket epic: writes the lane prompts the operator dispatches by hand, validates each report against the repo, authorizes the PR; never implements; user-invoked only |

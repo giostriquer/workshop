@@ -13,7 +13,8 @@ Those two completion requirements apply by default. `verification-before-complet
 fires at every done/fixed/passing claim. The comment trim (`trim-comments`,
 run by the `comment-trimmer` agent) and then the adversarial review
 (`code-quality-review`, plus `test-quality-review` when the diff changes
-production logic or tests) fire once the implementation is complete, before
+production logic or tests, plus `contract-review` for changed observable behavior,
+consumer contracts or cross-component wiring) fire once the implementation is complete, before
 PR-or-merge. Each runs unless the user explicitly declines it or the repo's own
 process supersedes it; a small diff, time pressure, or the session's confidence
 are not reasons to skip. Everything else fires on relevance.
@@ -38,7 +39,7 @@ specific task skips it.
 | An unresolved module, interface, ownership, or dependency choice | `codebase-design`, before defining dependent work |
 | Domain terms need to be settled or changed | `domain-modeling` |
 | About to claim done, fixed, or passing | `verification-before-completion` |
-| Implementation complete, before PR-or-merge | `trim-comments`, then `code-quality-review` (+ `test-quality-review`) |
+| Implementation complete, before PR-or-merge | `trim-comments`, then the applicable code, test, and behavior/contract reviews |
 | Picking a model | `model-reference` |
 
 ## The map
@@ -56,11 +57,11 @@ specific task skips it.
   harness's call.
 - **Completion**: only when the full agreed work set is implemented, verified,
   and about to ship, not at a checkpoint. The comment trim runs first, then one
-  adversarial round runs both required stages on the trimmed diff, each
+  adversarial round runs all applicable stages on the trimmed diff, each
   dispatched to a context that did not write the code, with the same scope and
   revision. Each discipline owns its verdict, findings, follow-ups, and pass
   record. A missing stage runs without repeating a completed one. Counting one
-  code review does not waive required test review. Verified fixes return to
+  code review does not waive required test or behavior/contract review. Verified fixes return to
   their owning reviewer; unresolved blockers hold delivery. Then the session outlines the
   work, with the trim's open encoding offers, and asks PR or merge, unless repo
   or user rules pre-authorize it.
@@ -80,7 +81,7 @@ name `file-pr`.
 | One just-finished change with a drivable surface | `empirical-proof` |
 | A broad decomposable surface at team scale | `qa-sweep` |
 | One premise, ticket, or hunch | `claim-check` |
-| Landing; refuses a code PR without the comment trim and the adversarial review | `file-pr` |
+| Landing after verification and review; missing gates return to completion | `file-pr` |
 
 When no frame fits, keep the standard and drop the frame: prove the
 deliverable the way its real consumer would use it.
@@ -118,7 +119,17 @@ parent passes no model and pastes nothing
 ([decision](../decisions/plugin-surfaces.md)). Muse works the Claude
 Code way: it registers each agent as a scoped definition (`workbench/<name>`)
 once you approve it with `muse plugins approve workbench`, and the parent
-dispatches that id with no model and nothing pasted.
+dispatches that id with the model and effort its Dispatch line requires, and
+nothing pasted.
+
+## Behavior and contract review
+
+Use [contract-review](contract-review.md) to check agreed outcomes and affected
+consumers. It dispatches `contract-reviewer` at completion for changed observable
+behavior, consumer contracts or wiring. Give it accepted outcomes, approved design
+and exclusions, diff/base and revision, and verification evidence. The skill owns
+the rubric, correction rounds and verdicts; the agent owns execution and model
+routing. Architecture preferences alone do not expand the workset.
 
 ## Common questions
 
@@ -168,5 +179,6 @@ No. Skill descriptions and your own rules are the whole activation surface.
 `using-workbench` is the frame, not a stage. It points to whichever skill owns
 the moment: `audit` and `brainstorming` at entry, `test-driven-development` and
 `systematic-debugging` in implementation, `verification-before-completion`, `trim-comments` and
-`code-quality-review` at completion, `file-pr` and `fix-ci` at landing.
+the applicable code, test, and behavior/contract reviews at completion,
+`file-pr` and `fix-ci` at landing.
 Re-read it when you cannot tell which piece owns what is in front of you.

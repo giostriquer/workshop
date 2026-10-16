@@ -28,18 +28,17 @@ finishes local preparation and names the delivery step still needed.
 ## When to reach for it
 
 Before opening a PR or pushing to a branch with an open PR, including review
-corrections when CI is green. It
-assumes the completion gates ran, except these: it will not file a code PR whose
-diff lacks its comment trim (`trim-comments`, run by the `comment-trimmer`
-agent) and then its adversarial review by reviewers who did not write the code
-(`code-quality-review`, plus `test-quality-review` when production logic or
-tests changed). A missing stage runs first; a trim run after a finished review
-edits comments only, so the review still covers the revision. The only exemptions: an explicit
-user waiver, a superseding repo process, a diff that changes no code, or a prior
-completed review covering the agreed scope. It retains each stage's result;
-pending findings return to the owning review skill. Filing or updating the PR
-does not itself restart a completed stage. Both receive the same trimmed scope
-and revision, and keep separate verdicts and pass records. A draft PR is still a filed PR.
+corrections when CI is green. It assumes verification and review already ran,
+then checks that their evidence covers the scope and revision being filed.
+The applicable stages are comment trimming, code-quality review, test-quality
+review for changed logic or tests, and `contract-review` for changed observable
+behavior, consumer contracts or cross-component wiring.
+
+A missing gate holds filing and returns to the completion workflow. Each stage
+keeps its verdict and pass record; completed stages are not restarted. A late
+comment-only trim preserves prior review coverage. Explicit user waivers and
+repository process take precedence; non-behavioral prose/comments/config do not
+require a new review. A draft PR is still a filed PR.
 
 When another agent will open or push to the PR (a subagent, fork, workflow agent or epic
 lane), the dispatch names `file-pr`, plus the agreed PR plan entry when there
@@ -67,8 +66,10 @@ latest base: fetch it from the remote and merge any commits the branch lacks,
 even without conflicts. Preserve uncommitted work and resolve conflicts under
 the accepted requirements; a failed fetch or unresolved merge blocks delivery.
 Discover the repo's PR gates (CI workflows, hooks, build scripts, contributor
-docs), run format, lint and type-check, then the affected
-tests; full suites run in PR CI. Find the ticket link. Search for the PR
+docs) and reuse current evidence covering the synchronized candidate. Run fresh
+checks when integration or corrections invalidate coverage, or a repository gate
+requires them at delivery; a no-op sync does not repeat validation. Missing
+completion evidence returns to completion. Full suites run in PR CI. Find the ticket link. Search for the PR
 template case-insensitively in `.github/`, the repo root and `docs/`, and
 record the result; the Summary / Ticket / Caveats fallback is allowed only
 after an empty search. Draft the body and title using the PR text contract,
@@ -171,9 +172,11 @@ place. If the app cannot run, there is no section and the report says why.
 such as `![alt](./after.png)` to the uploaded asset in place, keeping the
 section where it belongs. Re-attach failed uploads with `gh pr edit --attach`.
 
-**Why does it run my formatter first?** Format and lint are the cheapest required
-checks to fail, and `--no-verify` commits skipped them. Known failures are fixed
-before filing so the tend loop's attempts go to new ones.
+**Does landing rerun checks?** It reuses current evidence unless integration or
+corrections invalidate coverage, or the repository requires fresh delivery checks.
+When checks need to run, static checks precede affected tests. Commits that
+bypassed hooks still need evidence for the required checks, and known in-scope
+failures are fixed before filing.
 ([decision](../decisions/file-pr.md))
 
 **It stopped and proposed a split.** The diff went beyond the agreed PR plan (a
@@ -240,7 +243,7 @@ several candidates or the template requires one.
 ## Where it fits
 
 `file-pr` is one of three landing options, with a direct merge and a plain push.
-`verification-before-completion`, the comment trim and the adversarial review
-come before it; the trim and the review are the ones it checks rather than
-assumes. After it,
+Verification, comment trimming and applicable independent reviews come before
+it. It checks that their evidence covers the scope and revision being filed and
+returns missing stages to completion. After it,
 `receiving-code-review` governs acting on reviewer feedback.

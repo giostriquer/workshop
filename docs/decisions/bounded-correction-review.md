@@ -56,7 +56,7 @@ an unresolved design needs a decision under the ordinary ownership rules.
 
 ## Discipline ownership (2026-09-25)
 
-Code and test review each own their rules, findings, convergence decisions and
+Code, test, and behavior/contract review each own their rules, findings, convergence decisions and
 pass records. Delivery callers combine their verdicts; neither discipline
 loads or dispatches the other. See
 [independent stages](completion-review-stages.md#independent-disciplines-2026-09-25).

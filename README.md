@@ -97,6 +97,8 @@ Workbench operates without Toolkit. Toolkit's architecture survey requires
 Workbench's design references; its correction skill uses them for unresolved
 design choices. Grilling remains in Toolkit.
 
+Use [contract-review](docs/skills/contract-review.md) to check agreed behavior and
+affected consumers through the `contract-reviewer` agent.
 Start with [using-workbench](docs/skills/using-workbench.md) for the workflow,
 or the [skills handbook](docs/skills/README.md) to choose a skill by task.
 Neither plugin installs hooks or a dispatcher. Skill descriptions and explicit

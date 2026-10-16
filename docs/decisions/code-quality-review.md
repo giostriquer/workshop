@@ -74,3 +74,10 @@ followed by the reviewed revision and findings. Earlier prose verdicts forced
 both sessions and tooling to infer whether review passed. Sharing the two
 labels with test review makes the outcome readable without merging the rubrics.
 PASS means no in-scope blocking finding; a missing verdict does not imply PASS.
+
+## Pattern review now checks behavior and contracts (2026-10-16)
+
+The separate `contract-review` skill and `contract-reviewer` now checks agreed behavior and consumer contracts.
+The former comment-noise overlap ends: cosmetic narration stays with comment
+trimming, while standard 8 retains repository-rule, suppression and constraint
+findings. Structure and maintainability remain this discipline's responsibility.

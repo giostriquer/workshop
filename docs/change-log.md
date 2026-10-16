@@ -9,6 +9,12 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-12 reformat.
 
 
+## workbench 0.51.0: 2026-10-16
+
+- **Review agreed behavior and consumer contracts.** The new `contract-review` skill invokes `contract-reviewer`, replacing `pattern-reviewer`. It checks observable outcomes, affected consumers and integration at completion without reopening settled architecture for preferences. Custom dispatches must use the new agent name; correction rounds retain their existing convergence policy. ([decision](decisions/pattern-reviewer-comment-noise.md#review-the-agreed-behavior-and-affected-consumers-2026-10-16))
+- **Use explicit contract-review models.** Claude Code runs Opus 5.5 at `xhigh`, and Codex runs GPT-6.1 Sol at `xhigh`. Other harnesses use the parent's model and effort; Muse overrides the shared Claude settings accordingly. ([decision](decisions/model-reference.md#contract-review-routing-2026-10-16))
+- **Land with completed verification and review evidence.** `file-pr` checks existing completion records and returns missing stages to completion. It reuses valid evidence after unchanged synchronization, while preserving fresh checks for invalidated coverage and explicit delivery gates. ([decision](decisions/file-pr.md#landing-consumes-completed-gates-2026-10-16))
+
 ## workbench 0.50.1: 2026-10-16
 
 - **Keep license notices with copied skills.** The package separates standard MIT text from complete upstream attribution in `THIRD_PARTY_NOTICES.md`, restores the 2025 Superpowers copyright year, and requires both files with standalone skill copies. Full-plugin installations and Codex exports retain both files. ([decision](decisions/plugin-surfaces.md#license-notices-travel-with-copied-content-2026-10-16))
@@ -73,7 +79,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 ## toolkit 0.15.1: 2026-10-07
 
 - **Haiku gets a narrow lane instead of a ban.** The shipped `model-floor` rule allows Haiku 5.5 for high-volume, cost-sensitive summaries, compactions, and database queries that fetch and report data. Coding, code review, auditing, profiling, debugging, planning, design, and judging another agent's output never go to Haiku; mixed or unclear tasks stay off it, and volume or budget never moves a task into the lane. ([decision](decisions/adopt-global-rules.md#haiku-gets-a-narrow-lane-2026-10-07))
-
-## workbench 0.47.3: 2026-10-07
-
-- **CI watching names its own Haiku exclusion.** `model-reference` and `ci-watcher` list Haiku beside Astra and Fable as models that never watch CI, instead of relying on the global Haiku ban the operator rule no longer carries. ([decision](decisions/model-reference.md#claude-ci-watching-uses-sonnet-55-2026-09-29))
