@@ -9,6 +9,18 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-12 reformat.
 
 
+## workbench 0.49.0: 2026-10-16
+
+- **Dispatch files declare their lane.** `epic-orchestration` writes each dispatch under the scope folder's `dispatches/`, opening with `Lane: <LANE>`, and names it by absolute path in the pointer. The label, pointer and `Lane:` line are read as written by the tooling that carries handoffs, so returns to several existing lanes keep a label-and-block pair each, and the section is reread after a compaction or resume. ([decision](decisions/epic-orchestration.md#handoffs-are-read-as-written-by-their-file-2026-10-16))
+- **Run workbench on Muse.** A native `.muse-plugin/plugin.json` installs the plugin on Muse. Agents dispatch there by their scoped id, `workbench/<name>`, once the operator approves them; `session-messaging` reaches Muse peers through Muse's own messaging, and `handoff-goal`, `empirical-proof` and `model-reference` name Muse's surfaces. Muse's native loader does not honor `disable-model-invocation`; the README says how to restore it per machine. ([decision](decisions/plugin-surfaces.md#muse-a-native-per-plugin-manifest-on-the-claude-marketplace-catalog-2026-10-14))
+- **Agents pin no tool allowlist.** One tool name a host did not know made Muse reject a whole agent definition at spawn, so every agent drops its `tools:` line; each body still states what its agent must not touch. ([decision](decisions/plugin-surfaces.md#muse-a-native-per-plugin-manifest-on-the-claude-marketplace-catalog-2026-10-14))
+
+## toolkit 0.17.0: 2026-10-16
+
+- **Adopt global rules on Muse.** `adopt-global-rules` adds a `muse` host that writes `globals/MUSE.md` and the shared rules as blocks in `~/.config/muse/AGENTS.md`, since Muse reads no rules directory. ([decision](decisions/plugin-surfaces.md#muse-adopt-global-rules-host-and-repo-local-skill-precedence-2026-10-14))
+- **Shipped globals carry adopter defaults.** The global documents speak in the user's voice, preauthorize the task-tracker operations a task needs, comments included, and add a task-continuation rule; pull request comments and replies still need explicit authorization. ([decision](decisions/adopt-global-rules.md#shipped-globals-adopter-defaults-no-personal-grants-2026-10-15))
+- **Toolkit installs on Muse.** A native Muse manifest ships with the plugin, and `web-demo-video` names Muse's file-reading tool for reviewing captured frames. ([decision](decisions/plugin-surfaces.md#muse-a-native-per-plugin-manifest-on-the-claude-marketplace-catalog-2026-10-14))
+
 ## workbench 0.48.3: 2026-10-14
 
 - **Keep mutation evidence scoped and trustworthy.** Test-quality review verifies runtime-data isolation before its baseline, constrains Rust build and test targets, and distinguishes timeout uncertainty from assertion kills. It catches protection lost through test changes, clarifies constant-export coverage, and adds qualified Bun runner and incremental-report guidance while preserving existing budgets. ([decision](decisions/mutation-scope-and-budget.md#evidence-and-isolation-corrections-2026-10-14))
@@ -70,11 +82,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 - **Performance claims carry comparable evidence.** Verification and empirical proof require completed correct work, comparable runs, variation, and explicit limits on causality, independently of Toolkit. ([decision](decisions/empirical-proof.md))
 - **Reviews inspect enforceable contracts.** The quality rubric checks external-input validation against the whole declared type and identifies architecture that permits distant mistakes from plausible local edits. ([decision](decisions/code-quality-review.md))
 - **Self-audits can propose structural prevention.** Repeated process misses can point to an owner, interface, or executable check; the retrospective remains a report with no new edit authority. ([decision](decisions/self-audit.md))
-
-## workbench 0.46.0: 2026-10-03
-
-- **Sessions message each other through Session Orchestrator.** The new `session-messaging` skill lets a Claude Code or Codex session ask, tell or consult another one on the machine with `so post`, find it with `so ls --live`, and answer an arrival by running the command its header names. A refused send (six messages since the operator last spoke) stops the session for the operator; in Codex, `so post` asks to leave the sandbox with the prefix rule `["so", "post"]`. ([decision](decisions/session-messaging.md))
-
-## workbench 0.45.6: 2026-10-01
-
-- **Every PR push includes the latest target branch.** Filing and CI repairs refresh the actual target repository and branch, merge missing commits even without conflicts, and recheck the target after validation. Sessions resolve conflicts settled by existing requirements and validate the combined result; unresolved decisions and failed synchronization leave the push pending. ([decision](decisions/file-pr.md#synchronize-the-actual-target-before-every-push-2026-10-01))
