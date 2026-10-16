@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "name": "toolkit",
   "displayName": "Toolkit",
-  "version": "0.17.0",
-  "description": "Optional utilities for the workshop: html-artifact (reports, plans, architecture explanations, and interactive product targets), anatomy (launches pinned upstream interactive isometric figures on demand), ketchup (catches up on current work and human decisions), web-demo-video (Playwright walkthroughs with verification frames), get-pr-comments (triages a PR's feedback into a prioritized action list, read-only), adopt-global-rules (installs the workshop's shipped global CLAUDE.md / AGENTS.md, rules, and Claude output styles onto a machine, additively), me-human (dogfood a system from a human user's perspective), test-audit (gates new tests and audits or prunes low-value ones), dependency-audit (audits dependencies for bumps, caveats, conflicts, advisories and removal candidates, then applies the groups you pick), grill-me (a relentless interview that sharpens a plan, run by grilling), improve-codebase-architecture (finds deepening refactors, with codebase-design and domain-modeling), correct (prevents recurring repository mistakes), and benchmark-checklist (validates performance comparisons). Install alongside workbench when you want them; skip to keep sessions lean.",
+  "version": "0.18.0",
+  "description": "Optional utilities for the workshop: html-artifact (reports, plans, architecture explanations, and interactive product targets), anatomy (launches pinned upstream interactive isometric figures on demand), ketchup (catches up on current work and human decisions), web-demo-video (Playwright walkthroughs with verification frames), get-pr-comments (triages a PR's feedback into a prioritized action list, read-only), adopt-global-rules (installs the workshop's shipped global CLAUDE.md / AGENTS.md, rules, and Claude output styles onto a machine, additively), me-human (dogfood a system from a human user's perspective), test-audit (gates new tests and audits or prunes low-value ones), dependency-audit (audits dependencies for bumps, caveats, conflicts, advisories and removal candidates, then applies the groups you pick), grill-me (a relentless interview that sharpens a plan, run by grilling), improve-codebase-architecture (finds deepening refactors using Workbench's codebase-design and domain-modeling), correct (prevents recurring repository mistakes), and benchmark-checklist (validates performance comparisons). Install alongside workbench when you want them; skip to keep sessions lean.",
   "compat": {
     "source": "native",
     "manifestDir": ".muse-plugin"
@@ -13,10 +13,8 @@
       { "id": "adopt-global-rules", "path": "skills/adopt-global-rules/SKILL.md" },
       { "id": "anatomy", "path": "skills/anatomy/SKILL.md" },
       { "id": "benchmark-checklist", "path": "skills/benchmark-checklist/SKILL.md" },
-      { "id": "codebase-design", "path": "skills/codebase-design/SKILL.md" },
       { "id": "correct", "path": "skills/correct/SKILL.md" },
       { "id": "dependency-audit", "path": "skills/dependency-audit/SKILL.md" },
-      { "id": "domain-modeling", "path": "skills/domain-modeling/SKILL.md" },
       { "id": "get-pr-comments", "path": "skills/get-pr-comments/SKILL.md" },
       { "id": "grill-me", "path": "skills/grill-me/SKILL.md" },
       { "id": "grilling", "path": "skills/grilling/SKILL.md" },

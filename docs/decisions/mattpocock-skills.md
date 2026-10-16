@@ -1,10 +1,25 @@
 # Matt Pocock's grilling and architecture skills: decisions in force
 
-This is the rationale for five toolkit skills ported from
+This is the rationale for five skills ported from
 [mattpocock/skills](https://github.com/mattpocock/skills) (MIT, Copyright (c)
 2026 Matt Pocock): `grill-me`, `grilling`, `improve-codebase-architecture`,
 `codebase-design` and `domain-modeling`. Superseded choices are omitted, and
 git history keeps the originals.
+
+## Design references belong to Workbench (2026-10-16)
+
+`codebase-design` and `domain-modeling`, including their references and host
+policies, ship in Workbench so brainstorming can use them without Toolkit.
+The glossary lookup used by design-it-twice stays beside its owning skill.
+`grill-me`, `grilling`, and `improve-codebase-architecture` stay in Toolkit.
+The survey loads Workbench's design and domain skills, resolving the glossary
+reference from the installed domain skill rather than assuming sibling paths.
+Its interview still uses Toolkit's grilling skill. Missing Workbench leaves
+the dependent survey stage incomplete; it does not trigger an installation.
+
+Toolkit may depend on Workbench; Workbench must operate without Toolkit.
+Invocation policies and the moved reference content are preserved. The new
+brainstorming integration is recorded in `workbench-system.md`.
 
 ## Focused upstream refinements (2026-10-08)
 
@@ -47,7 +62,7 @@ The dependency graph, walked from both entry points:
 | `grill-me` | user-invoked | `grilling` |
 | `improve-codebase-architecture` (+ `HTML-REPORT.md`) | user-invoked | `codebase-design`, `grilling`, `domain-modeling` |
 | `grilling` | model-invocable | nothing |
-| `codebase-design` (+ `DEEPENING.md`, `DESIGN-IT-TWICE.md`) | model-invocable | nothing |
+| `codebase-design` (+ `DEEPENING.md`, `DESIGN-IT-TWICE.md`) | model-invocable | `domain-modeling` glossary reference when designing alternatives |
 | `domain-modeling` (+ `CONTEXT-FORMAT.md`, `ADR-FORMAT.md`) | model-invocable | nothing |
 
 Nothing else is needed. `setup-matt-pocock-skills` writes per-repo tracker,
@@ -68,11 +83,12 @@ load them. Every skill carries an `agents/openai.yaml`, as upstream does.
 Descriptions are rewritten as triggers in the `writing-skills` form, ending in
 "User-invoked only." for the entry points, like `test-audit`.
 
-## Loading the toolkit copies when another plugin ships the same names (2026-09-24)
+## Loading the Workshop copies when another plugin ships the same names
 
 Upstream writes each dependency as "Call the Skill tool with X", which is
-Claude Code's tool name. The ported text says "load `toolkit:X`", naming the
-plain `X` for hosts that don't prefix plugin skills. That matches the repo's
+Claude Code's tool name. The ported text names the owning plugin:
+`toolkit:grilling`, `workbench:codebase-design`, or `workbench:domain-modeling`,
+with plain names for hosts that don't prefix plugin skills. That matches the repo's
 existing wording ("Use the `test-driven-development` skill").
 
 The skills keep their upstream names, following the precedent in
@@ -81,13 +97,13 @@ The skills keep their upstream names, following the precedent in
 
 | Host | Plugin skill names | Both sets installed |
 | --- | --- | --- |
-| Claude Code | prefixed `plugin:skill` | Coexist; the entry points name `toolkit:X` |
+| Claude Code | prefixed `plugin:skill` | Coexist; entry points name each skill's owning plugin |
 | Codex | prefixed `plugin:skill` (`codex-rs` skill loader `namespace.rs`); a plain `$grilling` mention is refused when two skills share the name (`selection.rs`) | Coexist; `$toolkit:grill-me` invokes the toolkit set |
 | OpenCode | flat; its docs require names unique across every scanned directory | Load one set, not both |
 | Cursor, Antigravity | prefixing of plugin skills is not documented | Not verified |
 
-Each entry point also says to prefer the toolkit copy over a same-named skill
-from another plugin, so a host that lists both unprefixed still has a rule to
+Each entry point also identifies the owning Workshop plugin over a same-named
+skill from another source, so a host that lists both unprefixed still has a rule to
 follow. A toolkit-specific rename (`toolkit-grilling`) was rejected. It would
 break the names users type and every upstream diff, only to cover a
 both-installed state on hosts where it is unverified. On Claude Code, with
@@ -199,7 +215,7 @@ the `CONTEXT` to `GLOSSARY` naming convention, including the format-file
 rename. The upstream manifest still says `1.2.3`; a merge from a branch named
 `release/v1.3` does not prove that version was published.
 
-Toolkit accepts both conventions. Repository instructions choose the location
+The shared glossary lookup accepts both conventions. Repository instructions choose the location
 first, existing maps and glossaries are reused, and a new unconfigured repo
 defaults to `GLOSSARY.md`. Ambiguous competing files require a location decision
 before writing. No automatic rename, merge, or second glossary is authorized.

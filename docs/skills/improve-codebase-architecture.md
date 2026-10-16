@@ -2,6 +2,10 @@
 
 [Canonical skill](../../plugins/toolkit/skills/improve-codebase-architecture/SKILL.md)
 
+Ships in Toolkit and requires Workbench for `codebase-design` and
+`domain-modeling`. Its interview uses Toolkit's `grilling`. If Workbench is
+missing, the survey reports that dependency instead of claiming completion.
+
 ## What it does
 
 `improve-codebase-architecture` surveys a codebase for **deepening
@@ -41,7 +45,8 @@ Neighbours it is easy to confuse with:
 
 ## Prerequisites and side effects
 
-None to run it. With no direction given, it reads recent commit history and
+Install Workbench alongside Toolkit for its design and domain references.
+No existing glossary or ADR is required. With no direction given, it reads recent commit history and
 weights the scan toward files that keep changing. It reads the repo's glossary
 and ADRs (in `docs/adr/`, or wherever the repo keeps decision records)
 when they exist, and names candidates in your domain's own nouns.
@@ -103,9 +108,10 @@ Yes. Exploration runs through a sub-agent where the host has one, and inline
 otherwise. The report needs no network.
 
 **I also have the `mattpocock-skills` plugin installed.**
-Both plugins ship this skill and its three dependencies. The toolkit copy
-loads `toolkit:codebase-design`, `toolkit:grilling` and
-`toolkit:domain-modeling` by their plugin-prefixed names on Claude Code and
+The upstream plugin ships this skill and its dependencies. Workshop splits
+them between Toolkit and Workbench. The Toolkit survey
+loads `workbench:codebase-design`, `toolkit:grilling` and
+`workbench:domain-modeling` by their plugin-prefixed names on Claude Code and
 Codex. On OpenCode, skill names must be unique across scanned directories, so
 load one set.
 

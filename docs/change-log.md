@@ -9,6 +9,15 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-12 reformat.
 
 
+## workbench 0.50.0: 2026-10-16
+
+- **Settle architecture before defining the workset.** Brainstorming explicitly covers architectural decisions and loads `codebase-design` when ownership, interfaces, state, dependencies, or extraction remain unresolved. The selected design carries constraints, exclusions, and verification into implementation and review; bounded work stays bounded and settled decisions stay settled. ([decision](decisions/workbench-system.md#architecture-before-the-workset-2026-10-16))
+- **Design guidance ships with Workbench.** `codebase-design` and `domain-modeling`, including their references and invocation policies, move here from Toolkit. Workbench can use them without installing Toolkit. ([decision](decisions/mattpocock-skills.md#design-references-belong-to-workbench-2026-10-16))
+
+## toolkit 0.18.0: 2026-10-16
+
+- **Use Workbench's shared design guidance.** `improve-codebase-architecture` now requires Workbench's `codebase-design` and `domain-modeling`; `correct` uses Workbench when prevention needs an unresolved design choice. The moved skills are no longer shipped in Toolkit. Update Workbench alongside Toolkit for those paths; `grilling` and `grill-me` remain in Toolkit. ([decision](decisions/mattpocock-skills.md#design-references-belong-to-workbench-2026-10-16))
+
 ## workbench 0.49.0: 2026-10-16
 
 - **Dispatch files declare their lane.** `epic-orchestration` writes each dispatch under the scope folder's `dispatches/`, opening with `Lane: <LANE>`, and names it by absolute path in the pointer. The label, pointer and `Lane:` line are read as written by the tooling that carries handoffs, so returns to several existing lanes keep a label-and-block pair each, and the section is reread after a compaction or resume. ([decision](decisions/epic-orchestration.md#handoffs-are-read-as-written-by-their-file-2026-10-16))
@@ -69,16 +78,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 
 - **PR bodies explain the full impact of a change.** `file-pr` follows the behavior activated by flags and defaults, then explains workflow changes, compatibility, breaking changes, side effects, rollout, and rollback. Known failures and unverified critical workflows appear in the change description, with detailed evidence in the repository's verification field. ([decision](decisions/file-pr.md#clear-technical-prose-and-reviewer-evidence-2026-10-05))
 - **PR writing uses precise technical English.** Titles, bodies, and delivery reports use ASD-STE100 Simplified Technical English as a guiding style without claiming formal compliance. Compact visuals, paired evidence, and recovery guidance adapt Matt Pocock's PR skill while preserving repository templates and delivery rules. ([decision](decisions/file-pr.md#clear-technical-prose-and-reviewer-evidence-2026-10-05))
-
-## toolkit 0.15.0: 2026-10-04
-
-- **Prevent recurring mistakes with `correct`.** Trace repeated repository mistakes to their cause, then use ownership, interfaces, types, checks, or behavioral tests to prevent recurrence. Plans stay read-only; authorized repairs require evidence that the check rejects the mistake and accepts valid work. ([decision](decisions/correct.md))
-- **Check performance claims with `benchmark-checklist`.** Validate completed correct work, comparable configurations, repeated runs and variation before drawing conclusions. A requested one-run ballpark stays a labeled observation, and an unknown cause limits causal claims. ([decision](decisions/benchmark-checklist.md))
-- **Design for contributors with partial context.** Architecture surveys and alternative designs check split ownership, equivalent competing paths, reachable internals, and hand-synchronized lists while preserving legitimate compatibility. ([decision](decisions/mattpocock-skills.md#agent-contributions-with-partial-context-2026-10-04))
-- **Reuse either glossary convention.** Domain modeling, architecture surveys, and design briefs share one lookup rule for `GLOSSARY.md`, legacy `CONTEXT.md`, their maps, and repository-specific locations. Existing names remain intact; new unconfigured repos default to `GLOSSARY.md`. ([decision](decisions/mattpocock-skills.md#glossary-compatibility-and-source-tracking-2026-10-04))
-
-## workbench 0.47.0: 2026-10-04
-
-- **Performance claims carry comparable evidence.** Verification and empirical proof require completed correct work, comparable runs, variation, and explicit limits on causality, independently of Toolkit. ([decision](decisions/empirical-proof.md))
-- **Reviews inspect enforceable contracts.** The quality rubric checks external-input validation against the whole declared type and identifies architecture that permits distant mistakes from plausible local edits. ([decision](decisions/code-quality-review.md))
-- **Self-audits can propose structural prevention.** Repeated process misses can point to an owner, interface, or executable check; the retrospective remains a report with no new edit authority. ([decision](decisions/self-audit.md))

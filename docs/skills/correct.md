@@ -2,6 +2,10 @@
 
 [Canonical skill](../../plugins/toolkit/skills/correct/SKILL.md)
 
+This skill ships in Toolkit. When prevention requires an unresolved design
+choice, it loads `workbench:codebase-design`; that branch requires Workbench.
+Other prevention work can proceed without it.
+
 ## What it does
 
 `correct` investigates recurring repository mistakes and turns them into
@@ -51,8 +55,10 @@ No. The remedy must fit the consequence and scope. A small existing validation
 hook may suffice; a judgment call may still need a concise instruction.
 
 **Does it need Workbench or a specific host?**
-No. It uses repository history, available review evidence, and the host's tools.
-Its architecture reference ships alongside it in Toolkit.
+Workbench is needed when prevention requires an unresolved design choice;
+that branch loads `workbench:codebase-design`. Other prevention work uses
+repository history, available review evidence, and the host's tools without
+a specific host or Workbench requirement.
 
 ## How to tell it worked
 

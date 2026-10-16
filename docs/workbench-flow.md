@@ -38,6 +38,12 @@ flowchart TD
 
 ## Implementation: agency belongs to the user and the harness
 
+During brainstorming, unresolved choices about module ownership, interfaces,
+state, or dependencies load Workbench's `codebase-design` before the workset
+is defined. The selected design and its constraints travel with the accepted
+scope into implementation and review. Bounded work stays bounded; Toolkit is
+not required.
+
 ```mermaid
 flowchart LR
     classDef gate fill:#0e7468,stroke:#0a5c52,color:#ffffff

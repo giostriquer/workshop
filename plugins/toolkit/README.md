@@ -39,6 +39,11 @@ for skills marked user-invoked only below.
 
 ## Skills
 
+The architecture survey requires Workbench's `codebase-design` and
+`domain-modeling`. `correct` uses Workbench's `codebase-design` when prevention
+requires a design choice. Install Workbench alongside Toolkit for those paths.
+`grill-me` and `grilling` remain self-contained in Toolkit.
+
 | Skill | Does |
 | --- | --- |
 | [`html-artifact`](skills/html-artifact/SKILL.md) | creates HTML reports, plans, architecture explanations, and interactive product targets; user-invoked only |
@@ -53,10 +58,8 @@ for skills marked user-invoked only below.
 | [`grill-me`](skills/grill-me/SKILL.md) | interviews you about a plan, design, or idea in rounds of questions with recommended answers until every branch is settled; user-invoked only |
 | [`grilling`](skills/grilling/SKILL.md) | the round-based interview that `grill-me` and `improve-codebase-architecture` run |
 | [`improve-codebase-architecture`](skills/improve-codebase-architecture/SKILL.md) | surveys a codebase for deepening opportunities, writes an offline HTML report, then grills the candidate you pick; user-invoked only |
-| [`codebase-design`](skills/codebase-design/SKILL.md) | the deep-module vocabulary (module, interface, depth, seam, adapter, leverage, locality) and its principles |
 | [`correct`](skills/correct/SKILL.md) | turns evidenced recurring mistakes into proportionate prevention and verifies it; explicit requests only |
 | [`benchmark-checklist`](skills/benchmark-checklist/SKILL.md) | validates measured performance comparisons, with a lightweight path for requested ballparks |
-| [`domain-modeling`](skills/domain-modeling/SKILL.md) | sharpens a project's glossary (`GLOSSARY.md` or legacy `CONTEXT.md`) and offers ADRs for hard-to-reverse decisions |
 
 > **Attribution:** `get-pr-comments` is derived from the `cursor-team-kit` plugin in Cursor's [cursor/plugins](https://github.com/cursor/plugins) (MIT, Copyright (c) 2026 Cursor), adapted per the [get-pr-comments decision](https://github.com/giostriquer/workshop/blob/main/docs/decisions/get-pr-comments.md).
 
@@ -76,7 +79,7 @@ task's authority and makes visuals optional. See its
 
 > **Attribution:** `web-demo-video` adapts the verification workflow from Lauren Tan's `pstack` `create-verification-skill` in Cursor's [cursor/plugins](https://github.com/cursor/plugins) (MIT, Copyright (c) 2026 Lauren Tan). Its recorder uses Microsoft's [Playwright CLI](https://github.com/microsoft/playwright-cli) as an external tool. See the [web-demo-video decision](https://github.com/giostriquer/workshop/blob/main/docs/decisions/web-demo-video.md).
 
-> **Attribution:** `grill-me`, `grilling`, `improve-codebase-architecture`, `codebase-design` and `domain-modeling` are derived from Matt Pocock's [mattpocock/skills](https://github.com/mattpocock/skills) (MIT, Copyright (c) 2026 Matt Pocock), with improvements to `improve-codebase-architecture` and `codebase-design` adapted from the `pstack` plugin in Cursor's [cursor/plugins](https://github.com/cursor/plugins) (MIT, Copyright (c) 2026 Lauren Tan): adapted per the [mattpocock-skills decision](https://github.com/giostriquer/workshop/blob/main/docs/decisions/mattpocock-skills.md).
+> **Attribution:** `grill-me`, `grilling` and `improve-codebase-architecture` are derived from Matt Pocock's [mattpocock/skills](https://github.com/mattpocock/skills) (MIT, Copyright (c) 2026 Matt Pocock), with improvements to `improve-codebase-architecture` adapted from the `pstack` plugin in Cursor's [cursor/plugins](https://github.com/cursor/plugins) (MIT, Copyright (c) 2026 Lauren Tan): adapted per the [mattpocock-skills decision](https://github.com/giostriquer/workshop/blob/main/docs/decisions/mattpocock-skills.md).
 
 `adopt-global-rules` also runs without any plugin installed, for bootstrapping a
 bare machine:

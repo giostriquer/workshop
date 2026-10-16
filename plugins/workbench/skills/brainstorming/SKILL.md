@@ -1,6 +1,6 @@
 ---
 name: brainstorming
-description: Use when designing a feature or a refactor and when an idea carries questions the codebase can't answer (intent, preference, trade-offs). Not for confirmed small fixes or work whose design is already settled.
+description: Use when designing a feature or refactor, making architectural decisions, or exploring ideas with questions the codebase can't answer. Not for confirmed small fixes or settled designs.
 ---
 
 # Brainstorming Ideas Into Designs
@@ -41,9 +41,30 @@ one up", so the user can override it.
 actual scope warrants it. Explain a material change in classification; uncertainty
 is a reason to inspect the relevant boundary, not automatically choose the heaviest path.
 
+## Architecture choices before the workset
+
+During exploration, when an unresolved choice concerns module ownership,
+interfaces, seam placement, state, dependencies, or extraction, load the sibling
+`workbench:codebase-design` skill before comparing approaches or defining
+dependent work. Use plain `codebase-design` on hosts without plugin prefixes;
+prefer the Workbench copy when another plugin ships the same name. This applies
+to bounded work too; loading the reference does not upgrade the path.
+
+Trace the affected callers and current owner, and read relevant existing
+decisions before choosing a shape. Apply the design principles to that evidence.
+Carry the selected interface and ownership, invariants and compatibility
+constraints, explicit exclusions, and intended consumer verification into the
+existing design or workset. A bounded task can capture these in a few sentences.
+An already settled choice remains valid until new evidence challenges it.
+
+The implementation and review receive those decisions with the accepted scope.
+A new failure path or violated constraint can reopen the affected choice;
+another preferred architecture alone does not expand the workset. This hook
+loads design guidance, not the user-invoked architecture survey or grilling.
+
 ## Where this sits in the workbench flow
 
-- **Scope:** features and refactors with unsettled design choices get this treatment. Confirmed small
+- **Scope:** features, refactors, and architectural decisions with unsettled design choices get this treatment. Confirmed small
   fixes (e.g. a bug an audit already pinned down) skip it; work whose design was
   already settled elsewhere skips it. Entering does not mean the full ceremony:
   the path classification above decides how much, and most bounded work is a few
@@ -168,18 +189,11 @@ plus a short in-chat design is the whole process.
 
 **Design for isolation and clarity:**
 
-- Break the system into smaller units that each have one clear purpose,
-  communicate through well-defined interfaces, and can be understood and tested
-  independently
-- For each unit, you should be able to answer: what does it do, how do you use
-  it, and what does it depend on?
-- Can someone understand what a unit does without reading its internals? Can
-  you change the internals without breaking consumers? If not, the boundaries
-  need work.
-- Smaller, well-bounded units are also easier for you to work with; you reason
-  better about code you can hold in context at once, and your edits are more
-  reliable when files are focused. When a file grows large, that's often a
-  signal that it's doing too much.
+- Use the loaded `codebase-design` principles for unresolved structural choices.
+  Judge the complexity callers must understand and where changes concentrate;
+  smaller files or more modules alone do not establish a better design.
+- For each module, explain its responsibility, how callers use it, what it
+  depends on, and how its contract is verified through its interface.
 
 **Working in existing codebases:**
 

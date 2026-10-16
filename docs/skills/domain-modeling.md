@@ -1,6 +1,9 @@
 # domain-modeling
 
-[Canonical skill](../../plugins/toolkit/skills/domain-modeling/SKILL.md)
+[Canonical skill](../../plugins/workbench/skills/domain-modeling/SKILL.md)
+
+Ships in Workbench. Toolkit's architecture survey uses this Workbench skill
+for glossary lookup and active domain modeling.
 
 ## What it does
 

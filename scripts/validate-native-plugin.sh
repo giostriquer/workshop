@@ -227,6 +227,8 @@ WORKBENCH_SKILLS="audit
 brainstorming
 claim-check
 code-quality-review
+codebase-design
+domain-modeling
 empirical-proof
 epic-auditor
 epic-cleanup
@@ -257,10 +259,8 @@ test-quality-reviewer.md"
 TOOLKIT_SKILLS="adopt-global-rules
 anatomy
 benchmark-checklist
-codebase-design
 correct
 dependency-audit
-domain-modeling
 get-pr-comments
 grill-me
 grilling

@@ -13,14 +13,15 @@ existing approval stays valid.
 
 ## When to reach for it
 
-Invoke `/brainstorming` when designing a feature or refactor, or when an idea
-carries questions the codebase can't answer: intent, preference, trade-offs.
+Invoke `/brainstorming` when designing a feature or refactor, making architectural
+decisions, or exploring ideas with questions the codebase can't answer: intent,
+preference, trade-offs.
 Skip it for confirmed small fixes (a bug an audit already pinned down) and for
 work whose design is already settled.
 
 | The problem | The skill |
 | --- | --- |
-| An idea to build; a feature or refactor to design | `brainstorming` |
+| An idea to explore, a feature or refactor to design, or an architectural decision to settle | `brainstorming` |
 | Something to verify, hunt, or check | `audit` |
 | An unresolved failure requiring investigation | `systematic-debugging` |
 | A settled design a fresh session should pursue autonomously | `handoff-goal` (user-invoked) |
@@ -41,6 +42,21 @@ the kind of app. It reclassifies in either direction when evidence changes the
 needed depth, and says so. Keeping a spike's code is a new request, classified
 fresh.
 
+## Architecture before the workset
+
+When exploration reveals an unresolved choice about module ownership,
+interfaces, state, dependencies, seam placement, or extraction, brainstorming
+loads Workbench's [codebase-design](codebase-design.md) before comparing
+approaches or defining dependent work. Bounded work can use this reference
+without becoming a full architectural exercise. It requires no Toolkit install.
+
+The existing design or workset carries the affected callers, selected interface
+and ownership, invariants, compatibility constraints, exclusions, and intended
+consumer verification. Implementation and review receive those decisions with
+the accepted scope. New evidence can reopen a choice; another preferred
+architecture alone does not expand the task. Loading the reference does not
+start an architecture survey or grilling interview.
+
 ## The dialogue
 
 Bounded work stops at context, a few questions, and the in-chat design;
@@ -57,7 +73,8 @@ stay sequential, and anything the codebase can establish it answers itself.
 
 **Presenting the design.** Sections scaled to complexity, related sections
 together, covering architecture, components, data flow, error handling, and
-testing. Units get one clear purpose and well-defined interfaces. In existing
+testing. Module design follows the shared design principles: what callers need
+to know and where changes concentrate, rather than file size alone. In existing
 code it follows existing patterns.
 
 **Design self-review.** The written design is checked for placeholders,

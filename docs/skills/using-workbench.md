@@ -35,6 +35,8 @@ specific task skips it.
 | Which skill owns this moment? | `using-workbench` |
 | Something to verify, hunt, or check | `audit` |
 | Designing a feature or a refactor | `brainstorming` |
+| An unresolved module, interface, ownership, or dependency choice | `codebase-design`, before defining dependent work |
+| Domain terms need to be settled or changed | `domain-modeling` |
 | About to claim done, fixed, or passing | `verification-before-completion` |
 | Implementation complete, before PR-or-merge | `trim-comments`, then `code-quality-review` (+ `test-quality-review`) |
 | Picking a model | `model-reference` |
@@ -44,8 +46,10 @@ specific task skips it.
 - **Entry**: two optional doors. Door A is `audit`, which exits with a report
   or revealed work. Door B is an idea: ground it against the codebase, then
   `brainstorming` owns what the code cannot answer.
-- **Scoping**: `brainstorming` settles open design, then follows the
-  authorized route (direct, plan, or handoff-goal) or asks for a missing one.
+- **Scoping**: `brainstorming` settles open design, loading the sibling
+  `codebase-design` for unresolved structural choices before defining the
+  workset. It then follows the authorized route (direct, plan, or handoff-goal)
+  or asks for a missing one. This path works without Toolkit.
 - **Implementation**: `test-driven-development` where a test harness exists
   (repo conventions win on conflict); `systematic-debugging` for sustained,
   unresolved failures. In-session versus dispatched is the user's and the

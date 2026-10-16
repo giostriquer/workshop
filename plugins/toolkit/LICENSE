@@ -40,8 +40,8 @@ https://github.com/giostriquer/workshop/blob/main/docs/decisions/test-audit.md
 
 ---
 
-Portions of this plugin (the `grill-me`, `grilling`,
-`improve-codebase-architecture`, `codebase-design` and `domain-modeling`
+Portions of this plugin (the `grill-me`, `grilling` and
+`improve-codebase-architecture`
 skills and their bundled reference files) are derived from Matt Pocock's
 skills (https://github.com/mattpocock/skills), Copyright (c) 2026 Matt Pocock,
 and are used under the MIT License. The above permission and warranty notices
@@ -51,8 +51,8 @@ https://github.com/giostriquer/workshop/blob/main/docs/decisions/mattpocock-skil
 
 ---
 
-Portions of this plugin (parts of the `improve-codebase-architecture` and
-`codebase-design` skills and their reference files) are adapted from Cursor's
+Portions of this plugin (parts of the `improve-codebase-architecture`
+skill and its reference files) are adapted from Cursor's
 plugins (https://github.com/cursor/plugins): the `pstack` plugin's `architect`,
 `how` and `principle-exhaust-the-design-space` skills, Copyright (c) 2026
 Lauren Tan, and are used under the MIT License. The above permission and

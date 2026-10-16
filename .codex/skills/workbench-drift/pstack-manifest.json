@@ -23,7 +23,7 @@
   "pieces": [
     {
       "upstreamPath": "pstack/skills/architect/",
-      "localPath": "plugins/toolkit/skills/codebase-design/",
+      "localPath": "plugins/workbench/skills/codebase-design/",
       "disposition": "adopted",
       "why": "Deep interfaces and safe changes with partial context.",
       "adaptations": "Also informs improve-codebase-architecture and the independent Workbench code-quality rubric. Preserve compatibility and distinct adapters; no arena, model pins, or automatic implementation."
@@ -120,7 +120,7 @@
     },
     {
       "upstreamPath": "pstack/skills/principle-exhaust-the-design-space/",
-      "localPath": "plugins/toolkit/skills/codebase-design/DESIGN-IT-TWICE.md",
+      "localPath": "plugins/workbench/skills/codebase-design/DESIGN-IT-TWICE.md",
       "disposition": "adopted",
       "why": "Compare structurally distinct interfaces.",
       "adaptations": "Usage-first candidate designs with host-neutral delegation and sequential fallback."

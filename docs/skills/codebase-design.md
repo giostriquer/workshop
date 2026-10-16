@@ -1,6 +1,6 @@
 # codebase-design
 
-[Canonical skill](../../plugins/toolkit/skills/codebase-design/SKILL.md)
+[Canonical skill](../../plugins/workbench/skills/codebase-design/SKILL.md)
 
 ## What it does
 
@@ -8,6 +8,7 @@
 principles that follow from them. It is a reference, not a process: it has no
 loop, no artifact, and no checkpoint. Skills that design or restructure code
 load it for the vocabulary, and on its own it gives you the language and stops.
+It ships in Workbench alongside `domain-modeling`; Toolkit is not required.
 
 | Term | What it means | Don't say |
 | --- | --- | --- |
@@ -45,8 +46,10 @@ negative and positive check; a sketch does not claim those checks ran.
 
 It is model-invocable: the agent loads it when you design or reshape a
 module's interface, argue about where a seam goes, or judge whether an
-extraction earns its keep, and [improve-codebase-architecture](improve-codebase-architecture.md)
-loads it by name.
+extraction earns its keep. Workbench's [brainstorming](brainstorming.md) loads
+it when exploration encounters an unresolved structural choice, before defining
+the workset. Toolkit's [improve-codebase-architecture](improve-codebase-architecture.md)
+also loads the Workbench copy by name.
 
 | The problem | The skill |
 | --- | --- |

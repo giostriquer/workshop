@@ -3,6 +3,8 @@
 A direct-use plugin from [Workshop](https://github.com/giostriquer/workshop):
 review and CI agents, a comment trimmer, and skills for investigation through
 delivery. Individual skills document their tool and access requirements.
+Codebase design and domain modeling ship here so brainstorming can resolve
+architectural choices before defining the workset, without installing Toolkit.
 Optional artifact and maintenance utilities live in the sibling
 [`toolkit`](https://github.com/giostriquer/workshop/blob/main/plugins/toolkit/README.md) plugin: install it only if you want them.
 
@@ -105,6 +107,8 @@ surface, and `using-workbench` answers "how does this flow work?" on demand.
 | --- | --- |
 | [`audit`](skills/audit/SKILL.md) | uses the requested scope (quick · static review · deep · sweep), runs inline or through the selected engine, reports uncertainty, and asks only for unresolved decisions |
 | [`brainstorming`](skills/brainstorming/SKILL.md) | design dialogue for features and refactors, ending at your route pick: direct / plan / handoff-goal |
+| [`codebase-design`](skills/codebase-design/SKILL.md) | the deep-module vocabulary (module, interface, depth, seam, adapter, leverage, locality) and its principles |
+| [`domain-modeling`](skills/domain-modeling/SKILL.md) | sharpens a project's glossary (`GLOSSARY.md` or legacy `CONTEXT.md`) and offers ADRs for hard-to-reverse decisions |
 | [`test-driven-development`](skills/test-driven-development/SKILL.md) | RED-GREEN-REFACTOR, default where a test harness exists; repo conventions take precedence |
 | [`systematic-debugging`](skills/systematic-debugging/SKILL.md) | four-phase root-cause discipline for persistent or unclear failures |
 | [`verification-before-completion`](skills/verification-before-completion/SKILL.md) | the "deemed ready" gate: fresh evidence before any done / fixed / passing claim |
@@ -120,6 +124,13 @@ surface, and `using-workbench` answers "how does this flow work?" on demand.
 > **Attribution:** `trim-comments` is derived from OpenClaw's [openclaw/openclaw](https://github.com/openclaw/openclaw) `.agents/skills/deslop` (MIT, Copyright (c) 2026 OpenClaw Foundation), with its comment keep-list and its constraint-comment and suppression rules adapted from the `pstack` plugin's `no-comments` skill and `comment-sicko` agent in Cursor's [cursor/plugins](https://github.com/cursor/plugins) (MIT, Copyright (c) 2026 Lauren Tan): adapted per the [trim-comments decision](https://github.com/giostriquer/workshop/blob/main/docs/decisions/trim-comments.md): narrowed to code comments, dispatched as a workbench delivery stage before the review round, diff scope made host- and stack-neutral.
 
 ## Scope
+
+`codebase-design` and `domain-modeling` are derived from Matt Pocock's
+[skills](https://github.com/mattpocock/skills) (MIT, Copyright (c) 2026 Matt
+Pocock). The design references also adapt Lauren Tan's pstack `architect` and
+`principle-exhaust-the-design-space` guidance in
+[cursor/plugins](https://github.com/cursor/plugins) (MIT, Copyright (c) 2026
+Lauren Tan). See the [design skills decision](https://github.com/giostriquer/workshop/blob/main/docs/decisions/mattpocock-skills.md).
 
 No MCP servers, no hooks, no dispatchers: skills activate on their own
 triggers or your invocation, with no SessionStart hook.

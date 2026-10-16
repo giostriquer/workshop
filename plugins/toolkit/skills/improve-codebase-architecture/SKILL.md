@@ -8,11 +8,15 @@ disable-model-invocation: true
 
 Surface architectural friction and propose **deepening opportunities**: refactors that turn shallow modules into deep ones. The aim is testability and AI-navigability.
 
-The skills this command loads ship beside it in the toolkit plugin: `toolkit:codebase-design`, `toolkit:grilling` and `toolkit:domain-modeling` (plain names on hosts that don't prefix plugin skills with the plugin name). If another installed plugin ships a skill with the same plain name, load the toolkit one.
+This command uses `workbench:codebase-design` and `workbench:domain-modeling`
+from the Workbench plugin, and the sibling `toolkit:grilling` skill. Use plain
+names on hosts without plugin prefixes; otherwise resolve the named plugin's
+copy. Workbench is required for this survey. If a required skill is unavailable,
+report the missing dependency and leave the dependent stage incomplete.
 
 This command is _informed_ by the project's domain model and built on a shared design vocabulary:
 
-- Load `toolkit:codebase-design` for the architecture vocabulary (**module**, **interface**, **depth**, **seam**, **adapter**, **leverage**, **locality**) and its principles (the deletion test, "the interface is the test surface", "one adapter = hypothetical seam, two = real"). Use these terms exactly in every suggestion, and don't drift into "component," "service," "API," or "boundary."
+- Load `workbench:codebase-design` for the architecture vocabulary (**module**, **interface**, **depth**, **seam**, **adapter**, **leverage**, **locality**) and its principles (the deletion test, "the interface is the test surface", "one adapter = hypothetical seam, two = real"). Use these terms exactly in every suggestion, and don't drift into "component," "service," "API," or "boundary."
 - The domain glossary gives names to good seams; ADRs (in `docs/adr/`, or wherever the repo keeps its decision records) record decisions this command should not re-litigate.
 
 ## Process
@@ -25,8 +29,9 @@ This command is _informed_ by the project's domain model and built on a shared d
 - Otherwise, walk back a good stretch of the commit history (`git log --oneline`) to find the codebase's hot spots, the files and areas that keep coming up, and let those paths pull your attention first. If the changes are scattered with no clear hot spot, widen the net.
 
 Read the project's domain glossary and any ADRs in the area you're touching
-first. Use the shared [glossary lookup](../domain-modeling/CONTEXT-FORMAT.md#locate-the-glossary)
-to follow repo pointers and either `GLOSSARY` or legacy `CONTEXT` files/maps.
+first. Resolve the installed `workbench:domain-modeling` skill and read
+`CONTEXT-FORMAT.md`, **Locate the glossary**, beside its `SKILL.md` to follow
+repo pointers and either `GLOSSARY` or legacy `CONTEXT` files/maps.
 Carry the resolved path into exploration briefs. Reading vocabulary does not
 invoke active domain modeling or create missing files.
 
@@ -83,9 +88,9 @@ Do NOT propose interfaces yet. After the file is written, ask the user: "Which o
 
 Once the user picks a candidate, load `toolkit:grilling` to walk the decision tree with them: constraints, dependencies, the shape of the deepened module, what sits behind the seam, what tests survive.
 
-Side effects happen inline as decisions crystallize; load `toolkit:domain-modeling` to keep the domain model current as you go:
+Side effects happen inline as decisions crystallize; load `workbench:domain-modeling` to keep the domain model current as you go:
 
 - **Naming a deepened module after a concept not in the glossary?** Add the resolved term to the same selected glossary. Create it lazily if it doesn't exist.
 - **Sharpening a fuzzy term during the conversation?** Update that glossary right there.
 - **User rejects the candidate with a load-bearing reason?** Offer an ADR, framed as: _"Want me to record this as an ADR so future architecture reviews don't re-suggest it?"_ Only offer when the reason would actually be needed by a future explorer to avoid re-suggesting the same thing; skip ephemeral reasons ("not worth it right now") and self-evident ones.
-- **Want to explore alternative interfaces for the deepened module?** Use the design-it-twice pattern in `toolkit:codebase-design` (its `DESIGN-IT-TWICE.md`).
+- **Want to explore alternative interfaces for the deepened module?** Use the design-it-twice pattern in `workbench:codebase-design` (its `DESIGN-IT-TWICE.md`).

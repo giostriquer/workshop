@@ -40,7 +40,10 @@ proportionate to the accepted scope:
 1. **Ownership and interface.** Give an invariant one authoritative owner;
    derive repeated lists; make internals inaccessible; consolidate equivalent
    paths. Preserve supported compatibility, distinct use cases, and adapters.
-   For a real design choice, use the sibling `toolkit:codebase-design` guidance.
+   For a real design choice, load `workbench:codebase-design` from Workbench
+   (plain `codebase-design` on hosts without plugin prefixes). If unavailable,
+   report the missing dependency and leave that design choice unresolved;
+   independent prevention work can continue.
 2. **Types and checks.** Make invalid states unrepresentable where practical.
    Otherwise use the existing lint, build, or validation path. An error should
    name the violated rule and the supported operation. For existing debt, a

@@ -38,6 +38,29 @@ skills. Removing the pipeline does not prohibit authorized delegation.
 
 ## Current workflow ownership
 
+### Architecture before the workset (2026-10-16)
+
+Brainstorming had an architectural path but never loaded the existing design
+guidance. Its local preference for smaller units also competed with the
+deep-interface criteria in `codebase-design`. Brainstorming now loads that
+skill when exploration exposes an unresolved choice about module ownership,
+interfaces, state, dependencies, or extraction, before comparing approaches
+or defining dependent work. The trigger also applies to bounded work. The
+description explicitly includes architectural decisions so an undecided
+structural choice can enter brainstorming without a feature or refactor request.
+
+The selected design carries its affected callers, constraints, exclusions,
+and verification into the existing workset. This gives implementation and
+review the same decision to assess. New evidence can reopen a decision;
+an alternative preference alone does not expand the workset. Existing
+review scope and correctness requirements remain in force.
+
+Workbench must work without Toolkit. `codebase-design` and `domain-modeling`
+therefore move into Workbench together: the former's design-it-twice reference
+uses the latter's glossary lookup. Toolkit may depend on Workbench, so its
+architecture survey, correction skill, and grilling skills remain there.
+This is a conditional skill reference, not a host hook or dispatcher.
+
 The [flow map](../workbench-flow.md) summarizes the current
 [`using-workbench` contract](../../plugins/workbench/skills/using-workbench/SKILL.md).
 The diagram is a reading aid; the skill specs define execution.

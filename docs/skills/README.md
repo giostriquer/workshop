@@ -27,6 +27,8 @@ you want them, and skip to keep sessions lean.
 | One premise, ticket, or hunch to settle | [claim-check](claim-check.md) |
 | A broad surface worth team-scale coverage | [qa-sweep](qa-sweep.md) |
 | Designing a feature or a refactor | [brainstorming](brainstorming.md) |
+| Shared words for a module's interface, seam, and depth | [codebase-design](codebase-design.md) |
+| To settle a project's glossary terms (`GLOSSARY.md` or `CONTEXT.md`), or record an ADR | [domain-modeling](domain-modeling.md) |
 | A long-running goal a fresh session should pursue alone | [handoff-goal](handoff-goal.md) |
 | Implementing where a test harness exists | [test-driven-development](test-driven-development.md) |
 | An unresolved failure requiring sustained investigation | [systematic-debugging](systematic-debugging.md) |
@@ -62,10 +64,8 @@ you want them, and skip to keep sessions lean.
 | To be interviewed about a plan, design, or idea until every branch is settled | [grill-me](grill-me.md), user-invoked only |
 | The round-based interview other skills run | [grilling](grilling.md) |
 | To survey a codebase for refactors that deepen shallow modules | [improve-codebase-architecture](improve-codebase-architecture.md), user-invoked only |
-| Shared words for a module's interface, seam, and depth | [codebase-design](codebase-design.md) |
 | Prevent recurring repository mistakes, on an explicit request | [correct](correct.md) |
 | Check the evidence behind a measured performance comparison | [benchmark-checklist](benchmark-checklist.md) |
-| To settle a project's glossary terms (`GLOSSARY.md` or `CONTEXT.md`), or record an ADR | [domain-modeling](domain-modeling.md) |
 
 ## Invocation and completion
 

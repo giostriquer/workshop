@@ -85,8 +85,12 @@ npx github:giostriquer/workshop --dry-run   # plan; drop --dry-run to apply
 
 | Plugin | Contents | Reference |
 | --- | --- | --- |
-| **workbench** | Investigation, design, implementation, verification, review, and delivery skills, plus review and CI agents | [Catalog and agent contracts](plugins/workbench/README.md) |
-| **toolkit** | Optional tools for artifacts, architecture, dependencies, feedback, and machine setup | [Catalog](plugins/toolkit/README.md) |
+| **workbench** | Investigation, brainstorming, codebase design and domain modeling, implementation, verification, review, and delivery, plus review and CI agents | [Catalog and agent contracts](plugins/workbench/README.md) |
+| **toolkit** | Optional tools for artifacts, architecture surveys, dependencies, feedback, and machine setup | [Catalog](plugins/toolkit/README.md) |
+
+Workbench operates without Toolkit. Toolkit's architecture survey requires
+Workbench's design references; its correction skill uses them for unresolved
+design choices. Grilling remains in Toolkit.
 
 Start with [using-workbench](docs/skills/using-workbench.md) for the workflow,
 or the [skills handbook](docs/skills/README.md) to choose a skill by task.

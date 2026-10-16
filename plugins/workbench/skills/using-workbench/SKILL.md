@@ -49,7 +49,8 @@ ENTRY (two optional doors)
       can't answer
 
 SCOPING
-  brainstorming for unresolved design → follow the authorized route or resolve a missing choice:
+  brainstorming for unresolved design; structural choices load codebase-design
+      before defining the workset → follow the authorized route or resolve a missing choice:
       direct (straight from session) · plan (mechanism from the user's stack:
       plugin skill → repo skill → repo standards → harness plan mode) ·
       handoff-goal (contract dir; fresh session pursues autonomously)
@@ -95,6 +96,8 @@ FEEDBACK
 | --- | --- |
 | Something to verify / hunt / check | `audit` (engines: `claim-check`, `qa-sweep`) |
 | Designing a feature or refactor | `brainstorming` → the user's route pick |
+| An unresolved module, interface, ownership, or dependency choice during design | `codebase-design`, before defining dependent work |
+| Domain terms need to be settled or changed | `domain-modeling` |
 | A long-running autonomous goal, outliving this session | `handoff-goal` |
 | Implementing with a test harness | `test-driven-development` |
 | An unresolved failure requiring sustained investigation | `systematic-debugging` |

@@ -22,6 +22,17 @@ SOFTWARE.
 
 ---
 
+The `codebase-design` and `domain-modeling` skills and their bundled references
+are derived from Matt Pocock's skills (https://github.com/mattpocock/skills),
+Copyright (c) 2026 Matt Pocock, under the MIT License. The design references
+also adapt the pstack `architect` and `principle-exhaust-the-design-space`
+guidance from Cursor's plugins (https://github.com/cursor/plugins), Copyright
+(c) 2026 Lauren Tan, under the MIT License. The above permission and warranty
+notices apply to those portions. Adaptations are documented at
+https://github.com/giostriquer/workshop/blob/main/docs/decisions/mattpocock-skills.md
+
+---
+
 Portions of this plugin (the "method" process skills: brainstorming,
 test-driven-development, systematic-debugging, verification-before-completion,
 receiving-code-review, and their bundled reference files) are

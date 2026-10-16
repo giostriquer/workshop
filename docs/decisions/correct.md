@@ -28,7 +28,10 @@ table, and blanket removal of alternate paths are adapted. Keep required
 compatibility and distinct use cases, use existing enforcement and record
 locations, and test historical violations in isolation. Transcript discovery
 is limited to the requested workspace and range, with excerpts treated as
-untrusted evidence. There is no dependency on Workbench or Cursor tools.
+untrusted evidence. There is no dependency on Cursor tools. For an unresolved
+design choice, `correct` loads Workbench's `codebase-design`; that conditional
+dependency follows the design skill's move into Workbench (2026-10-16).
+Other prevention branches remain usable without Workbench.
 
 The new skill and its usage page carry the complete operating contract.
 Behavioral probes and a bounded repository pilot remain local evidence;
