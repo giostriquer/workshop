@@ -20,9 +20,14 @@ bug hunting to ordinary session work.
 ## Decide what would demonstrate the change
 
 Turn the requested behavior, diff, and acceptance criteria into observable
-outcomes. For a bug fix, exercise the original symptom on the changed build.
-For a feature, complete the intended flow and inspect its result. For a
-refactor, exercise or compare the behavior that must remain unchanged.
+outcomes. For a bug fix, exercise the original symptom on the changed build with
+a check that could fail on the defect: the reported trigger, or a check seen
+failing before the fix. A later pre-fix run uses a disposable checkout, never a
+revert of the fix in an active or dirty worktree; see
+`verification-before-completion`'s Seen failing before the fix. A pass on input
+not shown to reach the defect leaves the fix unverified. For a feature, complete
+the intended flow and inspect its result. For a refactor, exercise or compare
+the behavior that must remain unchanged.
 
 Choose checks that could expose a plausible failure:
 

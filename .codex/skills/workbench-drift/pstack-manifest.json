@@ -230,6 +230,52 @@
         "date": "2026-10-12",
         "note": "Operator-approved scoped adaptations after source comparison. Source snapshot is not publication proof; range-review pin remains unchanged."
       }
+    },
+    {
+      "upstreamPath": "pstack/skills/tdd/",
+      "disposition": "dropped",
+      "why": "Report shape, existing-assertion guardrail and closest-executable-check fallback were baseline-probed against the local test-driven-development skill; it already produced the intended outcomes, so nothing was carried. The explicit-request-only trigger contradicts the local default.",
+      "scopedReview": {
+        "commit": "1541ad72393f5a771eb45d99e1b6276e3636c3ea",
+        "version": "0.15.29",
+        "date": "2026-10-21",
+        "note": "Scoped review for the TDD and verification comparison; range-review pin unchanged. See docs/decisions/empirical-proof.md."
+      }
+    },
+    {
+      "upstreamPath": "pstack/automations/benny/skills/reproduce-and-fix-issues/references/verify-existing-fix.md",
+      "localPath": "plugins/workbench/skills/verification-before-completion/",
+      "disposition": "adopted",
+      "why": "A bug-fix check counts only when it could fail on the defect: the reported trigger, or a check first seen failing on the pre-fix build.",
+      "adaptations": "Also informs empirical-proof. Keeps its protect-the-working-tree step through the existing disposable-checkout pattern. No fixed two-repro count, Slack coordination, app-control adapter or automation contract.",
+      "scopedReview": {
+        "commit": "1541ad72393f5a771eb45d99e1b6276e3636c3ea",
+        "version": "0.15.29",
+        "date": "2026-10-21",
+        "note": "Scoped review for the TDD and verification comparison; range-review pin unchanged. See docs/decisions/empirical-proof.md."
+      }
+    },
+    {
+      "upstreamPath": "pstack/skills/create-formal-verification-skill/",
+      "disposition": "dropped",
+      "why": "Generates project-local verification skills (the pattern stripped from create-verification-skill) and needs specialist model checkers; no lived-in proof here. Its seen-fail principle is carried through verify-existing-fix.",
+      "scopedReview": {
+        "commit": "1541ad72393f5a771eb45d99e1b6276e3636c3ea",
+        "version": "0.15.29",
+        "date": "2026-10-21",
+        "note": "Scoped review for the TDD and verification comparison; range-review pin unchanged. See docs/decisions/empirical-proof.md."
+      }
+    },
+    {
+      "upstreamPath": "pstack/skills/maintain-formal-verification-skill/",
+      "disposition": "dropped",
+      "why": "Maintains generated formal-verification skills, which are not carried.",
+      "scopedReview": {
+        "commit": "1541ad72393f5a771eb45d99e1b6276e3636c3ea",
+        "version": "0.15.29",
+        "date": "2026-10-21",
+        "note": "Scoped review for the TDD and verification comparison; range-review pin unchanged. See docs/decisions/empirical-proof.md."
+      }
     }
   ]
 }

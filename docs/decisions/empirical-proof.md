@@ -190,3 +190,38 @@ an explicitly requested ballpark can report a valid single run. This did not cha
 dependency. The later default-proof decision above changes the trigger, not
 the performance evidence standard. The
 full procedure and its source are recorded in `benchmark-checklist.md`.
+
+## A bug-fix check must be able to fail on the defect (2026-10-21)
+
+A comparison with pstack, Superpowers and Matt Pocock's verification guidance
+produced eight candidate rules. Fresh-context baseline probes against the
+existing text passed seven of them: intermittent symptoms, guards that must fail
+on a violation, mechanical comparison for unchanged behavior, every affected
+entry point, reading back operation results, dry-run side effects and disclosure
+of unrequested changes. One failed. When it was unclear whether the input
+reached the bug, an agent called a CLI fix "verified" from a pass on the changed
+build, citing the rule that asked only for a pass "on the changed artifact".
+
+The bug-fix proof now requires a check that could fail on the defect: the
+reported trigger, or a check seen failing before the fix. A later pre-fix run
+uses a disposable checkout. A pass on input not shown to reach the defect leaves
+the fix unverified. The rule lives in verification-before-completion's "Match
+proof to the deliverable", and its "Seen failing before the fix" pattern now
+covers boundary checks as well as regression tests, so the pre-fix run inherits
+the existing ban on mutating an active or dirty worktree. Sources:
+[pstack `verify-existing-fix.md`](https://github.com/cursor/plugins/blob/1541ad72393f5a771eb45d99e1b6276e3636c3ea/pstack/automations/benny/skills/reproduce-and-fix-issues/references/verify-existing-fix.md)
+("If the symptom does not appear twice on the baseline, there is no baseline",
+with its protect-the-working-tree step) and Matt Pocock's
+[`diagnosing-bugs`](https://github.com/mattpocock/skills/blob/5beb35b040e3de97e54fa9e386d7e42d15c295c2/skills/engineering/diagnosing-bugs/SKILL.md)
+"red-capable" loop; neither's fixed repetition count or pipeline came along.
+Three fresh runs of the failing scenario now refuse the claim until the pre-fix
+run, and the non-triggering-input case is unchanged. With the fix uncommitted in
+a dirty worktree, three more runs took the pre-fix code from a separate worktree
+or clone and left the operator's edits untouched.
+
+Ten real completion moments from the operator's repositories, replayed against
+both texts, showed no change for refactors, features, blocked runs or a bug
+whose check already used the trigger. Three cases whose evidence never touched
+the trigger gained one check each: a rerun of the original input, a real
+interaction in a scratch build, or pre-fix runs of stand-in probes. That cost is
+the intended effect.

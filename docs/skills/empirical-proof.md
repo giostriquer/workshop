@@ -115,10 +115,13 @@ Missing data does not justify dropping a required journey step to get a pass.
 
 **Are passing tests enough?**
 Yes, when they exercise the relevant real consumer boundary on the changed
-artifact. A public-interface library test can suffice; a mocked component test
-does not prove the running UI. Reuse valid evidence instead of repeating a run
-merely because this skill was loaded. Evidence changes when the relevant
-revision, inputs, dependencies, configuration, or runtime state changes.
+artifact. For a bug fix, the check must also be able to fail on the defect: it
+uses the reported trigger, or it was seen failing before the fix (a later
+pre-fix run uses a disposable checkout). A public-interface library test can
+suffice; a mocked component test does not prove the running UI. Reuse valid
+evidence instead of repeating a run merely because this skill was loaded.
+Evidence changes when the relevant revision, inputs, dependencies,
+configuration, or runtime state changes.
 
 **Does the default require a video, a team, or a new harness?**
 No. Use the smallest meaningful check. A native tool exchange or command output

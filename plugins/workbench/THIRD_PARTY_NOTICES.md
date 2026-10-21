@@ -105,15 +105,20 @@ https://github.com/giostriquer/workshop/blob/main/docs/decisions/file-pr.md
 ---
 
 Portions of `test-driven-development` and `test-quality-review` adapt the test
-boundary and mutation-confirmation guidance in Matt Pocock's `tdd` and
-`diagnosing-bugs` skills (https://github.com/mattpocock/skills), Copyright (c)
-2026 Matt Pocock, under the MIT License. The MIT permission and warranty
-notices apply to those portions. Adaptations are documented at
+boundary and mutation-confirmation guidance, and
+`verification-before-completion` and `empirical-proof` adapt the red-capable
+bug-fix check, in Matt Pocock's `tdd` and `diagnosing-bugs` skills
+(https://github.com/mattpocock/skills), Copyright (c) 2026 Matt Pocock, under
+the MIT License. The MIT permission and warranty notices apply to those
+portions. Adaptations are documented at
 https://github.com/giostriquer/workshop/blob/main/docs/decisions/mattpocock-skills.md
+and
+https://github.com/giostriquer/workshop/blob/main/docs/decisions/empirical-proof.md
 
 The focused consumer-proof default in `verification-before-completion` and
-`empirical-proof` also adapts pstack's `principle-prove-it-works` and bug-fix
-playbook (https://github.com/cursor/plugins), Copyright (c) 2026 Lauren Tan,
+`empirical-proof` also adapts pstack's `principle-prove-it-works`, bug-fix
+playbook and Benny `verify-existing-fix` reference
+(https://github.com/cursor/plugins), Copyright (c) 2026 Lauren Tan,
 under the MIT License and the MIT permission and warranty notices. See
 https://github.com/giostriquer/workshop/blob/main/docs/decisions/empirical-proof.md
 

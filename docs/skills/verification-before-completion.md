@@ -52,7 +52,7 @@ the required local gates. Full suites normally run in PR CI.
 | Tests pass | Test output, 0 failures | Stale result, "should pass", a claim broader than coverage |
 | Linter clean | Linter output, 0 errors | Partial check, extrapolation |
 | Build succeeds | Build exits 0 | Linter passing, logs look fine |
-| Bug fixed | Original symptom checked through the affected consumer boundary on the changed artifact, passing | Green tests that bypass the failing path |
+| Bug fixed | Original symptom checked through the affected consumer boundary on the changed artifact, using the reported trigger or a check seen failing before the fix (a later pre-fix run uses a disposable checkout), passing | Green tests that bypass the failing path; a pass on input not shown to reach the defect |
 | App or UI state ("the button appears") | Seen in the changed running build, naming the flow and observation; images inspected for visual claims | Tests, mocks, an old installed build, or an unchecked-app disclosure treated as completion |
 | Regression test works | Verified red-green cycle | Test passes once |
 | Agent completed | Diff inspected, acceptance evidence corroborated | Agent says "success" |
@@ -118,7 +118,8 @@ be fine now" doesn't.
 - Claims about agent work rest on the diff, not on the agent's summary.
 - Behavioral completion rests on the affected real consumer path on the
   changed artifact; blocked checks remain explicitly incomplete.
-- Regression tests were seen failing before anyone trusted them.
+- Regression tests, and boundary checks for a bug fix, were seen failing or used
+  the reported trigger before anyone trusted them.
 - **Not working:** the gate gets named but no evidence is cited, it triggers broad QA or
   duplicate checks without cause, or stale evidence gets
   reused.

@@ -9,6 +9,10 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-12 reformat.
 
 
+## workbench 0.52.2: 2026-10-21
+
+- **A bug-fix check must be able to fail on the bug.** `verification-before-completion` and `empirical-proof` count an app or CLI check toward "bug fixed" only when it uses the reported trigger or was seen failing before the fix; a pass on input never shown to reach the defect leaves the fix unverified. A later pre-fix run uses a disposable checkout, never a revert in an active or dirty worktree. ([decision](decisions/empirical-proof.md#a-bug-fix-check-must-be-able-to-fail-on-the-defect-2026-10-21))
+
 ## workbench 0.52.1: 2026-10-21
 
 - **Keep mutation campaigns with the review and off a busy host.** A `blocked` mutation run now joins the next test-quality review round instead of going to the implementer, and code the host cannot build stays `blocked` until the user supplies a capable host or waives it. Reviewers clone their copy to a fresh path, check for another running campaign before each launch and wait up to fifteen minutes outside the budget, and stop processes by their own paths. `partial` is recorded only for the budget, estimate sampling, the wait limit, a handback or shared-host timeouts. ([decision](decisions/mutation-scope-and-budget.md#blocked-runs-shared-hosts-and-copies-2026-10-21))
@@ -75,7 +79,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 
 - **Behavioral completion requires focused consumer proof.** `verification-before-completion` invokes `empirical-proof` by default for behavioral changes and refactors. Reuse sufficient current evidence; blocked checks remain incomplete, and explicit declines and repository rules retain precedence. Broad QA, recordings, teams, and permanent harnesses remain optional. ([decision](decisions/empirical-proof.md#focused-consumer-proof-is-the-completion-default-2026-10-08))
 - **Tests state their boundary and mutation probes confirm their source change.** TDD explains what a selected test catches and misses without reopening agreed scope. Hand-applied mutants must differ from pristine source with expectations intact before their failures count as evidence. ([decision](decisions/mattpocock-skills.md#focused-upstream-refinements-2026-10-08))
-
-## toolkit 0.15.2: 2026-10-08
-
-- **Yes accepts the grilling recommendation.** Phrase yes/no questions so an affirmative answer selects the recommended action, while genuine multi-option decisions retain distinct choices. ([decision](decisions/mattpocock-skills.md#focused-upstream-refinements-2026-10-08))

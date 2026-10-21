@@ -47,11 +47,15 @@ Use focused local checks and required local gates. Full suites normally run in P
 ## Match proof to the deliverable
 
 For a feature or fix, exercise the affected behavior through its actual user or
-consumer boundary on an artifact containing the change. For a refactor, compare
-the preserved behavior at the affected boundary. Check the result and relevant
-side effects. A real public-interface test can suffice for a library claim;
-a mocked component test cannot establish what a running app shows. Use
-`empirical-proof` for the surface-specific route and artifact identity checks.
+consumer boundary on an artifact containing the change. For a bug fix, that
+check must be able to fail on the defect: it uses the reported trigger, or it
+was seen failing before the fix (a later pre-fix run follows Seen failing before
+the fix). A pass on input not shown to reach the defect leaves the fix
+unverified. For a refactor, compare the preserved behavior at the affected
+boundary. Check the result and relevant side effects. A real public-interface
+test can suffice for a library claim; a mocked component test cannot establish
+what a running app shows. Use `empirical-proof` for the surface-specific route
+and artifact identity checks.
 
 Reuse evidence that already meets this bar. No extra run, recording, agent team,
 full suite, or permanent harness is required merely to invoke the skill.
@@ -76,7 +80,7 @@ waived check as passed. Preserve user-owned sessions and data.
 | Tests pass | Applicable test output: 0 failures | Stale result, "should pass", broader claim than coverage |
 | Linter clean | Linter output: 0 errors | Partial check, extrapolation |
 | Build succeeds | Build command: exit 0 | Linter passing, logs look good |
-| Bug fixed | Original symptom checked through the affected consumer boundary on the changed artifact: passes | Code changed, a green test that bypasses the failing path |
+| Bug fixed | Original symptom checked through the affected consumer boundary on the changed artifact, using the reported trigger or a check seen failing before the fix: passes | Code changed, a green test that bypasses the failing path, a pass on input not shown to reach the defect |
 | App or UI state ("the button appears", "the crash is fixed in the app") | Seen in the changed running build; name the flow and observation, inspect images for visual claims | Tests, fixtures, mock screens, an old installed build, or an unchecked-app disclosure treated as completion |
 | Regression test works | Red-green cycle verified | Test passes once |
 | Agent completed | Inspect VCS diff and corroborate acceptance evidence | Agent reports "success" |
@@ -121,11 +125,13 @@ does not require Toolkit, profiling, or a benchmark campaign for unrelated work.
 ❌ "Should pass now" / "Looks correct"
 ```
 
-**Regression tests (TDD Red-Green):**
+**Seen failing before the fix (regression tests and boundary checks):**
 ```
 ✅ In a disposable checkout: preserve test → remove only fix → inspect diff against pristine source → intended assertion fails → restore fix → passes
+✅ Boundary check: same check and input on a pre-fix build from a disposable checkout → symptom appears → changed build → passes
    Never mutate an active/dirty worktree for this comparison
 ❌ "I've written a regression test" (without red-green verification)
+❌ "Fixed and verified" from a pass on input never seen to reach the defect
 ```
 
 **Build:**
