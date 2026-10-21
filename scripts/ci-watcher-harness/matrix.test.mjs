@@ -9,7 +9,7 @@ import { loadRunner, runnerFile } from './template.mjs';
 const { watch, options } = await loadRunner();
 const SHA = 'a'.repeat(40);
 const OTHER = 'b'.repeat(40);
-const PR_FIELDS = 'number,url,state,headRefOid,headRefName,mergedAt,closedAt,statusCheckRollup';
+const PR_FIELDS = 'number,url,state,headRefOid,headRefName,mergedAt,closedAt,mergeable,mergeStateStatus,statusCheckRollup';
 const RUN_FIELDS = 'databaseId,headSha,headBranch,status,conclusion,attempt,name,url,workflowDatabaseId,event';
 const link = 'https://example.com/acme/webapp/actions/runs/11/job/22';
 const check = (name = 'unit', conclusion = 'SUCCESS', extra = {}) => ({
@@ -17,7 +17,8 @@ const check = (name = 'unit', conclusion = 'SUCCESS', extra = {}) => ({
 });
 const pr = (checks = [check()], extra = {}) => ({
   number: 1, url: 'https://example.com/acme/webapp/pull/1', state: 'OPEN', headRefOid: SHA,
-  headRefName: 'feature', mergedAt: null, closedAt: null, statusCheckRollup: checks, ...extra,
+  headRefName: 'feature', mergedAt: null, closedAt: null, mergeable: 'MERGEABLE', mergeStateStatus: 'CLEAN',
+  statusCheckRollup: checks, ...extra,
 });
 const run = (extra = {}) => ({ databaseId: 11, headSha: SHA, headBranch: 'feature', attempt: 1,
   workflowDatabaseId: 7, event: 'pull_request', name: 'CI', url: link,
@@ -46,9 +47,20 @@ function rig(responses, extra = {}, existing) {
 
 for (const state of ['MERGED', 'CLOSED']) test(`${state} ends before reading checks or runs`, async () => {
   const r = rig([pr(null, { state })]);
-  assert.equal((await watch(r.state, r.deps)).status, state.toLowerCase());
+  const result = await watch(r.state, r.deps);
+  assert.equal(result.status, state.toLowerCase());
+  assert.deepEqual(result.checks, []);
   assert.equal(r.calls.length, 1);
   assert.equal(r.sleeps.length, 0);
+});
+
+test('a merged PR reports the check state at merge time without reading runs', async () => {
+  const r = rig([pr([check('unit', null, { detailsUrl: link }), check('lint')], { state: 'MERGED' })]);
+  const result = await watch(r.state, r.deps);
+  assert.equal(result.status, 'merged');
+  assert.deepEqual(result.pending.map(row => row.name), ['unit']);
+  assert.deepEqual(result.counts, { pass: 1, fail: 0, pending: 1, skip: 0, cancel: 0 });
+  assert.equal(r.calls.length, 1);
 });
 
 test('a moved PR head never certifies passing checks', async () => {
@@ -57,18 +69,109 @@ test('a moved PR head never certifies passing checks', async () => {
   assert.equal(r.calls.length, 1);
 });
 
+test('a head that moves after a pending poll carries none of the old head checks', async () => {
+  const r = rig([pr([check('unit', null)]), pr([check()], { headRefOid: OTHER })]);
+  const result = await watch(r.state, r.deps);
+  assert.equal(result.status, 'superseded');
+  assert.equal(result.observedSha, OTHER);
+  assert.deepEqual(result.checks, []);
+  assert.equal(r.calls.length, 2);
+  assert.equal(r.sleeps.length, 1);
+});
+
 test('optional failure returns while required checks are pending, without another read', async () => {
   const r = rig([pr([check('optional', 'FAILURE', { detailsUrl: link }), check('required', null)])], { expected: ['required'] });
   const result = await watch(r.state, r.deps);
   assert.equal(result.status, 'failed');
   assert.deepEqual(result.failed, [{ name: 'optional', bucket: 'fail', link }]);
-  assert.equal(result.pending[0].name, 'required');
+  assert.deepEqual(result.pending.map(row => row.name), ['required']);
   assert.equal(result.targetSha, SHA);
   assert.equal(result.observedSha, SHA);
   assert.deepEqual(result.pr, { number: 1, url: 'https://example.com/acme/webapp/pull/1', state: 'OPEN',
-    mergedAt: null, closedAt: null });
+    mergedAt: null, closedAt: null, mergeable: 'MERGEABLE', mergeStateStatus: 'CLEAN' });
   assert.deepEqual(result.counts, { pass: 0, fail: 1, pending: 1, skip: 0, cancel: 0 });
   assert.deepEqual(result.required, { expected: ['required'], missing: ['required'], coverage: 'caller-specified' });
+  assert.equal(r.calls.length, 1);
+});
+
+test('a conflicted PR returns at once, even before any check reports', async () => {
+  const r = rig([pr([], { mergeable: 'CONFLICTING', mergeStateStatus: 'DIRTY' })]);
+  const result = await watch(r.state, r.deps);
+  assert.equal(result.status, 'conflicted');
+  assert.equal(result.pr.mergeable, 'CONFLICTING');
+  assert.equal(result.pr.mergeStateStatus, 'DIRTY');
+  assert.equal(r.calls.length, 1);
+  assert.equal(r.sleeps.length, 0);
+});
+
+test('a conflict outranks passing checks and carries the failed and pending checks', async () => {
+  const r = rig([pr([check('unit'), check('lint', 'FAILURE', { detailsUrl: link }), check('e2e', null)],
+    { mergeable: 'CONFLICTING' })], { expected: ['unit'] });
+  const result = await watch(r.state, r.deps);
+  assert.equal(result.status, 'conflicted');
+  assert.deepEqual(result.failed, [{ name: 'lint', bucket: 'fail', link }]);
+  assert.deepEqual(result.pending.map(row => row.name), ['e2e']);
+  assert.deepEqual(result.required.missing, []);
+  assert.equal(r.calls.length, 1);
+});
+
+test('a conflict that appears while checks run ends the watch on that poll', async () => {
+  const running = [check('unit', null)];
+  const r = rig([pr(running), pr(running, { mergeable: 'CONFLICTING' })]);
+  assert.equal((await watch(r.state, r.deps)).status, 'conflicted');
+  assert.equal(r.calls.length, 2);
+  assert.equal(r.sleeps.length, 1);
+});
+
+test('passing checks wait for GitHub to compute mergeability', async () => {
+  const r = rig([pr([check()], { mergeable: 'UNKNOWN', mergeStateStatus: 'UNKNOWN' }), pr([check()])]);
+  const result = await watch(r.state, r.deps);
+  assert.equal(result.status, 'passed');
+  assert.equal(result.pr.mergeable, 'MERGEABLE');
+  assert.equal(r.calls.length, 2);
+  assert.equal(r.sleeps.length, 1);
+});
+
+test('mergeability that stays unknown is pending at the deadline, not passed or blocked', async () => {
+  const r = rig([pr([check()], { mergeable: 'UNKNOWN' })], { deadline: 1600 });
+  const result = await watch(r.state, r.deps);
+  assert.equal(result.status, 'pending');
+  assert.equal(result.reason, 'Watch deadline reached');
+  assert.equal(r.state.errors, 0);
+  assert.deepEqual(result.pending, [{ name: 'GitHub mergeability', bucket: 'pending',
+    link: 'https://example.com/acme/webapp/pull/1' }]);
+  assert.equal(r.now(), 1600000);
+});
+
+test('all-skipped checks wait for mergeability before blocking', async () => {
+  const skipped = [check('optional', 'SKIPPED')];
+  const r = rig([pr(skipped, { mergeable: 'UNKNOWN' }), pr(skipped)]);
+  const result = await watch(r.state, r.deps);
+  assert.equal(result.status, 'blocked');
+  assert.equal(result.reason, 'No check passed');
+  assert.equal(r.calls.length, 2);
+  assert.equal(r.sleeps.length, 1);
+});
+
+test('merge state is reported, not judged, when the PR is mergeable', async () => {
+  const r = rig([pr([check()], { mergeStateStatus: 'BLOCKED' })]);
+  const result = await watch(r.state, r.deps);
+  assert.equal(result.status, 'passed');
+  assert.equal(result.pr.mergeStateStatus, 'BLOCKED');
+});
+
+for (const [label, extra, status] of [['a moved head', { headRefOid: OTHER }, 'superseded'],
+  ['a closed PR', { state: 'CLOSED' }, 'closed'], ['a merged PR', { state: 'MERGED' }, 'merged']]) {
+  test(`${label} outranks a reported conflict`, async () => {
+    const r = rig([pr([check()], { mergeable: 'CONFLICTING', ...extra })]);
+    assert.equal((await watch(r.state, r.deps)).status, status);
+    assert.equal(r.calls.length, 1);
+  });
+}
+
+test('mergeability is validated only at the pinned head', async () => {
+  const r = rig([pr([check()], { headRefOid: OTHER, mergeable: undefined })]);
+  assert.equal((await watch(r.state, r.deps)).status, 'superseded');
   assert.equal(r.calls.length, 1);
 });
 
@@ -79,10 +182,18 @@ for (const [label, detailsUrl] of Object.entries({ job: link,
     run({ status: 'in_progress', conclusion: '', jobs: [check('child', 'FAILURE')] })]);
   const result = await watch(r.state, r.deps);
   assert.equal(result.status, 'failed');
-  assert.equal(result.failed[0].name, 'child');
+  assert.deepEqual(result.failed.map(row => row.name), ['child']);
   assert.equal(r.calls.length, 2);
   assert.deepEqual(r.calls, [['pr', 'view', '1', '--repo', 'acme/webapp', '--json', PR_FIELDS],
     ['run', 'view', '11', '--repo', 'acme/webapp', '--json', `${RUN_FIELDS},jobs`]]);
+});
+
+test('run details replace a stale pending rollup row for the same run', async () => {
+  const r = rig([pr([check('unit', null, { detailsUrl: link })]), run()]);
+  const result = await watch(r.state, r.deps);
+  assert.equal(result.status, 'passed');
+  assert.deepEqual(result.checks.map(row => [row.name, row.bucket]), [['CI', 'pass'], ['unit', 'pass']]);
+  assert.equal(r.calls.length, 2);
 });
 
 test('passing linked run details preserve unrelated pending checks', async () => {
@@ -156,7 +267,9 @@ test('one passing check cannot hide another pending check', async () => {
 
 test('legacy commit statuses participate in the same verdict', async () => {
   const r = rig([pr([{ context: 'external', state: 'FAILURE', targetUrl: 'https://example.com/build' }])]);
-  assert.equal((await watch(r.state, r.deps)).failed[0].name, 'external');
+  const result = await watch(r.state, r.deps);
+  assert.equal(result.status, 'failed');
+  assert.deepEqual(result.failed.map(row => row.name), ['external']);
 });
 
 for (const checks of [[], [check('optional')], [check('required', 'SKIPPED')]]) {
@@ -171,7 +284,8 @@ for (const checks of [[], [check('optional')], [check('required', 'SKIPPED')]]) 
 
 for (const response of [new Error('Access denied'), pr(null), pr([check('bad', 'UNKNOWN')]),
   pr([check('')]), pr([check(7)]), pr([], { state: 'UNKNOWN' }), pr([check('unit', null, { status: 'UNKNOWN' })]),
-  pr([], { headRefOid: `x${SHA}` }), pr([], { headRefOid: `${SHA}x` })]) {
+  pr([], { headRefOid: `x${SHA}` }), pr([], { headRefOid: `${SHA}x` }),
+  pr([check()], { mergeable: undefined }), pr([check()], { mergeable: 'YES' })]) {
   test(`four invalid reads block without certifying stale data: ${JSON.stringify(response)}`, async () => {
     const r = rig([response]);
     const result = await watch(r.state, r.deps);
@@ -286,16 +400,30 @@ test('a branch rerun waits past its old failed listing for the new attempt', asy
   assert.equal(r.calls.length, 7);
 });
 
+test('a conflict during a rerun omits the stale attempt it replaces', async () => {
+  const r = rig([pr([check('unit', 'FAILURE', { detailsUrl: link }), check('lint')], { mergeable: 'CONFLICTING' })],
+    { rerun: '11', afterAttempt: 1 });
+  const result = await watch(r.state, r.deps);
+  assert.equal(result.status, 'conflicted');
+  assert.deepEqual(result.failed, []);
+  assert.deepEqual(result.checks.map(row => row.name), ['lint']);
+  assert.equal(r.calls.length, 1);
+});
+
 test('an unrelated failure returns even while the requested rerun has not started', async () => {
   const r = rig([pr([check('old', 'FAILURE', { detailsUrl: link }), check('other', 'FAILURE')])], { rerun: '11', afterAttempt: 1 });
-  assert.equal((await watch(r.state, r.deps)).failed[0].name, 'other');
+  const result = await watch(r.state, r.deps);
+  assert.equal(result.status, 'failed');
+  assert.deepEqual(result.failed.map(row => row.name), ['other']);
   assert.equal(r.calls.length, 1);
 });
 
 test('the newer rerun attempt can fail immediately', async () => {
   const r = rig([pr([check('old', 'FAILURE', { detailsUrl: link })]), run({ attempt: 2 }),
     run({ attempt: 2, jobs: [check('new failure', 'FAILURE')] })], { rerun: '11', afterAttempt: 1 });
-  assert.equal((await watch(r.state, r.deps)).failed[0].name, 'new failure');
+  const result = await watch(r.state, r.deps);
+  assert.equal(result.status, 'failed');
+  assert.deepEqual(result.failed.map(row => row.name), ['new failure']);
   assert.equal(r.calls.length, 3);
 });
 
@@ -376,8 +504,8 @@ test('branch failures already in the listing return before any detail read', asy
   }], { pr: undefined, branch: 'feature' });
   const result = await watch(r.state, r.deps);
   assert.equal(result.status, 'failed');
-  assert.equal(result.failed[0].name, 'broken');
-  assert.equal(result.pending[0].name, 'CI');
+  assert.deepEqual(result.failed.map(row => row.name), ['broken']);
+  assert.deepEqual(result.pending.map(row => row.name), ['CI']);
   assert.equal(r.calls.length, 2);
   assert.equal(r.sleeps.length, 0);
 });
@@ -385,7 +513,9 @@ test('branch failures already in the listing return before any detail read', asy
 test('branch watches detect failed jobs before their run completes', async () => {
   const r = rig([{ sha: SHA }, [run()], run({ status: 'in_progress', conclusion: '', jobs: [check('child', 'FAILURE')] })],
     { pr: undefined, branch: 'feature' });
-  assert.equal((await watch(r.state, r.deps)).failed[0].name, 'child');
+  const result = await watch(r.state, r.deps);
+  assert.equal(result.status, 'failed');
+  assert.deepEqual(result.failed.map(row => row.name), ['child']);
   assert.equal(r.calls.length, 3);
   assert.deepEqual(r.calls, [
     ['api', 'repos/acme/webapp/commits/feature'],
@@ -401,7 +531,7 @@ test('a branch child failure returns before another workflow detail read', async
   { pr: undefined, branch: 'feature' });
   const result = await watch(r.state, r.deps);
   assert.equal(result.status, 'failed');
-  assert.equal(result.failed[0].name, 'child');
+  assert.deepEqual(result.failed.map(row => row.name), ['child']);
   assert.equal(r.calls.length, 3);
 });
 
@@ -445,6 +575,14 @@ test('branch run selection keeps each workflow and event independently', async (
   }], { pr: undefined, branch: 'feature', expected: ['unit', 'manual', 'lint'] });
   assert.equal((await watch(r.state, r.deps)).status, 'passed');
   assert.deepEqual(r.calls.filter(args => args[1] === 'view').map(args => args[2]).sort(), ['11', '12', '13']);
+});
+
+test('an unnamed workflow run is reported by its run id', async () => {
+  const r = rig([{ sha: SHA }, [run({ name: '', status: 'in_progress', conclusion: '' })],
+    run({ name: '', conclusion: 'failure', jobs: [] })], { pr: undefined, branch: 'feature' });
+  const result = await watch(r.state, r.deps);
+  assert.equal(result.status, 'failed');
+  assert.deepEqual(result.failed.map(row => row.name), ['Run 11']);
 });
 
 test('branch movement ends before listing old-head runs', async () => {
@@ -494,9 +632,12 @@ function cli(t, delayMs = 0, host = {}, response = pr([check('unit', 'FAILURE')]
   const bin = path.join(dir, 'bin'); mkdirSync(bin);
   const fake = path.join(bin, 'gh');
   copyFileSync(new URL('./bin/gh', import.meta.url), fake); chmodSync(fake, 0o755);
+  // The fake is extensionless CommonJS; a "type": "module" package.json above
+  // the temp directory would otherwise make Node load it as an ES module.
+  writeFileSync(path.join(bin, 'package.json'), '{"type":"commonjs"}');
   const fixture = path.join(dir, 'responses.json');
   writeFileSync(fixture, JSON.stringify([{ args: ['pr', 'view', '1', '--repo', 'acme/webapp', '--json',
-    'number,url,state,headRefOid,headRefName,mergedAt,closedAt,statusCheckRollup'], response, delayMs }]));
+    PR_FIELDS], response, delayMs }]));
   const state = path.join(dir, 'nested', 'watch.json');
   const trace = path.join(dir, 'calls.jsonl');
   const env = { ...process.env, PATH: `${bin}${path.delimiter}${process.env.PATH}`, CI_WATCHER_FIXTURE: fixture,
@@ -515,7 +656,7 @@ test('the packaged CLI runs from a different cwd, persists its result and resume
   const observed = JSON.parse(readFileSync(trace, 'utf8').trim());
   assert.equal(observed.watcherPid, first.pid);
   assert.equal(observed.lockOwner, String(first.pid));
-  assert.equal(JSON.parse(readFileSync(state, 'utf8')).result.failed[0].name, 'unit');
+  assert.deepEqual(JSON.parse(readFileSync(state, 'utf8')).result.failed.map(row => row.name), ['unit']);
   assert.equal(existsSync(`${state}.lock`), false);
   writeFileSync(fixture, '[]');
   const resumed = call(['--resume', state]);

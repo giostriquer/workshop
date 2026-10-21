@@ -86,10 +86,10 @@ repo's conventions, then open or update the PR, with one
 
 **See it through.** CI runs through `fix-ci`'s loop. A separate watcher (Sonnet 5.5 on
 Claude Code or gpt-6.1-sol on Codex) returns at the first failed check or job,
-including checks not listed as required. The parent then collects logs and
-diagnoses the failure.
-Mergeability comes from `gh pr view --json mergeable,mergeStateStatus`. It
-resolves conflicts that appear while tending. Every push integrates the latest
+including checks not listed as required, or at the first merge conflict. The
+parent then collects logs and diagnoses the failure, or synchronizes the target
+to resolve the conflict. A `passed` verdict needs a PR GitHub reports mergeable.
+The skill resolves conflicts that appear while tending. Every push integrates the latest
 target, even without conflicts. It refreshes the title and body when
 the diff changes. It stops at green and mergeable, when a CI cause exhausts its
 two fix attempts, or when a genuine blocker prevents delivery, and reports why.

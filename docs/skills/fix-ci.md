@@ -55,9 +55,12 @@ checks should be seen through to green.
    parent waits through the host mechanism at its longest permitted interval.
    It returns at the
    **first failed check or job on the pinned revision**, including failures not
-   listed as required, or the moment the PR **merges or closes**. Its report
-   lists the checks still pending. The runner's `passed` verdict describes
-   reported checks. Green also requires every known required check to pass on
+   listed as required, at a **merge conflict**, or the moment the PR **merges
+   or closes**. Its report lists the checks still pending. For a conflicted PR,
+   real faults among the listed failures are fixed first, flakes are not
+   rerun, and synchronization (step 8) resolves the conflict without using a
+   fix attempt. The runner's `passed` verdict describes reported checks on a PR
+   GitHub reports mergeable. Green also requires every known required check to pass on
    the pinned SHA; unspecified coverage, missing, cancelled or superseded
    checks are not green.
 3. **The parent collects evidence after the watcher returns.** `gh run view <run-id> --log-failed`, then read the
@@ -108,6 +111,13 @@ decisions, verifies the result, and continues. It asks only when resolution
 needs a new scope, product, policy or authority decision. Each push includes a
 fresh sync of the PR's actual target, regardless of whether GitHub reports it
 as mergeable.
+
+**Why did the watcher return `conflicted` before CI finished?** A PR with merge
+conflicts cannot merge whatever its checks say, and GitHub starts no
+`pull_request` workflows on it, so the watch would only run out its window. The
+watcher reads mergeability on every poll and returns at the first conflict. If
+GitHub has not finished computing mergeability, green checks wait for it; a
+watch that ends while waiting reports a pending `GitHub mergeability` row.
 
 **It re-ran the job instead of fixing anything.** That is the flake path, and it
 fires once. If the rerun comes back red, the loop treats it as a fault.

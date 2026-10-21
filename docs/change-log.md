@@ -9,6 +9,10 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-12 reformat.
 
 
+## workbench 0.52.0: 2026-10-21
+
+- **Report merge conflicts ahead of CI results.** The CI watcher reads PR mergeability on every poll and returns a new `conflicted` verdict as soon as GitHub reports a merge conflict, ahead of any check result; `passed` now also requires a mergeable PR. Before, a conflicted PR with green checks was reported as passing, and one with no checks waited out the whole watch window. `fix-ci` and `file-pr` route `conflicted` to target synchronization, which uses no CI fix attempt. ([decision](decisions/fix-ci.md#merge-conflicts-end-the-watch-2026-10-21))
+
 ## workbench 0.51.0: 2026-10-16
 
 - **Review agreed behavior and consumer contracts.** The new `contract-review` skill invokes `contract-reviewer`, replacing `pattern-reviewer`. It checks observable outcomes, affected consumers and integration at completion without reopening settled architecture for preferences. Custom dispatches must use the new agent name; correction rounds retain their existing convergence policy. ([decision](decisions/pattern-reviewer-comment-noise.md#review-the-agreed-behavior-and-affected-consumers-2026-10-16))
@@ -75,7 +79,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 ## workbench 0.47.4: 2026-10-07
 
 - **CI watchers execute one bundled runner.** `ci-watcher` and `fix-ci` invoke the same Node command for PR and branch monitoring, with pinned revisions, persisted deadlines and explicit rerun attempts. Failures return before diagnosis; cancelled or missing checks cannot certify a pass, and partial reruns preserve jobs that already passed. Node 18+ and authenticated `gh` are required; missing prerequisites produce a reported gap. ([decision](decisions/fix-ci.md#execute-a-bundled-watcher-instead-of-generating-loops-2026-10-07))
-
-## toolkit 0.15.1: 2026-10-07
-
-- **Haiku gets a narrow lane instead of a ban.** The shipped `model-floor` rule allows Haiku 5.5 for high-volume, cost-sensitive summaries, compactions, and database queries that fetch and report data. Coding, code review, auditing, profiling, debugging, planning, design, and judging another agent's output never go to Haiku; mixed or unclear tasks stay off it, and volume or budget never moves a task into the lane. ([decision](decisions/adopt-global-rules.md#haiku-gets-a-narrow-lane-2026-10-07))

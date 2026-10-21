@@ -5,10 +5,11 @@ import { pathToFileURL } from 'node:url';
 import { promisify } from 'node:util';
 
 const execute = promisify(execFile);
-const PR_FIELDS = 'number,url,state,headRefOid,headRefName,mergedAt,closedAt,statusCheckRollup';
+const PR_FIELDS = 'number,url,state,headRefOid,headRefName,mergedAt,closedAt,mergeable,mergeStateStatus,statusCheckRollup';
 const RUN_FIELDS = 'databaseId,headSha,headBranch,status,conclusion,attempt,name,url,workflowDatabaseId,event';
 const FAILURES = new Set(['failure', 'error', 'timed_out', 'action_required', 'startup_failure', 'stale']);
 const PENDING = new Set(['pending', 'queued', 'in_progress', 'requested', 'waiting', 'expected']);
+const MERGEABILITY = new Set(['MERGEABLE', 'CONFLICTING', 'UNKNOWN']);
 
 function bucket(status, conclusion) {
   const result = String(conclusion || status || '').toLowerCase();
@@ -63,7 +64,8 @@ async function snapshot(state, read) {
       throw new Error('PR response lacks a valid state or full head SHA');
     }
     state.observedSha = pr.headRefOid;
-    state.pr = { number: pr.number, url: pr.url, state: pr.state, mergedAt: pr.mergedAt, closedAt: pr.closedAt };
+    state.pr = { number: pr.number, url: pr.url, state: pr.state, mergedAt: pr.mergedAt, closedAt: pr.closedAt,
+      mergeable: pr.mergeable ?? null, mergeStateStatus: pr.mergeStateStatus ?? null };
     state.checks = [];
     if (pr.state !== 'OPEN') {
       try { state.checks = array(pr.statusCheckRollup, 'PR check rollup').map(check); }
@@ -71,7 +73,18 @@ async function snapshot(state, read) {
       return summary(state, pr.state.toLowerCase(), 'PR is no longer open');
     }
     if (pr.headRefOid !== c.sha) return summary(state, 'superseded', 'PR head moved');
+    if (!MERGEABILITY.has(pr.mergeable)) throw new Error('PR response lacks a valid mergeable state');
     rows = array(pr.statusCheckRollup, 'PR check rollup').map(check);
+    // The attempt-specific jobs replace stale rollup rows from that run, even when
+    // GitHub keeps the previous attempt's check records visible for several polls.
+    if (c.rerun) rows = rows.filter(row => !new RegExp(`/actions/runs/${c.rerun}(?:/|$|\\?)`).test(row.link));
+    // GitHub starts no pull_request workflows on a conflicted PR, and any check
+    // result is moot until a new head resolves the conflict.
+    if (pr.mergeable === 'CONFLICTING') {
+      state.checks = rows;
+      return summary(state, 'conflicted', 'PR has merge conflicts with its base');
+    }
+    if (pr.mergeable === 'UNKNOWN') rows.push({ name: 'GitHub mergeability', bucket: 'pending', link: pr.url || '' });
   } else {
     const head = await read(['api', `repos/${c.repo}/commits/${encodeURIComponent(c.branch)}`]);
     if (!/^[a-f0-9]{40}$/i.test(head.sha ?? '')) throw new Error('Branch response lacks a full SHA');
@@ -104,9 +117,6 @@ async function snapshot(state, read) {
   }
 
   if (c.rerun) {
-    // The attempt-specific jobs replace stale rollup rows from that run, even when
-    // GitHub keeps the previous attempt's check records visible for several polls.
-    rows = rows.filter(row => !new RegExp(`/actions/runs/${c.rerun}(?:/|$|\\?)`).test(row.link));
     state.checks = rows;
     if (rows.some(row => row.bucket === 'fail')) return summary(state, 'failed', 'Another check failed during the rerun');
     const run = await read(['run', 'view', c.rerun, ...repo, '--json', `${RUN_FIELDS},jobs`]);
@@ -239,6 +249,7 @@ node watch-ci.mjs --resume <scratch>/watch.json
 Optional: --deadline <Unix-seconds> (default: ten minutes), --expect <required-check-name>
 (repeatable), --rerun <run-id> --after-attempt <failed-attempt>, --call-limit-ms <milliseconds>.
 The command polls every 30 seconds, writes only its state file, and prints one JSON verdict.
+A PR watch returns conflicted at once when GitHub reports merge conflicts; passed needs a mergeable PR.
 On slice, resume the same state file. No log reads, reruns, repository edits or pushes occur.
 Exit 0: reported verdict. Exit 2: invocation/runtime gap. Inspect status; exit 0 is not CI green.
 `;

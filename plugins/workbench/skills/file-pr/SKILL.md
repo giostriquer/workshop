@@ -407,12 +407,14 @@ Reusing the merged head branch requires an explicit instruction.
    owns the failing-log diagnosis, flake-vs-fault triage, minimal in-session fixes,
    the per-cause two-attempt cap, and the never-weaken-a-check rule. The watcher
    returns at the first failed check or job on the pinned revision, including
-   checks not listed as required, or the moment the PR merges or closes. It
+   checks not listed as required, at a merge conflict, or the moment the PR
+   merges or closes. It
    reports before collecting logs; the parent starts diagnosis then. Watching always runs in the
    `ci-watcher` agent, dispatched as `fix-ci` says, never in the
-   parent's own turns; accept only results for the target SHA, with required-check coverage stated. Mergeability comes from
-   `gh pr view --json mergeable,mergeStateStatus`.
-10. **If conflicts appear while tending**, use steps 2 and 8 to integrate the
+   parent's own turns; accept only results for the target SHA, with required-check coverage stated. A merge conflict
+   ends the watch as `conflicted`, which step 10 handles.
+10. **If conflicts appear while tending**, including a `conflicted` watcher
+    verdict, use steps 2 and 8 to integrate the
     target, resolve them, validate, and push. Every push still integrates the
     latest target even when GitHub reports the PR as mergeable.
 11. **Stop when the PR is green and mergeable, or when a CI cause exhausts its

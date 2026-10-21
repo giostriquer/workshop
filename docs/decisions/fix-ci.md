@@ -2,6 +2,44 @@
 
 This note is the rationale for the `fix-ci` skill and the `ci-watcher` agent it dispatches, both shipped in the `workbench` plugin; superseded choices are omitted and git history keeps the originals.
 
+## Merge conflicts end the watch (2026-10-21)
+
+The runner read only check results, never mergeability. GitHub starts no
+`pull_request` workflows on a conflicted PR, so a conflicted head showed no
+checks and the watcher waited out its ten-minute window as `pending`. When the
+base moved during a watch, the checks of the earlier merge ref kept running and
+the watcher could return `passed` for a PR that cannot merge. Standalone
+`fix-ci` then reported green; `file-pr` learned about the conflict only from a
+later read.
+
+PR snapshots now include `mergeable` and `mergeStateStatus`. A conflicting open
+PR at the pinned head returns `conflicted` on that poll, ahead of every check
+result; merged, closed and superseded still take precedence. The verdict carries
+the failed and pending checks the PR rollup shows, without the run-detail reads
+a check verdict makes: the next head reruns everything, and the parent's
+pre-push read of the old head still catches later failures. During a flake
+rerun, the rerun's stale rows are dropped before the conflict check, so an old
+attempt never reads as a live failure. `passed` needs GitHub to report the PR
+mergeable. Unknown mergeability adds a pending `GitHub mergeability` row, so the
+watch keeps polling and a deadline result names what it waited on. A missing or
+unrecognized value is a read error. The parent fixes real faults among the
+listed failures, does not rerun a flake on a head about to be replaced, and then
+resolves the conflict through its existing synchronization step, which uses no
+CI fix attempt. `mergeStateStatus` is reported, not judged: a `BEHIND` or
+`BLOCKED` PR is still governed by the existing synchronization and delivery
+rules. Branch-only watches have no mergeability and are unchanged.
+
+The focused harness covers an immediate conflict with no checks, a conflict
+outranking failed, pending and passing checks, a conflict that appears
+mid-watch, a conflict during a flake rerun, merged, closed and superseded
+outranking a conflict, passing checks waiting on unknown mergeability, unknown
+mergeability at the deadline without read errors, a reported but unjudged
+merge state, and malformed values. Two new mutants (ignoring the conflict,
+passing on unknown mergeability) are killed. Live read-only runs against public
+PRs reproduced both defects on the previous runner (a false `passed` on a
+conflicted PR with settled green checks; a full-window `pending` on a conflicted
+PR with no checks) and returned `conflicted` within a second on this one.
+
 ## Execute a bundled watcher instead of generating loops (2026-10-07)
 
 An instruction template still asks each watcher to construct executable code.

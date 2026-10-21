@@ -53,8 +53,13 @@ explicitly authorized flake rerun. An active process locks that file.
   calls for logs, rules or another snapshot. Never re-arm after failure.
 - `merged` / `closed`: return the PR state and available merge/close time.
 - `superseded`: return the observed head; the new head needs its own dispatch.
-- `passed`: all reported checks settled without failure. Report required
-  coverage separately. Unspecified or missing expected coverage does not prove
+- `conflicted`: GitHub reports merge conflicts on the open PR at the pinned
+  head. Return at once with the PR link, `mergeable` and `mergeStateStatus`,
+  and the failed and pending checks the PR rollup shows. A conflict outranks
+  every check result: GitHub starts no `pull_request` workflows on a
+  conflicted PR, and only a new head can resolve it.
+- `passed`: all reported checks settled without failure and, for a PR, GitHub
+  reports it mergeable. Report required coverage separately. Unspecified or missing expected coverage does not prove
   merge readiness; cancelled or absent checks are not passed.
 - `pending`: the original deadline expired. Return the remaining checks and
   the next action; do not extend the window yourself.
@@ -95,8 +100,9 @@ A rerun waits for a newer attempt and reads that exact attempt's jobs, while
 still reporting unrelated failures. It never mistakes the old attempt for the new.
 
 Return the JSON verdict in a concise report: status, target and observed SHA,
-PR/run link, required coverage, failed and pending checks, and the parent's next
-step. Failure links are enough; missing logs do not delay the return.
+PR/run link, mergeability, required coverage, failed and pending checks, and the parent's next
+step. A `GitHub mergeability` row in any verdict's pending checks is not a CI
+check: GitHub had not finished computing whether the PR can merge. Failure links are enough; missing logs do not delay the return.
 
 All CI polling runs here, never in the parent. Keep the designated model even
 when the parent uses it too; unavailable dispatch is a monitoring gap. Do not

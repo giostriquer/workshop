@@ -81,18 +81,29 @@ is not polling and the parent runs it itself.
      watcher reports `merged` or `closed` at once and the loop ends: a closed
      PR has nothing to fix, and a merged head's remaining checks belong to the
      base branch.
+   - Merge conflicts on the open PR at the pinned SHA (`mergeable:
+     CONFLICTING`) → return `conflicted` at once, ahead of any check result.
+     GitHub starts no `pull_request` workflows on a conflicted PR, so waiting
+     only runs out the window, and green checks cannot make it mergeable. The
+     verdict lists the failed and pending checks the PR rollup shows. The
+     parent first takes real faults among those failures through steps 3–7; a
+     flake gets no rerun, since every check runs again on the resolved head.
+     Then step 8 resolves the conflict. Resolving a conflict is
+     synchronization and uses no fix attempt.
    - Any failed check or job on the pinned SHA → return `failed` immediately,
      including checks not listed as required and jobs whose workflow is still
      running. Use the observed snapshot and available links; the watcher ends
      its turn before fetching logs or classifying merge requirements. The parent
      owns those next steps. A required-only filter must not hide the failure.
-   - `passed` means all reported checks settled without failure. Report green
-     only when the caller's known required checks also passed on the target SHA.
+   - `passed` means all reported checks settled without failure and, for a PR,
+     GitHub reports it mergeable; unknown mergeability keeps the watch pending.
+     Report green only when the caller's known required checks also passed on
+     the target SHA.
      Unspecified required coverage is a reported gap, not proof of merge readiness.
    - Pending → the bundled command polls the PR state and its checks every
      thirty seconds (including child jobs for branch-only CI),
      within its bounded window. **The watcher returns at the first failed check or
-     job, or the moment the PR merges or closes**, naming the check or the
+     job, a merge conflict, or the moment the PR merges or closes**, naming the check or the
      state and listing the checks still pending. Neither the watcher nor the parent waits for the
      remaining checks: any check still running when the fix is pushed reruns
      on the new head anyway, so waiting buys nothing and a failure visible in
@@ -166,7 +177,7 @@ is not polling and the parent runs it itself.
 
 ## Output
 
-- Final CI verdict (green / still red / pending / superseded / blocked), target
+- Final CI verdict (green / conflicted / still red / pending / superseded / blocked), target
   SHA, expected checks, watcher model, and PR/run link. Name the immediate next step.
 - Per attempt: what failed, the root cause, and what changed (files + commit).
 - If not fixed: the diagnosis, the failing-log excerpt or check link, and the

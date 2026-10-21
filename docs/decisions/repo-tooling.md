@@ -87,6 +87,17 @@ mutant runner checks named defects. `template.mjs` is now the source loader,
 not a shell-loop template. Earlier bash/zsh loop measurements are historical
 and do not describe current coverage. See the [watcher decision](fix-ci.md).
 
+The mutant runner counts a kill only when every failing test fails by
+assertion. `ignore-child-failure` read as unproven because two tests indexed
+`failed[0]` and crashed with a `TypeError` on an empty list; the matrix now
+checks status and whole name lists, so every named mutant is killed by
+assertion. Three further mutants pin evidence a review found unasserted: run
+details replacing a stale rollup row, a superseded verdict carrying no old-head
+checks, and a merged verdict carrying the rollup. The CLI cases write a
+`{"type":"commonjs"}` `package.json` beside the copied fake `gh`, which failed as
+an ES module whenever the temp directory sat under this repo's module-typed
+`package.json`. The unused shell-era `bin/date` and `bin/sleep` fakes are gone.
+
 ## `release` ships plugin changes and refreshes this machine's caches (2026-10-14)
 
 `.claude/skills/release/` (mirrored to `.codex/skills/release/`) is user-invoked only. It versions every plugin with unreleased changes, writes the release notes through `change-log`, pushes through `push`, then updates this machine's Claude Code and Codex installs and checks them. Both hosts install Workshop from GitHub `main` and keep one cache folder per version, so a change pushed without a new version never reaches an installed copy: `claude plugin update` reports the plugin as current and keeps the old files. Releases had been run by hand from a recipe in one host's memory, and a request to "update global caches" meant nothing to a session without it.

@@ -9,6 +9,11 @@ export const MUTANTS = {
   'ignore-expected-checks': ["if (c.expected.some(name => !rows.some(row => row.name === name && row.bucket === 'pass'))) return null;", 'if (false) return null;'],
   'never-block-read-errors': ['if (state.errors >= 4)', 'if (state.errors >= 400)'],
   'ignore-moved-head': ['if (pr.headRefOid !== c.sha)', 'if (false)'],
+  'keep-stale-rollup-row': ['rows = rows.filter(row => !new RegExp(`/actions/runs/${id}', 'rows = rows.filter(row => true || !new RegExp(`/actions/runs/${id}'],
+  'carry-old-head-checks': ["state.checks = [];\n    if (pr.state !== 'OPEN') {", "if (pr.state !== 'OPEN') {"],
+  'drop-merged-checks': ["try { state.checks = array(pr.statusCheckRollup, 'PR check rollup').map(check); }", 'try { state.checks = []; }'],
+  'ignore-conflict': ["if (pr.mergeable === 'CONFLICTING')", 'if (false)'],
+  'pass-unknown-mergeability': ["if (pr.mergeable === 'UNKNOWN') rows.push(", 'if (false) rows.push('],
 };
 
 export function mutate(source, name) {
