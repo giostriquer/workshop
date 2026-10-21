@@ -103,3 +103,38 @@ References: [Cargo argument forwarding](https://mutants.rs/cargo-args.html),
 and [Stryker incremental limits](https://stryker-mutator.io/docs/stryker-js/incremental/).
 Historical scenario matrices remain in git; they are bounded regression
 evidence, not cross-model reliability estimates.
+
+## Blocked runs, shared hosts and copies (2026-10-21)
+
+A 30-day transcript audit found the October 14 recipe corrections holding: no
+trailing Rust target flags, no parallel jobs, and no invocation over fifteen
+minutes. It also found three gaps. The rubric sent a `blocked` campaign to the
+implementer ("the implementer runs or repairs it"), which contradicts
+`test-driven-development`: sweeps belong to the review. Several implementers ran
+campaigns after such a hand-back. Reviewers sharing a scratch folder cloned into
+or deleted inside a sibling's copy, and the one-campaign rule had no procedure,
+so some reviewers checked the host and waited while others launched blind or
+killed processes host-wide. Code the host cannot build was recorded as `waived`
+in one review and `blocked` in another.
+
+The implementer now repairs only what it owns. Scope a round left `blocked`
+joins the next round's mutation scope even when no file changed, so a review
+round, not the implementer, runs the campaign. Another platform's code is
+`blocked` with that platform and the command for a host that builds it, and
+waits for the user to supply that host or waive the run, since another round on
+the same host cannot run it. The review's copy is cloned to an absent path inside
+a fresh `mktemp -d` directory and reused by follow-up rounds; processes stop by
+the run's own paths. Before each launch the reviewer lists running campaigns
+with a self-excluding pattern and waits for another campaign, outside the budget
+and for at most fifteen minutes per round. A listing that cannot see other
+sessions is not evidence of a free host. Scope the wait leaves uncovered is
+`partial`, unless no required scope ran at all, which is `blocked` and carried to
+the next round. `partial` records the budget ending, estimate sampling, the wait
+limit or a handback, or shared-host timeouts; otherwise remaining budget runs the
+next focused part. Counts that put a run
+under a minute serve as its estimate. A helper that applies one defect meets the
+inspection rule when it proves the diff is exactly the intended production
+change.
+
+The fifteen-minute wait and the budget exclusion are defaults chosen with the
+correction; they did not come from a measured trade-off.

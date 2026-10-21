@@ -9,6 +9,10 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-12 reformat.
 
 
+## workbench 0.52.1: 2026-10-21
+
+- **Keep mutation campaigns with the review and off a busy host.** A `blocked` mutation run now joins the next test-quality review round instead of going to the implementer, and code the host cannot build stays `blocked` until the user supplies a capable host or waives it. Reviewers clone their copy to a fresh path, check for another running campaign before each launch and wait up to fifteen minutes outside the budget, and stop processes by their own paths. `partial` is recorded only for the budget, estimate sampling, the wait limit, a handback or shared-host timeouts. ([decision](decisions/mutation-scope-and-budget.md#blocked-runs-shared-hosts-and-copies-2026-10-21))
+
 ## workbench 0.52.0: 2026-10-21
 
 - **Report merge conflicts ahead of CI results.** The CI watcher reads PR mergeability on every poll and returns a new `conflicted` verdict as soon as GitHub reports a merge conflict, ahead of any check result; `passed` now also requires a mergeable PR. Before, a conflicted PR with green checks was reported as passing, and one with no checks waited out the whole watch window. `fix-ci` and `file-pr` route `conflicted` to target synchronization, which uses no CI fix attempt. ([decision](decisions/fix-ci.md#merge-conflicts-end-the-watch-2026-10-21))
@@ -75,7 +79,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 ## toolkit 0.15.2: 2026-10-08
 
 - **Yes accepts the grilling recommendation.** Phrase yes/no questions so an affirmative answer selects the recommended action, while genuine multi-option decisions retain distinct choices. ([decision](decisions/mattpocock-skills.md#focused-upstream-refinements-2026-10-08))
-
-## workbench 0.47.4: 2026-10-07
-
-- **CI watchers execute one bundled runner.** `ci-watcher` and `fix-ci` invoke the same Node command for PR and branch monitoring, with pinned revisions, persisted deadlines and explicit rerun attempts. Failures return before diagnosis; cancelled or missing checks cannot certify a pass, and partial reruns preserve jobs that already passed. Node 18+ and authenticated `gh` are required; missing prerequisites produce a reported gap. ([decision](decisions/fix-ci.md#execute-a-bundled-watcher-instead-of-generating-loops-2026-10-07))

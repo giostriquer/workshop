@@ -37,7 +37,10 @@ owns exact tool recipes, estimates, budgets, and reuse requirements.
 
 **Limits.** Initial rounds have a thirty-minute ceiling including setup;
 follow-ups have fifteen and cover the correction delta. Campaigns run one at a
-time and completed scope is not rerun under another runner. Unsupported syntax,
+time on the host: the reviewer checks `ps` before each launch and waits, up to
+fifteen minutes outside the budget, for another session's campaign. The review's
+disposable copy gets a new, absence-checked path, and follow-up rounds reuse it.
+Completed scope is not rerun under another runner. Unsupported syntax,
 slow tests, and parsed behavior tools cannot mutate use the rubric's bounded
 fallbacks. Hand-applied defects need an inspected production diff and unchanged
 test expectations before a failure counts.
@@ -47,7 +50,8 @@ test expectations before a failure counts.
 | Behavioral survivor or newly lost protection | Issue with the assertion needed to catch it |
 | Equivalent mutant or irrelevant wording change | Observation |
 | Partial run or uncertain timeout | Scope and reason disclosed in strategy notes; no waiver or extension |
-| Required run blocked after bounded setup | `ISSUES_FOUND`, with attempts and remaining work |
+| Required run blocked after bounded setup | `ISSUES_FOUND`, with attempts, remaining work and the command; the next review round runs it, not the implementer |
+| Code this host cannot build | `blocked` with the platform and a capable host's command; open until the user supplies that host or waives the run |
 | Run waived by the user or a superseding repository rule | Explicit waiver, not a passing run |
 | Unresolved writes outside the review's isolated state | Preservation gap and `ISSUES_FOUND` |
 
@@ -71,7 +75,7 @@ Yes, in isolation, with a focused config and a passing, nonempty baseline. For R
 The functions the changed test cases call, selected by name or line range, not the whole file. A changed or removed assertion that loses protection creates an Issue even when production is unchanged. Gaps that predate both the production and test diff stay under Strategy notes.
 
 **What does a follow-up round rerun?**
-Only the delta: the lines the correction changed and the lines behind each finding it claims to close, in the initial round's copy brought to the new revision, within 15 minutes.
+The delta: the lines the correction changed and the lines behind each finding it claims to close, plus scope a prior round left `blocked` (including `blocked: host busy`), in the initial round's copy brought to the new revision, within 15 minutes. Another platform's code is the exception: it stays blocked until you supply a host that builds it or waive the run.
 
 **Who owns follow-ups and when do they stop?**
 This skill does. Return verified fixes or evidence-based rejections to the same reviewer for confirmation. Follow-ups run automatically while findings close or narrow. Delivery holds on no progress, a rejection repeated without new evidence, or two consecutive passes that each add a blocker without reducing the open count. The owning authority decides the next step; a hold is never PASS. Once all blockers are confirmed closed, a later edit or SHA alone does not reopen review.
@@ -98,7 +102,7 @@ No. The reviewer answers `## Verdict: REFUSED - out-of-scope dispatch`; each sta
 - The `Workspace preservation` line verifies the author's checkout and isolated runtime destinations, with no unresolved external writes.
 - Issues name concrete mutants and the assertions that kill them.
 
-It's misapplied if the author's session ran it, missing tools produced a qualitative PASS, a pure move's bodies were mutated, a whole file was swept because one of its tests changed, a test file was mutated, a completed campaign was rerun under another runner, two campaigns ran at once, a follow-up round rebuilt the copy and reran the initial scope, a custom harness was built for unparsed files, the lane ran past its budget, or a mutation decision was sent to the caller or an epic owner.
+It's misapplied if the author's session ran it, missing tools produced a qualitative PASS, a pure move's bodies were mutated, a whole file was swept because one of its tests changed, a test file was mutated, a completed campaign was rerun under another runner, two campaigns ran at once, a follow-up round rebuilt the copy and reran the initial scope, a copy was cloned into a folder another reviewer held, a custom harness was built for unparsed files, the lane ran past its budget, another platform's code was recorded as `waived`, an implementer ran the campaign a review left blocked, or a mutation decision was sent to the caller or an epic owner.
 
 ## Where it fits
 

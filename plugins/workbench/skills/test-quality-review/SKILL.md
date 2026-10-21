@@ -82,8 +82,12 @@ reviewer the existing record. Requests outside delivery keep their agreed scope.
    each finding it claims to close, with the initial round's tool. Bring the
    initial round's disposable copy to the new revision (check out the reviewed
    commit or apply the delta there) and keep its build caches; a follow-up round
-   creates no new copy and does not rerun the initial round's scope. A follow-up
-   round's mutation lane has 15 minutes of wall clock in total.
+   creates no new copy and does not rerun the initial round's scope. Scope a
+   prior round left `blocked` joins this round's mutation scope even when no file
+   changed. It runs in the existing copy, or in a new one when the copy caused
+   the block; what stays uncovered is `partial`. Code this host cannot build
+   stays `blocked` for the user, as the mutation lane says. A follow-up round's
+   mutation lane has 15 minutes of wall clock in total.
 3. Delta walk prior findings by stable ID. Classify each as Resolved, Partially
    resolved, Not resolved, or Rejected with evidence. Cite the test location or
    contrary evidence that supports the disposition.
@@ -233,10 +237,14 @@ named tests.
    For a hand-applied defect, inspect the mutated source diff against the
    pristine copy before running: prove the intended production change landed
    and test expectations stayed intact. An unchanged file or setup failure
-   cannot count as a detected mutant.
+   cannot count as a detected mutant. A helper that applies, runs and restores
+   one defect meets this when it checks that the diff against the pristine copy
+   is exactly the intended production change, with no other line or test
+   expectation touched, and stops before the tests run otherwise.
 2. After success, failure, or timeout, stop any remaining mutation processes,
-   including test processes the mutated tests spawned (search `ps` for the copy's
-   path), and compare the author checkout with that baseline. Remove only run-created
+   including test processes the mutated tests spawned: search `ps` for the
+   copy's, sandbox's and output's paths, never kill by tool name host-wide, and
+   compare the author checkout with that baseline. Remove only run-created
    artifacts whose ownership is established; preserve pre-existing work and useful
    evidence. Keep evidence in the scope's scratch location, verified to be outside
    the commit set. The disposable copy itself stays for the task's later rounds
@@ -289,7 +297,10 @@ named tests.
   dependency directory linked and build caches cloned, not a fresh dependency
   install when the author's serves. A clone of a linked worktree carries a
   `.git` file that points at the author's git directory: delete it from the
-  copy before any git command runs there. One copy holds every run of the
+  copy before any git command runs there. Clone to a path that is absent
+  before the clone, inside a fresh directory
+  (`copy="$(mktemp -d <scratch>/tq.XXXXXX)/tree"`), and never clone into, clean
+  or delete a folder another reviewer may hold. One copy holds every run of the
   round, mutation tools and hand-applied defects alike. Bound a run with the host's
   tool timeout or a background job polled by an `until` loop: macOS has no
   `timeout` command, and some hosts reject a `sleep` chained before a command.
@@ -368,9 +379,21 @@ named tests.
   reconcile its counts. A survivor the reviewer wants to check by hand gets
   one hand-applied defect in the copy. Campaigns run one at a time on the
   host: a second Stryker or cargo-mutants process never starts while one is
-  running. Timeouts from a run that shared the host with another campaign cannot
-  establish detection: record their lines as `partial` with the
-  single-campaign command under Strategy notes.
+  running. Before each launch, list running campaigns with
+  `ps -axo pid,etime,command | grep -E '[s]tryker|[c]argo-mutants'`, run as its
+  own command rather than chained before the launch; the brackets keep the
+  listing from matching itself, and a shell or poller that only names the tools
+  is not a campaign. A listing without PID 1 or other
+  users' processes cannot see other sessions, so it does not show a free host;
+  the Mutation run line says so. While another campaign runs, wait for it:
+  waiting time is outside the lane budget, at most 15 minutes per round, and
+  goes on the Mutation run line. Scope still uncovered when the wait reaches
+  that limit or the round must hand back is `partial`, with its command under
+  Strategy notes; when no required scope ran at all, record `blocked: host busy`
+  instead, and the next round carries it.
+  Timeouts from a run that shared the host with another campaign cannot
+  establish detection: record their lines as `partial` with the single-campaign
+  command under Strategy notes.
 - Keep per-mutant timeouts distinct from assertion kills in the evidence, whatever
   the tool's score counts. Record a known hit-limit or loop reason as timeout
   detection; an unexplained deadline, resource kill or runner error is inconclusive.
@@ -395,6 +418,7 @@ named tests.
   execute: mutants × baseline seconds ÷ concurrency, from the counts the tool
   prints first (Stryker's `Instrumented N mutants` and `Initial test run
   succeeded ... in S seconds`; `cargo mutants --list` and the baseline build).
+  When those counts put the run under one minute, the counts are its estimate.
   An estimate over 10 minutes ends that run and narrows the scope before the
   next one starts: the functions behind a changed test shrink to the lines its
   new assertions pin, then the changed lines are sampled and the rest recorded
@@ -406,7 +430,10 @@ named tests.
   When the budget ends with in-scope lines uncovered, stop: judge the survivors
   you have, record `partial: <covered scope> / <uncovered scope>` on the Mutation
   run line, and put the exact command for the uncovered scope under Strategy
-  notes. Do not open another copy or lane to continue.
+  notes. Do not open another copy or lane to continue. Record `partial` only
+  when the budget ends, the estimate rule samples the scope, the wait limit or a
+  handback stops the lane, or shared-host timeouts leave lines unproven; in every
+  other case, while budget remains, run the next focused part of the scope.
 - **Mutation evidence is bounded, never negotiated.** What the lane ran within
   its budget is the evidence: the counts, `partial`, and the judged survivors.
   A partial run or a timeout is not an Issue, does not hold delivery, and needs
@@ -415,8 +442,14 @@ named tests.
   mutation-evidence Issue is a required run that never happened over in-scope
   content the tool parses, after setup and repair within the budget: record
   `blocked: <failure, attempted repair, remaining scope>` on the Mutation run
-  line with the exact command, and the implementer runs or repairs it. That
-  verdict is `ISSUES_FOUND`; qualitative analysis cannot make the run PASS.
+  line with the exact command. That verdict is `ISSUES_FOUND`; qualitative
+  analysis cannot make the run PASS. The implementer repairs what it owns, such
+  as a failing baseline or its own config; the campaign itself runs in the next
+  test-quality review round (see Revision rounds), never as the implementer's
+  sweep. Code this host cannot build, such as another platform's target, is
+  `blocked` with that platform and the command for a host that builds it. No
+  later round on this host can run it, so it waits for the user to supply such
+  a host or waive the run; it is neither `waived` nor `not applicable`.
   `waived: <rule or user instruction>` records a run a repository rule or the
   user removed in advance, never a successful run and never a decision the
   reviewer, a caller or an epic owner makes.
@@ -487,9 +520,13 @@ Follow-up pass: [0 initial, or the follow-up's number]
   counts; Stryker: killed / timeout / survived /
   no coverage (unavailable with the command runner) / errors; cargo-mutants:
   caught / missed / timeout / unviable, timeout reasons and inconclusive outcomes,
-  with fresh and reused results separated; or "partial: <covered scope> /
-  <uncovered scope>" when the time budget ended first; or "blocked: <failure,
-  attempted repair, remaining scope>"; or "waived: <authority and scope>"; or
+  with fresh and reused results separated, and any campaign wait in minutes and
+  whether the process listing could see other sessions; or "partial: <covered
+  scope> / <uncovered scope>" when the budget, the estimate rule, the wait limit
+  or a handback stopped the lane, or shared-host timeouts left lines unproven;
+  or "blocked: <failure, attempted repair, remaining
+  scope>", naming the platform and a capable host's command when this host
+  cannot build it; or "waived: <authority and scope>"; or
   "not applicable: <source evidence of no executable behavior, or files the
   tool does not parse>"]
 - Workspace preservation: [verified against pre-run staged, unstaged, and untracked
