@@ -1,9 +1,15 @@
 # Ecosystem commands
 
-Commands per package manager for the audit and apply phases. Check the
+Commands for project package operations in either path. Machine software uses
+the owner/updater procedure in `incident-response.md`, not these project
+environment defaults. Check the
 installed tool's `--help` when a flag is refused: versions differ. A command
 marked "if installed" is a plugin or separate tool; the skill's scope says how
-to run a missing one.
+to run a missing one. During an incident, complete its safe-execution and source
+checks before using any command below, including wrappers, ephemeral tools and
+builds. An install or build can execute dependency code. `--dry-run` is not a
+general execution guard, and script-suppression flags do not sandbox explicitly
+invoked tests or programs. Do not run a compromised version for baseline proof.
 
 ## Detect
 
@@ -27,10 +33,11 @@ names its version. Workspace roots list the members to audit.
 | Maven | `pom.xml`, no lockfile; prefer the `./mvnw` wrapper | `<modules>` | `dependencyManagement`, `<exclusions>` |
 | Gradle | `build.gradle(.kts)`, `gradle/libs.versions.toml`, and `gradle.lockfile` when dependency locking is on; prefer the `./gradlew` wrapper | `include` in `settings.gradle(.kts)` | `resolutionStrategy` (`force`), `constraints`, `exclude` |
 
-## Stay inside the checkout
+## Stay inside the selected project environment
 
-These default to machine-wide state rather than the project. Run the scoped
-form, or report the gap.
+For project operations these commands can default to machine-wide state. Run
+the scoped form, or report the gap. An explicitly selected machine update uses
+its actual installation owner; do not remove these safeguards from project work.
 
 - **pip:** a bare `pip` acts on whatever interpreter runs it, which without a
   project environment is the machine's global or user Python. Run it only as

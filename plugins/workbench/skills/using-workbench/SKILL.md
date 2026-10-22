@@ -111,7 +111,7 @@ FEEDBACK
 | Checking existing tests or recommending a testing approach | `test-quality-review`, run by the `test-quality-reviewer` agent; give it the question and target |
 | Landing | outline gate → `file-pr` for opening or pushing to a PR; merge or branch-only push; `fix-ci`. Delegated PR delivery names `file-pr` |
 | Review feedback arrives | `receiving-code-review` |
-| The user asks to clean up worktrees, branches, caches, temp files or processes, or an epic's leftovers | `epic-cleanup`; never on the session's own initiative |
+| The user asks to reclaim project or machine disk space, or clean up worktrees, Docker, caches, scratch files or processes | `workspace-cleanup`; never on the session's own initiative |
 
 Before any push, resolve whether the branch has an open PR. If it does, load
 `file-pr` before pushing, including review corrections with green CI. Its target

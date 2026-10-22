@@ -1,0 +1,6 @@
+interface:
+  display_name: "Workspace Cleanup"
+  short_description: "Reclaim development disk space while preserving active work"
+
+policy:
+  allow_implicit_invocation: true

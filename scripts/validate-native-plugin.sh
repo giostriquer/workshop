@@ -232,7 +232,6 @@ contract-review
 domain-modeling
 empirical-proof
 epic-auditor
-epic-cleanup
 epic-implementation
 epic-orchestration
 file-pr
@@ -248,7 +247,8 @@ test-driven-development
 test-quality-review
 trim-comments
 using-workbench
-verification-before-completion"
+verification-before-completion
+workspace-cleanup"
 
 WORKBENCH_AGENTS="ci-watcher.md
 code-quality-reviewer.md

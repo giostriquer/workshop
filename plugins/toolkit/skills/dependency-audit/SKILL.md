@@ -1,29 +1,47 @@
 ---
 name: dependency-audit
-description: Use when the user asks to audit, bump, upgrade or update a project's dependencies, or to check them for version conflicts, breaking-change caveats, security advisories, deprecated or unmaintained packages, or dependencies that could be removed or replaced. User-invoked only.
+description: Use when the user asks to audit or upgrade dependencies, assess a supply-chain or security advisory, or check and patch explicitly scoped runtimes, containers, installed applications or OS packages. Also for dependency conflicts, breaking changes, deprecated packages or removal candidates. User-invoked only.
 disable-model-invocation: true
 ---
 
 # Dependency Audit
 
-Report first, edit later. Phase 1 is a read-only audit of every direct
-dependency, ending in one grouped report and a question: which groups to apply.
-Phase 2 applies only the chosen groups, in batches, through the package manager,
-with focused checks after each batch. The package manager writes every lockfile
-change; never hand-edit a lockfile.
+Report first, apply the selected changes, and verify the result. Existing
+approval carries forward without another question. Package managers write
+lockfile changes; never hand-edit a lockfile.
 
 ## Scope
 
-The current checkout and its workspace members. Never audit, bump, install or
-remove anything in machine-wide state (global, user and system environments):
-no `-g`, `--global` or `--user` flags, no system package manager (Homebrew,
-apt and the like), and no global tool install. A tool the audit needs but
-lacks runs ephemerally (`npx`, `uvx`, `pnpm dlx`, `bunx`) or is reported as
-missing. Commands that default to the machine's environment, a bare `pip`
-above all, run in the scoped form [ecosystems.md](ecosystems.md) gives, or are
-reported as a gap. A disposable copy of the checkout in a temp directory, used
-to try a bump or generate a missing lockfile, counts as the checkout and is
-deleted afterwards; notes stay in that copy or in the report.
+Default to the current checkout and its workspace members. Expand to other
+repositories, developer tools, runtimes, containers, OS software or installed
+applications only when the user requests that scope. An inventory request does
+not authorize updates. Preserve exclusions and governing repository/device rules.
+Application coverage means installed versions, embedded dependencies and vendor
+fixes; broad code review and general machine hardening are separate tasks.
+
+For project-only work, no global/user/system package mutations or global tool
+installs. Use the project environment and the scoped commands in
+[ecosystems.md](ecosystems.md), never a bare `pip` or another ambiguous target.
+Use a missing audit tool ephemerally only after checking its source/version and
+execution risk, otherwise report it missing. A disposable checkout can test a
+routine bump, but inherits machine access and is not a security sandbox.
+
+## Choose the path before running commands
+
+- **Named incident, suspected malicious release, CA/trust incident, or requested
+  machine software auditing/patching:** read [incident-response.md](incident-response.md).
+  It owns affected-asset discovery, the prioritized report, selected remediation
+  and active-consumer verification, replacing the routine phases below. Do not
+  delay a targeted security response for a full unrelated dependency audit.
+- **Routine project dependency upkeep:** use the phases below and
+  [ecosystems.md](ecosystems.md) for manager-specific commands.
+
+If ordinary upkeep reveals suspected compromise, switch to the incident path
+before installing or executing the affected software. Read manifests, lockfiles
+and current advisories before the baseline. Do not run a suspicious binary even
+for its version, fetch an unverified scanner, or execute suspect lifecycle,
+build or test code merely to establish RED. Record unavailable baseline checks;
+safe metadata inspection and independent authorized work can continue.
 
 ## Before the audit
 
@@ -37,9 +55,10 @@ deleted afterwards; notes stay in that copy or in the report.
 3. Read the manager's config (`.npmrc`, `.yarnrc.yml`, `pnpm-workspace.yaml`,
    `[tool.uv]`) for settings that change resolution, such as
    `legacy-peer-deps` or overrides. Never print or copy a token found there.
-4. Run the checks you will use after each batch (install from the lockfile,
-   typecheck, build, the tests that cover dependency call sites) once, so a
-   later failure is attributable. Report a red baseline; do not fix it here.
+4. After the execution-risk check above, run the checks you will use after each
+   batch (install from the lockfile, typecheck, build, the tests that cover
+   dependency call sites) once, so a later failure is attributable. Report a red
+   baseline; do not fix it here.
 
 ## Phase 1: the audit (read-only)
 
@@ -144,7 +163,10 @@ all patch and minor"), restate that selection and go on to phase 2.
    Leave full suites to CI unless the repository or the user requires a local
    run.
 4. A batch that breaks is fixed at the call sites its notes named, or reverted
-   by restoring the manifest and lockfile and reinstalling. Never paper over it
+   by restoring only this batch's manifest/lockfile changes and reinstalling.
+   Preserve pre-existing edits. Never restore a release known affected by the
+   incident or undo a security mitigation to recover a green build; use the incident path
+   to select a safe fallback or report the blocker. Never paper over it
    with `--force`, `--legacy-peer-deps`, a type or lint suppression, a skipped
    test, or an override (see Boundaries). Change a test's expected value only
    for a behavior change the report named and the user chose with that batch.
@@ -166,7 +188,8 @@ concern per PR usually gives a major bump or a removal its own PR.
 - An override, resolution or patch is only ever proposed in the report, with
   a go-ahead, never used to rescue a failing batch.
 - No publishing (`npm publish`, `cargo publish`, `gem push`, `twine upload`),
-  and never read out, change or copy registry credentials.
+  and never print or copy credentials. Credential revocation/rotation is a
+  separately scoped incident action, not part of ordinary package updates.
 
 ## Common mistakes
 

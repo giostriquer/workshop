@@ -99,6 +99,11 @@ design choices. Grilling remains in Toolkit.
 
 Use [contract-review](docs/skills/contract-review.md) to check agreed behavior and
 affected consumers through the `contract-reviewer` agent.
+
+Use [workspace-cleanup](docs/skills/workspace-cleanup.md) when you ask to reclaim
+project or machine disk space from worktrees, Docker, build caches and scratch
+artifacts. It replaces the former `epic-cleanup` command.
+
 Start with [using-workbench](docs/skills/using-workbench.md) for the workflow,
 or the [skills handbook](docs/skills/README.md) to choose a skill by task.
 Neither plugin installs hooks or a dispatcher. Skill descriptions and explicit

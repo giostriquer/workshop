@@ -41,6 +41,7 @@ specific task skips it.
 | About to claim done, fixed, or passing | `verification-before-completion` |
 | Implementation complete, before PR-or-merge | `trim-comments`, then the applicable code, test, and behavior/contract reviews |
 | Picking a model | `model-reference` |
+| Requested project or machine disk cleanup | `workspace-cleanup` |
 
 ## The map
 

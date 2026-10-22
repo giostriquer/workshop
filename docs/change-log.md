@@ -8,6 +8,13 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.53.0: 2026-10-22
+
+- **Reclaim workspace disk space with `workspace-cleanup`.** This replaces `epic-cleanup` with one workflow for project and machine cleanup, covering worktrees, Docker, build caches, `.workbench` and `.tmp` artifacts. It measures bloat, preserves active and unique work, acts on selected targets under existing authorization, and verifies recovered space. ([decision](decisions/workspace-cleanup.md#purpose-and-authority-2026-10-22))
+
+## toolkit 0.19.0: 2026-10-22
+
+- **Respond to dependency and software security incidents.** `dependency-audit` now covers requested incident work across project dependencies, development tools, containers, installed applications and the OS. It checks current primary advisories before executing suspect software, selects known-safe upgrades or pins, and verifies the active consumer and trust store; pending restarts, unverified surfaces and compromise recovery remain explicit. Ordinary project audits keep their existing scope. ([decision](decisions/dependency-audit.md#incident-response-and-requested-machine-software-2026-10-22))
 
 ## workbench 0.52.2: 2026-10-21
 
@@ -69,13 +76,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 - **Invoke Anatomy for interactive isometric figures.** The explicit-only launcher loads the complete upstream package at a fixed commit and keeps its source unchanged. Automatic invocation is disabled on Claude Code and Codex; Git and network access are required, with Node.js and Chrome or Chromium for upstream checks. ([decision](decisions/anatomy.md))
 - **Catch up with `ketchup`.** Summarize current work, distinguish verified results from reports and stale evidence, and surface unresolved human decisions. The explicit-only skill preserves task ownership and continues already authorized work after a status request. ([decision](decisions/ketchup.md))
 - **Read every page of PR review comments.** `get-pr-comments` paginates inline feedback, checks retrieval failures, and identifies partial results and unknown missing feedback before summarizing. ([decision](decisions/get-pr-comments.md))
-
-## workbench 0.48.1: 2026-10-12
-
-- **Prove a usable journey after required setup.** `empirical-proof` checks initialization, migrations, and data before exercising the unchanged acceptance journey. Missing prerequisites remain visible, and stand-in environments disclose setup they supply that the target still needs. ([decision](decisions/empirical-proof.md))
-- **Check compatibility beyond symbol references.** `claim-check` and `empirical-proof` name the assumption that makes a change safe, trace relevant persisted, wire, cross-language, configuration, and lifecycle consumers, and select the smallest real check that can refute it. ([decision](decisions/claim-check.md))
-
-## workbench 0.48.0: 2026-10-08
-
-- **Behavioral completion requires focused consumer proof.** `verification-before-completion` invokes `empirical-proof` by default for behavioral changes and refactors. Reuse sufficient current evidence; blocked checks remain incomplete, and explicit declines and repository rules retain precedence. Broad QA, recordings, teams, and permanent harnesses remain optional. ([decision](decisions/empirical-proof.md#focused-consumer-proof-is-the-completion-default-2026-10-08))
-- **Tests state their boundary and mutation probes confirm their source change.** TDD explains what a selected test catches and misses without reopening agreed scope. Hand-applied mutants must differ from pristine source with expectations intact before their failures count as evidence. ([decision](decisions/mattpocock-skills.md#focused-upstream-refinements-2026-10-08))

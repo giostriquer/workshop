@@ -45,7 +45,7 @@ you want them, and skip to keep sessions lean.
 | Implementing a lane dispatched through epic-orchestration | [epic-implementation](epic-implementation.md) |
 | Auditing a lane dispatched through epic-orchestration | [epic-auditor](epic-auditor.md) |
 | Asking or telling another local session on this machine | [session-messaging](session-messaging.md) |
-| Cleaning up a repo's stale worktrees, branches, caches or processes, or an epic's leftovers, when you ask | [epic-cleanup](epic-cleanup.md) |
+| Reclaiming project or machine disk space from worktrees, Docker, build caches, `.workbench` and `.tmp`, when you ask | [workspace-cleanup](workspace-cleanup.md) |
 | Looking back at how the process itself ran | [self-audit](self-audit.md) |
 
 ## The optional toolkit
@@ -60,7 +60,7 @@ you want them, and skip to keep sessions lean.
 | To install the workshop's host-specific global instructions and rules on a machine | [adopt-global-rules](adopt-global-rules.md) |
 | To use a system as a real human user and report what got in the way | [me-human](me-human.md) |
 | To gate a new test, or audit and prune tests that don't earn their keep | [test-audit](test-audit.md), user-invoked only |
-| To bump dependencies knowing what each bump breaks, surface conflicts and advisories, or drop unused ones | [dependency-audit](dependency-audit.md), user-invoked only |
+| To audit/upgrade dependencies or respond to security incidents across selected project and machine software | [dependency-audit](dependency-audit.md), user-invoked only |
 | To be interviewed about a plan, design, or idea until every branch is settled | [grill-me](grill-me.md), user-invoked only |
 | The round-based interview other skills run | [grilling](grilling.md) |
 | To survey a codebase for refactors that deepen shallow modules | [improve-codebase-architecture](improve-codebase-architecture.md), user-invoked only |

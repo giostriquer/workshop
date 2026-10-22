@@ -1,6 +1,0 @@
-interface:
-  display_name: "Epic Cleanup"
-  short_description: "List workspace cleanup candidates, or clean up after an epic"
-
-policy:
-  allow_implicit_invocation: true
