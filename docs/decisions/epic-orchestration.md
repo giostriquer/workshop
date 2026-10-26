@@ -2,6 +2,27 @@
 
 This note is the rationale for the `epic-orchestration` skill, shipped in the `workbench` plugin; superseded choices are omitted and git history keeps the originals.
 
+## Tracker status follows the work (2026-10-26)
+
+The operator repeatedly had to remind owners to move active tickets and their
+epic to in-progress. The skill required a current local ledger and ticket
+closeout, but left intermediate tracker transitions implicit.
+
+The owner now reconciles ticket and epic status at lifecycle checkpoints,
+using the tracker's available workflow states and existing write authority.
+Owner returns include a tracker-sync field so a local ledger update cannot
+silently stand in for the shared status. Queued work stays queued, accurate
+review or blocked states stay intact, and completion still requires the existing
+acceptance, delivery and operator closure gates. Unavailable tracker writes leave
+an explicit pending transition while independent authorized work continues.
+
+Four simulated consuming-agent cases covered active-work recovery, pending
+review and merge, unavailable tracker writes, and closure awaiting the operator.
+The revised skill produced the expected statuses and explicit synchronization
+records. The old wording also chose the expected statuses in those cases; the
+reported omissions motivate the correction. These are bounded regression checks,
+not live tracker verification or a measured reliability improvement.
+
 ## Handoffs are read as written, by their file (2026-10-16)
 
 Session Orchestrator reads an orchestrator's handoffs from its own text, and

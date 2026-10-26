@@ -343,6 +343,33 @@ completed delivery.
   decision and source. A fix that refuses required legitimate work is itself
   an in-scope defect, not a reason to narrow acceptance silently.
 
+## Keep tracker status current
+
+You own status synchronization for the epic and its tickets. When a tracker is
+available and writes are authorized, reconcile status on start or resume, when
+work begins, after meaningful handbacks or rulings, and at delivery and closure.
+Use existing authority without asking the operator to repeat it.
+
+Read current statuses and the available workflow states for both tickets and
+the parent epic or project. Map the work's actual phase to those states:
+
+- When work begins, move the active tickets and their epic to **In Progress**
+  or the workflow's equivalent. Leave unstarted, queued tickets unchanged.
+- Reflect review, blockers and resumed work as they occur. Keep an accurate
+  review or blocked state instead of resetting every open item to In Progress.
+  One blocked ticket does not block an epic whose other work can advance.
+- Mark a ticket **Done** only after independent acceptance and required
+  delivery are verified. A lane report, open PR or green CI alone is insufficient.
+  Close the epic only after its closure gates and the operator's decision.
+
+Apply only needed transitions to operator-owned items, then read back the result.
+On recovery, repair stale statuses against verified work; preserve accurate
+terminal states unless the work has been explicitly reopened within scope.
+If the tracker, write authority or a suitable state is unavailable, or an update
+fails, record the intended transition, reason and responsible owner as pending
+in the ledger. Continue independent authorized work and retry when the blocker
+clears; report confirmed tracker state separately from intended state.
+
 ## Keep a local epic ledger
 
 Reuse the epic scope folder's README or CURRENT entry point; otherwise create
@@ -357,6 +384,8 @@ scope sources determine membership. Record local tooling locations and their
 publication boundary, including the source of any explicit promotion, so recovery
 does not turn local verification into a delivery obligation.
 Distinguish reported claims from verified results and bind evidence to revisions.
+Keep a **Tracker sync** entry with item references, last confirmed ticket and
+epic statuses, and pending transitions; mark it not applicable without a tracker.
 
 Start from the ledger and load sources needed for the next decision. Refresh
 volatile facts before relying on them. After meaningful handbacks, rulings or
@@ -391,7 +420,9 @@ request.
 An owner return has these parts, in order:
 
 1. **Verified disposition:** results, revision and remaining gates. Distinguish
-   validation, PR readiness, merge and epic completion.
+   validation, PR readiness, merge and epic completion. Include **Tracker sync**:
+   confirmed ticket and epic statuses, pending updates with their owner and
+   reason, or not applicable when no tracker is used.
 2. **Required lane handoff:** the lane-specific label and populated fenced pointer
    from **Dispatching** for each affected lane. Include it when accepting or
    rejecting a report, returning a correction or ruling, or authorizing delivery, including after

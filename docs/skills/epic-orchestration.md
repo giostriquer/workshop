@@ -233,6 +233,21 @@ work needs them
 ([using-workbench's artifact guidance](using-workbench.md)); evidence stays
 addressable.
 
+**Does it keep ticket and epic statuses updated?**
+
+Yes. With tracker access and write authority, the owner reconciles statuses on
+start or resume, when work begins, after meaningful handbacks or rulings, and at
+delivery and closure. Active tickets and their epic move to In Progress or the
+workflow's equivalent; queued tickets stay unchanged. Review, blockers and
+resumed work use the available states. A blocked ticket does not block an epic
+whose other work can continue.
+
+The owner reads back changes and records confirmed statuses in the ledger and
+owner returns. Unavailable or failed updates remain explicitly pending, with a
+reason and responsible owner, while independent work continues. Tickets become
+Done after independent acceptance and required delivery; epic closure still
+needs its closure gates and your decision.
+
 **How does each reply end?**
 
 An owner return gives the verified result and revision, the required copyable
@@ -291,6 +306,8 @@ review mechanics.
   copyable reports across follow-ups and recovery.
 - Amendments reference the active contract; lanes can make decisions it already settles.
 - Reports come back validated against the repo, with unverified parts stated.
+- Active tickets and their epic have current tracker statuses; unavailable
+  updates stay visible with an owner and reason.
 - Coordination and verification tooling stays local unless explicitly scoped for
   delivery; required evidence and normal product regression tests remain intact.
 - Lanes that touch the same file arrive in the same prompt.

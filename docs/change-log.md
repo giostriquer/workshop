@@ -8,6 +8,10 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.53.1: 2026-10-26
+
+- **Keep epic and ticket statuses current.** `epic-orchestration` now explicitly moves active tickets and their epic to In Progress or the workflow's equivalent, reconciles later transitions, and reports confirmed or pending tracker updates. Queued work and existing completion gates are preserved. ([decision](decisions/epic-orchestration.md#tracker-status-follows-the-work-2026-10-26))
+
 ## workbench 0.53.0: 2026-10-22
 
 - **Reclaim workspace disk space with `workspace-cleanup`.** This replaces `epic-cleanup` with one workflow for project and machine cleanup, covering worktrees, Docker, build caches, `.workbench` and `.tmp` artifacts. It measures bloat, preserves active and unique work, acts on selected targets under existing authorization, and verifies recovered space. ([decision](decisions/workspace-cleanup.md#purpose-and-authority-2026-10-22))
@@ -70,9 +74,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 ## workbench 0.48.2: 2026-10-14
 
 - **Keep lane names stable across handoffs.** `epic-orchestration` assigns each lane one unique, short name and reuses it in paste labels, pointers, reports and the ledger. Worksets and delivery phases remain separate, and inherited composite labels map to a canonical name while preserving sessions and artifact references. ([decision](decisions/epic-orchestration.md#lane-names-stay-stable-across-handoffs-2026-10-14))
-
-## toolkit 0.16.0: 2026-10-12
-
-- **Invoke Anatomy for interactive isometric figures.** The explicit-only launcher loads the complete upstream package at a fixed commit and keeps its source unchanged. Automatic invocation is disabled on Claude Code and Codex; Git and network access are required, with Node.js and Chrome or Chromium for upstream checks. ([decision](decisions/anatomy.md))
-- **Catch up with `ketchup`.** Summarize current work, distinguish verified results from reports and stale evidence, and surface unresolved human decisions. The explicit-only skill preserves task ownership and continues already authorized work after a status request. ([decision](decisions/ketchup.md))
-- **Read every page of PR review comments.** `get-pr-comments` paginates inline feedback, checks retrieval failures, and identifies partial results and unknown missing feedback before summarizing. ([decision](decisions/get-pr-comments.md))
