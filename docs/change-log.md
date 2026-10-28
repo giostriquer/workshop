@@ -8,6 +8,10 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.53.2: 2026-10-28
+
+- **Route lane questions through the orchestrator.** `epic-implementation` sends questions and approvals unresolved by the active contract through the normal `need-guidance` handback, including user-input requests from other skills. The orchestrator rules within delegated authority or escalates to the operator; independent authorized work continues while the dependent action waits. ([decision](decisions/epic-implementation.md#questions-through-the-orchestrator-2026-10-28))
+
 ## workbench 0.53.1: 2026-10-26
 
 - **Keep epic and ticket statuses current.** `epic-orchestration` now explicitly moves active tickets and their epic to In Progress or the workflow's equivalent, reconciles later transitions, and reports confirmed or pending tracker updates. Queued work and existing completion gates are preserved. ([decision](decisions/epic-orchestration.md#tracker-status-follows-the-work-2026-10-26))
@@ -70,7 +74,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 ## workbench 0.48.3: 2026-10-14
 
 - **Keep mutation evidence scoped and trustworthy.** Test-quality review verifies runtime-data isolation before its baseline, constrains Rust build and test targets, and distinguishes timeout uncertainty from assertion kills. It catches protection lost through test changes, clarifies constant-export coverage, and adds qualified Bun runner and incremental-report guidance while preserving existing budgets. ([decision](decisions/mutation-scope-and-budget.md#evidence-and-isolation-corrections-2026-10-14))
-
-## workbench 0.48.2: 2026-10-14
-
-- **Keep lane names stable across handoffs.** `epic-orchestration` assigns each lane one unique, short name and reuses it in paste labels, pointers, reports and the ledger. Worksets and delivery phases remain separate, and inherited composite labels map to a canonical name while preserving sessions and artifact references. ([decision](decisions/epic-orchestration.md#lane-names-stay-stable-across-handoffs-2026-10-14))

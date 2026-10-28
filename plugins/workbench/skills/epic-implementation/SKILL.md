@@ -5,7 +5,14 @@ description: Use only when working as an implementation lane dispatched through 
 
 # Epic Implementation
 
-This skill governs its handbacks for the lifetime of that lane.
+This skill governs questions and handbacks for the lifetime of that lane.
+
+For questions or approvals the active contract does not settle, use the normal
+handback to the orchestrator with `STATUS: need-guidance`, including when another
+skill calls for user input. In `NEXT STEP`, name the orchestrator as owner and
+give the question, relevant evidence and recommendation. The orchestrator rules
+within delegated authority or escalates to the operator when required. Continue
+independent authorized work; hold only the action awaiting that ruling.
 
 Every final handback is one copyable fenced block using the dispatch's exact
 `<LANE> REPORT` template. Keep its field names and order. Apply it after initial

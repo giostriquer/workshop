@@ -31,6 +31,17 @@ The statuses `blocked`, `need-follow-up` and `need-guidance` share one condition
 `ready-for-validation` omits that field. This replaces the blocked-only field so
 each non-ready handback remains actionable.
 
+### Questions through the orchestrator (2026-10-28)
+
+Implementation lanes can stop to ask the operator questions that the
+orchestrator already has authority to settle. Route questions and approvals
+unresolved by the active contract through the existing `need-guidance` handback,
+including user-input requests from other skills. `NEXT STEP` names the
+orchestrator as owner and carries the question, evidence and recommendation.
+The orchestrator applies existing delegated authority or escalates an
+operator-reserved decision. Independent authorized work continues while the
+dependent action waits. This changes routing without granting new authority.
+
 ## Validation
 
 The operator's repeated-round example is the recorded failure. A fresh control

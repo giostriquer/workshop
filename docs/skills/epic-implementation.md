@@ -25,6 +25,15 @@ The lane chooses implementation and verification methods under repository rules
 and the skills that own the work. This skill carries the reporting contract
 through the lane's lifetime.
 
+**Who answers a lane's questions?**
+
+Questions or approvals unresolved by the active contract go to the orchestrator
+in the normal `need-guidance` report, including when another skill calls for user
+input. `NEXT STEP` names the orchestrator as owner and gives the question,
+evidence and recommendation. The orchestrator rules within delegated authority
+or escalates to the operator. Continue independent authorized work while the
+dependent action awaits a ruling.
+
 **Where is the template?**
 
 The initial contract includes or links the shared
