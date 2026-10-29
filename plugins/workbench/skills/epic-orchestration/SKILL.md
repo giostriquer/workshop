@@ -37,9 +37,39 @@ acceptance are not trivial. Work owned by another skill follows its routing.
 
 ## The loop
 
-Establish scope → refresh and revalidate → dispatch ready lanes → independently
-validate reports → correct or authorize delivery → verify delivery → blind
-audit → resolve findings or propose closure to the operator.
+Establish scope and the primary journey → refresh and revalidate → dispatch
+ready lanes → independently validate reports → correct or authorize delivery →
+verify delivery → blind audit → resolve findings or propose closure to the
+operator.
+
+## Plan the primary journey
+
+Before the first implementation workset, or on resume when the ledger has none,
+write the epic's **primary journey**: numbered end-to-end steps from its
+acceptance criteria, from the user's first action to the goal holding. For an
+epic with no user-facing flow, the steps are the ordered outcomes that complete
+it. Every acceptance criterion belongs to a step; criteria outside the user
+path, such as docs or migration, are steps after it. Record the journey at the
+top of the ledger with each step's state, tickets and criteria. It orders
+approved scope and adds none.
+
+Complete the thinnest end-to-end path first, then widen it, unless the operator
+has set another order. Each implementation dispatch names the journey step it
+moves and the tickets its delivery closes. A delivery that leaves its ticket
+open records what remains and the workset that closes it. A second partial
+delivery on one ticket without that closing workset triggers a re-plan of the
+ticket before more work is dispatched against it.
+
+Before dispatching a workset, or folding a finding into an active one, name the
+step it moves. A finding, however valid, takes one of three dispositions:
+
+- It blocks the next step on the current path: it enters a workset.
+- It serves a later step: record it against that step for when the step is worked.
+- It moves no step: it goes to the ledger's follow-up list for the operator and
+  is not dispatched.
+
+A defect in a lane's own change is a correction under **Rulings and findings**,
+not a finding to place.
 
 ## Keep coordination and verification tooling local
 
@@ -75,11 +105,12 @@ Before a new implementation workset, reopened work or scope-changing amendment:
 
 1. **Establish membership.** Read the operator-approved objective, acceptance
    criteria, exclusions and explicit amendments from the ledger's governing
-   sources. Bind each assignment to the criterion it serves and why it is
-   necessary. Owner-written tickets, dispatches, reports and summaries cannot
-   grant scope. Conditional criteria stay conditional; permission to use a
-   resource does not add a deliverable. Missing or conflicting authority holds
-   the affected assignment until its source or the operator's ruling resolves it.
+   sources. Bind each assignment to the journey step it moves and the criterion
+   it serves; citing a criterion without moving a step does not admit work.
+   Owner-written tickets, dispatches, reports and summaries cannot grant scope.
+   Conditional criteria stay conditional; permission to use a resource does not
+   add a deliverable. Missing or conflicting authority holds the step that needs
+   it, under **Holds stop one step**.
    Helpers and audits inherit this boundary; a helper does not need a separate
    scope argument for every check within its assigned workset.
 2. **Refresh the base.** Use `origin/dev` unless the repository or operator names
@@ -128,6 +159,11 @@ Match evidence to the claim:
 - **New behavior or interfaces:** exercise the required observable contract and
   relevant boundaries. **Docs or configuration:** check the actual consumers,
   examples or constraints affected. Apply repository and owning-skill gates.
+- **User-reachable changes:** for a change a user can reach in the running app,
+  acceptance includes the affected flow in the running app, or a named reason it
+  is not reachable yet. A repository ban on running E2E suites is not a ban on
+  launching the app; do not forbid, in dispatches or your own checks, launches
+  the repository allows.
 - **Gates and infrastructure:** inspect the design and exercise what it accepts
   and rejects, including legitimate work the fix might now refuse.
 - **Artifact acceptance or derived authority:** use output from the actual
@@ -181,7 +217,8 @@ The initial dispatch is a complete brief that works without tracker access:
 
 - **Lane:** canonical name from the ledger, with role and assigned worksets
   recorded separately.
-- **Scope:** governing epic source and amendments, assigned criteria, ticket
+- **Scope:** governing epic source and amendments, the journey step the
+  workset moves, assigned criteria, the tickets its delivery closes, ticket
   objectives and source anchors, finish line, exclusions, and decisions the
   lane can make or must return.
 - **Setup:** validated integration ref/SHA, worktree and branch, repository setup
@@ -194,7 +231,8 @@ The initial dispatch is a complete brief that works without tracker access:
   exact required sections. Separate supporting evidence from startup reading;
   state which checks need it. Resolve conflicting contracts before dispatch.
 - **Outcomes and evidence:** affected contracts, required behavior and checks,
-  compatibility obligations and handback evidence. Let the lane choose design,
+  compatibility obligations and handback evidence, including the running-app
+  flow for a user-reachable change. Let the lane choose design,
   sequencing and test techniques within repository and owning-skill rules.
 - **Coordination and handback:** other lanes' ownership/dependencies, required
   gates, and the role's reporting skill: `workbench:epic-implementation` for the
@@ -236,7 +274,15 @@ folder, indexed by the ledger. Each file opens with `Lane: <LANE>` on its first
 line, the canonical name, then its brief.
 Acceptance and hold notices reference the active contract, identify the revision
 and disposition, and state the lane's current authorized action or hold.
-Each hold names who can release it and its governing source. Resolve your own
+
+**Holds stop one step.** Missing or conflicting authority, a pending dependency
+or an unfinished review holds only the exact step that consumes its output.
+Each hold names that step, who can release it and its governing source. Keep
+independent work, and work against an agreed interface, moving; record where it
+reconciles with the held input. A review the operator schedules for later holds
+neither implementation nor delivery unless the operator names it as a gate.
+
+Resolve your own
 delivery gate under **Completion review and delivery**; preserve gates explicitly
 reserved to the operator. A hold creates no merge authority or new correction
 round. Do not issue work whose trigger has not fired.
@@ -323,8 +369,10 @@ completed delivery.
 
 ## Rulings and findings
 
-- **Corrections:** return confirmed in-scope defects to the owning lane. Routine
-  fixes within its contract proceed there. If a review stops converging under
+- **Corrections:** return confirmed defects in a lane's own change to the owning
+  lane. Routine fixes within its contract proceed there. A pre-existing or
+  adjacent finding is not a correction; place it under **Plan the primary
+  journey**. If a review stops converging under
   its own discipline's rules, record the next-step decision and reason, then dispatch
   it. Unless that decision ends review, lane follow-ups resume autonomously.
   Keep unresolved delivery holds visible.
@@ -332,8 +380,8 @@ completed delivery.
   timeouts are not findings. Return requests to waive, scope or diagnose them
   to the lane under that rubric; only repository rules or the operator remove
   a run. This does not waive required sensitivity evidence for regression claims.
-- **External findings:** technical validity and reachability do not establish
-  epic membership. Route unrelated findings to separate follow-ups under
+- **External findings:** technical validity, reachability and a cited criterion
+  do not establish epic membership. Route unrelated findings to separate follow-ups under
   existing write authority. If an external defect blocks an epic criterion,
   record the criterion, evidence, external owner and unblock; advance independent
   work. Do not absorb its repair or waive the criterion. Scope expansion needs
@@ -376,8 +424,9 @@ Reuse the epic scope folder's README or CURRENT entry point; otherwise create
 `LEDGER.md`. Other indexes point there. This is disposable working state under
 `using-workbench`, not a second tracker or committed documentation layer.
 
-Keep the approved goal, closure bar, exclusions and scope sources distinct from
-discovered follow-ups. Track active lanes and contract revisions, worktrees,
+Open with the primary journey and each step's state. Keep the approved goal,
+closure bar, exclusions and scope sources distinct from discovered follow-ups,
+including findings that move no step. Track active lanes and contract revisions, worktrees,
 dependencies, holds, decisions and their sources, owners and next actions.
 Index briefs, evidence, recovery material and the tracker backlog; governing
 scope sources determine membership. Record local tooling locations and their
@@ -419,16 +468,18 @@ request.
 
 An owner return has these parts, in order:
 
-1. **Verified disposition:** results, revision and remaining gates. Distinguish
+1. **Progress:** acceptance criteria closed, criteria remaining, and the journey
+   step now in work.
+2. **Verified disposition:** results, revision and remaining gates. Distinguish
    validation, PR readiness, merge and epic completion. Include **Tracker sync**:
    confirmed ticket and epic statuses, pending updates with their owner and
    reason, or not applicable when no tracker is used.
-2. **Required lane handoff:** the lane-specific label and populated fenced pointer
+3. **Required lane handoff:** the lane-specific label and populated fenced pointer
    from **Dispatching** for each affected lane. Include it when accepting or
    rejecting a report, returning a correction or ruling, or authorizing delivery, including after
    recovery and when no more implementation is needed. If only an operator
    decision remains, return the lane's disposition and current hold.
-3. **Immediate next action:** continue authorized work or dispatch a revalidated
+4. **Immediate next action:** continue authorized work or dispatch a revalidated
    workset; advance pending delivery; issue the closing audit; propose closure;
    or name a blocker, owner and unblock while advancing independent work. Put
    operator decisions here, outside the paste blocks. Do not ask the operator
@@ -438,7 +489,7 @@ Before sending the final reply, check that every lane-facing disposition has
 its actual file, its own `Paste this into <LANE>:` label and its fenced pointer
 in the reply, with the same canonical name in the label, pointer and ledger.
 Progress updates and answers that carry no lane-facing disposition
-can stay brief prose.
+can stay brief prose; a progress update still opens with **Progress**.
 
 **Audit returns name what is finished.** In the return file and the operator-facing
 disposition, state these separately:
@@ -461,7 +512,8 @@ the pointer. Use the same explicit nouns when saying "validated", "done" or
 
 ## Closing the epic
 
-Closure requires acceptance evidence, regression checks for relevant fix
+Closure requires every journey step verified end to end, acceptance evidence,
+regression checks for relevant fix
 families, dispositioned findings, verified required delivery and a **blind audit**.
 The auditor starts from the artifact, not PR history, probes declared epic
 surfaces against approved criteria and attacks prior fixes. Require each fix

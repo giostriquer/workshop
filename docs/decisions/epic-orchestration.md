@@ -2,6 +2,52 @@
 
 This note is the rationale for the `epic-orchestration` skill, shipped in the `workbench` plugin; superseded choices are omitted and git history keeps the originals.
 
+## The epic advances along its primary journey (2026-10-29)
+
+A long multi-person access epic kept dispatching worksets while its own ledger
+repeatedly recorded that no signed-in teammate could reach the shared work.
+Four technically valid adjacent findings (a new auth flow in an existing
+service, a billing reader, a generated-fingerprint change and shell/Git
+hardening) each cited an acceptance criterion and became work. 29 of 63
+dispatches delivered partial contributions that closed no ticket, and the
+operator could not tell where the epic stood. The same session treated a later
+broad security review and cross-epic dependencies as holds, which the operator
+lifted three times in one day, and accepted user-reachable changes without a
+running-app check because its dispatches widened a repository consent rule for
+E2E suites into a ban on launching the app.
+
+Binding an assignment to "the criterion it serves" was too weak: any adjacent
+finding can cite one. The owner now writes the epic's primary journey, numbered
+end-to-end steps drawn from the acceptance criteria, at the top of the ledger
+before the first implementation workset. Every criterion belongs to a step, so
+the journey orders approved scope and adds none. Worksets complete the thinnest
+end-to-end path first, then widen, unless the operator sets another order.
+Dispatches name the step they move and the tickets their delivery closes. A
+second partial delivery on one ticket without a closing workset triggers a
+re-plan. A finding enters a workset only when it blocks the next step on the
+current path. One that serves a later step waits against that step, and one
+that moves no step goes to the operator's follow-up list. Defects in a lane's
+own change remain ordinary corrections. Owner returns open with criteria
+closed, criteria remaining and the step in work.
+
+Holds now stop only the exact step that consumes the missing ruling, dependency
+or review output. Independent work, and work against an agreed interface, keeps
+moving with a recorded reconciliation point. An operator-scheduled later review
+holds nothing unless the operator names it as a gate. Completion reviews still
+gate delivery. For a user-reachable change, acceptance includes the affected
+flow in the running app or a named reason it is not reachable yet, and a ban on
+E2E suites no longer stretches to launching the app.
+
+Four simulated consuming-agent scenarios covered adjacent findings after a
+foundation slice, a stalled epic with repeated partial deliveries, a lane facing
+a pending ruling, a cross-team dependency and a scheduled review, and a UI report
+missing a running-app check. Each ran once against the revised and once against
+the previous wording in fresh contexts. The revised skill produced the expected
+dispositions in all four. The previous wording also stayed in scope and held
+narrowly in these scenarios, which state exclusions and gaps more plainly than
+the recorded session did. The recorded session is the failure evidence, and
+these runs are bounded regression checks, not a reliability estimate.
+
 ## Tracker status follows the work (2026-10-26)
 
 The operator repeatedly had to remind owners to move active tickets and their

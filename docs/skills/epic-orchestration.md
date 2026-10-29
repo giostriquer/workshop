@@ -64,10 +64,26 @@ repository rules and the skills that own the work. The owner specifies outcomes,
 affected contracts and required evidence without repeating those skills'
 procedures. Lanes return decisions their existing contract does not settle.
 
+**How does it keep the epic moving end to end?**
+
+Before the first implementation workset, the owner writes the epic's **primary
+journey**: numbered steps from your acceptance criteria, from the user's first
+action to the goal holding, at the top of the ledger. An epic with no user-facing
+flow uses its ordered outcomes. Every criterion belongs to a step, so the journey
+orders the approved scope without adding any.
+
+Worksets complete the thinnest end-to-end path first, then widen it, unless you
+set another order. Each implementation dispatch names the step it moves and the
+tickets its delivery closes. A delivery that leaves a ticket open names what
+remains and the workset that closes it; a second partial delivery without one
+re-plans that ticket. Every owner return opens with the criteria closed, the
+criteria remaining and the step now in work.
+
 **Does it check that a ticket is still valid before assigning it?**
 
-Yes. It first ties each assignment to the approved epic's acceptance criteria
-and scope sources, including explicit amendments and exclusions. It then refreshes
+Yes. It first ties each assignment to a journey step and the approved epic's
+acceptance criteria and scope sources, including explicit amendments and
+exclusions. It then refreshes
 the integration branch (`origin/dev` unless another target is configured)
 without disturbing active lanes or your changes, then checks each ticket at that
 SHA. Fixed or obsolete work leaves the dispatch,
@@ -78,6 +94,10 @@ hold it.
 
 Every dispatch states its scope basis and finish line. A discovered defect,
 reachable dependency, or coordinator-written backlog does not expand the epic.
+Neither does a finding that merely cites a criterion: a valid finding enters a
+workset only when it blocks the next step on the current path. One that serves a
+later step waits against that step; one that moves no step goes to the ledger's
+follow-up list for you. Defects in a lane's own change are still corrections.
 Permission to use a credential or fixture does not add a deliverable, and a
 conditional readiness check stays conditional. Helpers and closing audits use
 the same scope boundary.
@@ -118,6 +138,14 @@ when a relevant change invalidates the work or evidence, or a repository/deliver
 rule requires it. Unrelated upstream changes do not create new qualification
 tasks. Valid evidence keeps
 its original revision and input attribution.
+
+**What does a hold stop?**
+
+Only the exact step that consumes the missing input. A pending ruling, a
+dependency or an unfinished review names that step, who can release it and
+the governing source. Independent work, and work against an agreed interface,
+keeps moving, with the reconciliation point recorded. A review you schedule for
+later holds nothing unless you name it as a gate.
 
 **How does it group work into lanes?**
 
@@ -199,6 +227,9 @@ consequential claims. Regression fixes need evidence that checks detect the
 intended defect; reverts or mutations run only in disposable checkouts.
 Behavior-preserving work can use equivalence and passing characterization.
 New interfaces, docs and configuration get checks suited to their contracts.
+A change a user can reach is accepted on the running app's affected flow, or
+with a named reason it is not reachable yet. A repository ban on E2E suites does
+not stop the owner or lanes from launching the app.
 Missing imports or broken setup never count as a regression RED.
 
 The owner also checks applicable diff rules, infrastructure design, what gates
@@ -250,8 +281,9 @@ needs its closure gates and your decision.
 
 **How does each reply end?**
 
-An owner return gives the verified result and revision, the required copyable
-handoff for each affected lane, then a concrete next action with its owner.
+An owner return opens with progress (criteria closed, criteria remaining, the
+journey step in work), then gives the verified result and revision, the required
+copyable handoff for each affected lane, and a concrete next action with its owner.
 Accepting or rejecting a report, issuing a ruling and authorizing delivery all
 require the file and fenced pointer. A prose recap or ledger update alone does
 not complete the handoff. Progress updates can stay brief prose.
@@ -301,7 +333,12 @@ review mechanics.
   lane-specific paste label and copyable pointer, including in a batch and when
   approval is the only next step.
 - Every implementation dispatch names a freshly validated revision and only work
-  remaining at it, tied to an approved epic criterion.
+  remaining at it, tied to a journey step and an approved epic criterion, plus
+  the tickets its delivery closes.
+- Each return tells you which criteria closed and which remain; tickets close as
+  their steps are accepted.
+- A hold names the one step it stops; the rest of the epic keeps moving.
+- User-reachable changes are accepted on the running app.
 - Every auditor dispatch requires `epic-auditor`; audit handbacks remain complete
   copyable reports across follow-ups and recovery.
 - Amendments reference the active contract; lanes can make decisions it already settles.
@@ -312,6 +349,8 @@ review mechanics.
   delivery; required evidence and normal product regression tests remain intact.
 - Lanes that touch the same file arrive in the same prompt.
 - Negative signal: a lane report accepted because it looked complete.
+- Negative signal: side worksets merging while the ledger still says the
+  journey's first steps do not work.
 
 ## Where it fits
 
