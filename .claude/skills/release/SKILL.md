@@ -1,14 +1,13 @@
 ---
 name: release
-description: Use when the user explicitly invokes release in the Workshop repo, because workbench or toolkit changes are waiting to ship or this machine's global Claude Code and Codex plugin caches lag the pushed plugins. User-invoked only.
-disable-model-invocation: true
+description: Use when the user asks to release in the Workshop repo, because workbench or toolkit changes are waiting to ship or this machine's global Claude Code and Codex plugin caches lag the pushed plugins. Not on the agent's own initiative.
 ---
 
 # Release
 
 Ship every plugin with unreleased changes, then bring this machine's global
-Claude Code and Codex caches up to the pushed release. Invoking the skill
-authorizes what it lists: version bumps, release notes, one commit and push to
+Claude Code and Codex caches up to the pushed release. The user's request to
+release authorizes what it lists: version bumps, release notes, one commit and push to
 `main`, and updating the Workshop plugins this machine already has. It
 authorizes nothing else, such as installing or removing a plugin.
 
