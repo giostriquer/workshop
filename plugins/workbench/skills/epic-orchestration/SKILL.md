@@ -182,7 +182,8 @@ reviews run in parallel. Trim edits belong
 in RANGE as `trim-comments`' *Who runs it* requires. Intermediate validation
 reports and requests for rulings do not trigger review.
 
-Alongside that round, attempt `scope-review` once through its Muse-only runner.
+Alongside that round, attempt `scope-review` once through its Muse-only invocation
+directions for the current host.
 Include the original epic goal, the accepted lane increment and exclusions, and
 the claimed versus verified journey. Record its report or `SKIPPED`; invocation
 problems never trigger fallback, setup repair or a delivery hold. The parent

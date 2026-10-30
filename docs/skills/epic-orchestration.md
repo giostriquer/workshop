@@ -1,8 +1,9 @@
 # epic-orchestration
 
 At the completion round, the lane also attempts the optional Muse `scope-review`
-once, with the original epic goal, accepted lane increment and exclusions, and
-claimed versus verified journey. A failed invocation records `SKIPPED` without
+once through its host invocation directions, with the original epic goal,
+accepted lane increment and exclusions, relevant source paths, and claimed versus
+verified journey. A failed invocation records `SKIPPED` without
 fallback or a delivery hold; the parent triages findings without a Muse rerun.
 
 [Canonical skill](../../plugins/workbench/skills/epic-orchestration/SKILL.md)

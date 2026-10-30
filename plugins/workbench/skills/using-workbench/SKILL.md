@@ -32,7 +32,8 @@ among them, and neither is the session's own judgment that this one looks
 fine.
 
 **Muse scope opinion:** at the initial completion round, also attempt
-`scope-review` once on the same revision through its bundled Muse CLI runner.
+`scope-review` once on the same revision through Muse, using its host-native
+invocation directions.
 It is advisory and explicitly optional on failure: record `SKIPPED` and continue
 if invocation fails. Never substitute another model, retry, repair setup, or hold
 delivery for it. This exception does not waive any required review above.
@@ -212,8 +213,9 @@ Epic returns require verified acknowledgment and a concrete next action; see
 ## Workbench agents on Codex
 
 `scope-review` is a separate CLI-backed role on every host, not a registered
-Workbench agent. Its own runner is the only dispatch route; the host-agent
-instructions below do not apply to it.
+Workbench agent. Follow its direct Muse invocation directions for the current
+host, or its optional packet-only runner. The host-agent instructions below do
+not apply to the reviewer itself.
 
 Each workbench agent file carries a **Dispatch** line near its top that names
 how to dispatch it; the calling skill supplies only the run's inputs. On

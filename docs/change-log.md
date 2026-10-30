@@ -8,6 +8,10 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.59.0: 2026-10-30
+
+- **Invoke Muse through the host harness.** `scope-review` now prefers direct invocation from Codex and Claude, with bounded read-only source inspection and native JSON-schema output. The existing packet runner is optional; single-attempt skip behavior and parent finding triage remain. ([decision](decisions/scope-review.md#native-host-invocation-2026-10-30))
+
 ## workbench 0.58.0: 2026-10-30
 
 - **Retire `handoff-goal`.** The skill, contract templates and historical docs move to the deprecated archive. Active workflow routes now offer Direct and Plan, and plugin catalogs no longer expose the retired skill. ([decision](../attic/deprecated/skills/handoff-goal/origin.md#retired-2026-10-30))
@@ -68,7 +72,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 ## workbench 0.52.1: 2026-10-21
 
 - **Keep mutation campaigns with the review and off a busy host.** A `blocked` mutation run now joins the next test-quality review round instead of going to the implementer, and code the host cannot build stays `blocked` until the user supplies a capable host or waives it. Reviewers clone their copy to a fresh path, check for another running campaign before each launch and wait up to fifteen minutes outside the budget, and stop processes by their own paths. `partial` is recorded only for the budget, estimate sampling, the wait limit, a handback or shared-host timeouts. ([decision](decisions/mutation-scope-and-budget.md#blocked-runs-shared-hosts-and-copies-2026-10-21))
-
-## workbench 0.52.0: 2026-10-21
-
-- **Report merge conflicts ahead of CI results.** The CI watcher reads PR mergeability on every poll and returns a new `conflicted` verdict as soon as GitHub reports a merge conflict, ahead of any check result; `passed` now also requires a mergeable PR. Before, a conflicted PR with green checks was reported as passing, and one with no checks waited out the whole watch window. `fix-ci` and `file-pr` route `conflicted` to target synchronization, which uses no CI fix attempt. ([decision](decisions/fix-ci.md#merge-conflicts-end-the-watch-2026-10-21))

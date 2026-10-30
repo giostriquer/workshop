@@ -26,8 +26,9 @@ and revision, including the applicable independently dispatched stages:
    agent's Dispatch line. The applicable reviews run in parallel after trimming.
 
 Also retain the optional `scope-review` outcome from the completion round: a Muse
-report or `SKIPPED` with its reason. If never attempted, use its runner once;
-any invocation problem skips without fallback or holding filing. Do not repeat
+report or `SKIPPED` with its reason. If never attempted, follow its invocation
+directions for the current host once; any invocation problem skips without
+fallback or holding filing. Do not repeat
 an earlier attempt or require Muse confirmation of findings. This optional
 opinion is outside the required-stage gate below.
 
