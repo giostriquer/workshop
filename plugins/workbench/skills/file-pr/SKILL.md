@@ -25,6 +25,12 @@ and revision, including the applicable independently dispatched stages:
    exclusions, diff/base and revision, and verification evidence. Follow the
    agent's Dispatch line. The applicable reviews run in parallel after trimming.
 
+Also retain the optional `scope-review` outcome from the completion round: a Muse
+report or `SKIPPED` with its reason. If never attempted, use its runner once;
+any invocation problem skips without fallback or holding filing. Do not repeat
+an earlier attempt or require Muse confirmation of findings. This optional
+opinion is outside the required-stage gate below.
+
 If verification or a required stage is missing, hold filing and return that gap
 to the completion workflow. Resume landing after it is resolved; do not restart
 completed stages. Carry the trim's encoding offers as `trim-comments` describes.

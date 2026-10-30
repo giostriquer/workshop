@@ -8,6 +8,10 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.57.0: 2026-10-30
+
+- **Add a Muse scope opinion at completion.** `scope-review` checks the original request, accepted increment, exclusions and evidence claims through one bounded Muse invocation. It trusts the configured authentication, skips invocation failures without fallback or delivery holds, and leaves finding triage to the parent while required reviewers retain their gates. ([decision](decisions/scope-review.md#decision-2026-10-30))
+
 ## workbench 0.56.0: 2026-10-30
 
 - **Keep long skill entrypoints bounded.** Code-quality review, test-quality review, PR preparation, goal handoffs and epic orchestration now load detailed procedures through explicit references while retaining shared authority, recovery and completion gates in their entrypoints. The repository validator enforces an under-20,000-byte limit. ([decision](decisions/repo-tooling.md#bounded-skill-entrypoints-2026-10-30))
@@ -69,7 +73,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 ## workbench 0.50.1: 2026-10-16
 
 - **Keep license notices with copied skills.** The package separates standard MIT text from complete upstream attribution in `THIRD_PARTY_NOTICES.md`, restores the 2025 Superpowers copyright year, and requires both files with standalone skill copies. Full-plugin installations and Codex exports retain both files. ([decision](decisions/plugin-surfaces.md#license-notices-travel-with-copied-content-2026-10-16))
-
-## toolkit 0.18.1: 2026-10-16
-
-- **Preserve attribution across installation routes.** Standard MIT text and the existing upstream notices now ship as `LICENSE` and `THIRD_PARTY_NOTICES.md`; standalone-copy instructions require both in the copied skill folder. The standalone npm installer also retains its license and notices. ([decision](decisions/plugin-surfaces.md#license-notices-travel-with-copied-content-2026-10-16))

@@ -19,6 +19,11 @@ PR-or-merge. Each runs unless the user explicitly declines it or the repo's own
 process supersedes it; a small diff, time pressure, or the session's confidence
 are not reasons to skip. Everything else fires on relevance.
 
+At that initial round, `scope-review` also attempts one Muse opinion on the same
+revision. It is explicitly optional on failure: record `SKIPPED` and continue,
+with no fallback, retry, setup repair or delivery hold. Its advisory findings
+are parent-triaged; required reviews keep their own gates and follow-ups.
+
 Repo process takes precedence in both directions: the repo's own `CLAUDE.md`,
 `AGENTS.md`, or `CONTRIBUTING` governs worktrees, test discipline, and
 completion gates. A repo gate can require wider coverage than the default

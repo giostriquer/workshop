@@ -32,6 +32,11 @@ For completion-review findings, use the owning review skill's follow-up rules.
 Passing tests support a fix; that reviewer confirms closure of the finding.
 Keep the same review record through feedback and handoffs.
 
+The optional Muse `scope-review` is an explicit exception to reviewer-confirmed
+closure: the parent verifies and records dispositions, with no automatic rerun
+or delivery hold for Muse availability. Existing required reviews still own
+their findings and follow-ups.
+
 ## Forbidden Responses
 
 **NEVER:**

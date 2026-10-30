@@ -1,5 +1,10 @@
 # file-pr
 
+The completion record also carries the optional Muse `scope-review` report or
+`SKIPPED` reason. If it was never attempted, invoke its runner once; any invocation
+problem skips. Filing does not rerun an earlier attempt, require Muse clearance,
+or hold for Muse availability. Required review gates remain unchanged.
+
 [Canonical skill](../../plugins/workbench/skills/file-pr/SKILL.md)
 
 ## What it does

@@ -242,6 +242,7 @@ handoff-goal
 model-reference
 qa-sweep
 receiving-code-review
+scope-review
 self-audit
 session-messaging
 systematic-debugging

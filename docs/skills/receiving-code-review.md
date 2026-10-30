@@ -1,5 +1,9 @@
 # receiving-code-review
 
+For the optional Muse `scope-review`, the parent verifies and records finding
+dispositions. It does not require Muse confirmation or an automatic rerun. All
+required review disciplines retain their own closure rules.
+
 [Canonical skill](../../plugins/workbench/skills/receiving-code-review/SKILL.md)
 
 ## What it does

@@ -68,6 +68,10 @@ flowchart LR
 
 ## Read the owning contract
 
+Alongside the initial adversarial round, attempt `scope-review` once through Muse.
+It is advisory: invocation problems record `SKIPPED`, with no fallback, setup
+repair, automatic rerun or delivery hold. Required review gates stay unchanged.
+
 | Need | Source |
 | --- | --- |
 | Choose a skill for the task | [Skills handbook](skills/README.md) |

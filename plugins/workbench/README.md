@@ -82,6 +82,11 @@ instructions.
 
 ## Everyday skills
 
+The completion round also attempts `scope-review` once through the configured
+Muse CLI on every host. It is an advisory opinion with no provider fallback:
+invocation problems record `SKIPPED` and never hold delivery. It is not a generic
+registered reviewer agent; code, test and contract review retain their gates.
+
 | Skill | Does |
 | --- | --- |
 | [`file-pr`](skills/file-pr/SKILL.md) | files the branch's PR from the repo's own template, then tends it to green-and-mergeable; never merges |
@@ -92,6 +97,7 @@ instructions.
 | [`empirical-proof`](skills/empirical-proof/SKILL.md) | default focused proof of behavioral changes through apps or real consumers, with evidence reuse and coverage gaps |
 | [`code-quality-review`](skills/code-quality-review/SKILL.md) | strict, structure-first maintainability review of a diff |
 | [`contract-review`](skills/contract-review/SKILL.md) | agreed behavior, integration and affected consumer contracts, checked by `contract-reviewer` |
+| [`scope-review`](skills/scope-review/SKILL.md) | original goal, accepted scope and evidence claims; one optional Muse-only opinion at completion |
 | [`test-quality-review`](skills/test-quality-review/SKILL.md) | test trustworthiness review: whether tests protect the behavior they claim, backed by a mutation run over the changed code; runs with the adversarial review when logic or tests changed |
 | [`trim-comments`](skills/trim-comments/SKILL.md) | the comment trim at completion, before the review round: removes code-comment slop (narration, banners, commented-out code, stale comments, workaround sermons) from the finished diff, keeps comments that carry what the code can't, offers encodings for constraint comments, and reports correctness-hiding suppressions; dispatched to `comment-trimmer` |
 | [`epic-orchestration`](skills/epic-orchestration/SKILL.md) | owns a multi-ticket epic: writes the lane prompts the operator dispatches by hand, validates each report against the repo, authorizes the PR; never implements; user-invoked only |

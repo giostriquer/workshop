@@ -37,6 +37,7 @@ you want them, and skip to keep sessions lean.
 | Trimming a finished diff's code comments before the review round | [trim-comments](trim-comments.md), run by the `comment-trimmer` agent |
 | The adversarial pass before PR-or-merge | [code quality](code-quality-review.md), [test quality](test-quality-review.md) for changed logic/tests, and [contract review](contract-review.md) for changed behavior, consumer contracts or wiring |
 | Checking whether existing tests protect the behavior they claim to | [test-quality-review](test-quality-review.md) |
+| An additional opinion on the original goal and finished scope at completion | [scope-review](scope-review.md), one Muse-only attempt; invocation problems skip without fallback or holding delivery |
 | Picking a model | [model-reference](model-reference.md) |
 | Turning a branch into a PR and seeing it green | [file-pr](file-pr.md) |
 | CI is red | [fix-ci](fix-ci.md) |
@@ -82,6 +83,10 @@ verified and about to ship through a PR or the repository delivery process
 `test-quality-review` when production logic or tests changed, `contract-review` for changed observable
 behavior, consumer contracts or cross-component wiring). Each stops only for an explicit decline or
 a repo process that supersedes it.
+
+The initial round also attempts [scope-review](scope-review.md) once through Muse.
+This advisory opinion is optional on failure: `SKIPPED` records the gap without
+waiving required reviews, retrying or holding delivery.
 
 **Proof stays focused.** `empirical-proof` supplies default consumer proof for
 behavioral completion and reuses adequate current evidence. It does not add a

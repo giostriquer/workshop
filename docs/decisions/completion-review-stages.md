@@ -64,3 +64,11 @@ verdict, findings and convergence record. Code and test review remain independen
 completed stages are preserved. The completion workflow dispatches missing stages;
 `file-pr` checks their evidence before landing and returns gaps to completion.
 See [the role decision](pattern-reviewer-comment-noise.md#review-the-agreed-behavior-and-affected-consumers-2026-10-16).
+
+## Optional Muse scope opinion (2026-10-30)
+
+The initial round also attempts [scope-review](scope-review.md) once. It is an
+explicit exception to required-stage and reviewer-confirmed closure rules:
+invocation failures skip, no other provider substitutes, and the parent triages
+successful advisory findings. It never holds delivery for Muse availability or
+adds a clearance loop. Required stages retain their gates and follow-up owners.

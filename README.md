@@ -99,6 +99,8 @@ design choices. Grilling remains in Toolkit.
 
 Use [contract-review](docs/skills/contract-review.md) to check agreed behavior and
 affected consumers through the `contract-reviewer` agent.
+The completion round also attempts [scope-review](docs/skills/scope-review.md)
+through Muse: one advisory opinion, with invocation failures skipped and no fallback.
 
 Use [workspace-cleanup](docs/skills/workspace-cleanup.md) when you ask to reclaim
 project or machine disk space from worktrees, Docker, build caches and scratch

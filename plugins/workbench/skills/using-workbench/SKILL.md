@@ -31,6 +31,12 @@ confident implementation, a tidy-looking change, or time pressure are not
 among them, and neither is the session's own judgment that this one looks
 fine.
 
+**Muse scope opinion:** at the initial completion round, also attempt
+`scope-review` once on the same revision through its bundled Muse CLI runner.
+It is advisory and explicitly optional on failure: record `SKIPPED` and continue
+if invocation fails. Never substitute another model, retry, repair setup, or hold
+delivery for it. This exception does not waive any required review above.
+
 **Repo process takes precedence, in both directions.** When the repo carries
 its own process document (`CLAUDE.md`, `AGENTS.md`, `CONTRIBUTING`), follow it
 for worktrees, test discipline, and completion gates rather than re-running the
@@ -76,6 +82,8 @@ through a PR or the repository's delivery process, not an intermediate checkpoin
   Give each the same accepted scope and revision in a separate prompt. Each owns
   its findings, verdict, follow-ups, and pass record. A missing stage runs without
   repeating a completed one; one verdict does not waive another applicable stage.
+  In parallel, attempt scope-review once via Muse; record its report or SKIPPED.
+  Its advisory findings are parent-triaged, with no Muse clearance loop.
   The trim and each review stage are dispatched to a context that did not write
   the code, never self-served. A missing stage keeps the gate pending. Each is
   skipped only on an explicit user decline or a superseding repo process; they
@@ -108,6 +116,7 @@ FEEDBACK
 | The comment trim: **required** once the work-stream is complete, before the adversarial pass, **dispatched** to an agent that did not write the code | `trim-comments`, run by the `comment-trimmer` agent |
 | The initial adversarial pass: **required** on the trimmed diff, right before PR-or-merge, **dispatched** to reviewers that did not write the code | `code-quality-review`, run by the `code-quality-reviewer` agent; plus `test-quality-review`, run by the `test-quality-reviewer` agent, when the diff changes production logic or tests |
 | Changed behavior, consumer contracts or cross-component wiring, at completion | `contract-review`, run by `contract-reviewer`, given accepted outcomes, approved design and exclusions, diff/base and revision, and verification evidence; behavior and contract review, not convention compliance |
+| Additional scope opinion at the completion round | `scope-review`, one Muse-only CLI attempt; skip any invocation problem, no fallback or delivery hold |
 | Checking existing tests or recommending a testing approach | `test-quality-review`, run by the `test-quality-reviewer` agent; give it the question and target |
 | Landing | outline gate → `file-pr` for opening or pushing to a PR; merge or branch-only push; `fix-ci`. Delegated PR delivery names `file-pr` |
 | Review feedback arrives | `receiving-code-review` |
@@ -203,6 +212,10 @@ Epic returns require verified acknowledgment and a concrete next action; see
 `epic-orchestration` for lane, delivery, audit, and closure handoffs.
 
 ## Workbench agents on Codex
+
+`scope-review` is a separate CLI-backed role on every host, not a registered
+Workbench agent. Its own runner is the only dispatch route; the host-agent
+instructions below do not apply to it.
 
 Each workbench agent file carries a **Dispatch** line near its top that names
 how to dispatch it; the calling skill supplies only the run's inputs. On
