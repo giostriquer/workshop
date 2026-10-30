@@ -2,6 +2,41 @@
 
 This note is the rationale for the `fix-ci` skill and the `ci-watcher` agent it dispatches, both shipped in the `workbench` plugin; superseded choices are omitted and git history keeps the originals.
 
+## Let the host own waiting and the runner own evidence (2026-10-29)
+
+Recent watcher transcripts exposed foreground commands moved to the background
+after three minutes despite a ten-minute requested timeout. Agents then built
+sleep and process-discovery loops around the runner. They also interpreted old
+runner results using newer mergeability guarantees. The model assignments were
+correct and remain unchanged.
+
+Claude Code's current background-subagent lifecycle delivers a background
+command's completion to its subagent even after that subagent yields. Use that
+notification, and hand back only a terminal verdict. Hosts without that lifecycle
+retain bounded foreground slices or process waits. The foreground fallback must
+use the actual call ceiling; a requested timeout is not proof of the ceiling.
+See the [host contract](https://code.claude.com/docs/en/sub-agents#tools-permissions-and-results-of-background-subagents).
+
+Protocol 2 binds invocation and interpretation: the caller requests it explicitly,
+the result identifies it, and mergeability comes from the reported PR fields.
+Old runners reject the new invocation instead of lending an old `passed` result
+new guarantees. Old saved states are not promoted to the new protocol.
+
+A per-user target registry identifies GitHub host, repository, PR or branch, SHA and rerun
+attempt independently of caller-selected state filenames. One process owns a
+target; another caller receives its state location or saved result, preserving
+the original deadline. Incompatible expected-check sets are reported rather
+than silently sharing weaker coverage. Terminal results are evidence from their
+recorded observation time, not a fresh read. New heads and explicit rerun
+attempts have distinct identities. The host is persisted with the target, and
+resuming under a changed `GH_HOST` is rejected before any GitHub read.
+
+Completed job details are reused only while fresh run metadata confirms the
+same revision, run, attempt, status and conclusion. Running jobs are still read
+on every poll, so child failures remain visible. Rate limits pause reads within
+the original deadline without consuming the ordinary read-error budget. The
+polling interval remains thirty seconds; no model or effort setting changes.
+
 ## Merge conflicts end the watch (2026-10-21)
 
 The runner read only check results, never mergeability. GitHub starts no

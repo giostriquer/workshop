@@ -33,7 +33,7 @@ polling script, or search another plugin version for a replacement.
 Start one command, with the supplied paths and values:
 
 ```sh
-node "<runner>" --repo acme/webapp --pr 123 --sha "<full-sha>" --state "<scratch>/watch.json"
+node "<runner>" --protocol 2 --repo acme/webapp --pr 123 --sha "<full-sha>" --state "<scratch>/watch.json"
 ```
 
 For branch-only CI, replace `--pr 123` with `--branch "<branch>"`. Add
@@ -46,7 +46,13 @@ The runner polls every thirty seconds and prints one JSON result. It creates
 its scratch directory and persists the target, original deadline, latest
 snapshot, consecutive read failures and terminal result in the state file.
 One state file belongs to one watch; use a new file for a new head or the
-explicitly authorized flake rerun. An active process locks that file.
+explicitly authorized flake rerun. A per-user registry also locks the target
+across different filenames. Keep its default location across dispatches.
+
+Require `protocolVersion: 2` in every result. An unrecognized option, old saved
+state or missing protocol is a version gap: return it without falling back to an
+older invocation. Report mergeability only from the result's explicit PR fields;
+never infer it from an older runner's `passed` status.
 
 - `failed`: return immediately with the failed check/job, available link and
   pending checks. Required status never filters failures. Make no more network
@@ -65,10 +71,14 @@ explicitly authorized flake rerun. An active process locks that file.
   the next action; do not extend the window yourself.
 - `blocked`: report the precise runtime, access, malformed-data or cancellation
   gap. Do not work around it by generating another watcher.
-- `slice`: resume with `node "<runner>" --resume "<same-state-file>"` in the
-  same agent turn. This continues the original deadline and error count;
+- `slice` / `resumable`: resume with
+  `node "<runner>" --protocol 2 --resume "<returned-stateFile>"` in this agent. This continues the original deadline and error count;
   there is no code or timestamp to reconstruct. If the host requires an explicit
-  `--call-limit-ms`, supply that same limit on the resume command.
+  `--call-limit-ms`, supply that same limit on the resume command. Retain the
+  host's `--wait-mode` too.
+- `watching`: another process already owns this target. Report its `stateFile`
+  to the parent; do not start another command or poll its file/process. The
+  original watcher's handback remains authoritative.
 
 Exit code zero means a verdict was returned, not that CI passed. A nonzero
 exit is an invocation/runtime gap. The saved result may be read once if tool
@@ -76,32 +86,48 @@ output was lost; never print the whole state file or request logs before handbac
 
 ## Host waiting
 
-- **Claude Code.** Run the command in foreground Bash with `timeout` at the
-  host's maximum (normally `600000`). Do not set `run_in_background` inside
-  the watcher or end the agent turn while its process runs: that wakes the
-  parent early. The runner detects `CLAUDECODE` and `BASH_MAX_TIMEOUT_MS`,
-  returning `slice` a minute before the call limit. Resume until a terminal
-  result. The parent may dispatch this agent in the background.
+- **Claude Code with background-subagent completion notifications.** Run Bash
+  with `run_in_background: true`, adding `--wait-mode background`. Set its
+  `timeout` to cover the remaining watch window plus a minute (normally
+  `660000` ms for a new default watch), within the host's background lifetime
+  ceiling. Yield the subagent turn while the command runs, without a
+  `SubagentHandback` or final verdict. Command completion re-invokes this
+  subagent; read the completed output once, then hand back the terminal result
+  or resume a slice. Do not use Monitor, `sleep`, `pgrep` or repeated output
+  reads. If the remaining window exceeds the permitted command lifetime, pass
+  that lifetime as `--call-limit-ms` so the command slices before it expires.
+  Use this path only when the host supports that lifecycle and keeps the session
+  alive through completion; a one-shot CLI that exits on the initial result uses
+  the foreground fallback below. An interim yield notice may reach the parent;
+  it is not a terminal verdict.
 - **Codex.** Start with `exec_command`; retain its `session_id` and wait using
   empty `write_stdin` calls. Use the longest wait allowed by the active host
   instructions, up to `300000` ms, and set code-mode cells' `yield_time_ms`
   to the same permitted duration so the wrapper does not yield early.
   Waits return promptly when the process exits. Follow host-required status
   updates without adding GitHub polls. Return the final result to the parent.
-- **Other hosts.** Run the command in the foreground. If a tool has a hard call
-  limit, pass `--call-limit-ms <milliseconds>`; it must exceed sixty seconds.
+- **Foreground fallback.** Run the command in foreground Bash. Pass the actual
+  tool call ceiling as `--call-limit-ms <milliseconds>`; it must exceed sixty
+  seconds. A requested timeout alone does not establish the ceiling. With
+  `CLAUDECODE`, the runner caps its automatic ceiling at three minutes (or a
+  lower `BASH_MAX_TIMEOUT_MS`), returning a slice a minute before that ceiling. Resume until terminal.
 
 ## Ownership and output
 
 One designated watcher per pinned head, with the flake rerun as the one
-same-head exception. The parent owns that dispatch rule; a state-file lock
-prevents two processes sharing one watch file, not independently named watches.
+same-head exception. The parent owns that dispatch rule; the runner's registry
+also prevents independent filenames from polling the same GitHub host, repository, PR or
+branch, SHA and rerun attempt. A duplicate terminal result has `reused: true`:
+report its observation time as saved evidence, not a fresh GitHub read. Different
+expected-check sets are blocked instead of silently sharing weaker coverage.
+A resume must keep the saved GitHub host; a changed `GH_HOST` is a reported gap.
 A rerun waits for a newer attempt and reads that exact attempt's jobs, while
 still reporting unrelated failures. It never mistakes the old attempt for the new.
 
 Return the JSON verdict in a concise report: status, target and observed SHA,
-PR/run link, mergeability, required coverage, failed and pending checks, and the parent's next
-step. A `GitHub mergeability` row in any verdict's pending checks is not a CI
+PR/run link, explicit mergeability, required coverage, failed and pending checks,
+skip/cancellation counts, observation time, and the parent's next step. Full check
+rows remain in the state file; do not copy them all into the handback. A `GitHub mergeability` row in any verdict's pending checks is not a CI
 check: GitHub had not finished computing whether the PR can merge. Failure links are enough; missing logs do not delay the return.
 
 All CI polling runs here, never in the parent. Keep the designated model even

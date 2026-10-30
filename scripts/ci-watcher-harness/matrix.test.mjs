@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
-import { spawnSync } from 'node:child_process';
-import { chmodSync, copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { spawn, spawnSync } from 'node:child_process';
+import { chmodSync, copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, renameSync, rmSync, writeFileSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { test } from 'node:test';
@@ -641,11 +641,23 @@ function cli(t, delayMs = 0, host = {}, response = pr([check('unit', 'FAILURE')]
   const state = path.join(dir, 'nested', 'watch.json');
   const trace = path.join(dir, 'calls.jsonl');
   const env = { ...process.env, PATH: `${bin}${path.delimiter}${process.env.PATH}`, CI_WATCHER_FIXTURE: fixture,
+    WORKBENCH_CI_WATCH_REGISTRY: path.join(dir, 'registry'),
     CI_WATCHER_TRACE: trace, CI_WATCHER_STATE: state };
   delete env.CLAUDECODE;
   Object.assign(env, host);
-  const call = args => spawnSync(process.execPath, [runnerFile, ...args], { cwd: dir, env, encoding: 'utf8', timeout: 5000 });
-  return { call, state, fixture, trace };
+  const call = (args, preload, environment = {}) => spawnSync(process.execPath, [...(preload ? ['--require', preload] : []), runnerFile, ...args], { cwd: dir, env: { ...env, ...environment }, encoding: 'utf8', timeout: 5000 });
+  const start = (args, preload) => {
+    const child = spawn(process.execPath, [...(preload ? ['--require', preload] : []), runnerFile, ...args], { cwd: dir, env });
+    let stdout = '';
+    child.stdout.on('data', data => { stdout += data; });
+    const done = new Promise((resolve, reject) => {
+      child.on('error', reject);
+      child.on('close', status => resolve({ status, stdout }));
+    });
+    t.after(() => { if (child.exitCode === null) child.kill(); });
+    return { child, done };
+  };
+  return { call, start, state, fixture, trace, dir };
 }
 
 test('the packaged CLI runs from a different cwd, persists its result and resumes without gh', t => {
@@ -662,9 +674,11 @@ test('the packaged CLI runs from a different cwd, persists its result and resume
   const resumed = call(['--resume', state]);
   assert.equal(resumed.status, 0, resumed.stdout);
   assert.equal(JSON.parse(resumed.stdout).status, 'failed');
+  assert.equal(JSON.parse(resumed.stdout).reused, true);
   const duplicate = call(['--repo', 'acme/webapp', '--pr', '1', '--sha', SHA, '--state', state]);
-  assert.equal(duplicate.status, 2);
-  assert.match(JSON.parse(duplicate.stdout).reason, /already exists/);
+  assert.equal(duplicate.status, 0);
+  assert.equal(JSON.parse(duplicate.stdout).status, 'failed');
+  assert.equal(JSON.parse(duplicate.stdout).reused, true);
 });
 
 test('the CLI sleeps after a pending poll until its real deadline', t => {
@@ -734,4 +748,503 @@ test('an unsupported saved-state version is rejected without a GitHub read', t =
   assert.equal(result.status, 2);
   assert.match(JSON.parse(result.stdout).reason, /Invalid watch state/);
   assert.equal(readFileSync(fixture, 'utf8'), original);
+});
+
+test('protocol evidence is explicit and old saved passes cannot acquire new guarantees', async t => {
+  const r = rig([pr()]);
+  assert.equal((await watch(r.state, r.deps)).protocolVersion, 2);
+  const { call, state, fixture } = cli(t);
+  mkdirSync(path.dirname(state));
+  writeFileSync(state, JSON.stringify({ version: 1, config: config(), result: { status: 'passed' } }));
+  const before = readFileSync(fixture, 'utf8');
+  const result = call(['--resume', state, '--protocol', '2']);
+  assert.equal(result.status, 2);
+  assert.match(JSON.parse(result.stdout).reason, /Invalid watch state/);
+  assert.equal(readFileSync(fixture, 'utf8'), before);
+});
+
+test('a protocol mismatch fails before any GitHub read', t => {
+  const { call, state, fixture } = cli(t);
+  const before = readFileSync(fixture, 'utf8');
+  const result = call(['--repo', 'acme/webapp', '--pr', '1', '--sha', SHA, '--state', state, '--protocol', '1']);
+  assert.equal(result.status, 2);
+  assert.match(JSON.parse(result.stdout).reason, /protocol/i);
+  assert.equal(readFileSync(fixture, 'utf8'), before);
+});
+
+test('background mode bypasses automatic foreground slicing', t => {
+  const { call, state } = cli(t, 400, { CLAUDECODE: '1', BASH_MAX_TIMEOUT_MS: '60200' });
+  const result = call(['--repo', 'acme/webapp', '--pr', '1', '--sha', SHA, '--state', state,
+    '--protocol', '2', '--wait-mode', 'background']);
+  assert.equal(result.status, 0, result.stdout);
+  assert.equal(JSON.parse(result.stdout).status, 'failed');
+  assert.equal(JSON.parse(result.stdout).protocolVersion, 2);
+});
+
+test('a different state filename reuses terminal target evidence without polling again', t => {
+  const { call, state, fixture } = cli(t);
+  const first = call(['--repo', 'acme/webapp', '--pr', '1', '--sha', SHA, '--state', state]);
+  assert.equal(JSON.parse(first.stdout).status, 'failed');
+  writeFileSync(fixture, '[]');
+  const other = path.join(path.dirname(state), 'another.json');
+  const result = call(['--repo', 'ACME/WEBAPP', '--pr', '1', '--sha', SHA, '--state', other]);
+  assert.equal(result.status, 0, result.stdout);
+  assert.equal(JSON.parse(result.stdout).status, 'failed');
+  assert.equal(JSON.parse(result.stdout).reused, true);
+  assert.equal(JSON.parse(result.stdout).stateFile, state);
+  assert.equal(existsSync(other), false);
+});
+
+test('shared target evidence cannot silently weaken a second caller required checks', t => {
+  const { call, state, fixture } = cli(t);
+  call(['--repo', 'acme/webapp', '--pr', '1', '--sha', SHA, '--state', state]);
+  writeFileSync(fixture, '[]');
+  const result = call(['--repo', 'acme/webapp', '--pr', '1', '--sha', SHA,
+    '--state', `${state}.other`, '--expect', 'integration']);
+  assert.equal(result.status, 2);
+  assert.match(JSON.parse(result.stdout).reason, /expected checks/i);
+});
+
+test('two processes with different state paths share one active target owner', async t => {
+  const { start, call, state, trace } = cli(t, 1500);
+  const args = ['--repo', 'acme/webapp', '--pr', '1', '--sha', SHA, '--state', state];
+  const first = start(args);
+  const until = Date.now() + 3000;
+  while (!existsSync(trace) && Date.now() < until) await new Promise(resolve => setTimeout(resolve, 10));
+  assert.ok(existsSync(trace), 'first process must reach the GitHub boundary');
+  const originalDeadline = JSON.parse(readFileSync(state, 'utf8')).config.deadline;
+  const result = call([...args.slice(0, -1), `${state}.other`, '--deadline', String(originalDeadline + 3600)]);
+  assert.equal(result.status, 0, result.stdout);
+  assert.equal(JSON.parse(result.stdout).deadline, originalDeadline);
+  assert.equal(JSON.parse(result.stdout).status, 'watching');
+  assert.equal(JSON.parse(result.stdout).stateFile, state);
+  assert.equal(existsSync(`${state}.other`), false);
+  assert.equal((await first.done).status, 0);
+  assert.equal(readFileSync(trace, 'utf8').trim().split('\n').length, 1);
+});
+
+test('an interrupted target resumes its original state and deadline under a different filename', t => {
+  const { call, state, fixture } = cli(t, 500);
+  const args = ['--repo', 'acme/webapp', '--pr', '1', '--sha', SHA, '--state', state];
+  const first = call([...args, '--call-limit-ms', '60200']);
+  assert.equal(JSON.parse(first.stdout).status, 'slice');
+  const originalDeadline = JSON.parse(readFileSync(state, 'utf8')).config.deadline;
+  writeFileSync(fixture, '[]');
+  const result = call([...args.slice(0, -1), `${state}.other`, '--deadline', String(originalDeadline + 3600)]);
+  assert.equal(result.status, 0, result.stdout);
+  assert.equal(JSON.parse(result.stdout).status, 'resumable');
+  assert.equal(JSON.parse(result.stdout).deadline, originalDeadline);
+  assert.equal(JSON.parse(result.stdout).stateFile, state);
+});
+
+test('the CLI returns compact evidence while retaining every check in state', t => {
+  const { call, state } = cli(t, 0, {}, pr([check('unit'), check('advisory', 'SKIPPED')]));
+  const result = call(['--repo', 'acme/webapp', '--pr', '1', '--sha', SHA, '--state', state, '--protocol', '2']);
+  const verdict = JSON.parse(result.stdout);
+  assert.equal(verdict.status, 'passed');
+  assert.equal(verdict.checks, undefined);
+  assert.deepEqual(verdict.skipped.map(x => x.name), ['advisory']);
+  assert.equal(verdict.pr.mergeable, 'MERGEABLE');
+  assert.ok(Number.isFinite(Date.parse(verdict.observedAt)));
+  assert.deepEqual(JSON.parse(readFileSync(state, 'utf8')).checks.map(x => x.name), ['unit', 'advisory']);
+});
+
+test('completed PR jobs are cached while current metadata still guards a rerun', async () => {
+  let poll = 0;
+  const r = rig([args => {
+    if (args[0] === 'pr') { poll += 1; return pr([check('unit', 'SUCCESS', { detailsUrl: link }), check('external', null)]); }
+    const fields = args[args.indexOf('--json') + 1];
+    if (poll < 3) return run(fields.includes('jobs') ? {} : { jobs: undefined });
+    return run({ attempt: 2, status: 'in_progress', conclusion: '', jobs: [check('regression', 'FAILURE')] });
+  }]);
+  const result = await watch(r.state, r.deps);
+  assert.equal(result.status, 'failed');
+  assert.deepEqual(result.failed.map(x => x.name), ['regression']);
+  const reads = r.calls.filter(args => args[0] === 'run');
+  assert.equal(reads[1][reads[1].indexOf('--json') + 1], RUN_FIELDS);
+  assert.equal(reads.filter(args => args.includes(`${RUN_FIELDS},jobs`)).length, 2);
+});
+
+test('branch metadata avoids rereading completed jobs while another workflow runs', async () => {
+  let poll = 0;
+  const r = rig([args => {
+    if (args[0] === 'api') return { sha: SHA };
+    if (args[1] === 'list') { poll += 1; return [run(), run({ databaseId: 12, workflowDatabaseId: 8, status: 'in_progress', conclusion: '' })]; }
+    if (args[2] === '11') return run();
+    return run({ databaseId: 12, workflowDatabaseId: 8, jobs: [check('integration', poll === 1 ? null : 'FAILURE')], status: 'in_progress', conclusion: '' });
+  }], { pr: undefined, branch: 'feature' });
+  const result = await watch(r.state, r.deps);
+  assert.equal(result.status, 'failed');
+  assert.deepEqual(result.failed.map(x => x.name), ['integration']);
+  assert.equal(r.calls.filter(args => args[1] === 'view' && args[2] === '11').length, 1);
+  assert.equal(r.calls.filter(args => args[1] === 'view' && args[2] === '12').length, 2);
+});
+
+test('rate limiting pauses beyond four reads and recovers inside the original deadline', async () => {
+  let reads = 0;
+  const r = rig([() => { if (++reads <= 5) throw new Error('HTTP 429: secondary rate limit'); return pr(); }], { deadline: 3000 });
+  const result = await watch(r.state, r.deps);
+  assert.equal(result.status, 'passed');
+  assert.equal(r.state.errors, 0);
+  assert.deepEqual(r.sleeps, [60000, 120000, 240000, 300000, 300000]);
+});
+
+test('a rate limit pause survives slices without extending the watch deadline', async () => {
+  const r = rig([new Error('HTTP 429: Retry-After: 120')], { deadline: 1100 });
+  assert.equal((await watch(r.state, { ...r.deps, callLimitMs: 30000 })).status, 'slice');
+  const next = rig([pr()], {}, JSON.parse(JSON.stringify(r.state)));
+  next.setClock(r.now());
+  assert.equal((await watch(next.state, next.deps)).status, 'pending');
+  assert.equal(next.calls.length, 0);
+  assert.equal(next.state.config.deadline, 1100);
+});
+
+
+test('completed metadata with unfinished jobs is reread for an early child failure', async () => {
+  let poll = 0;
+  const r = rig([args => {
+    if (args[0] === 'pr') { poll += 1; return pr([check('unit', null, { detailsUrl: link })]); }
+    return run({ jobs: [check('unit', poll === 1 ? null : 'FAILURE')] });
+  }]);
+  const result = await watch(r.state, r.deps);
+  assert.equal(result.status, 'failed');
+  assert.deepEqual(result.failed.map(row => row.name), ['unit']);
+  assert.ok(r.calls.filter(args => args[0] === 'run').every(args => args.includes(`${RUN_FIELDS},jobs`)));
+});
+
+test('a cached run rejects mismatched metadata and detail attempts instead of passing', async () => {
+  const r = rig([args => args[0] === 'pr' ? pr([check('unit', 'SUCCESS', { detailsUrl: link })]) :
+    args.includes(RUN_FIELDS) ? run({ attempt: 2, jobs: undefined }) : run()]);
+  r.state.runCache = { 11: run() };
+  const result = await watch(r.state, r.deps);
+  assert.equal(result.status, 'blocked');
+  assert.match(result.reason, /attempt changed/);
+  assert.equal(r.state.errors, 4);
+});
+
+
+for (const seam of ['claim', 'registry']) test(`an acquisition interrupted at ${seam} can resume its original state`, t => {
+  const { call, state, fixture, dir } = cli(t, 500);
+  const args = ['--repo', 'acme/webapp', '--pr', '1', '--sha', SHA, '--state', state];
+  assert.equal(JSON.parse(call([...args, '--call-limit-ms', '60200']).stdout).status, 'slice');
+  const before = JSON.parse(readFileSync(state, 'utf8'));
+  const registry = path.join(dir, 'registry');
+  const entry = path.join(registry, readdirSync(registry).find(name => name.endsWith('.json')));
+  const preload = path.join(dir, 'interrupt.cjs');
+  writeFileSync(preload, `const fs = require('node:fs');
+const original = fs.writeFileSync;
+fs.writeFileSync = function(file, data, ...rest) {
+  const result = original.call(this, file, data, ...rest);
+  if (${JSON.stringify(seam)} === 'claim' ? String(file).endsWith('.claim') :
+      (String(file) === ${JSON.stringify(entry)} || (String(file).startsWith(${JSON.stringify(entry + '.')}) && !String(file).includes('.lock') && String(file).endsWith('.tmp')))) process.kill(process.pid, 'SIGKILL');
+  return result;
+};
+require('node:module').syncBuiltinESMExports();`);
+  assert.equal(call(['--resume', state], preload).signal, 'SIGKILL');
+  assert.equal(JSON.parse(readFileSync(state, 'utf8')).config.deadline, before.config.deadline);
+  const other = call([...args.slice(0, -1), `${state}.other`]);
+  assert.equal(JSON.parse(other.stdout).status, 'resumable');
+  assert.equal(JSON.parse(other.stdout).deadline, before.config.deadline);
+  writeFileSync(fixture, JSON.stringify([{ args: ['pr', 'view', '1', '--repo', 'acme/webapp', '--json', PR_FIELDS], response: pr() }]));
+  const resumed = JSON.parse(call(['--resume', state]).stdout);
+  assert.equal(resumed.status, 'passed');
+  assert.equal(resumed.deadline, before.config.deadline);
+});
+
+test('a registry pathname reused by another head cannot lend its verdict to the original target', t => {
+  const { call, state, trace } = cli(t);
+  const args = ['--repo', 'acme/webapp', '--pr', '1', '--sha', SHA, '--state', state, '--deadline', '1'];
+  assert.equal(JSON.parse(call(args).stdout).targetSha, SHA);
+  renameSync(state, `${state}.archive`);
+  assert.equal(JSON.parse(call(args.map(x => x === SHA ? OTHER : x)).stdout).targetSha, OTHER);
+  const result = call(args.map(x => x === state ? `${state}.other` : x));
+  assert.equal(result.status, 2);
+  assert.match(JSON.parse(result.stdout).reason, /another target/);
+  assert.equal(existsSync(trace), false);
+});
+
+test('registry identities separate repository, PR, branch, SHA and rerun attempts', t => {
+  const { call, state, trace } = cli(t);
+  const targets = [{}, { repo: 'acme/other' }, { sha: OTHER }, { pr: '2' },
+    { branch: 'feature' }, { branch: 'other' }, { rerun: '11', 'after-attempt': '1' },
+    { rerun: '12', 'after-attempt': '1' }, { rerun: '11', 'after-attempt': '2' }];
+  for (const [index, changed] of targets.entries()) {
+    const next = { repo: 'acme/webapp', pr: '1', sha: SHA, deadline: '1', ...changed, state: `${state}.${index}` };
+    if (next.branch) delete next.pr;
+    const result = JSON.parse(call(Object.entries(next).flatMap(([k, v]) => [`--${k}`, v])).stdout);
+    assert.equal(result.status, 'pending');
+    assert.equal(result.reused, undefined);
+    assert.equal(result.stateFile, next.state);
+  }
+  assert.equal(existsSync(trace), false);
+});
+
+for (const field of ['attempt', 'status', 'conclusion']) test(`completed cache invalidates when only ${field} changes`, async () => {
+  const changed = { attempt: 2, status: 'in_progress', conclusion: 'failure' };
+  const r = rig([args => args[0] === 'pr' ? pr([check('unit', 'SUCCESS', { detailsUrl: link })]) :
+    run({ [field]: changed[field], jobs: [check('new-child', 'FAILURE')] })]);
+  r.state.runCache = { 11: run() };
+  const result = await watch(r.state, r.deps);
+  assert.equal(result.status, 'failed');
+  assert.ok(result.failed.some(row => row.name === 'new-child'));
+});
+
+for (const invalid of [{ databaseId: 12 }, { headSha: OTHER }, { attempt: undefined }, { attempt: 0 }, { attempt: 1.5 }]) {
+  test(`cached metadata rejects invalid identity ${JSON.stringify(invalid)}`, async () => {
+    const r = rig([args => args[0] === 'pr' ? pr([check('unit', 'SUCCESS', { detailsUrl: link })]) : run(invalid)]);
+    r.state.runCache = { 11: run() };
+    assert.equal((await watch(r.state, r.deps)).status, 'blocked');
+    assert.equal(r.state.errors, 4);
+  });
+}
+
+
+test('concurrent takeover of a dead owner leaves only one GitHub reader', async t => {
+  const { call, start, state, fixture, trace, dir } = cli(t, 500);
+  const args = ['--repo', 'acme/webapp', '--pr', '1', '--sha', SHA, '--state', state];
+  assert.equal(JSON.parse(call([...args, '--call-limit-ms', '60200']).stdout).status, 'slice');
+  const saved = JSON.parse(readFileSync(state, 'utf8'));
+  const owner = spawnSync(process.execPath, ['-e', '']);
+  const registry = path.join(dir, 'registry');
+  const entry = path.join(registry, readdirSync(registry).find(name => name.endsWith('.json')));
+  writeFileSync(`${entry}.lock`, JSON.stringify({ pid: owner.pid, stateFile: state, config: saved.config }));
+  writeFileSync(`${state}.lock`, String(owner.pid));
+  writeFileSync(trace, '');
+  writeFileSync(fixture, JSON.stringify([{ args: ['pr', 'view', '1', '--repo', 'acme/webapp', '--json', PR_FIELDS],
+    response: pr([check('unit', 'FAILURE')]), delayMs: 500 }]));
+  const results = await Promise.all([start(['--resume', state]).done, start(['--resume', state]).done]);
+  assert.equal(results.filter(result => JSON.parse(result.stdout).status === 'failed').length, 1);
+  assert.equal(readFileSync(trace, 'utf8').trim().split('\n').length, 1);
+  assert.equal(JSON.parse(readFileSync(state, 'utf8')).result.status, 'failed');
+});
+
+test('cancelled evidence names only the cancelled checks alongside passing work', t => {
+  const { call, state } = cli(t, 0, {}, pr([check('unit', 'CANCELLED'), check('lint')]));
+  const result = JSON.parse(call(['--repo', 'acme/webapp', '--pr', '1', '--sha', SHA, '--state', state]).stdout);
+  assert.equal(result.status, 'blocked');
+  assert.deepEqual(result.cancelled, [{ name: 'unit', bucket: 'cancel', link: '' }]);
+  assert.equal(result.counts.cancel, 1);
+  assert.equal(result.counts.pass, 1);
+  assert.deepEqual(JSON.parse(readFileSync(state, 'utf8')).result.cancelled, result.cancelled);
+});
+
+for (const [header, delay, space] of [[120, 120000, ''], [120, 120000, ' '], [999999, 86400000, ' '], [0, 1000, ' ']]) {
+  test(`Retry-After:${space}${header} permits the next read after its bounded pause`, async () => {
+    const r = rig([new Error(`HTTP 429 rate limit; Retry-After:${space}${header}`), pr()], { deadline: 200000 });
+    const result = await watch(r.state, r.deps);
+    assert.equal(result.status, 'passed');
+    assert.deepEqual(r.sleeps, [delay]);
+    assert.equal(r.calls.length, 2);
+  });
+}
+
+for (const invalid of [{ databaseId: 12 }, { headSha: OTHER }, { attempt: undefined }, { attempt: 0 }, { attempt: 1.5 }]) {
+  test(`invalid metadata cannot trigger a detail read ${JSON.stringify(invalid)}`, async () => {
+    const r = rig([args => args[0] === 'pr' ? pr([check('unit', 'SUCCESS', { detailsUrl: link })]) :
+      args.includes(RUN_FIELDS) ? run(invalid) : run()]);
+    r.state.runCache = { 11: run() };
+    assert.equal((await watch(r.state, r.deps)).status, 'blocked');
+    assert.equal(r.calls.filter(args => args.includes(`${RUN_FIELDS},jobs`)).length, 0);
+  });
+}
+
+test('valid fresh metadata cannot certify job details from a different run', async () => {
+  const r = rig([args => args[0] === 'pr' ? pr([check('unit', 'SUCCESS', { detailsUrl: link })]) :
+    args.includes(RUN_FIELDS) ? run({ attempt: 2 }) : run({ attempt: 2, databaseId: 12 })]);
+  r.state.runCache = { 11: run() };
+  const result = await watch(r.state, r.deps);
+  assert.equal(result.status, 'blocked');
+  assert.match(result.reason, /identity/);
+});
+
+test('both host wait modes work on new watches and protocol-checked resumes', () => {
+  const base = ['--repo', 'acme/webapp', '--pr', '1', '--sha', SHA, '--state', '/tmp/acme.json'];
+  for (const mode of ['foreground', 'background']) {
+    assert.equal(options([...base, '--wait-mode', mode])['wait-mode'], mode);
+    const resumed = options(['--resume', '/tmp/acme.json', '--protocol', '2', '--wait-mode', mode]);
+    assert.equal(resumed.resume, '/tmp/acme.json');
+    assert.equal(resumed.protocol, '2');
+    assert.equal(resumed['wait-mode'], mode);
+  }
+  assert.throws(() => options([...base, '--wait-mode', 'automatic']), /wait-mode/);
+});
+
+for (const ticket of [0, 7]) test(`a live acquisition claim ${ticket} blocks before GitHub or state writes`, t => {
+  const { call, state, fixture, trace, dir } = cli(t, 500);
+  assert.equal(JSON.parse(call(['--repo', 'acme/webapp', '--pr', '1', '--sha', SHA, '--state', state, '--call-limit-ms', '60200']).stdout).status, 'slice');
+  const before = readFileSync(state, 'utf8');
+  const registry = path.join(dir, 'registry');
+  const entry = path.join(registry, readdirSync(registry).find(name => name.endsWith('.json')));
+  writeFileSync(path.join(`${entry}.lock.claims`, `${process.pid}.claim`), String(ticket));
+  writeFileSync(trace, '');
+  writeFileSync(fixture, JSON.stringify([{ args: ['pr', 'view', '1', '--repo', 'acme/webapp', '--json', PR_FIELDS], response: pr() }]));
+  const result = call(['--resume', state]);
+  assert.equal(result.status, 2);
+  assert.equal(JSON.parse(result.stdout).status, 'blocked');
+  assert.equal(readFileSync(trace, 'utf8'), '');
+  assert.equal(readFileSync(state, 'utf8'), before);
+});
+
+test('a contender cannot overtake an owner paused before lock publication', async t => {
+  const { call, start, state, fixture, trace, dir } = cli(t, 500);
+  assert.equal(JSON.parse(call(['--repo', 'acme/webapp', '--pr', '1', '--sha', SHA, '--state', state, '--call-limit-ms', '60200']).stdout).status, 'slice');
+  const marker = path.join(dir, 'publishing');
+  const preload = path.join(dir, 'pause-publication.cjs');
+  writeFileSync(preload, `const fs = require('node:fs'); const write = fs.writeFileSync;
+fs.writeFileSync = function(file, data, ...rest) {
+  const result = write.call(this, file, data, ...rest);
+  if (String(file).includes('.lock.claims/') && String(file).endsWith('.tmp') && String(data).includes('"config"')) {
+    write(${JSON.stringify(marker)}, 'ready');
+    Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 1000);
+  }
+  return result;
+}; require('node:module').syncBuiltinESMExports();`);
+  writeFileSync(trace, '');
+  const answer = { args: ['pr', 'view', '1', '--repo', 'acme/webapp', '--json', PR_FIELDS], response: pr([check('unit', 'FAILURE')]) };
+  writeFileSync(fixture, JSON.stringify([answer, answer]));
+  const first = start(['--resume', state], preload);
+  const until = Date.now() + 3000;
+  while (!existsSync(marker) && Date.now() < until) await new Promise(resolve => setTimeout(resolve, 10));
+  assert.ok(existsSync(marker), 'owner must be in the publication collision window');
+  const second = start(['--resume', state]);
+  const results = await Promise.all([first.done, second.done]);
+  assert.equal(results.filter(result => JSON.parse(result.stdout).status === 'failed').length, 1);
+  assert.equal(results.filter(result => JSON.parse(result.stdout).status === 'blocked').length, 1);
+  assert.equal(readFileSync(trace, 'utf8').trim().split('\n').length, 1);
+});
+
+test('Claude foreground mode works when no maximum timeout is configured', t => {
+  const { call, state } = cli(t, 0, { CLAUDECODE: '1', BASH_MAX_TIMEOUT_MS: '' });
+  const result = call(['--repo', 'acme/webapp', '--pr', '1', '--sha', SHA, '--state', state, '--wait-mode', 'foreground']);
+  assert.equal(result.status, 0);
+  assert.equal(JSON.parse(result.stdout).status, 'failed');
+});
+
+test('different GitHub hosts have separate targets and resume cannot change its saved host', t => {
+  const { call, state, trace } = cli(t);
+  const args = ['--repo', 'acme/webapp', '--pr', '1', '--sha', SHA, '--state', state, '--deadline', '1'];
+  assert.equal(call(args, undefined, { GH_HOST: 'github.com' }).status, 0);
+  const other = JSON.parse(call(args.map(x => x === state ? `${state}.host` : x), undefined, { GH_HOST: 'ghe.example' }).stdout);
+  assert.equal(other.reused, undefined);
+  assert.equal(other.stateFile, `${state}.host`);
+  const before = readFileSync(state, 'utf8');
+  const changedHost = call(['--resume', state], undefined, { GH_HOST: 'ghe.example' });
+  assert.equal(changedHost.status, 2);
+  assert.match(JSON.parse(changedHost.stdout).reason, /host/i);
+  assert.equal(readFileSync(state, 'utf8'), before);
+  assert.equal(existsSync(trace), false);
+});
+
+test('a pathname reused by a different PR on the same SHA is rejected', t => {
+  const { call, state } = cli(t);
+  const args = ['--repo', 'acme/webapp', '--pr', '1', '--sha', SHA, '--state', state, '--deadline', '1'];
+  assert.equal(call(args).status, 0);
+  renameSync(state, `${state}.archive`);
+  const otherPr = [...args]; otherPr[3] = '2';
+  assert.equal(call(otherPr).status, 0);
+  const result = call(args.map(x => x === state ? `${state}.other` : x));
+  assert.equal(result.status, 2);
+  assert.match(JSON.parse(result.stdout).reason, /another target/);
+});
+
+test('compatible nonempty required coverage reuses its terminal evidence', t => {
+  const { call, state, trace } = cli(t, 0, {}, pr());
+  const args = ['--repo', 'acme/webapp', '--pr', '1', '--sha', SHA, '--state', state, '--expect', 'unit'];
+  assert.equal(JSON.parse(call(args).stdout).status, 'passed');
+  const result = call(args.map(x => x === state ? `${state}.other` : x));
+  assert.equal(result.status, 0);
+  assert.equal(JSON.parse(result.stdout).reused, true);
+  assert.deepEqual(JSON.parse(result.stdout).required.expected, ['unit']);
+  assert.equal(readFileSync(trace, 'utf8').trim().split('\n').length, 1);
+});
+
+test('active owners cannot share incompatible required coverage', async t => {
+  const { start, call, state, trace } = cli(t, 1000, {}, pr());
+  const args = ['--repo', 'acme/webapp', '--pr', '1', '--sha', SHA, '--state', state, '--expect', 'unit'];
+  const first = start(args);
+  const until = Date.now() + 3000;
+  while (!existsSync(trace) && Date.now() < until) await new Promise(resolve => setTimeout(resolve, 10));
+  assert.ok(existsSync(trace));
+  const result = call(args.map(x => x === state ? `${state}.other` : x === 'unit' ? 'integration' : x));
+  assert.equal(result.status, 2);
+  assert.match(JSON.parse(result.stdout).reason, /expected checks/);
+  assert.equal((await first.done).status, 0);
+  assert.equal(readFileSync(trace, 'utf8').trim().split('\n').length, 1);
+});
+
+for (const legacy of ['nonterminal-state', 'missing-result-protocol', 'old-result-protocol']) test(`protocol rejects an independently old ${legacy}`, t => {
+  const { call, state, trace } = cli(t);
+  assert.equal(call(['--repo', 'acme/webapp', '--pr', '1', '--sha', SHA, '--state', state]).status, 0);
+  const saved = JSON.parse(readFileSync(state, 'utf8'));
+  if (legacy === 'nonterminal-state') { saved.version = 1; saved.config.deadline = 1; delete saved.result; }
+  else if (legacy === 'old-result-protocol') saved.result.protocolVersion = 1;
+  else delete saved.result.protocolVersion;
+  writeFileSync(state, JSON.stringify(saved));
+  const result = call(['--resume', state]);
+  assert.equal(result.status, 2);
+  assert.match(JSON.parse(result.stdout).reason, /Invalid watch state/);
+  assert.equal(readFileSync(trace, 'utf8').trim().split('\n').length, 1);
+});
+
+test('simultaneous equal acquisition tickets select one owner', async t => {
+  const { start, state, fixture, trace, dir } = cli(t);
+  const barriers = path.join(dir, 'barriers'); mkdirSync(barriers);
+  const preload = path.join(dir, 'equal-tickets.cjs');
+  writeFileSync(preload, `const fs = require('node:fs'); const path = require('node:path');
+const write = fs.writeFileSync, rename = fs.renameSync;
+const root = ${JSON.stringify(barriers)}, registry = ${JSON.stringify(path.join(dir, 'registry') + path.sep)};
+const pause = ms => Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
+const meet = (phase, value) => {
+  write(path.join(root, phase + '-' + process.pid), String(value));
+  const until = Date.now() + 3000;
+  while (fs.readdirSync(root).filter(name => name.startsWith(phase + '-')).length < 2) {
+    if (Date.now() >= until) throw new Error('Two-process barrier did not fill');
+    pause(10);
+  }
+};
+const target = file => String(file).startsWith(registry) && String(file).includes('.lock.claims/');
+fs.writeFileSync = function(file, data, ...rest) {
+  if (target(file) && String(file).endsWith('.tmp')) {
+    if (/^\\d+$/.test(String(data))) meet('selected', data);
+    if (String(data).includes('"config"')) { write(path.join(root, 'entered-' + process.pid), 'ready'); pause(700); }
+  }
+  return write.call(this, file, data, ...rest);
+};
+fs.renameSync = function(from, to) {
+  const result = rename.call(this, from, to);
+  if (target(to) && String(to).endsWith('.claim')) meet('published', 'ready');
+  return result;
+}; require('node:module').syncBuiltinESMExports();`);
+  const answer = { args: ['pr', 'view', '1', '--repo', 'acme/webapp', '--json', PR_FIELDS],
+    response: pr([check('unit', 'FAILURE')]), delayMs: 500 };
+  writeFileSync(fixture, JSON.stringify([answer, answer]));
+  const args = ['--repo', 'acme/webapp', '--pr', '1', '--sha', SHA, '--state', state];
+  const results = await Promise.all([start(args, preload).done,
+    start(args.map(x => x === state ? `${state}.other` : x), preload).done]);
+  const names = readdirSync(barriers);
+  assert.deepEqual(names.filter(name => name.startsWith('selected-')).map(name => readFileSync(path.join(barriers, name), 'utf8')), ['1', '1']);
+  assert.equal(names.filter(name => name.startsWith('entered-')).length, 1);
+  assert.equal(results.filter(result => JSON.parse(result.stdout).status === 'failed').length, 1);
+  assert.equal(results.filter(result => JSON.parse(result.stdout).status === 'blocked').length, 1);
+  assert.equal(readFileSync(trace, 'utf8').trim().split('\n').length, 1);
+});
+
+test('resuming a copied snapshot returns the registered owner terminal evidence', t => {
+  const { call, state, fixture, trace } = cli(t, 500);
+  const args = ['--repo', 'acme/webapp', '--pr', '1', '--sha', SHA, '--state', state];
+  assert.equal(JSON.parse(call([...args, '--call-limit-ms', '60200']).stdout).status, 'slice');
+  const copied = `${state}.copy`;
+  copyFileSync(state, copied);
+  const answer = conclusion => ({ args: ['pr', 'view', '1', '--repo', 'acme/webapp', '--json', PR_FIELDS], response: pr([check('unit', conclusion)]) });
+  writeFileSync(fixture, JSON.stringify([answer('FAILURE')]));
+  assert.equal(JSON.parse(call(['--resume', state]).stdout).status, 'failed');
+  writeFileSync(fixture, JSON.stringify([answer('SUCCESS')]));
+  const result = call(['--resume', copied]);
+  assert.equal(result.status, 0);
+  const verdict = JSON.parse(result.stdout);
+  assert.equal(verdict.status, 'failed');
+  assert.equal(verdict.reused, true);
+  assert.equal(verdict.stateFile, state);
+  assert.equal(readFileSync(trace, 'utf8').trim().split('\n').length, 2);
+  assert.equal(JSON.parse(readFileSync(fixture, 'utf8')).length, 1);
 });

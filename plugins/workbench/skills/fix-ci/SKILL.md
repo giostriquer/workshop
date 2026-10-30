@@ -25,20 +25,24 @@ Dispatch `ci-watcher` by name with no model (on Codex, paste the agent file,
 `agents/ci-watcher.md` two directories above this `SKILL.md`, and use its Dispatch
 line, per `using-workbench`'s *Workbench agents on Codex*). Never watch inside
 the parent's own turns. If the host cannot dispatch the agent, report the
-monitoring gap. The parent owns diagnosis and repairs; the watcher gathers CI
+monitoring gap. Require the agent's protocol-2 invocation and result; an older
+runner or saved state is a reported version gap, never a reason to remove the
+protocol option or infer mergeability. The parent owns diagnosis and repairs; the watcher gathers CI
 evidence and returns the runner's verdict.
 
 Host notes, of which only the first is Claude Code behavior:
 
-- **Claude Code only.** The dispatch runs in the background and the parent is
-  re-invoked by the watcher's handback notification, so the parent ends its
-  turn after dispatching and runs no `gh pr checks`, `gh run view`, Monitor or
-  read of the watcher's output file in the meantime. Inside the watcher, the
-  bundled command runs in foreground Bash calls that each end before the tool's
-  ten-minute limit, so the watcher's turn never ends early and the parent is
-  re-invoked once, by the handback. A host that raises the limit with
-  `BASH_MAX_TIMEOUT_MS` (to eleven minutes or more for the default window)
-  lets one call cover the whole window.
+- **Claude Code only.** On persistent hosts supporting background-subagent
+  completion notifications, dispatch in the background. The watcher starts the
+  runner with background Bash, yields without a final handback, and resumes when its
+  command completes. The parent ends its turn after dispatch and is re-invoked
+  by the watcher's final handback. An interim yield notice is not completion:
+  yield again until terminal evidence arrives. This requires a persistent host
+  session. In a one-shot CLI that exits on the initial result, dispatch the
+  watcher in the foreground and wait for its return; the watcher uses foreground
+  Bash too. Neither builds Monitor, `sleep`, `pgrep` or
+  repeated output-read loops. Hosts without that lifecycle use the watcher's
+  bounded foreground fallback with the actual tool ceiling.
 - **Codex.** After `spawn_agent`, call `wait_agent` with the longest timeout
   permitted by the active host instructions (up to `600000` ms) and repeat
   until the watcher's final answer. Do not end the turn meanwhile:
@@ -59,6 +63,14 @@ a new head and therefore a new watcher. The flake rerun is the one same-head
 re-watch: step 5 dispatches one watcher for the head, naming the rerun's run
 id and the attempt that failed, and that watcher waits for the new attempt,
 then watches every check on the head. No other second watcher on a red head.
+The runner additionally shares ownership across filenames for the same target,
+including its GitHub host. A resume with a changed `GH_HOST` is blocked.
+A `watching` response names the original owner's state file: await that owner's
+handback, or report an unavailable owner rather than polling it. A `resumable`
+response uses that state file and its original deadline. Reused terminal results
+are dated saved evidence; they do not establish current merge readiness. Different
+expected-check sets are a reported gap. Keep the default per-user registry across
+dispatches so this safeguard applies.
 The rule covers polling and watching; a single `gh pr checks` or `gh run view`
 read, such as the pre-push snapshot in step 8 or the attempt read in step 5,
 is not polling and the parent runs it itself.
@@ -102,7 +114,9 @@ is not polling and the parent runs it itself.
      Unspecified required coverage is a reported gap, not proof of merge readiness.
    - Pending → the bundled command polls the PR state and its checks every
      thirty seconds (including child jobs for branch-only CI),
-     within its bounded window. **The watcher returns at the first failed check or
+     within its bounded window. Completed job details are cached only while fresh
+     metadata matches their SHA, run and attempt; running jobs are still read.
+     Rate limiting pauses reads within the same deadline. **The watcher returns at the first failed check or
      job, a merge conflict, or the moment the PR merges or closes**, naming the check or the
      state and listing the checks still pending. Neither the watcher nor the parent waits for the
      remaining checks: any check still running when the fix is pushed reruns

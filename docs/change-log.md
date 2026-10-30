@@ -8,6 +8,11 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.55.0: 2026-10-29
+
+- **Let the host carry CI waiting.** On supported Claude Code hosts, `ci-watcher` uses background command completion notifications; other hosts retain bounded foreground slices or process waits. Watcher model and reasoning settings are unchanged. ([decision](decisions/fix-ci.md#let-the-host-own-waiting-and-the-runner-own-evidence-2026-10-29))
+- **Bind watcher results to their protocol and target.** Protocol 2 rejects stale runner/state contracts, shares target ownership across state filenames, and reports compact verdicts with observation times. Completed job details are reused only with matching fresh run metadata; rate limits pause reads within the original deadline. ([decision](decisions/fix-ci.md#let-the-host-own-waiting-and-the-runner-own-evidence-2026-10-29))
+
 ## workbench 0.54.0: 2026-10-29
 
 - **Advance epics along their primary journey.** `epic-orchestration` writes the epic's end-to-end steps from its acceptance criteria before the first workset, completes the thinnest path first, and has each dispatch name the step it moves and the tickets it closes. Valid findings that block no current step wait or go to the operator's follow-up list. Repeated partial deliveries trigger a re-plan, and owner returns open with criteria closed and remaining. Holds stop only the step that consumes the missing input, and user-reachable changes are accepted on the running app. ([decision](decisions/epic-orchestration.md#the-epic-advances-along-its-primary-journey-2026-10-29))
@@ -68,9 +73,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 - **Dispatch files declare their lane.** `epic-orchestration` writes each dispatch under the scope folder's `dispatches/`, opening with `Lane: <LANE>`, and names it by absolute path in the pointer. The label, pointer and `Lane:` line are read as written by the tooling that carries handoffs, so returns to several existing lanes keep a label-and-block pair each, and the section is reread after a compaction or resume. ([decision](decisions/epic-orchestration.md#handoffs-are-read-as-written-by-their-file-2026-10-16))
 - **Run workbench on Muse.** A native `.muse-plugin/plugin.json` installs the plugin on Muse. Agents dispatch there by their scoped id, `workbench/<name>`, once the operator approves them; `session-messaging` reaches Muse peers through Muse's own messaging, and `handoff-goal`, `empirical-proof` and `model-reference` name Muse's surfaces. Muse's native loader does not honor `disable-model-invocation`; the README says how to restore it per machine. ([decision](decisions/plugin-surfaces.md#muse-a-native-per-plugin-manifest-on-the-claude-marketplace-catalog-2026-10-14))
 - **Agents pin no tool allowlist.** One tool name a host did not know made Muse reject a whole agent definition at spawn, so every agent drops its `tools:` line; each body still states what its agent must not touch. ([decision](decisions/plugin-surfaces.md#muse-a-native-per-plugin-manifest-on-the-claude-marketplace-catalog-2026-10-14))
-
-## toolkit 0.17.0: 2026-10-16
-
-- **Adopt global rules on Muse.** `adopt-global-rules` adds a `muse` host that writes `globals/MUSE.md` and the shared rules as blocks in `~/.config/muse/AGENTS.md`, since Muse reads no rules directory. ([decision](decisions/plugin-surfaces.md#muse-adopt-global-rules-host-and-repo-local-skill-precedence-2026-10-14))
-- **Shipped globals carry adopter defaults.** The global documents speak in the user's voice, preauthorize the task-tracker operations a task needs, comments included, and add a task-continuation rule; pull request comments and replies still need explicit authorization. ([decision](decisions/adopt-global-rules.md#shipped-globals-adopter-defaults-no-personal-grants-2026-10-15))
-- **Toolkit installs on Muse.** A native Muse manifest ships with the plugin, and `web-demo-video` names Muse's file-reading tool for reviewing captured frames. ([decision](decisions/plugin-surfaces.md#muse-a-native-per-plugin-manifest-on-the-claude-marketplace-catalog-2026-10-14))

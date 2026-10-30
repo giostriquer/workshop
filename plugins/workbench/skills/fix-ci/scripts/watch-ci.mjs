@@ -1,10 +1,14 @@
 import { execFile } from 'node:child_process';
-import { readFileSync, writeFileSync, mkdirSync, renameSync, openSync, closeSync, unlinkSync, existsSync } from 'node:fs';
+import { readFileSync, readdirSync, writeFileSync, mkdirSync, renameSync, unlinkSync, existsSync } from 'node:fs';
 import path from 'node:path';
+import os from 'node:os';
+import { createHash } from 'node:crypto';
 import { pathToFileURL } from 'node:url';
 import { promisify } from 'node:util';
 
 const execute = promisify(execFile);
+const PROTOCOL = 2;
+const githubHost = () => (process.env.GH_HOST || 'github.com').toLowerCase();
 const PR_FIELDS = 'number,url,state,headRefOid,headRefName,mergedAt,closedAt,mergeable,mergeStateStatus,statusCheckRollup';
 const RUN_FIELDS = 'databaseId,headSha,headBranch,status,conclusion,attempt,name,url,workflowDatabaseId,event';
 const FAILURES = new Set(['failure', 'error', 'timed_out', 'action_required', 'startup_failure', 'stale']);
@@ -43,15 +47,42 @@ function summary(state, status, reason) {
   const checks = state.checks ?? [];
   const expected = state.config.expected;
   return {
-    status, reason, targetSha: state.config.sha, observedSha: state.observedSha ?? null,
+    protocolVersion: PROTOCOL, status, reason, targetSha: state.config.sha, observedSha: state.observedSha ?? null,
+    observedAt: state.observedAt ?? null,
     pr: state.pr ?? null, deadline: state.config.deadline,
     counts: Object.fromEntries(['pass', 'fail', 'pending', 'skip', 'cancel'].map(
       name => [name, checks.filter(c => c.bucket === name).length])),
     failed: checks.filter(c => c.bucket === 'fail'), pending: checks.filter(c => c.bucket === 'pending'),
+    skipped: checks.filter(c => c.bucket === 'skip'), cancelled: checks.filter(c => c.bucket === 'cancel'),
     required: { expected, missing: expected.filter(name => !checks.some(c => c.name === name && c.bucket === 'pass')),
       coverage: expected.length ? 'caller-specified' : 'not supplied' },
     checks,
   };
+}
+
+async function readRun(state, read, id, metadata) {
+  const repo = ['--repo', state.config.repo];
+  const cached = state.runCache?.[id];
+  const fields = cached ? RUN_FIELDS : `${RUN_FIELDS},jobs`;
+  const current = metadata ?? await read(['run', 'view', id, ...repo, '--json', fields]);
+  if (current.headSha !== state.config.sha) throw new Error('Workflow run belongs to another revision');
+  if (String(current.databaseId) !== id || !Number.isSafeInteger(current.attempt) || current.attempt < 1) {
+    throw new Error('Workflow run identity or attempt is not verified');
+  }
+  if (cached && ['databaseId', 'headSha', 'attempt', 'status', 'conclusion'].every(k => current[k] === cached[k])) {
+    return cached;
+  }
+  const detail = !metadata && !cached ? current :
+    await read(['run', 'view', id, ...repo, '--json', `${RUN_FIELDS},jobs`]);
+  if (String(detail.databaseId) !== id || !Number.isSafeInteger(detail.attempt) || detail.attempt < 1) {
+    throw new Error('Workflow run identity or attempt is not verified');
+  }
+  if (detail.attempt !== current.attempt) throw new Error('Workflow run attempt changed during the snapshot');
+  const checks = runChecks(detail, state.config.sha);
+  state.runCache ??= {};
+  if (detail.status === 'completed' && checks.every(row => row.bucket !== 'pending')) state.runCache[id] = detail;
+  else delete state.runCache[id];
+  return detail;
 }
 
 async function snapshot(state, read) {
@@ -109,7 +140,7 @@ async function snapshot(state, read) {
     state.checks = rows;
     if (rows.some(row => row.bucket === 'fail')) return summary(state, 'failed', 'Workflow failed');
     for (const [index, run] of selected.entries()) {
-      const detail = await read(['run', 'view', String(run.databaseId), ...repo, '--json', `${RUN_FIELDS},jobs`]);
+      const detail = await readRun(state, read, String(run.databaseId), run);
       rows.splice(rows.indexOf(summaries[index]), 1, ...runChecks(detail, c.sha));
       state.checks = rows;
       if (rows.some(row => row.bucket === 'fail')) return summary(state, 'failed', 'Workflow or child job failed');
@@ -139,7 +170,7 @@ async function snapshot(state, read) {
     const ids = [...new Set(rows.map(row => row.link.match(/\/actions\/runs\/(\d+)(?:\/|$|\?)/)?.[1])
       .filter(id => id && id !== c.rerun))];
     for (const id of ids) {
-      const run = await read(['run', 'view', id, ...repo, '--json', `${RUN_FIELDS},jobs`]);
+      const run = await readRun(state, read, id);
       rows = rows.filter(row => !new RegExp(`/actions/runs/${id}(?:/|$|\\?)`).test(row.link));
       rows.push(...runChecks(run, c.sha));
       state.checks = rows;
@@ -164,13 +195,21 @@ export async function watch(state, { read, now = Date.now, sleep = ms => new Pro
     return result;
   };
   while (now() < end) {
+    if (state.retryAt > now()) {
+      await sleep(Math.min(end - now(), state.retryAt - now()));
+      continue;
+    }
     try {
       const result = await snapshot(state, async args => {
         const remaining = end - now();
         if (remaining <= 0) throw new Error('Watch window ended during a snapshot');
-        return read(args, Math.min(30000, remaining));
+        const value = await read(args, Math.min(30000, remaining));
+        state.observedAt = new Date(now()).toISOString();
+        return value;
       });
       state.errors = 0;
+      state.rateLimits = 0;
+      delete state.retryAt;
       delete state.error;
       if (result) {
         state.result = result;
@@ -178,8 +217,17 @@ export async function watch(state, { read, now = Date.now, sleep = ms => new Pro
         return result;
       }
     } catch (error) {
-      state.errors = (state.errors ?? 0) + 1;
       state.error = String(error.message).slice(0, 500);
+      if (/\b429\b|rate limit|secondary rate/i.test(state.error)) {
+        state.rateLimits = (state.rateLimits ?? 0) + 1;
+        const retryAfter = state.error.match(/retry-after\s*:\s*(\d+)/i);
+        const delay = retryAfter ? Math.min(86400, Number(retryAfter[1])) * 1000 :
+          Math.min(300000, 60000 * 2 ** Math.min(state.rateLimits - 1, 3));
+        state.retryAt = now() + Math.max(1000, delay);
+        save(state);
+        continue;
+      }
+      state.errors = (state.errors ?? 0) + 1;
       if (state.errors >= 4) return finish('blocked', state.error);
     }
     save(state);
@@ -200,7 +248,7 @@ function positive(value, name) {
 
 export function options(argv, now = Date.now()) {
   const values = { expected: [] };
-  const allowed = new Set(['repo', 'pr', 'branch', 'sha', 'state', 'deadline', 'rerun', 'after-attempt', 'expect', 'resume', 'call-limit-ms']);
+  const allowed = new Set(['repo', 'pr', 'branch', 'sha', 'state', 'deadline', 'rerun', 'after-attempt', 'expect', 'resume', 'call-limit-ms', 'protocol', 'wait-mode']);
   for (let i = 0; i < argv.length; i += 2) {
     const key = argv[i].replace(/^--/, '');
     const value = argv[i + 1];
@@ -211,9 +259,11 @@ export function options(argv, now = Date.now()) {
       values[key] = value;
     }
   }
+  if (values.protocol && values.protocol !== String(PROTOCOL)) throw new Error(`Unsupported watcher protocol: ${values.protocol}`);
+  if (values['wait-mode'] && !['foreground', 'background'].includes(values['wait-mode'])) throw new Error('Invalid --wait-mode');
   if (values.resume) {
-    if (Object.keys(values).some(k => !['expected', 'resume', 'call-limit-ms'].includes(k)) || values.expected.length) {
-      throw new Error('--resume accepts only --call-limit-ms as an additional option');
+    if (Object.keys(values).some(k => !['expected', 'resume', 'call-limit-ms', 'protocol', 'wait-mode'].includes(k)) || values.expected.length) {
+      throw new Error('--resume accepts only protocol and host waiting options');
     }
     return values;
   }
@@ -227,6 +277,8 @@ export function options(argv, now = Date.now()) {
   values.afterAttempt = values.rerun ? positive(values['after-attempt'], '--after-attempt') : undefined;
   values.deadline = values.deadline ? positive(values.deadline, '--deadline') : Math.floor(now / 1000) + 600;
   values.sha = values.sha.toLowerCase();
+  values.repo = values.repo.toLowerCase();
+  values.expected = [...new Set(values.expected)].sort();
   return values;
 }
 
@@ -242,59 +294,164 @@ async function github(args, timeout) {
 }
 
 const HELP = `Read-only PR or branch CI watcher (Node 18+, authenticated gh).
-node watch-ci.mjs --repo acme/webapp --pr 123 --sha <full-sha> --state <scratch>/watch.json
+node watch-ci.mjs --protocol 2 --repo acme/webapp --pr 123 --sha <full-sha> --state <scratch>/watch.json
 node watch-ci.mjs --repo acme/webapp --branch main --sha <full-sha> --state <scratch>/watch.json
 node watch-ci.mjs --resume <scratch>/watch.json
 
 Optional: --deadline <Unix-seconds> (default: ten minutes), --expect <required-check-name>
-(repeatable), --rerun <run-id> --after-attempt <failed-attempt>, --call-limit-ms <milliseconds>.
-The command polls every 30 seconds, writes only its state file, and prints one JSON verdict.
+(repeatable), --rerun <run-id> --after-attempt <failed-attempt>, --call-limit-ms <milliseconds>,
+--wait-mode background (host completion notifications; no automatic foreground slice).
+The command polls every 30 seconds, writes its state and per-user target registry, and prints compact JSON.
+WORKBENCH_CI_WATCH_REGISTRY overrides the per-user registry in the system temporary directory.
+A duplicate target returns its existing stateFile and verdict, or watching/resumable without another poll.
 A PR watch returns conflicted at once when GitHub reports merge conflicts; passed needs a mergeable PR.
 On slice, resume the same state file. No log reads, reruns, repository edits or pushes occur.
 Exit 0: reported verdict. Exit 2: invocation/runtime gap. Inspect status; exit 0 is not CI green.
 `;
 
+function readState(file) {
+  const state = JSON.parse(readFileSync(file, 'utf8'));
+  if (state.version !== PROTOCOL || !state.config || !Number.isSafeInteger(state.config.deadline) ||
+      typeof state.config.host !== 'string' || !state.config.host ||
+      (state.result && state.result.protocolVersion !== PROTOCOL)) throw new Error('Invalid watch state; use its original runner or dispatch a new target');
+  return state;
+}
+
+function targetKey(config) {
+  return createHash('sha256').update(JSON.stringify([config.host, config.repo.toLowerCase(),
+    config.pr ? ['pr', String(Number(config.pr))] : ['branch', config.branch], config.sha,
+    config.rerun ?? null, config.afterAttempt ?? null])).digest('hex');
+}
+
+function sameCoverage(left, right) {
+  return JSON.stringify([...new Set(left.expected)].sort()) === JSON.stringify([...new Set(right.expected)].sort());
+}
+
+function activeOwner(file) {
+  if (!existsSync(file)) return null;
+  const text = readFileSync(file, 'utf8').trim();
+  const owner = text.startsWith('{') ? JSON.parse(text) : { pid: positive(text, 'Lock owner') };
+  try { process.kill(positive(String(owner.pid), 'Lock owner'), 0); return owner; }
+  catch (error) { if (error.code !== 'ESRCH') throw error; }
+  return null;
+}
+
+function claims(directory) {
+  const live = [];
+  for (const name of readdirSync(directory)) {
+    if (!/^\d+\.claim$/.test(name)) continue;
+    const pid = Number(name.split('.')[0]);
+    try { process.kill(pid, 0); }
+    catch (error) { if (error.code === 'ESRCH') continue; throw error; }
+    let text;
+    try { text = readFileSync(path.join(directory, name), 'utf8'); }
+    catch (error) { if (error.code === 'ENOENT') continue; throw error; }
+    const ticket = text === '' ? 0 : Number(text);
+    if (!Number.isSafeInteger(ticket) || ticket < 0) throw new Error('Invalid acquisition claim');
+    live.push({ pid, ticket });
+  }
+  return live;
+}
+
+function acquire(file, value) {
+  const directory = `${file}.claims`;
+  mkdirSync(directory, { recursive: true, mode: 0o700 });
+  const claim = path.join(directory, `${process.pid}.claim`);
+  const temporary = `${claim}.tmp`;
+  writeFileSync(claim, '0', { flag: 'wx', mode: 0o600 });
+  try {
+    // Zero means choosing; numbered PID claims serialize stale-owner recovery
+    // without an ownerless guard that survives a killed process.
+    const ticket = Math.max(0, ...claims(directory).map(owner => owner.ticket)) + 1;
+    writeFileSync(temporary, String(ticket), { mode: 0o600 });
+    renameSync(temporary, claim);
+    if (claims(directory).some(owner => owner.pid !== process.pid &&
+        (owner.ticket === 0 || owner.ticket < ticket || (owner.ticket === ticket && owner.pid < process.pid)))) {
+      throw new Error('Another process is acquiring this watch; retry the same invocation');
+    }
+    if (existsSync(file)) {
+      if (activeOwner(file)) throw new Error('This state file already has an active watcher');
+      unlinkSync(file);
+    }
+    writeFileSync(temporary, value, { mode: 0o600 });
+    renameSync(temporary, file);
+    return file;
+  } finally {
+    if (existsSync(temporary)) unlinkSync(temporary);
+    unlinkSync(claim);
+  }
+}
+
+function writeState(file, value) {
+  const temporary = `${file}.${process.pid}.tmp`;
+  writeFileSync(temporary, JSON.stringify(value), { mode: 0o600 });
+  renameSync(temporary, file);
+}
+
+function output(result, stateFile, extra = {}) {
+  const { checks, ...compact } = result;
+  console.log(JSON.stringify({ ...compact, stateFile, ...extra }));
+}
+
 export async function main(argv) {
   if (argv.length === 1 && argv[0] === '--help') { console.log(HELP); return; }
-  let lock;
+  const locks = [];
   try {
     const args = options(argv);
     const file = path.resolve(args.resume || args.state);
     mkdirSync(path.dirname(file), { recursive: true });
-    const lockFile = `${file}.lock`;
-    if (existsSync(lockFile)) {
-      const owner = positive(readFileSync(lockFile, 'utf8').trim(), 'Lock owner');
-      try { process.kill(owner, 0); throw new Error('This state file already has an active watcher'); }
-      catch (error) { if (error.code !== 'ESRCH') throw error; }
-      unlinkSync(lockFile);
-    }
-    const fd = openSync(lockFile, 'wx', 0o600);
-    writeFileSync(fd, String(process.pid)); closeSync(fd); lock = lockFile;
+    if (activeOwner(`${file}.lock`)) throw new Error('This state file already has an active watcher');
     let state;
     if (args.resume) {
-      state = JSON.parse(readFileSync(file, 'utf8'));
-      if (state.version !== 1 || !state.config || !Number.isSafeInteger(state.config.deadline)) throw new Error('Invalid watch state');
+      state = readState(file);
+      if (state.config.host !== githubHost()) throw new Error('GitHub host changed; resume with the original GH_HOST');
     } else {
-      if (existsSync(file)) throw new Error('State already exists; use --resume or a new state file');
-      const { state: unused, 'call-limit-ms': limit, ...config } = args;
-      state = { version: 1, config, errors: 0, checks: [] };
+      const { state: unused, 'call-limit-ms': limit, 'wait-mode': mode, protocol, ...config } = args;
+      state = { version: PROTOCOL, config: { ...config, host: githubHost() }, errors: 0, checks: [] };
     }
+    const registry = state.registry ?? process.env.WORKBENCH_CI_WATCH_REGISTRY ??
+      path.join(os.tmpdir(), `workbench-ci-watches-${process.getuid?.() ?? createHash('sha256').update(os.homedir()).digest('hex').slice(0, 12)}`);
+    state.registry = path.resolve(registry);
+    mkdirSync(state.registry, { recursive: true, mode: 0o700 });
+    const entry = path.join(state.registry, `${targetKey(state.config)}.json`);
+    const targetLock = `${entry}.lock`;
+    const owner = activeOwner(targetLock);
+    if (owner) {
+      if (!sameCoverage(owner.config, state.config)) throw new Error('Target already watched with different expected checks');
+      output(summary({ ...state, config: owner.config }, 'watching', 'An existing process owns this target; use its handback'), owner.stateFile);
+      return;
+    }
+    locks.push(acquire(targetLock, JSON.stringify({ pid: process.pid, stateFile: file, config: state.config })));
+    if (existsSync(entry)) {
+      const existingFile = JSON.parse(readFileSync(entry, 'utf8')).stateFile;
+      if (!args.resume || existingFile !== file) {
+        const existing = readState(existingFile);
+        if (targetKey(existing.config) !== targetKey(state.config)) throw new Error('Registry state belongs to another target');
+        if (existing.result && existing.result.targetSha !== state.config.sha) throw new Error('Saved result belongs to another target');
+        if (!sameCoverage(existing.config, state.config)) throw new Error('Target already watched with different expected checks');
+        output(existing.result ?? summary(existing, 'resumable', 'Resume this existing state; retain its original deadline'), existingFile, { reused: true });
+        return;
+      }
+    }
+    if (!args.resume && existsSync(file)) throw new Error('State already exists; use --resume or a new state file');
+    locks.push(acquire(`${file}.lock`, String(process.pid)));
     let limit = args['call-limit-ms'];
-    if (!limit && process.env.CLAUDECODE) limit = process.env.BASH_MAX_TIMEOUT_MS || '600000';
+    if (!limit && args['wait-mode'] !== 'background' && process.env.CLAUDECODE) {
+      limit = String(Math.min(180000, positive(process.env.BASH_MAX_TIMEOUT_MS || '180000', 'Host call limit')));
+    }
     const callLimitMs = limit ? positive(limit, 'Call limit') - 60000 : Infinity;
     if (callLimitMs <= 0) throw new Error('Call limit must exceed the 60-second return margin');
-    const save = value => {
-      const temporary = `${file}.${process.pid}.tmp`;
-      writeFileSync(temporary, JSON.stringify(value), { mode: 0o600 });
-      renameSync(temporary, file);
-    };
+    const save = value => writeState(file, value);
+    if (state.result && state.result.targetSha !== state.config.sha) throw new Error('Saved result belongs to another target');
+    const reused = Boolean(state.result);
     save(state);
-    console.log(JSON.stringify(await watch(state, { read: github, save, callLimitMs })));
+    writeState(entry, { stateFile: file });
+    output(await watch(state, { read: github, save, callLimitMs }), file, reused ? { reused: true } : {});
   } catch (error) {
-    console.log(JSON.stringify({ status: 'blocked', reason: String(error.message).slice(0, 500) }));
+    console.log(JSON.stringify({ protocolVersion: PROTOCOL, status: 'blocked', reason: String(error.message).slice(0, 500) }));
     process.exitCode = 2;
   } finally {
-    if (lock) unlinkSync(lock);
+    for (const lock of locks.reverse()) unlinkSync(lock);
   }
 }
 
