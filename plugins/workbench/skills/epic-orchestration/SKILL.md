@@ -192,22 +192,39 @@ the smallest check that addresses it and disclose unavailable coverage.
 
 ## Write the lane contract
 
+**Choose the assignment first.** For each revalidated workset, select an
+available existing or fresh lane by current file ownership, dependencies and
+capacity. Completed work gives its former lane no ownership of later work.
+Continue the existing session for unfinished assigned work, corrections,
+delivery and recovery. Reusing an idle lane for new work needs an explicit new
+assignment; keep the earlier workset's completed disposition. Useful context and
+repository-supported setup reuse inform the choice after readiness is established.
+
+Dispatch independent ready worksets together under the primary journey and the
+current epic's governing concurrency and delivery limits. A lane awaiting PR
+checks retains its delivery responsibility; that wait alone does not hold
+independent implementation. Apply limits only within the scope of their governing
+source, not because another program's recovery note used them.
+
 **Lane identity.** Give each implementation or auditor lane one canonical name:
 a short alphanumeric token, unique within the epic, such as `L3`, `Parser` or
-`A2`. Reuse an established simple name; otherwise assign it once and record it
-in the ledger and contract before dispatch. Use that exact name in paste labels,
-pointer blocks, dispatches, report headings and status updates throughout
-corrections, delivery, audit rounds and recovery. Keep role, worksets, tickets,
+`A2`. When reusing a lane, retain its established simple name; give a new lane
+its own name and record it in the ledger and contract before dispatch. Use that
+exact name in paste labels, pointer blocks, dispatches, report headings and
+status updates throughout corrections, delivery, audit rounds and recovery.
+Keep role, worksets, tickets,
 phase and PR details in separate fields or prose. A lane covering several
 worksets still has one name; separate lanes each have their own name and handoff.
 
 For an inherited composite label, choose one canonical name and record the old
-label's mapping to it in the ledger before the next handoff. Continue the same
-session and preserve existing artifact paths and references. The mapping is
-recovery metadata; subsequent destination labels use only the canonical name.
+label's mapping to it in the ledger before the next handoff. This label repair
+keeps the same session and preserves existing artifact paths and references.
+The mapping is recovery metadata; subsequent destination labels use only the
+canonical name.
 
-Group lanes by file ownership so concurrent work does not compete over a shared
-contract. Name affected producers, fixture builders and consumer checks for
+Group concurrent assignments by active file ownership so they do not compete
+over a shared contract. Historical ownership is not a reservation.
+Name affected producers, fixture builders and consumer checks for
 shared-interface changes. Parallel lanes must have neither conflicting file
 ownership nor unmet producer/consumer dependencies; record readiness conditions.
 Coordinate an ownership overlap before concurrent edits and record the agreement
@@ -216,7 +233,8 @@ under `FORKS/DEVIATIONS`. Coordination cannot override epic exclusions.
 The initial dispatch is a complete brief that works without tracker access:
 
 - **Lane:** canonical name from the ledger, with role and assigned worksets
-  recorded separately.
+  recorded separately; fresh or reused session and the current reason for that
+  assignment.
 - **Scope:** governing epic source and amendments, the journey step the
   workset moves, assigned criteria, the tickets its delivery closes, ticket
   objectives and source anchors, finish line, exclusions, and decisions the
@@ -426,8 +444,10 @@ Reuse the epic scope folder's README or CURRENT entry point; otherwise create
 
 Open with the primary journey and each step's state. Keep the approved goal,
 closure bar, exclusions and scope sources distinct from discovered follow-ups,
-including findings that move no step. Track active lanes and contract revisions, worktrees,
-dependencies, holds, decisions and their sources, owners and next actions.
+including findings that move no step. Track each workset's state, assigned lane,
+readiness dependencies and next action separately from a lane's completed history.
+Track active lanes and contract revisions, worktrees, holds, decisions and their
+sources and owners.
 Index briefs, evidence, recovery material and the tracker backlog; governing
 scope sources determine membership. Record local tooling locations and their
 publication boundary, including the source of any explicit promotion, so recovery

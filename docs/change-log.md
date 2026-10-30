@@ -8,6 +8,10 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.55.1: 2026-10-29
+
+- **Choose lane assignments before reusing names.** New worksets select available lanes by current file ownership, dependencies and capacity. Corrections and delivery preserve their session, independent ready work can proceed during PR checks within governing limits, and the ledger separates new assignments from completed history. ([decision](decisions/epic-orchestration.md#assignment-precedes-naming-2026-10-29))
+
 ## workbench 0.55.0: 2026-10-29
 
 - **Let the host carry CI waiting.** On supported Claude Code hosts, `ci-watcher` uses background command completion notifications; other hosts retain bounded foreground slices or process waits. Watcher model and reasoning settings are unchanged. ([decision](decisions/fix-ci.md#let-the-host-own-waiting-and-the-runner-own-evidence-2026-10-29))
@@ -67,9 +71,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 ## toolkit 0.18.0: 2026-10-16
 
 - **Use Workbench's shared design guidance.** `improve-codebase-architecture` now requires Workbench's `codebase-design` and `domain-modeling`; `correct` uses Workbench when prevention needs an unresolved design choice. The moved skills are no longer shipped in Toolkit. Update Workbench alongside Toolkit for those paths; `grilling` and `grill-me` remain in Toolkit. ([decision](decisions/mattpocock-skills.md#design-references-belong-to-workbench-2026-10-16))
-
-## workbench 0.49.0: 2026-10-16
-
-- **Dispatch files declare their lane.** `epic-orchestration` writes each dispatch under the scope folder's `dispatches/`, opening with `Lane: <LANE>`, and names it by absolute path in the pointer. The label, pointer and `Lane:` line are read as written by the tooling that carries handoffs, so returns to several existing lanes keep a label-and-block pair each, and the section is reread after a compaction or resume. ([decision](decisions/epic-orchestration.md#handoffs-are-read-as-written-by-their-file-2026-10-16))
-- **Run workbench on Muse.** A native `.muse-plugin/plugin.json` installs the plugin on Muse. Agents dispatch there by their scoped id, `workbench/<name>`, once the operator approves them; `session-messaging` reaches Muse peers through Muse's own messaging, and `handoff-goal`, `empirical-proof` and `model-reference` name Muse's surfaces. Muse's native loader does not honor `disable-model-invocation`; the README says how to restore it per machine. ([decision](decisions/plugin-surfaces.md#muse-a-native-per-plugin-manifest-on-the-claude-marketplace-catalog-2026-10-14))
-- **Agents pin no tool allowlist.** One tool name a host did not know made Muse reject a whole agent definition at spawn, so every agent drops its `tools:` line; each body still states what its agent must not touch. ([decision](decisions/plugin-surfaces.md#muse-a-native-per-plugin-manifest-on-the-claude-marketplace-catalog-2026-10-14))

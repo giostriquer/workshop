@@ -149,9 +149,25 @@ later holds nothing unless you name it as a gate.
 
 **How does it group work into lanes?**
 
-By **file ownership, not topic**: all changes to a hot file go in one lane.
-Lanes go out together only when they share no files and none waits on another
-in-flight lane's output.
+By **current file ownership, dependencies and available capacity**. Concurrent
+assignments must not compete over shared files or depend on unavailable outputs.
+The owner coordinates an overlap before concurrent edits and records readiness
+conditions. A lane's past work in an area does not reserve its future work.
+
+**When does it reuse a lane or start a new one?**
+
+Unfinished assigned work, corrections, delivery and recovery continue in the
+existing session. For a new revalidated workset, the owner chooses an available
+existing or fresh lane. An idle lane with useful context can be reused through
+an explicit new assignment; completed work stays completed. The brief states
+whether the session is fresh or reused and why. The ledger tracks each workset's
+state, dependencies and next action separately from the lane's history.
+
+Independent ready worksets go out together under the primary journey and the
+current epic's governing limits. A lane waiting for PR checks keeps its delivery
+responsibility while independent implementation can proceed. Limits from another
+program apply only within the scope their governing source sets. Setup reuse
+follows the repository's supported facilities.
 
 **How are lanes named?**
 
@@ -163,10 +179,10 @@ details, so a lane's name stays the same through delivery and recovery. A lane
 covering several worksets still has one name; separate lanes get separate names
 and paste blocks.
 
-Existing simple names stay. If an older label combined several names or phase
-details, the owner records its mapping to one canonical name in the ledger and
-uses that name from then on. The existing session, artifact paths and references
-are preserved.
+Reused lanes keep their simple names; new lanes get their own. If an older label
+combined several names or phase details, the owner records its mapping to one
+canonical name in the ledger and uses that name from then on. The existing
+session, artifact paths and references are preserved.
 
 **How does it connect to the rest of the workbench?**
 
@@ -347,7 +363,9 @@ review mechanics.
   updates stay visible with an owner and reason.
 - Coordination and verification tooling stays local unless explicitly scoped for
   delivery; required evidence and normal product regression tests remain intact.
-- Lanes that touch the same file arrive in the same prompt.
+- New work is assigned by current readiness and capacity; past lane ownership
+  does not queue independent ready work behind a completed assignment.
+- Concurrent assignments have coordinated file ownership and satisfied dependencies.
 - Negative signal: a lane report accepted because it looked complete.
 - Negative signal: side worksets merging while the ledger still says the
   journey's first steps do not work.

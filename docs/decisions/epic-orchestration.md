@@ -359,6 +359,30 @@ composite-label recovery and a mixed implementation/auditor batch. Session and
 artifact continuity and authority boundaries were preserved. These are bounded
 simulated regression checks, not a reliability estimate or live epic proof.
 
+### Assignment precedes naming (2026-10-29)
+
+The operator later reported a session repeatedly sending new work to a completed
+lane. The naming rule preserved sessions without distinguishing
+continuing an assignment from choosing the next one, and the handbook's "all
+changes to a hot file go in one lane" could read as permanent ownership.
+
+New worksets are assigned from current file ownership, dependencies and available
+capacity; previous work does not reserve later work. An idle lane with useful context can
+be reused through an explicit new assignment. Unfinished work, corrections and
+delivery keep their session continuity. Independent ready work goes out together
+within applicable limits; waiting for one PR's checks alone does not hold other
+implementation. The ledger records each workset's state and next action, so a
+lane's history cannot stand in for current readiness. Project-specific capacity
+limits and build-reuse facilities remain governed by their own sources.
+
+Four simulated cases covered an unavailable former lane with two independent
+worksets, delivery waiting alongside ready work, conflicting files and an
+unsettled producer interface, and correction recovery alongside reuse of an idle
+lane. One fresh context per wording ran all four cases. Both the previous and
+revised wording produced the expected assignments and holds; the explicit
+snapshots did not reproduce the reported session's failure. These are bounded
+regression checks, not proof of causation or a measured throughput improvement.
+
 ## Correction-review authority (2026-09-24)
 
 Lane corrections and owner validation are not reviewer passes. Focused
