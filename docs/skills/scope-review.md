@@ -33,6 +33,16 @@ No wrapper script is required. The existing Node runner is still an optional
 choice for a complete, packet-only review; it cannot inspect referenced source.
 Choose the route before the single attempt, never as a fallback after failure.
 
+## How do I read the direct result?
+
+Each saved JSONL row names its event in `payload_type` and carries the event's
+fields under `payload`. The `run.model.configured` payload identifies the model;
+`tool.result` payloads establish successful reads; the
+`run.terminal.completed` payload contains `terminal: completed` and a `text`
+string to parse as the JSON review. The canonical skill lists the exact fields.
+Output deltas alone do not establish completion. Require the successful process
+exit and valid terminal report before recording `REVIEWED`.
+
 ## What happens if Muse is unavailable?
 
 It records `SKIPPED` and continues. The same applies to timeouts, usage/auth

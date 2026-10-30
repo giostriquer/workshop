@@ -66,3 +66,12 @@ and additionally found the excluded telemetry call in the omitted source body.
 All four returned complete reports, and source hashes were unchanged. Separate
 injected invocation failures were skipped after one attempt on each host. These
 are bounded functional probes, not reliability or performance estimates.
+
+## Direct result envelope (2026-10-30)
+
+Two later native callers first searched top-level `type` or `event` fields and
+had to inspect the stream to recover its actual shape. The invocation guidance
+now names `payload_type`, the nested `payload` fields for model and tool results,
+and the JSON-encoded terminal `text`. This is a reference correction inside the
+existing direct route; it adds no required parser script. Process success, tool
+bounds, complete schema-valid output and unchanged-source checks still apply.

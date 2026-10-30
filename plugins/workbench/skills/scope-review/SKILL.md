@@ -84,9 +84,24 @@ Include source/diff excerpts in `changes`; paths alone cannot support this route
 ## Verify and record the result
 
 For the direct route, inspect the saved JSONL and process exit, not just the last
-printed line. Require configured provider/model `meta` / `muse-wonder-full-1.0`,
-a successful exit, and one `run.terminal.completed` event with `terminal: completed`.
-Parse its `text` as the schema-shaped review below. `CLEAR` and
+printed line. Each JSONL row is an envelope: `row.payload_type` names the event
+and `row.payload` holds its fields. Use this map when reading the stream:
+
+| `row.payload_type` | Fields in `row.payload` to inspect |
+| --- | --- |
+| `run.model.configured` | `provider_id` and `model_id` must be `meta` and `muse-wonder-full-1.0`. |
+| `tool.result` | `correlation_facts.tool_name`, `correlation_facts.outcome`, and `text` establish the tool's result and successful read coverage. Check the recorded call arguments too when needed to establish its path bounds. |
+| `run.terminal.completed` | `terminal` must be `completed`; `text` is a JSON-encoded string containing the review. Parse that string as JSON. |
+
+For example, the verdict is `JSON.parse(row.payload.text).verdict` on the
+completed terminal row. Event names are not top-level `type` or `event` fields,
+and output deltas are not a completed report. Read every row, require a
+successful process exit and exactly one completed terminal event, and reject a
+failed or cancelled terminal event even if earlier output looks like a review.
+An unfamiliar envelope or a missing required field is an invalid report, not
+permission to infer a pass from the printed text.
+
+Validate the parsed report against the schema and contract below. `CLEAR` and
 `INSUFFICIENT_CONTEXT` have no findings; `FINDINGS` has at least one. Findings need
 unique IDs and concrete nonempty evidence and recommendations. Every report has
 limitations. Reject incomplete, malformed, wrong-model or unauthorized-tool runs.
