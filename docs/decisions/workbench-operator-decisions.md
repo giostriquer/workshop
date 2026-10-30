@@ -10,7 +10,11 @@ Unless coverage is already stated, `audit` asks for the tier through a structure
 
 ## The first route is `direct`, asked like sizing (2026-08-12)
 
-The first route's former slang name, left in by oversight, became `direct`: implement from session context. A route pick that is still needed, in `brainstorming` or at `audit`'s confirmed-fix exit, is asked like the sizing question, with user-facing labels (Direct, Plan, Long-running goal) instead of skill names.
+The first route's former slang name, left in by oversight, became `direct`: implement from session context. A route pick that is still needed, in `brainstorming` or at `audit`'s confirmed-fix exit, is asked like the sizing question, with user-facing labels (Direct, Plan) instead of skill names.
+
+On 2026-10-30, the operator retired `handoff-goal`. Its former long-running-goal
+route is removed from the active skills, catalogs and flow maps; the contract
+and templates remain in the [deprecated archive](../../attic/deprecated/skills/handoff-goal/origin.md).
 
 ## TDD is a default, not a mandate (2026-08-12)
 

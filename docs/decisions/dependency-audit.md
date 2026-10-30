@@ -5,7 +5,7 @@ Rationale for Toolkit's dependency upkeep skill. The
 procedure; its [ecosystem reference](../../plugins/toolkit/skills/dependency-audit/ecosystems.md)
 owns package-manager commands.
 
-## A user-invoked dependency audit in toolkit (2026-09-24)
+## A dependency audit in toolkit (2026-09-24)
 
 Dependency upkeep needs code-specific migration analysis, conflict checks,
 security findings, and removal evidence. It is occasional work rather than a
@@ -13,10 +13,12 @@ mandatory development stage, so it belongs in Toolkit and has no hard
 Workbench dependency. The operator directly requested the addition; there was
 no earlier substantial-project use recorded for this piece.
 
-Explicit invocation starts the skill. Claude Code uses frontmatter and Codex
-uses its policy sidecar; Muse's native-loader limitation is recorded in
-[plugin surfaces](plugin-surfaces.md#muse-implicit-invocation-hole-accepted-2026-10-14).
-A general dependency request can still be ordinary work under the host's rules.
+## Model invocation (2026-10-30)
+
+The operator requested model invocation for matching dependency work. Remove
+the Claude restriction and enable implicit invocation in the Codex policy
+sidecar. Explicit invocation remains available; scope and update authorization
+still follow the request and the skill's report-first workflow.
 
 ## Report first, then apply chosen groups in batches (2026-09-24)
 
@@ -73,8 +75,8 @@ not duplicate version-specific CLI recipes.
 The operator wants reliable, rapid response to supply-chain incidents, including
 OS and installed applications. Keep one `dependency-audit` entry point. Add a
 conditional incident/machine-software reference rather than a code-review or
-general hardening skill. Routine project upkeep retains its existing report,
-package-manager rules and explicit invocation policy.
+general hardening skill. Routine project upkeep retains its existing report and
+package-manager rules.
 
 The old workflow had concrete gaps: a mandatory baseline install before advisory
 assessment, unconditional encouragement to fetch ephemeral audit tools, an

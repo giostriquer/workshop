@@ -50,16 +50,15 @@ requires a design choice. Install Workbench alongside Toolkit for those paths.
 
 | Skill | Does |
 | --- | --- |
-| [`html-artifact`](skills/html-artifact/SKILL.md) | creates HTML reports, plans, architecture explanations, PR walkthroughs, and interactive product targets; user-invoked only |
+| [`html-artifact`](skills/html-artifact/SKILL.md) | creates HTML reports, plans, architecture explanations, PR walkthroughs, and interactive product targets |
 | [`anatomy`](skills/anatomy/SKILL.md) | launches pinned, unchanged upstream Anatomy for detailed interactive isometric figures; user-invoked only, with an on-demand fetch |
 | [`ketchup`](skills/ketchup/SKILL.md) | catches up on meaningful results, current evidence, and decisions waiting on the user; user-invoked only |
 | [`why`](skills/why/SKILL.md) | reconstructs historical decision rationale, separating documented intent, inference and unknowns; user-invoked only |
 | [`web-demo-video`](skills/web-demo-video/SKILL.md) | records a browser walkthrough with reusable CLI capture, scene frames, and optional MP4 |
 | [`get-pr-comments`](skills/get-pr-comments/SKILL.md) | triages the PR's conversation, review, and inline comments into a prioritized action list; read-only |
 | [`adopt-global-rules`](skills/adopt-global-rules/SKILL.md) | installs the workshop's shipped host-specific global instructions, rules, and Claude output styles onto this machine additively; user-invoked only |
-| [`me-human`](skills/me-human/SKILL.md) | dogfoods a system from a human user's perspective by trying before asking, escalating on bugs, and stopping at the scope edge; user-invoked only |
 | [`test-audit`](skills/test-audit/SKILL.md) | gates a test before it lands, and audits or prunes existing tests that are low-value, duplicative, or coupled to implementation; user-invoked only |
-| [`dependency-audit`](skills/dependency-audit/SKILL.md) | audits and upgrades project dependencies; responds to supply-chain/security incidents across explicitly selected runtimes, containers, apps and OS software, verifying the active consumer after approved fixes; user-invoked only |
+| [`dependency-audit`](skills/dependency-audit/SKILL.md) | audits and upgrades project dependencies; responds to supply-chain/security incidents across explicitly selected runtimes, containers, apps and OS software, verifying the active consumer after approved fixes |
 | [`grill-me`](skills/grill-me/SKILL.md) | interviews you about a plan, design, or idea in rounds of questions with recommended answers until every branch is settled; user-invoked only |
 | [`grilling`](skills/grilling/SKILL.md) | the round-based interview that `grill-me` and `improve-codebase-architecture` run |
 | [`improve-codebase-architecture`](skills/improve-codebase-architecture/SKILL.md) | surveys a codebase for deepening opportunities, writes an offline HTML report, then grills the candidate you pick; user-invoked only |

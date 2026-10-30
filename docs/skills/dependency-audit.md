@@ -40,10 +40,9 @@ Missing tools require a source/version and execution-risk check before use.
 During a suspected compromise, static inventory comes before installs or builds:
 neither an ephemeral tool nor a throwaway checkout is automatically safe.
 
-It is **user-invoked only** (`disable-model-invocation: true`, plus
-`allow_implicit_invocation: false` for Codex). Invoke `/dependency-audit`, or
-`$dependency-audit` in Codex, with the scope and anything you already know you
-want:
+The model can select this skill when your request matches its scope. You can
+also invoke `/dependency-audit`, or `$dependency-audit` in Codex, with the scope
+and anything you already know you want:
 
 - "Audit the dependencies and tell me what's safe to bump."
 - "Bump all patch and minor versions, and list the majors with their caveats."

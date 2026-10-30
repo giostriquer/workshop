@@ -38,7 +38,9 @@ here are historical records kept with retired specs.
 | `deprecated/skills/agent-audit` | 2026-08-11 | Onboarding plugin deleted; spec + origin doc preserved. Orchestrated `vigil` for governance audits. |
 | `deprecated/skills/doc-audit` | 2026-08-11 | Onboarding plugin deleted; spec + origin doc preserved. 14-check documentation audit. |
 | `deprecated/skills/handoff-pr` | 2026-08-11 | Evolved into the shipped `file-pr` skill; origin doc only: the pre-evolution spec lives in git history (`plugins/toolkit/skills/handoff-pr/`, pre-2026-08-11). |
+| `deprecated/skills/handoff-goal` | 2026-10-30 | Retired from Workbench at the operator's request; complete skill, templates, Codex policy, origin and usage docs preserved. |
 | `deprecated/skills/handoff-review` | 2026-08-10 | Retired from the `toolkit` plugin (last shipped in 0.16.5); spec + origin doc preserved. |
+| `deprecated/skills/me-human` | 2026-10-30 | Retired from Toolkit at the operator's request; complete skill, Codex policy, origin and usage docs preserved. |
 | `deprecated/skills/research` | 2026-08-11 | Onboarding plugin deleted; spec + origin doc preserved. Thin orchestrator for the `research` agent (also parked below). |
 | `deprecated/skills/structure-view` | 2026-08-05 | Renamed to `arch-map`, later consolidated into the shipped `html-artifact`; origin doc only: the design-first birth and Round 1 field notes under the old name. |
 | `deprecated/skills/visual-advisor` | 2026-08-11 | Onboarding plugin deleted; spec + origin doc preserved. Visual taste advisor, counterpart to `visual-implementer` (also parked below). |

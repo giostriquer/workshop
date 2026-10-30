@@ -33,7 +33,6 @@ flowchart TD
 
     RG --> R1["DIRECT<br/>straight from session context"]:::stage
     RG --> R2["PLAN<br/>mechanism discovered from the user's stack:<br/>plugin skill → repo skill → repo standards → harness plan mode"]:::stage
-    RG --> R3["HANDOFF-GOAL<br/>contract dir; fresh session pursues;<br/>same flow, own cadence"]:::stage
 ```
 
 ## Implementation: agency belongs to the user and the harness

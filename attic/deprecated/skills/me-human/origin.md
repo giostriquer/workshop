@@ -1,5 +1,11 @@
 # Dogfooding through an actual user task
 
+## Retired (2026-10-30)
+
+Retired from Toolkit at the operator's request. The complete skill and
+its former usage page are preserved here as history. Plugin discovery, catalogs
+and active workflow routes no longer offer it.
+
 ## Experience is the evidence (2026-08-13)
 
 A source-only account of what a user would experience cannot establish whether

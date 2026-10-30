@@ -64,7 +64,7 @@ answer is pending.
 | The audit was the ask | The report, verdict-first; stop |
 | Feature- or refactor-shaped work | `brainstorming`, with findings and confirmed flags as context |
 | Repairs already authorized | Confirmed in-scope fixes continue; `brainstorming` only for unsettled design |
-| A confirmed fix, no implementation authority | The route pick: **Direct**, **Plan**, or **Long-running goal** |
+| A confirmed fix, no implementation authority | The route pick: **Direct** or **Plan** |
 
 ## Common questions
 

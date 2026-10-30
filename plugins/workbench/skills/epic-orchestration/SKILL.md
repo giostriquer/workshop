@@ -22,8 +22,8 @@ A lane returns for a ruling when the existing contract does not settle a decisio
 ## When this is the right seat
 
 Use this for an epic too large for one session, with implementation in other
-sessions dispatched by hand. For one goal use `handoff-goal`; for one premise or
-ticket use `claim-check`; for broad verification use `qa-sweep`; for one finished
+sessions dispatched by hand. For one premise or ticket use `claim-check`;
+for broad verification use `qa-sweep`; for one finished
 change at a running artifact use `empirical-proof`. To implement yourself, have
 the operator recast the role first. Local support tooling below remains part of
 coordination and validation.

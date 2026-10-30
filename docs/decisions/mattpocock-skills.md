@@ -130,10 +130,9 @@ round by number depends on that shape. Later adaptations are recorded below.
 
 `HTML-REPORT.md` stays as the survey's report contract: header legend,
 candidate card fields, strength badges, diagram patterns, tone and glossary.
-Deferring to `html-artifact` was rejected for two reasons. It is user-invoked,
-so on Claude Code the model cannot load it mid-survey. And it deliberately has
-no fixed card vocabulary, while the survey's value is a fixed, comparable card
-per candidate.
+Deferring to `html-artifact` was originally rejected because it was user-invoked
+only and had no fixed card vocabulary. Model invocation is now enabled, but the
+survey still needs its own fixed, comparable card per candidate.
 
 The scaffold changed. Upstream loads the Tailwind play CDN and Mermaid from
 jsDelivr. Upstream's own usage page records an open failure: a hook demanding

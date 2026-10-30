@@ -97,6 +97,10 @@ Workbench operates without Toolkit. Toolkit's architecture survey requires
 Workbench's design references; its correction skill uses them for unresolved
 design choices. Grilling remains in Toolkit.
 
+`me-human` and `handoff-goal` are retired. Their complete skills and historical
+docs live in [`attic/deprecated/skills/`](attic/deprecated/skills/), outside all
+plugin discovery paths.
+
 Use [contract-review](docs/skills/contract-review.md) to check agreed behavior and
 affected consumers through the `contract-reviewer` agent.
 The completion round also attempts [scope-review](docs/skills/scope-review.md)

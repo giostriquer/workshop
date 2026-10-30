@@ -55,7 +55,7 @@ specific task skips it.
   `brainstorming` owns what the code cannot answer.
 - **Scoping**: `brainstorming` settles open design, loading the sibling
   `codebase-design` for unresolved structural choices before defining the
-  workset. It then follows the authorized route (direct, plan, or handoff-goal)
+  workset. It then follows the authorized route (direct or plan)
   or asks for a missing one. This path works without Toolkit.
 - **Implementation**: `test-driven-development` where a test harness exists
   (repo conventions win on conflict); `systematic-debugging` for sustained,

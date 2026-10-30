@@ -24,7 +24,6 @@ work whose design is already settled.
 | An idea to explore, a feature or refactor to design, or an architectural decision to settle | `brainstorming` |
 | Something to verify, hunt, or check | `audit` |
 | An unresolved failure requiring investigation | `systematic-debugging` |
-| A settled design a fresh session should pursue autonomously | `handoff-goal` (user-invoked) |
 
 ## Three paths
 
@@ -87,7 +86,6 @@ pass.
 | --- | --- |
 | **Direct** | Implement from this conversation |
 | **Plan** | Use your planning mechanism: a plugin or repo skill, repo standards, or harness plan mode |
-| **Long-running goal** | `handoff-goal`: a contract a fresh session pursues autonomously |
 
 The recommended route comes first, marked "(Recommended)".
 
@@ -141,5 +139,5 @@ settled. Architectural work keeps its written design and self-review first.
 
 `brainstorming` owns the scoping stage of the workbench flow. Both entry doors
 feed it: a grounded idea, or `audit` findings. It hands off at the route to
-direct implementation, your plan mechanism, or `handoff-goal`, upstream of
+direct implementation or your plan mechanism, upstream of
 `test-driven-development` and `systematic-debugging`.

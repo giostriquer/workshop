@@ -32,8 +32,7 @@ action. A pending decision blocks only work that depends on it. Ask explicitly
 to pause or stop when that is what you want. The skill does not interrupt other
 agents, post messages, publish changes, or grant new implementation authority.
 
-For a transfer to a new session, use
-[`handoff-goal`](handoff-goal.md). For a retrospective on the process, use
+For a retrospective on the process, use
 [`self-audit`](self-audit.md). Ketchup keeps ownership and scope where they are.
 
 **It's working if:** you can distinguish what is confirmed from what is merely

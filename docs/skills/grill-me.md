@@ -31,7 +31,6 @@ questions. The difference is who ends up holding the design:
 | A plan or idea of your own you want pressure-tested before you commit to it | `grill-me` |
 | A feature or refactor to design, ending in an approved design and an implementation route | [brainstorming](brainstorming.md) |
 | A codebase whose structure you want surveyed for refactors | [improve-codebase-architecture](improve-codebase-architecture.md) |
-| A settled design a fresh session should carry out alone | [handoff-goal](handoff-goal.md) |
 
 Brainstorming drives toward its own proposal: it sizes the process, reads the
 project, offers approaches with a recommendation, presents a design and asks

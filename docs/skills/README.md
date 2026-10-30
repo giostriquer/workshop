@@ -29,7 +29,6 @@ you want them, and skip to keep sessions lean.
 | Designing a feature or a refactor | [brainstorming](brainstorming.md) |
 | Shared words for a module's interface, seam, and depth | [codebase-design](codebase-design.md) |
 | To settle a project's glossary terms (`GLOSSARY.md` or `CONTEXT.md`), or record an ADR | [domain-modeling](domain-modeling.md) |
-| A long-running goal a fresh session should pursue alone | [handoff-goal](handoff-goal.md) |
 | Implementing where a test harness exists | [test-driven-development](test-driven-development.md) |
 | An unresolved failure requiring sustained investigation | [systematic-debugging](systematic-debugging.md) |
 | About to claim something is done | [verification-before-completion](verification-before-completion.md) |
@@ -53,16 +52,15 @@ you want them, and skip to keep sessions lean.
 
 | What you want | The skill |
 | --- | --- |
-| An HTML report, plan, architecture explanation, PR walkthrough, or interactive product target | [html-artifact](html-artifact.md), user-invoked only |
+| An HTML report, plan, architecture explanation, PR walkthrough, or interactive product target | [html-artifact](html-artifact.md) |
 | A detailed interactive isometric figure using upstream Anatomy | [anatomy](anatomy.md), user-invoked only |
 | The historical reason behind a design or workaround | [why](why.md), user-invoked only |
 | A catch-up on ongoing work and the decisions that need you | [ketchup](ketchup.md), user-invoked only |
 | A recorded walkthrough of UI work, with frames the model reads back | [web-demo-video](web-demo-video.md) |
 | To triage a PR's scattered feedback into one action list | [get-pr-comments](get-pr-comments.md) |
 | To install the workshop's host-specific global instructions and rules on a machine | [adopt-global-rules](adopt-global-rules.md) |
-| To use a system as a real human user and report what got in the way | [me-human](me-human.md) |
 | To gate a new test, or audit and prune tests that don't earn their keep | [test-audit](test-audit.md), user-invoked only |
-| To audit/upgrade dependencies or respond to security incidents across selected project and machine software | [dependency-audit](dependency-audit.md), user-invoked only |
+| To audit/upgrade dependencies or respond to security incidents across selected project and machine software | [dependency-audit](dependency-audit.md) |
 | To be interviewed about a plan, design, or idea until every branch is settled | [grill-me](grill-me.md), user-invoked only |
 | The round-based interview other skills run | [grilling](grilling.md) |
 | To survey a codebase for refactors that deepen shallow modules | [improve-codebase-architecture](improve-codebase-architecture.md), user-invoked only |

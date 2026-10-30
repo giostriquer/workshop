@@ -77,8 +77,7 @@ loads design guidance, not the user-invoked architecture survey or grilling.
   your context: don't re-derive them.
 - **Resolve the route under existing authorization:** **direct** implements from
   session context; **plan** uses the user's planning mechanism (plugin/repo skill,
-  repository convention, or harness plan mode); **handoff-goal** packages long-running
-  work for a fresh session only when the user invokes it. Follow an already chosen
+  repository convention, or harness plan mode). Follow an already chosen
   route. Otherwise recommend the fit and ask if the choice materially changes
   delivery, cost, or ownership; a routine direct implementation needs no new gate.
 - **A spike is the exception**: its terminal state is a reported recommendation,
@@ -237,10 +236,10 @@ If the user requests changes, apply them and repeat the affected self-review.
 Do not re-request approval of an unchanged design already authorized.
 
 **Then follow the authorized route.** When a route decision is still needed,
-present the three routes with a one-line recommendation and let the user pick. Ask with a
+present the two routes with a one-line recommendation and let the user pick. Ask with a
 structured question tool (`AskUserQuestion` or the host's equivalent) when one
 is available: user-facing labels, not skill names: **Direct**, **Plan**,
-**Long-running goal**, each with a one-line description, the recommended route
+each with a one-line description, the recommended route
 first and marked "(Recommended)". Otherwise present the same options as a
 numbered list and wait for that needed pick. Once design and route are settled,
 continue the implementation already requested.

@@ -2,7 +2,7 @@
 
 ## Decision (2026-09-22)
 
-Consolidate `html-report` and `arch-map` into the manual-only `html-artifact`
+Consolidate `html-report` and `arch-map` into the `html-artifact`
 skill. Reports, plans, architecture explanations, and product targets share a
 content and rendering workflow. Whether findings already exist in a document
 is an input condition, not a useful division between competing design systems.
@@ -13,6 +13,12 @@ architecture, phased work, and acceptance criteria in a mostly static document.
 The other combined research with realistic, interactive product targets; a
 revision grounded those targets in the actual application shell and controls.
 Private artifacts and transcript excerpts are not shipped as specimens.
+
+## Model invocation (2026-10-30)
+
+The operator requested model invocation for matching HTML artifact work. Remove
+the Claude restriction and enable implicit invocation in the Codex policy
+sidecar. Explicit invocation remains available.
 
 ## What changes
 

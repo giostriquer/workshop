@@ -8,9 +8,9 @@ visual language for what the reader needs to understand, decide, or try.
 
 ## When to use it
 
-The skill is **user-invoked only** (`disable-model-invocation: true`, plus
-`allow_implicit_invocation: false` for Codex). Invoke `/html-artifact` or
-`$html-artifact` in Codex with your material and intended audience. For example:
+The model can select this skill when creating or revising an HTML artifact.
+You can also invoke `/html-artifact` or `$html-artifact` in Codex with your
+material and intended audience. For example:
 
 - “Turn these findings into a concise decision document for the webapp team.”
 - “Explain the current dependency flow and the proposed extraction in HTML.”

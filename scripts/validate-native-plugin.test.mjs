@@ -15,9 +15,9 @@ const inputs = ['scripts/validate-native-plugin.sh', 'scripts/check-skill-size.m
 const EM_DASH = String.fromCharCode(0x2014); // built, so this file never contains one
 const OK = 'native plugin validation ok';
 
-const handoff = 'plugins/workbench/skills/handoff-goal';
-const handoffSkill = `${handoff}/SKILL.md`;
-const handoffSidecar = `${handoff}/agents/openai.yaml`;
+const userOnly = 'plugins/workbench/skills/epic-orchestration';
+const userOnlySkill = `${userOnly}/SKILL.md`;
+const userOnlySidecar = `${userOnly}/agents/openai.yaml`;
 
 // A copy under <base>/repo. Git sees only the copy: no parent repository, no
 // user or system config, and no GIT_* variables inherited from a hook.
@@ -89,21 +89,21 @@ test('outside a git checkout the em dash scan fails instead of skipping', (t) =>
 
 test('a user-invoked-only skill needs its Codex sidecar with allow_implicit_invocation: false', (t) => {
   const copy = copyRepo(t);
-  const sidecar = copy.read(handoffSidecar);
+  const sidecar = copy.read(userOnlySidecar);
   assert.match(sidecar, /^ {2}allow_implicit_invocation: false$/m, 'fixture precondition');
 
-  copy.write(handoffSidecar, sidecar.replace('allow_implicit_invocation: false', 'allow_implicit_invocation: true'));
-  assertFails(copy.validate(), /handoff-goal\/agents\/openai\.yaml must set policy\.allow_implicit_invocation: false/);
+  copy.write(userOnlySidecar, sidecar.replace('allow_implicit_invocation: false', 'allow_implicit_invocation: true'));
+  assertFails(copy.validate(), /epic-orchestration\/agents\/openai\.yaml must set policy\.allow_implicit_invocation: false/);
 
-  unlinkSync(copy.file(handoffSidecar));
-  assertFails(copy.validate(), /handoff-goal\/SKILL\.md sets disable-model-invocation: true, which Codex ignores/);
+  unlinkSync(copy.file(userOnlySidecar));
+  assertFails(copy.validate(), /epic-orchestration\/SKILL\.md sets disable-model-invocation: true, which Codex ignores/);
 });
 
 test('only a direct child of policy: sets allow_implicit_invocation', async (t) => {
   // The direct child's indentation is the first indented line under policy:, so the nested
   // block leads in several cases. A key nested deeper is not policy.allow_implicit_invocation.
   const copy = copyRepo(t);
-  const sidecar = copy.read(handoffSidecar);
+  const sidecar = copy.read(userOnlySidecar);
   const tail = 'policy:\n  allow_implicit_invocation: false\n';
   assert.ok(sidecar.endsWith(tail), 'fixture precondition');
   const policy = (...lines) => ['policy:', ...lines, ''].join('\n');
@@ -120,10 +120,10 @@ test('only a direct child of policy: sets allow_implicit_invocation', async (t) 
     ['a direct false indented four spaces passes', policy('    allow_implicit_invocation: false'), true],
   ]) {
     await t.test(label, () => {
-      copy.write(handoffSidecar, sidecar.slice(0, -tail.length) + block);
+      copy.write(userOnlySidecar, sidecar.slice(0, -tail.length) + block);
       const result = copy.validate();
       if (passes) assertPasses(result);
-      else assertFails(result, /handoff-goal\/agents\/openai\.yaml must set policy\.allow_implicit_invocation: false/);
+      else assertFails(result, /epic-orchestration\/agents\/openai\.yaml must set policy\.allow_implicit_invocation: false/);
     });
   }
 });
@@ -135,9 +135,9 @@ for (const [label, edit] of [
 ]) {
   test(`a skill ${label} needs no sidecar`, (t) => {
     const copy = copyRepo(t);
-    copy.write(handoffSkill, edit(copy.read(handoffSkill)));
-    assert.doesNotMatch(copy.read(handoffSkill), /disable-model-invocation: true/, 'fixture precondition');
-    unlinkSync(copy.file(handoffSidecar));
+    copy.write(userOnlySkill, edit(copy.read(userOnlySkill)));
+    assert.doesNotMatch(copy.read(userOnlySkill), /disable-model-invocation: true/, 'fixture precondition');
+    unlinkSync(copy.file(userOnlySidecar));
     assertPasses(copy.validate());
   });
 }
@@ -146,10 +146,10 @@ test('disable-model-invocation must be spelled literally true or false', async (
   // Hosts read other spellings differently (a quoted "true" is a string), and the
   // sidecar check keys on the literal, so any other spelling would skip it silently.
   const copy = copyRepo(t);
-  const skill = copy.read(handoffSkill);
+  const skill = copy.read(userOnlySkill);
   for (const spelling of ['True', '"true"', 'yes', 'False']) {
     await t.test(spelling, () => {
-      copy.write(handoffSkill, skill.replace('disable-model-invocation: true', `disable-model-invocation: ${spelling}`));
+      copy.write(userOnlySkill, skill.replace('disable-model-invocation: true', `disable-model-invocation: ${spelling}`));
       assertFails(copy.validate(),
         new RegExp(`disable-model-invocation must be the literal true or false, not '${spelling}'`));
     });

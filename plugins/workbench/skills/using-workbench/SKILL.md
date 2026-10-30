@@ -60,8 +60,7 @@ SCOPING
   brainstorming for unresolved design; structural choices load codebase-design
       before defining the workset → follow the authorized route or resolve a missing choice:
       direct (straight from session) · plan (mechanism from the user's stack:
-      plugin skill → repo skill → repo standards → harness plan mode) ·
-      handoff-goal (contract dir; fresh session pursues autonomously)
+      plugin skill → repo skill → repo standards → harness plan mode)
 
 IMPLEMENTATION (agency = user/harness call; implementer gets the plan/goal if present)
   identify the affected consumer boundary and observable completion check
@@ -109,7 +108,6 @@ FEEDBACK
 | Designing a feature or refactor | `brainstorming` → the user's route pick |
 | An unresolved module, interface, ownership, or dependency choice during design | `codebase-design`, before defining dependent work |
 | Domain terms need to be settled or changed | `domain-modeling` |
-| A long-running autonomous goal, outliving this session | `handoff-goal` |
 | Implementing with a test harness | `test-driven-development` |
 | An unresolved failure requiring sustained investigation | `systematic-debugging` |
 | Finishing a change or about to claim done / ready | `verification-before-completion` (use `empirical-proof` for behavioral changes; reuse adequate current evidence) |

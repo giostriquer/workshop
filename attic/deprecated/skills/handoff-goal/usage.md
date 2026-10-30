@@ -1,6 +1,8 @@
 # handoff-goal
 
-[Canonical skill](../../plugins/workbench/skills/handoff-goal/SKILL.md)
+Historical usage page; this skill is retired and no longer ships in a plugin.
+
+[Canonical skill](SKILL.md)
 
 ## What it does
 
@@ -96,7 +98,7 @@ a record outside the two files.
 **Why does my contract have a commit rule I never asked for?** Without one, the
 pursuer hoards a huge uncommitted diff across phases. An explicit no-commit
 instruction overrides the default, and the contract names where checkpoints go.
-([decision](../decisions/handoff-goal.md))
+([decision](origin.md))
 
 **Is repointing a test at a fixed module a forbidden dodge?** No. Relocating a
 test so the runner stops collecting it is; "pointing the test at the corrected
@@ -134,4 +136,4 @@ still verifies, records checkpoints, and reviews each phase.
 
 ## Contract details
 
-The [goal and plan templates](../../plugins/workbench/skills/handoff-goal/references/contract-templates.md) carry the fields and pursuing loop. They are read when assembling or critiquing the contract, including after compaction. The two-file contract, frozen goal, status-only plan and explicit operator restrictions still govern.
+The [goal and plan templates](references/contract-templates.md) carry the fields and pursuing loop. They are read when assembling or critiquing the contract, including after compaction. The two-file contract, frozen goal, status-only plan and explicit operator restrictions still govern.

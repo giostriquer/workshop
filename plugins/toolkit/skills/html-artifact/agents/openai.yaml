@@ -3,4 +3,4 @@ interface:
   short_description: "Create clear HTML plans, reports, and product targets"
 
 policy:
-  allow_implicit_invocation: false
+  allow_implicit_invocation: true

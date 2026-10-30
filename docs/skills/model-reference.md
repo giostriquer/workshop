@@ -25,7 +25,6 @@ dispatch.
 | Which skill owns this moment | `using-workbench` |
 | How big an investigation should be | `audit` |
 | Which implementation route the work takes | `brainstorming`'s route gate |
-| Handing a defined goal to a fresh session | `handoff-goal` |
 
 ## Reading the reference
 

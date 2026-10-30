@@ -64,9 +64,9 @@ applicable engine and ask only for missing decisions that change the investigati
      must not re-derive them.
    - **Repairs already authorized** → continue confirmed in-scope fixes; use brainstorming only for unsettled design.
    - **Work was revealed without implementation authority, a confirmed fix** → skip the design debate; present
-     the route pick (direct / plan / handoff-goal) directly: asked like the
+     the route pick (direct / plan) directly: asked like the
      sizing question: structured question tool when available, with
-     user-facing labels (**Direct**, **Plan**, **Long-running goal**) and the
+     user-facing labels (**Direct**, **Plan**) and the
      recommended route first and marked; a numbered list otherwise.
 
 ## Output

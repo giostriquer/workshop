@@ -8,6 +8,15 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.58.0: 2026-10-30
+
+- **Retire `handoff-goal`.** The skill, contract templates and historical docs move to the deprecated archive. Active workflow routes now offer Direct and Plan, and plugin catalogs no longer expose the retired skill. ([decision](../attic/deprecated/skills/handoff-goal/origin.md#retired-2026-10-30))
+
+## toolkit 0.21.0: 2026-10-30
+
+- **Allow model invocation for dependency and HTML work.** `dependency-audit` and `html-artifact` can be selected when the task matches, with the Codex policy kept in sync. Existing scope, update authorization and verification requirements still apply. ([dependency decision](decisions/dependency-audit.md#model-invocation-2026-10-30), [HTML decision](decisions/html-artifact.md#model-invocation-2026-10-30))
+- **Retire `me-human`.** The complete skill and its historical docs move to the deprecated archive, outside all shipped plugin discovery paths. ([decision](../attic/deprecated/skills/me-human/origin.md#retired-2026-10-30))
+
 ## workbench 0.57.0: 2026-10-30
 
 - **Add a Muse scope opinion at completion.** `scope-review` checks the original request, accepted increment, exclusions and evidence claims through one bounded Muse invocation. It trusts the configured authentication, skips invocation failures without fallback or delivery holds, and leaves finding triage to the parent while required reviewers retain their gates. ([decision](decisions/scope-review.md#decision-2026-10-30))
@@ -63,13 +72,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 ## workbench 0.52.0: 2026-10-21
 
 - **Report merge conflicts ahead of CI results.** The CI watcher reads PR mergeability on every poll and returns a new `conflicted` verdict as soon as GitHub reports a merge conflict, ahead of any check result; `passed` now also requires a mergeable PR. Before, a conflicted PR with green checks was reported as passing, and one with no checks waited out the whole watch window. `fix-ci` and `file-pr` route `conflicted` to target synchronization, which uses no CI fix attempt. ([decision](decisions/fix-ci.md#merge-conflicts-end-the-watch-2026-10-21))
-
-## workbench 0.51.0: 2026-10-16
-
-- **Review agreed behavior and consumer contracts.** The new `contract-review` skill invokes `contract-reviewer`, replacing `pattern-reviewer`. It checks observable outcomes, affected consumers and integration at completion without reopening settled architecture for preferences. Custom dispatches must use the new agent name; correction rounds retain their existing convergence policy. ([decision](decisions/pattern-reviewer-comment-noise.md#review-the-agreed-behavior-and-affected-consumers-2026-10-16))
-- **Use explicit contract-review models.** Claude Code runs Opus 5.5 at `xhigh`, and Codex runs GPT-6.1 Sol at `xhigh`. Other harnesses use the parent's model and effort; Muse overrides the shared Claude settings accordingly. ([decision](decisions/model-reference.md#contract-review-routing-2026-10-16))
-- **Land with completed verification and review evidence.** `file-pr` checks existing completion records and returns missing stages to completion. It reuses valid evidence after unchanged synchronization, while preserving fresh checks for invalidated coverage and explicit delivery gates. ([decision](decisions/file-pr.md#landing-consumes-completed-gates-2026-10-16))
-
-## workbench 0.50.1: 2026-10-16
-
-- **Keep license notices with copied skills.** The package separates standard MIT text from complete upstream attribution in `THIRD_PARTY_NOTICES.md`, restores the 2025 Superpowers copyright year, and requires both files with standalone skill copies. Full-plugin installations and Codex exports retain both files. ([decision](decisions/plugin-surfaces.md#license-notices-travel-with-copied-content-2026-10-16))

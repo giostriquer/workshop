@@ -1,7 +1,6 @@
 ---
 name: html-artifact
 description: Use when creating or revising an HTML report, plan, architecture explanation, PR walkthrough, or interactive product target from documents, conversation findings, code, or a proposed design.
-disable-model-invocation: true
 ---
 
 # HTML Artifact

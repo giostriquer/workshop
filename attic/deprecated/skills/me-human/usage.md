@@ -1,6 +1,8 @@
 # me-human
 
-[Canonical skill](../../plugins/toolkit/skills/me-human/SKILL.md)
+Historical usage page; this skill is retired and no longer ships in a plugin.
+
+[Canonical skill](SKILL.md)
 
 ## What it does
 
@@ -29,9 +31,9 @@ the moment after "it works" and before "it's good."
 | The problem | The skill |
 | --- | --- |
 | What is this thing like to actually use? | `me-human` |
-| Does this finished change work at the running app? | [empirical-proof](empirical-proof.md) |
-| Broad QA coverage over a release or surface | [qa-sweep](qa-sweep.md) |
-| Does this specific claim hold? | [claim-check](claim-check.md) |
+| Does this finished change work at the running app? | [empirical-proof](../../../../docs/skills/empirical-proof.md) |
+| Broad QA coverage over a release or surface | [qa-sweep](../../../../docs/skills/qa-sweep.md) |
+| Does this specific claim hold? | [claim-check](../../../../docs/skills/claim-check.md) |
 
 ## Common questions
 
@@ -73,7 +75,7 @@ items highlighted. Written to be read by a person, not parsed.
 ## Where it fits
 
 Outside the workbench flow, pointed at whatever you built. Its neighbors verify
-that something *works*: [empirical-proof](empirical-proof.md) proves one
-finished change at the running app, [qa-sweep](qa-sweep.md) covers a broad
+that something *works*: [empirical-proof](../../../../docs/skills/empirical-proof.md) proves one
+finished change at the running app, [qa-sweep](../../../../docs/skills/qa-sweep.md) covers a broad
 surface at team scale. `me-human` asks the question none of them do: whether
 the thing is any good to use.

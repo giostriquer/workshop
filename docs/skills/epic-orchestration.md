@@ -33,7 +33,6 @@ epic on evidence rather than an empty ticket list.
 | The problem | The skill |
 | --- | --- |
 | A multi-ticket epic, lanes dispatched by hand | `epic-orchestration` |
-| One goal for one fresh session | [handoff-goal](handoff-goal.md) |
 | A broad surface to cover at team scale | [qa-sweep](qa-sweep.md) |
 | One premise, ticket, or hunch | [claim-check](claim-check.md) |
 | One finished change to prove | [empirical-proof](empirical-proof.md) |
@@ -378,8 +377,7 @@ review mechanics.
 ## Where it fits
 
 Above the workbench flow, and made of it: it coordinates several sessions across
-an epic and owns the judgment none can make alone. Its closest neighbor is
-[handoff-goal](handoff-goal.md), which packages one goal for one fresh session.
+an epic and owns the judgment none can make alone.
 
 ## Recovery and detailed procedures
 

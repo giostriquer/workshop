@@ -91,7 +91,6 @@ registered reviewer agent; code, test and contract review retain their gates.
 | --- | --- |
 | [`file-pr`](skills/file-pr/SKILL.md) | files the branch's PR from the repo's own template, then tends it to green-and-mergeable; never merges |
 | [`fix-ci`](skills/fix-ci/SKILL.md) | watch-and-fix loop on the branch's CI: diagnose the failing log, minimal fix, push, re-watch; two fix attempts per failing cause; synchronization has no retry cap |
-| [`handoff-goal`](skills/handoff-goal/SKILL.md) | emits a goal contract a fresh session pursues autonomously; long-running work only, never pursues it itself |
 | [`claim-check`](skills/claim-check/SKILL.md) | evidence-graded investigation of a ticket / hunch / question: verdict + readiness dossier; preserves the result before any separately authorized repair |
 | [`qa-sweep`](skills/qa-sweep/SKILL.md) | fans a QA team over independent slices, corroborates every verdict-moving finding firsthand |
 | [`empirical-proof`](skills/empirical-proof/SKILL.md) | default focused proof of behavioral changes through apps or real consumers, with evidence reuse and coverage gaps |
@@ -117,7 +116,7 @@ surface, and `using-workbench` answers "how does this flow work?" on demand.
 | Skill | Does |
 | --- | --- |
 | [`audit`](skills/audit/SKILL.md) | uses the requested scope (quick · static review · deep · sweep), runs inline or through the selected engine, reports uncertainty, and asks only for unresolved decisions |
-| [`brainstorming`](skills/brainstorming/SKILL.md) | design dialogue for features and refactors, ending at your route pick: direct / plan / handoff-goal |
+| [`brainstorming`](skills/brainstorming/SKILL.md) | design dialogue for features and refactors, ending at your route pick: direct / plan |
 | [`codebase-design`](skills/codebase-design/SKILL.md) | the deep-module vocabulary (module, interface, depth, seam, adapter, leverage, locality) and its principles |
 | [`domain-modeling`](skills/domain-modeling/SKILL.md) | sharpens a project's glossary (`GLOSSARY.md` or legacy `CONTEXT.md`) and offers ADRs for hard-to-reverse decisions |
 | [`test-driven-development`](skills/test-driven-development/SKILL.md) | RED-GREEN-REFACTOR, default where a test harness exists; repo conventions take precedence |

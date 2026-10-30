@@ -1,7 +1,6 @@
 ---
 name: dependency-audit
-description: Use when the user asks to audit or upgrade dependencies, assess a supply-chain or security advisory, or check and patch explicitly scoped runtimes, containers, installed applications or OS packages. Also for dependency conflicts, breaking changes, deprecated packages or removal candidates. User-invoked only.
-disable-model-invocation: true
+description: Use when the user asks to audit or upgrade dependencies, assess a supply-chain or security advisory, or check and patch explicitly scoped runtimes, containers, installed applications or OS packages. Also for dependency conflicts, breaking changes, deprecated packages or removal candidates.
 ---
 
 # Dependency Audit

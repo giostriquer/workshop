@@ -1,6 +1,12 @@
-# handoff-goal: decisions in force
+# handoff-goal: historical decisions
 
-Rationale for the shipped `handoff-goal` skill (workbench plugin); superseded choices are omitted and git history keeps the originals.
+## Retired (2026-10-30)
+
+Retired from Workbench at the operator's request. The complete skill and
+its former usage page are preserved here as history. Plugin discovery, catalogs
+and active workflow routes no longer offer it.
+
+Historical rationale for `handoff-goal`, formerly shipped in Workbench.
 
 ## A forward handoff that writes a contract and never pursues it (2026-06-10)
 
@@ -43,6 +49,6 @@ Whether work should outlive the session is the operator's routing call, and a co
 Keep `handoff-goal` below the entrypoint size guard and move its substantial
 branch-specific procedures into skill-local references with explicit read
 conditions. Shared authority, preservation and completion gates remain inline.
-The [repo tooling decision](repo-tooling.md#bounded-skill-entrypoints-2026-10-30)
+The [repo tooling decision](../../../../docs/decisions/repo-tooling.md#bounded-skill-entrypoints-2026-10-30)
 records the observed truncation and validation boundary. No delivery or review
 requirement is relaxed by this layout change.

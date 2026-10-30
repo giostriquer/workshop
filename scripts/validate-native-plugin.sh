@@ -238,7 +238,6 @@ epic-implementation
 epic-orchestration
 file-pr
 fix-ci
-handoff-goal
 model-reference
 qa-sweep
 receiving-code-review
@@ -271,7 +270,6 @@ grilling
 html-artifact
 improve-codebase-architecture
 ketchup
-me-human
 test-audit
 web-demo-video
 why"
