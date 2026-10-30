@@ -239,3 +239,20 @@ files. These are bounded response probes, not live host or reliability proof.
 The real drift checker ran against a fetched upstream clone: the reviewed pin
 was current, and replaying the original baseline produced three adopted review
 blocks, 21 excluded changed paths, and no unmapped paths in that range.
+
+## Independent helpers start with fresh context (2026-10-30)
+
+Adapt Matt Pocock's fresh-context dispatch change at
+`7739eaed7f8f3915437a8def198a6d0d7206dbc7` into design-it-twice, the architecture
+survey and grilling's fact lookup. A new independent helper receives a scoped
+brief, source paths, settled constraints and evidence requirements without the
+parent's exploratory conversation or preferred conclusion. Codex uses
+`fork_turns: "none"`; other hosts use their equivalent when available.
+Related refinements continue with that helper. Existing reviewer routing, model
+choices, user decisions, and sequential fallbacks remain unchanged.
+
+A consuming-agent application produced scoped fresh-context briefs for all
+three helper paths and reused those helpers for related follow-ups. It kept
+source facts separate from the parent's preferred answer and left open product
+decisions with the user. This was a bounded dispatch-shape probe, not a measured
+quality comparison of the resulting designs.

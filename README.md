@@ -141,7 +141,11 @@ rationale. Load supporting references when the spec's branch requires them.
 - [Decision-note convention](docs/decisions/decisions-one-note-per-piece.md): one owning note per piece.
 - [Release notes](docs/change-log.md): shipped plugin changes.
 
-Run `sh scripts/validate-native-plugin.sh` for package and mirror checks.
+Run `sh scripts/validate-native-plugin.sh` for package, mirror and entrypoint
+size checks. Active `SKILL.md` files stay below 20,000 UTF-8 bytes; substantial
+conditional procedures live beside them in linked references. Shared authority,
+recovery and completion gates stay in the entrypoint. For the size check alone,
+run `node scripts/check-skill-size.mjs`.
 For an implementation change, run the affected focused tests under `scripts/`
 or the owning maintenance skill. Full CI suites are not a local default.
 The root and each plugin carry a standard MIT `LICENSE` and an accompanying

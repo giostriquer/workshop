@@ -247,3 +247,7 @@ Verification, comment trimming and applicable independent reviews come before
 it. It checks that their evidence covers the scope and revision being filed and
 returns missing stages to completion. After it,
 `receiving-code-review` governs acting on reviewer feedback.
+
+## Writing the PR
+
+When the title or body is drafted or revised, the author reads the [PR writing contract](../../plugins/workbench/skills/file-pr/references/pr-writing.md). It includes template preservation and the conditional architecture and screenshot guidance. Recovery reloads those rules before continuing the text; the completion and publication gates remain in the main skill.

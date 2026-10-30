@@ -8,6 +8,17 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.56.0: 2026-10-30
+
+- **Keep long skill entrypoints bounded.** Code-quality review, test-quality review, PR preparation, goal handoffs and epic orchestration now load detailed procedures through explicit references while retaining shared authority, recovery and completion gates in their entrypoints. The repository validator enforces an under-20,000-byte limit. ([decision](decisions/repo-tooling.md#bounded-skill-entrypoints-2026-10-30))
+- **Start independent designers with fresh context.** New design-it-twice helpers receive scoped briefs and settled constraints without the parent's exploratory history or preferred design. Related refinements continue in the same helper session, with model routing unchanged. ([decision](decisions/mattpocock-skills.md#independent-helpers-start-with-fresh-context-2026-10-30))
+
+## toolkit 0.20.0: 2026-10-30
+
+- **Reconstruct historical rationale with `why`.** The new explicit-only skill follows relevant dated evidence, separates documented intent from inference and unknowns, and identifies what needs checking before revisiting a decision. It adds no mandatory swarm or write authority. ([decision](decisions/why.md#decision-2026-10-30))
+- **Explain PRs with inspectable source.** The conditional HTML walkthrough recipe connects core and supporting changes, retains every available hunk including imports, discloses missing content, and separates source, execution and CI evidence. Offline, dark, keyboard and print behavior remain part of verification. ([decision](decisions/html-artifact.md#pr-walkthrough-reference-2026-10-30))
+- **Give independent helpers a fresh brief.** Architecture explorers and grilling fact-finders start from accepted scope, source paths and evidence requirements rather than inherited exploratory history. Related follow-ups reuse the same helper; open user decisions remain with the user. ([decision](decisions/mattpocock-skills.md#independent-helpers-start-with-fresh-context-2026-10-30))
+
 ## workbench 0.55.1: 2026-10-29
 
 - **Choose lane assignments before reusing names.** New worksets select available lanes by current file ownership, dependencies and capacity. Corrections and delivery preserve their session, independent ready work can proceed during PR checks within governing limits, and the ledger separates new assignments from completed history. ([decision](decisions/epic-orchestration.md#assignment-precedes-naming-2026-10-29))
@@ -62,12 +73,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 ## toolkit 0.18.1: 2026-10-16
 
 - **Preserve attribution across installation routes.** Standard MIT text and the existing upstream notices now ship as `LICENSE` and `THIRD_PARTY_NOTICES.md`; standalone-copy instructions require both in the copied skill folder. The standalone npm installer also retains its license and notices. ([decision](decisions/plugin-surfaces.md#license-notices-travel-with-copied-content-2026-10-16))
-
-## workbench 0.50.0: 2026-10-16
-
-- **Settle architecture before defining the workset.** Brainstorming explicitly covers architectural decisions and loads `codebase-design` when ownership, interfaces, state, dependencies, or extraction remain unresolved. The selected design carries constraints, exclusions, and verification into implementation and review; bounded work stays bounded and settled decisions stay settled. ([decision](decisions/workbench-system.md#architecture-before-the-workset-2026-10-16))
-- **Design guidance ships with Workbench.** `codebase-design` and `domain-modeling`, including their references and invocation policies, move here from Toolkit. Workbench can use them without installing Toolkit. ([decision](decisions/mattpocock-skills.md#design-references-belong-to-workbench-2026-10-16))
-
-## toolkit 0.18.0: 2026-10-16
-
-- **Use Workbench's shared design guidance.** `improve-codebase-architecture` now requires Workbench's `codebase-design` and `domain-modeling`; `correct` uses Workbench when prevention needs an unresolved design choice. The moved skills are no longer shipped in Toolkit. Update Workbench alongside Toolkit for those paths; `grilling` and `grill-me` remain in Toolkit. ([decision](decisions/mattpocock-skills.md#design-references-belong-to-workbench-2026-10-16))

@@ -96,3 +96,30 @@ A focused generation scenario checks a dark initial report around a supplied
 light product preview, with a light system preference and an optional theme
 switch. This is regression evidence for the new default, not a reliability
 estimate.
+
+## PR walkthrough reference (2026-10-30)
+
+Adapt the explanatory structure of Cursor's
+`cursor-team-kit/skills/pr-review-canvas` at
+`4dd1d05818d19792e7cd6e818f1667f95f7e1dbe` into a conditional html-artifact
+reference. Recurring PR explanation work warrants a recipe within the existing
+artifact skill, not another invocation. Lead with the problem and resulting
+behavior, connect core changes to supporting mechanical changes, and tie proof
+to the inspected revisions. Preserve an inspectable complete diff inventory,
+including imports, generated files and unavailable content. Collapsing detail
+changes presentation, never source coverage.
+
+Keep offline packaging, dark initial rendering, keyboard access and visual
+verification. Do not import source filtering, a fixed design system, network
+dependencies or publication authority. A placeholder walkthrough exercises the
+reader's expansion and navigation paths and discloses missing evidence.
+
+A fresh consuming agent produced a placeholder five-file walkthrough from a
+supplied snapshot. Browser checks reconciled the complete patch text, retained
+the side-effect imports and unavailable binary, verified source escaping, and
+reached all five source containers by keyboard. The artifact remained dark
+under a light system preference, had no page overflow at four widths from
+390 to 1280 pixels, exposed collapsed source in print, and made no external
+requests. Rendered opening, dense source, evidence and expansion states were
+inspected. This proves the specimen's presentation, not the fictional change's
+runtime behavior or general generation reliability.

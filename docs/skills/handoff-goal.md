@@ -131,3 +131,7 @@ every optional section; `goal.md` edited during pursuit.
 `handoff-goal` is the one route out of `brainstorming` that leaves the session.
 Everything upstream is compressed into the contract; downstream, the pursuer
 still verifies, records checkpoints, and reviews each phase.
+
+## Contract details
+
+The [goal and plan templates](../../plugins/workbench/skills/handoff-goal/references/contract-templates.md) carry the fields and pursuing loop. They are read when assembling or critiquing the contract, including after compaction. The two-file contract, frozen goal, status-only plan and explicit operator restrictions still govern.

@@ -37,3 +37,12 @@ The trigger tested definedness but not duration, so a small, well-specified task
 ## User-invoked only (2026-08-25)
 
 Whether work should outlive the session is the operator's routing call, and a contract the session decides to write freezes its own guess for a fresh session. The skill sets `disable-model-invocation: true` and runs only on an explicit `/handoff-goal`; brainstorming still offers the route, but only the user invokes it.
+
+## Compaction-safe entrypoint (2026-10-30)
+
+Keep `handoff-goal` below the entrypoint size guard and move its substantial
+branch-specific procedures into skill-local references with explicit read
+conditions. Shared authority, preservation and completion gates remain inline.
+The [repo tooling decision](repo-tooling.md#bounded-skill-entrypoints-2026-10-30)
+records the observed truncation and validation boundary. No delivery or review
+requirement is relaxed by this layout change.

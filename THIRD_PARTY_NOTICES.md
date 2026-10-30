@@ -10,7 +10,8 @@ upstream copyright notice below.
 ---
 
 Portions of this repository (the `writing-skills` skill at
-`.claude/skills/writing-skills/` and its bundled reference files) are derived
+`.claude/skills/writing-skills/` and its bundled reference files, plus the
+entrypoint size-guard idea in `scripts/check-skill-size.mjs`) are derived
 from "superpowers" (https://github.com/obra/superpowers),
 Copyright (c) 2025 Jesse Vincent, and are used under the MIT License.
 The MIT permission and warranty

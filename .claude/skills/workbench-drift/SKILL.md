@@ -1,6 +1,6 @@
 ---
 name: workbench-drift
-description: Use when checking Workshop's adaptations against obra/superpowers, cursor/plugins pstack, or mattpocock/skills, or changing their recorded adoption decisions.
+description: Use when checking Workshop's adaptations against obra/superpowers, cursor/plugins pstack and selected Cursor skills, or mattpocock/skills, or changing their recorded adoption decisions.
 metadata:
   system: workbench
 ---
@@ -28,7 +28,7 @@ Select the source the user requested; for an all-upstream check run each:
 | Source | Manifest | Target policy |
 | --- | --- | --- |
 | Superpowers | `manifest.json` | Published release tags |
-| pstack | `pstack-manifest.json` | Explicit branch tracking; record the exact commit and plugin manifest version |
+| pstack and selected Cursor team-kit skills | `pstack-manifest.json` | Explicit branch tracking; record the exact commit and plugin manifest version |
 | Matt Pocock | `mattpocock-manifest.json` | Explicit branch tracking; the adopted baseline postdates the latest published tag |
 
 Use the existing script with the chosen `--manifest` path and an explicitly
@@ -42,7 +42,9 @@ node .claude/skills/workbench-drift/scripts/drift-check.mjs --manifest .claude/s
 Follow the repository's hook-setup rule for a newly cloned cache. The pstack
 and Matt Pocock manifests map carried pieces and explicitly reviewed exclusions,
 not their entire older corpora. Other paths remain unmapped and surface when they next change;
-never add a catch-all dropped entry that would hide new skills.
+never add a catch-all dropped entry that would hide new skills. The pstack
+manifest also watches the adopted Cursor team-kit PR walkthrough path; that
+scoped watch does not claim a full audit of the Cursor catalog.
 
 1. **Run the script:** `node scripts/drift-check.mjs` (add `--json` when you want
    machine-readable output; `--manifest` / `--cache` to override paths). It

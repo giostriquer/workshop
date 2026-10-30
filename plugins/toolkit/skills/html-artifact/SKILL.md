@@ -1,6 +1,6 @@
 ---
 name: html-artifact
-description: Use when creating or revising an HTML report, plan, architecture explanation, or interactive product target from documents, conversation findings, code, or a proposed design.
+description: Use when creating or revising an HTML report, plan, architecture explanation, PR walkthrough, or interactive product target from documents, conversation findings, code, or a proposed design.
 disable-model-invocation: true
 ---
 
@@ -59,6 +59,8 @@ Open tools in a meaningful, honestly labeled working state.
 Read only the relevant techniques, relative to this skill directory:
 
 - [Diagrams](references/diagrams.md): architecture, mechanisms, and alternatives.
+- [PR walkthroughs](references/pr-walkthroughs.md): explaining a PR or diff,
+  with complete source coverage, connected changes and revision-bound evidence.
 - [Product mockups](references/product-mockups.md): credible current/target UI
   and interactive demonstrations.
 

@@ -8,7 +8,8 @@
     "license": "MIT",
     "author": "Lauren Tan",
     "watchPaths": [
-      "pstack"
+      "pstack",
+      "cursor-team-kit/skills/pr-review-canvas"
     ],
     "trackingNote": "No release tags were available at review. Track source commits explicitly and record the plugin manifest version; this is not marketplace publication proof.",
     "lastReviewed": {
@@ -275,6 +276,32 @@
         "version": "0.15.29",
         "date": "2026-10-21",
         "note": "Scoped review for the TDD and verification comparison; range-review pin unchanged. See docs/decisions/empirical-proof.md."
+      }
+    },
+    {
+      "upstreamPath": "pstack/skills/why/",
+      "localPath": "plugins/toolkit/skills/why/",
+      "disposition": "adopted",
+      "why": "Historical rationale grounded in dated evidence.",
+      "adaptations": "Explicit-only, bounded relevant sources, direct/inferred/unknown distinctions and current-condition checks. No mandatory swarm, source count, model routing or write authority.",
+      "scopedReview": {
+        "commit": "4dd1d05818d19792e7cd6e818f1667f95f7e1dbe",
+        "date": "2026-10-30",
+        "note": "Scoped adoption only; range-review pin unchanged.",
+        "version": "0.15.36"
+      }
+    },
+    {
+      "upstreamPath": "cursor-team-kit/skills/pr-review-canvas/",
+      "localPath": "plugins/toolkit/skills/html-artifact/references/pr-walkthroughs.md",
+      "disposition": "adopted",
+      "why": "Explain connected PR changes with inspectable source and evidence.",
+      "adaptations": "Conditional reference in html-artifact. Preserve every available hunk including imports, name unavailable content, offline dark rendering and keyboard/print checks. No automatic filtering or publication.",
+      "scopedReview": {
+        "commit": "4dd1d05818d19792e7cd6e818f1667f95f7e1dbe",
+        "date": "2026-10-30",
+        "note": "Scoped adoption only; range-review pin unchanged.",
+        "version": "1.2.0"
       }
     }
   ]

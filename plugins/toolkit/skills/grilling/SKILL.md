@@ -31,4 +31,11 @@ Each round the user answers reshapes the tree: settled decisions push the fronti
 
 Finding _facts_ is your job, never the user's. When a frontier question needs a fact from the environment (files, tools, docs), look it up yourself, through a sub-agent where the host has one; don't ask the user for anything you could look up. Don't block on it: a running exploration is an unsettled prerequisite, so only the questions downstream of it wait for the answer; ask the rest of the frontier now. The _decisions_ are the user's: put each to them and wait.
 
+Start each new independent fact-finding helper with fresh context (Codex
+`fork_turns: "none"`, or the host equivalent when available). Pass the factual
+question, relevant source paths, settled constraints and evidence needed, without
+the parent's exploratory conversation or preferred answer. Keep current model
+routing. Continue the same helper for related follow-ups. The helper reports
+facts and gaps; it does not decide the user's open questions.
+
 The session is done when the frontier is empty: every branch of the design tree visited, nothing left silently assumed. Do not act on it until the user confirms you have reached a shared understanding.

@@ -88,3 +88,7 @@ It's misapplied if it fires mid-implementation, the diff grows from findings the
 ## Where it fits
 
 A completion gate before landing. After verification and the [comment trim](trim-comments.md), it reviews the trimmed diff and returns its own verdict. [using-workbench](using-workbench.md) and [file-pr](file-pr.md) coordinate delivery stages; this skill owns implementation structure, maintainability, and closure of its findings.
+
+## Detailed review lenses
+
+The initial review reads the [questions and remedies](../../plugins/workbench/skills/code-quality-review/references/review-lenses.md); a follow-up reloads them when a new quality concern needs them. The main skill retains the scope boundary, standards, verdict and correction-loop rules. Moving examples does not expand the review.

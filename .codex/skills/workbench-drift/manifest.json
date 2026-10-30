@@ -10,7 +10,8 @@
     "author": "Jesse Vincent (obra)",
     "watchPaths": [
       "skills",
-      "hooks"
+      "hooks",
+      "tests/skill-size"
     ],
     "trackingNote": "Drift is measured against upstream's published releases, never the branch tip. Unreleased commits on `ref` are work in progress: they get reported as a count and excluded from review and from mirroring. Set track to \"branch\" only if upstream stops tagging releases.",
     "lastReviewed": {
@@ -69,11 +70,17 @@
       "localPath": ".claude/skills/writing-skills/",
       "disposition": "adopted",
       "why": "The RED→GREEN skill-authoring loop; the operator authors skills constantly. Repo-local, shipped in no plugin.",
-      "adaptations": "Retains the upstream authoring procedure, examples, discovery guidance, and baseline/change/retest loop. Local adaptations preserve existing code, judge outcomes and misapplication as well as compliance, label sample limits, and allow related changes to be tested together. Review upstream changes through the adaptation filter; do not re-mirror away these corrections. See docs/decisions/skill-wording-hardening.md. v6.4.1 review: the interpreter-invocation fix adopted verbatim, `node ./render-graphs.js` and the File Organization rule that skill text runs bundled scripts through their interpreter, never by bare path.",
+      "adaptations": "Retains the upstream authoring procedure, examples, discovery guidance, and baseline/change/retest loop. Local adaptations preserve existing code, judge outcomes and misapplication as well as compliance, label sample limits, and allow related changes to be tested together. Review upstream changes through the adaptation filter; do not re-mirror away these corrections. See docs/decisions/skill-wording-hardening.md. v6.4.1 review: the interpreter-invocation fix adopted verbatim, `node ./render-graphs.js` and the File Organization rule that skill text runs bundled scripts through their interpreter, never by bare path. Conditional authoring references and a conservative under-20000-byte entrypoint guard; retain outcome-based tests and valid-work preservation.",
       "localDeltas": [
         "Description includes auditing existing skills. Outcome-oriented evaluation and safe recovery are local adaptations to retain.",
         "Preserve the 2026-10-04 measured-evaluation contract: attempted tasks and observable outcomes, comparable contexts, trial/error/missing counts, variation, and bounded reliability claims. See docs/decisions/skill-wording-hardening.md."
-      ]
+      ],
+      "scopedReview": {
+        "commit": "2ce8aa15d05bd57213e6f746f953aafb7ded7a8b",
+        "release": "v7.0.1",
+        "date": "2026-10-30",
+        "note": "Scoped compaction layout and size-guard adaptation; range-review pin unchanged."
+      }
     },
     {
       "upstreamPath": "skills/receiving-code-review/",
@@ -141,6 +148,19 @@
       "localPath": null,
       "disposition": "dropped",
       "why": "Session diagnosis feeding superpowers bug reports: an intake interview, seven parallel analysts, a scrubbed-bundle export and a GitHub issue pipeline, under a rule that it never diagnoses a skill. Its transcript method was borrowed into workbench self-audit instead (2026-09-24): read the on-disk transcript, pre-compaction history and subagent transcripts included; discover the host's format at run time; cite path:line or drop the finding; read huge JSONL records by line number and small fields. self-audit proposes changes, so the no-diagnosis rule stayed behind with the pipeline. See docs/decisions/self-audit.md."
+    },
+    {
+      "upstreamPath": "tests/skill-size/test-skill-size.sh",
+      "localPath": "scripts/check-skill-size.mjs",
+      "disposition": "adopted",
+      "why": "Conservative guard against truncated skill entrypoints.",
+      "adaptations": "Native Node CLI checks active plugin and repo-local host trees in the existing package gate; references and attic excluded.",
+      "scopedReview": {
+        "commit": "2ce8aa15d05bd57213e6f746f953aafb7ded7a8b",
+        "release": "v7.0.1",
+        "date": "2026-10-30",
+        "note": "Scoped adaptation only; range-review pin unchanged."
+      }
     }
   ]
 }

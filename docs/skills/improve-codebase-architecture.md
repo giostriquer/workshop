@@ -136,3 +136,7 @@ from [codebase-design](codebase-design.md), walks your decisions with
 [domain-modeling](domain-modeling.md). What it produces is a decision about one
 candidate, which enters your build flow at [brainstorming](brainstorming.md)
 or a spec.
+
+## Independent exploration
+
+A new explorer starts with a fresh context containing the accepted scope, source paths, resolved glossary and decision records, and evidence requirements. Related follow-ups reuse that helper. Without helpers, exploration stays inline; the survey still proposes candidates rather than implementing them.

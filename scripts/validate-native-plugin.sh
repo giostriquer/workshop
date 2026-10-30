@@ -32,6 +32,8 @@ fail() {
 
 command -v node >/dev/null 2>&1 || fail "node is required to read JSON manifests"
 
+node scripts/check-skill-size.mjs >/dev/null || fail "skill entrypoint size check failed"
+
 # ── JSON reader ───────────────────────────────────────────────────────────
 # json <op> <file> [dotted.path] [field]
 #   check  parse only
@@ -270,7 +272,8 @@ improve-codebase-architecture
 ketchup
 me-human
 test-audit
-web-demo-video"
+web-demo-video
+why"
 
 assert_plugin() {
     name=$1

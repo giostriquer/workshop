@@ -80,6 +80,20 @@ https://github.com/giostriquer/workshop/blob/main/docs/decisions/ketchup.md
 
 ---
 
+The `why` skill adapts the `pstack` skill of the same name and its epistemics
+reference from Cursor's plugins (https://github.com/cursor/plugins), Copyright
+(c) 2026 Lauren Tan, under the MIT License. Adaptations are documented at
+https://github.com/giostriquer/workshop/blob/main/docs/decisions/why.md
+
+The PR walkthrough reference in `html-artifact` adapts `cursor-team-kit`'s
+`pr-review-canvas` from the same repository, Copyright (c) 2026 Cursor, under
+the MIT License. Adaptations are documented at
+https://github.com/giostriquer/workshop/blob/main/docs/decisions/html-artifact.md
+
+The MIT permission and warranty notices apply to these portions.
+
+---
+
 ## MIT license terms
 
 Permission is hereby granted, free of charge, to any person obtaining a copy

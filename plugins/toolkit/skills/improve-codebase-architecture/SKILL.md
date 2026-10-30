@@ -35,7 +35,13 @@ repo pointers and either `GLOSSARY` or legacy `CONTEXT` files/maps.
 Carry the resolved path into exploration briefs. Reading vocabulary does not
 invoke active domain modeling or create missing files.
 
-Then walk the codebase, through an exploration sub-agent where the host has one. Don't follow rigid heuristics; explore organically and note where you experience friction:
+Then walk the codebase, through an exploration sub-agent where the host has one.
+Start a new independent explorer with fresh context (Codex `fork_turns: "none"`,
+or the host equivalent when available). Give it the accepted scope, source
+paths, resolved glossary/ADR paths, settled constraints and evidence requirements,
+without the parent's exploratory history or favored candidate. Keep current model
+routing and continue that helper for related follow-ups. Without sub-agents,
+explore inline. Don't follow rigid heuristics; note where you experience friction:
 
 - Where does understanding one concept require bouncing between many small modules?
 - Where are modules **shallow**, with an interface nearly as complex as the implementation? Tells: callers coordinate several calls to finish one operation; options expose internal stages; a function forwards the same arguments to another of the same shape (a pass-through).

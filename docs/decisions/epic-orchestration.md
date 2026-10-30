@@ -423,3 +423,12 @@ handoffs remain distinct from optional helpers within the owner session.
 Helpers inherit its model by default; a smaller model in the same harness
 handles only trivial, cheaply verifiable work. The owner retains judgment,
 rulings and authorization.
+
+## Compaction-safe entrypoint (2026-10-30)
+
+Keep `epic-orchestration` below the entrypoint size guard and move its substantial
+branch-specific procedures into skill-local references with explicit read
+conditions. Shared authority, preservation and completion gates remain inline.
+The [repo tooling decision](repo-tooling.md#bounded-skill-entrypoints-2026-10-30)
+records the observed truncation and validation boundary. No delivery or review
+requirement is relaxed by this layout change.

@@ -11,7 +11,7 @@ import test from 'node:test';
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 // Everything the validator reads, plus .gitignore, which decides what `git add -A` tracks.
-const inputs = ['scripts/validate-native-plugin.sh', 'plugins', '.claude-plugin', '.agents/plugins', '.cursor-plugin', '.claude/skills', '.codex/skills', '.gitignore'];
+const inputs = ['scripts/validate-native-plugin.sh', 'scripts/check-skill-size.mjs', 'plugins', '.claude-plugin', '.agents/plugins', '.cursor-plugin', '.claude/skills', '.codex/skills', '.gitignore'];
 const EM_DASH = String.fromCharCode(0x2014); // built, so this file never contains one
 const OK = 'native plugin validation ok';
 
@@ -215,4 +215,12 @@ test('every repo-local skill needs its complete Codex mirror', (t) => {
   assertPasses(copy.validate());
   copy.write('.codex/skills/acme-guide/references/example.md', 'Outdated reference\n');
   assertFails(copy.validate(), /repo-local mirror drift: \.codex\/skills\/acme-guide/);
+});
+
+
+test('an oversized entrypoint fails the native package gate', (t) => {
+  const copy = copyRepo(t);
+  const rel = 'plugins/toolkit/skills/why/SKILL.md';
+  copy.write(rel, copy.read(rel).padEnd(20000, ' '));
+  assertFails(copy.validate(), /skills\/why\/SKILL.md: 20000 bytes/);
 });

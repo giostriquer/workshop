@@ -107,3 +107,7 @@ It's misapplied if the author's session ran it, missing tools produced a qualita
 ## Where it fits
 
 It returns an independent verdict on test trustworthiness, with its own findings, follow-ups, mutation evidence, and pass record. [using-workbench](using-workbench.md) and [file-pr](file-pr.md) coordinate delivery stages. A gap outside a follow-up's focus goes under Strategy notes unless it proves the change unsafe or incorrect as shipped.
+
+## Mutation procedure
+
+Before running or assessing mutations, the reviewer reads the [mutation procedure](../../plugins/workbench/skills/test-quality-review/references/mutation-testing.md), including after compaction. It retains tool selection, disposable-copy safety, time bounds, fallback conditions and reporting. Missing or partial execution stays visible; it does not become a passing score.

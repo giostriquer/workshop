@@ -81,3 +81,12 @@ The separate `contract-review` skill and `contract-reviewer` now checks agreed b
 The former comment-noise overlap ends: cosmetic narration stays with comment
 trimming, while standard 8 retains repository-rule, suppression and constraint
 findings. Structure and maintainability remain this discipline's responsibility.
+
+## Compaction-safe entrypoint (2026-10-30)
+
+Keep `code-quality-review` below the entrypoint size guard and move its substantial
+branch-specific procedures into skill-local references with explicit read
+conditions. Shared authority, preservation and completion gates remain inline.
+The [repo tooling decision](repo-tooling.md#bounded-skill-entrypoints-2026-10-30)
+records the observed truncation and validation boundary. No delivery or review
+requirement is relaxed by this layout change.

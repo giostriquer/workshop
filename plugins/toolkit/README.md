@@ -50,9 +50,10 @@ requires a design choice. Install Workbench alongside Toolkit for those paths.
 
 | Skill | Does |
 | --- | --- |
-| [`html-artifact`](skills/html-artifact/SKILL.md) | creates HTML reports, plans, architecture explanations, and interactive product targets; user-invoked only |
+| [`html-artifact`](skills/html-artifact/SKILL.md) | creates HTML reports, plans, architecture explanations, PR walkthroughs, and interactive product targets; user-invoked only |
 | [`anatomy`](skills/anatomy/SKILL.md) | launches pinned, unchanged upstream Anatomy for detailed interactive isometric figures; user-invoked only, with an on-demand fetch |
 | [`ketchup`](skills/ketchup/SKILL.md) | catches up on meaningful results, current evidence, and decisions waiting on the user; user-invoked only |
+| [`why`](skills/why/SKILL.md) | reconstructs historical decision rationale, separating documented intent, inference and unknowns; user-invoked only |
 | [`web-demo-video`](skills/web-demo-video/SKILL.md) | records a browser walkthrough with reusable CLI capture, scene frames, and optional MP4 |
 | [`get-pr-comments`](skills/get-pr-comments/SKILL.md) | triages the PR's conversation, review, and inline comments into a prioritized action list; read-only |
 | [`adopt-global-rules`](skills/adopt-global-rules/SKILL.md) | installs the workshop's shipped host-specific global instructions, rules, and Claude output styles onto this machine additively; user-invoked only |
@@ -97,6 +98,11 @@ guidance in [cursor/plugins](https://github.com/cursor/plugins). The benchmarkin
 questions originate in [Brendan Gregg's checklist](https://www.brendangregg.com/blog/2018-06-30/benchmarking-checklist.html).
 See the [correction decision](https://github.com/giostriquer/workshop/blob/main/docs/decisions/correct.md) and
 [benchmark decision](https://github.com/giostriquer/workshop/blob/main/docs/decisions/benchmark-checklist.md).
+
+`why` adapts Lauren Tan's MIT-licensed pstack guidance; the PR walkthrough
+reference in `html-artifact` adapts Cursor's MIT-licensed `pr-review-canvas`.
+See the [why decision](https://github.com/giostriquer/workshop/blob/main/docs/decisions/why.md)
+and [HTML artifact decision](https://github.com/giostriquer/workshop/blob/main/docs/decisions/html-artifact.md).
 
 ## Scope
 

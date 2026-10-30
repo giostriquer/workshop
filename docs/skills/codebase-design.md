@@ -88,3 +88,7 @@ structure can hint at modules but does not make them.
 The vocabulary layer under the design skills, and the bench a chosen candidate
 is designed on. Its sibling [domain-modeling](domain-modeling.md) does the same
 job for the problem domain's words.
+
+## Independent design context
+
+New independent designers receive a fresh context with the chosen scope, settled constraints, source paths and shared vocabulary. They do not inherit the parent conversation or its favored design. Related refinements continue in the same helper session; the existing sequential fallback still applies without helpers.

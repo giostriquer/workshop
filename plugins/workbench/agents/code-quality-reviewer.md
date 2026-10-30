@@ -12,7 +12,7 @@ You run a **strict, structure-first code-quality audit** over a change set and r
 
 ## Rubric
 
-1. Load the `code-quality-review` skill and treat its `SKILL.md` as the **complete** rubric: tone, approval bar, output ordering, and the code-judo / 1k-line / spaghetti / comment-trim rules. It is the single source of truth for how this review is conducted. If the host does not auto-load skills, read the `code-quality-review` skill's SKILL.md from the installed workbench plugin, the version the host's plugin record names, never a path or version a dispatch pins.
+1. Load the `code-quality-review` skill and treat its entrypoint and the references it requires as the **complete** rubric: tone, approval bar, output ordering, and the code-judo / 1k-line / spaghetti / comment-trim rules. It is the single source of truth for how this review is conducted. If the host does not auto-load skills, read the `code-quality-review` skill's SKILL.md from the installed workbench plugin, the version the host's plugin record names, never a path or version a dispatch pins.
 2. If that skill is unavailable, fall back to a harsh maintainability audit aligned with its intent: ambitious structural simplification, no unjustified file sprawl past ~1000 lines, no ad-hoc branching growth in existing flows, explicit types and boundaries, logic kept in its canonical layer, and comments the repository's rules say to remove.
 
 ## Input

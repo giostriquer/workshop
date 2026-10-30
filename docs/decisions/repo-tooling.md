@@ -103,3 +103,36 @@ an ES module whenever the temp directory sat under this repo's module-typed
 `.claude/skills/release/` (mirrored to `.codex/skills/release/`) runs when the user asks for a release, never on the agent's own initiative. It was user-invoked only until 2026-10-29, when that gate stopped a session from running a release the user had asked for in plain words; the user's request, not the slash command, carries the authority. It versions every plugin with unreleased changes, writes the release notes through `change-log`, pushes through `push`, then updates this machine's Claude Code and Codex installs and checks them. Both hosts install Workshop from GitHub `main` and keep one cache folder per version, so a change pushed without a new version never reaches an installed copy: `claude plugin update` reports the plugin as current and keeps the old files. Releases had been run by hand from a recipe in one host's memory, and a request to "update global caches" meant nothing to a session without it.
 
 The deterministic steps live in `scripts/release.mjs`, the only state-changing host step included. `plan` measures changes from the commit on `origin/main` that set the released version, following first parents so a merged bump resolves to the merge, so an earlier push that skipped the bump still shows as `needs-bump`; a manifest diff that only moves the version is the bump, not a change. `bump` updates every host manifest, including Muse, and rewrites the version text in place, because the manifests are hand-formatted and a JSON round trip rewrites them. `refresh` and `verify-caches` share one reading of each host's installed Workshop plugins: `refresh` updates the marketplace and each user-scope plugin `origin/main` releases, skipping a project- or local-scope install whose folder the run cannot know, and `verify-caches` compares each copy's git object ids with `origin/main`, ignoring the markers hosts and the OS add, and names a Workshop plugin the marketplace no longer lists instead of dropping it. A host whose CLI is missing is skipped, not failed. The release names the shipping paths in both `git add` and `git commit`, so another session's work in the tree, staged or not, does not ride along. Invoking the skill authorizes the bump, the push to `main` and updating installed plugins; it installs and removes nothing. The helper's tests run by hand with `node --test .claude/skills/release/tests/release.test.mjs`, including a check that the Codex copy of `SKILL.md` matches the canonical one. On Windows a CLI installed only as a `.cmd` shim reads as missing, which is unverified.
+
+## Bounded skill entrypoints (2026-10-30)
+
+Adopt the conservative under-20,000-byte SKILL.md guard from Superpowers v7.0.1
+(commit `2ce8aa15d05bd57213e6f746f953aafb7ded7a8b`). Recent local compaction
+records reattached oversized skills with a 20,000-character truncation marker.
+This establishes the truncation mechanism, not its responsibility for any
+particular workflow failure. Bytes provide a conservative bound for UTF-8 text.
+
+Move substantial conditional procedures from six oversized entrypoints into
+linked skill-local references. Shared authority, work preservation, recovery and
+completion rules stay in the entrypoint. Keep the moved procedures intact and
+load them at the applicable branch, including after compaction. The affected
+pieces are writing-skills, code-quality-review, test-quality-review, file-pr,
+handoff-goal and epic-orchestration. This changes packaging, not their gates.
+
+For writing-skills, authoring format/discovery and discipline-specific examples
+become conditional references. Its local outcome-based testing and preservation
+rules continue to govern upstream examples. One copied red-flag example that
+instructed deleting code now calls for preserving work and establishing the
+missing defect-sensitive evidence, consistent with the existing core rule. The native validator checks shipped
+and repo-local Claude/Codex entrypoints, including new ones. Supporting documents
+and parked skills are outside this entrypoint budget. Boundary and UTF-8 tests
+exercise the actual CLI; consuming-agent probes check reference retrieval.
+
+The six entrypoints and their moved procedures were exercised in fresh consuming
+contexts simulating recovery after compaction: PR drafting, a no-commit handoff
+with missing browser access, a bounded correction review, an auditor closeout
+and local harness ruling, a mutation follow-up, and a conditional authoring
+reference repair. Consumers loaded the applicable references and retained the
+authority and evidence boundaries. These are bounded scenario checks, not live
+compaction trials or a reliability estimate. Ten shipped procedure extractions
+also retain their original text after relative-link and terminal-newline repairs.

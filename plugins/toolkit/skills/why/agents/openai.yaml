@@ -1,0 +1,6 @@
+interface:
+  display_name: "Why"
+  short_description: "Reconstruct the rationale behind a decision"
+
+policy:
+  allow_implicit_invocation: false

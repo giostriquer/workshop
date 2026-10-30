@@ -38,3 +38,12 @@ scope, and generic unavailable status were superseded by the focused mutation
 rules. They are retained only in git history. Earlier fixture probes established
 specific routing and evidence behaviors, not general reviewer recall or a
 performance improvement.
+
+## Compaction-safe entrypoint (2026-10-30)
+
+Keep `test-quality-review` below the entrypoint size guard and move its substantial
+branch-specific procedures into skill-local references with explicit read
+conditions. Shared authority, preservation and completion gates remain inline.
+The [repo tooling decision](repo-tooling.md#bounded-skill-entrypoints-2026-10-30)
+records the observed truncation and validation boundary. No delivery or review
+requirement is relaxed by this layout change.

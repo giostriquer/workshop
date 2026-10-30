@@ -16,6 +16,7 @@ The skill is **user-invoked only** (`disable-model-invocation: true`, plus
 - “Explain the current dependency flow and the proposed extraction in HTML.”
 - “Make a plan with realistic current/target screens for this schema editor.”
 - “This page hides the main decision. Improve its hierarchy and comparisons.”
+- “Walk me through this PR, connecting the main changes to the supporting diff.”
 
 Documents, conversation findings, code, diffs, and proposed designs can all be
 inputs. Include a preferred reference or product captures when they matter.
@@ -42,6 +43,14 @@ Existing findings, IDs, measurements, denominators, scope, and uncertainty stay
 intact. Observations, proposals, targets, and illustrative data remain distinct.
 Architecture claims have inspectable sources. Product targets retain enough of
 the actual application's context to make the proposed experience credible.
+
+For a PR walkthrough, the author reads the
+[walkthrough recipe](../../plugins/toolkit/skills/html-artifact/references/pr-walkthroughs.md).
+The page identifies the inspected base and head, explains the problem and
+resulting behavior, and connects core changes to supporting edits. A complete
+file index makes every available hunk inspectable, including imports and
+collapsed mechanical changes. Missing or truncated content remains visible as
+a gap. Test code, executed checks, CI and merge state are distinguished.
 
 ## Delivery and verification
 

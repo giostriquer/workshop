@@ -20,6 +20,12 @@ Show this to the user, then immediately proceed to Step 2. The user reads and th
 
 Dispatch 3+ sub-agents in parallel. Each must produce a **radically different** interface for the deepened module. On a host without sub-agents, write the designs yourself one after another, each against its own constraint, and don't revise an earlier design to look like a later one.
 
+Start each new independent designer with fresh context: on Codex set
+`fork_turns: "none"`; use the equivalent on other hosts when available. Supply
+settled constraints and source paths, without the parent's exploratory history
+or preferred design. Keep the current model routing. Continue the same helper
+for related refinements; freshness applies to the new independent assignment.
+
 Prompt each sub-agent with a separate technical brief (file paths, coupling details, dependency category from [DEEPENING.md](DEEPENING.md), what sits behind the seam). The brief is independent of the user-facing problem-space explanation in Step 1. Give each agent a different design constraint:
 
 - Agent 1: "Minimize the interface: aim for 1–3 entry points max. Maximise leverage per entry point."

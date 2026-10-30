@@ -375,3 +375,7 @@ review mechanics.
 Above the workbench flow, and made of it: it coordinates several sessions across
 an epic and owns the judgment none can make alone. Its closest neighbor is
 [handoff-goal](handoff-goal.md), which packages one goal for one fresh session.
+
+## Recovery and detailed procedures
+
+The main skill keeps scope, authority, the primary journey, delivery gates and closure rules visible. Its conditional references supply lane contracts, dispatch formatting, owner validation, local tooling, ledger recovery and owner returns. Before the next lane-facing action after compaction, the owner reloads the dispatch instructions and emits the complete labeled pointer. A saved file or recap alone is not a handoff.

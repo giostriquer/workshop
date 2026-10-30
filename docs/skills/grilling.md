@@ -78,3 +78,7 @@ A primitive, kept in one place so every skill that needs an interview uses the
 same one. [grill-me](grill-me.md) is its user-invoked front door, and
 [improve-codebase-architecture](improve-codebase-architecture.md) runs it once
 you have picked a candidate.
+
+## Independent fact lookup
+
+A new fact-finding helper gets a fresh context with the factual question, relevant sources, settled constraints and evidence requirements. Related follow-ups reuse it. Facts can unblock the interview; the helper cannot settle your open decisions.
