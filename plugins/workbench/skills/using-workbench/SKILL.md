@@ -167,9 +167,9 @@ Broad `qa-sweep` remains user-optioned: offer it and run only on an explicit
 ask, immediate or standing. Research, document edits, and narrow test/build
 status claims use evidence appropriate to their deliverable.
 
-## Artifacts are disposable
+## Temporary artifacts and their lifecycle
 
-Working artifacts are normally temporary. That is a storage convention, not permission to delete existing work or evidence. Save such
+**`.workbench` is temporary working storage, not an archive.** Save working
 artifacts under **`.workbench/<work_scope>/`** (or `.tmp/workbench/<work_scope>/`
 in repos that centralize scratch under `.tmp/`), typically gitignored. Promotion
 to a durable artifact is **the user's call**: it happens only when they
@@ -181,6 +181,22 @@ working material into committed docs.
 belong in the **same** folder as the rest of the scope's material: the
 dispatching session hands the scope folder's path to every agent in its
 contract; agents never invent their own locations.
+
+**Retire artifacts when their purpose ends.** The owning session must remove
+its disposable build copies, probes, logs and intermediate outputs once no
+active run, review, delivery or follow-up needs them. At closeout, account for
+the scope's leftovers: removed, retained with a concrete consumer/purpose and
+removal condition, or awaiting deletion approval. Keep the smallest useful
+evidence; a needed receipt does not require keeping the build tree beside it.
+Remove the scope directory when empty. Do not archive obsolete scratch by default.
+
+Recheck exact paths, ownership, nested worktrees, live consumers and unique data
+before removal. Use existing deletion authority; if user or repo rules require
+approval, present the exact obsolete paths together and leave them pending until
+approved. This lifecycle grants no deletion authority over existing or other
+sessions' work. Explicit preservation and stop-tending instructions take priority.
+Broad worktree, Docker, VM and machine cleanup still requires a user request and
+uses `workspace-cleanup`; it is not an automatic completion step.
 
 ## Worktree location
 

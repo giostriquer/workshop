@@ -1,6 +1,6 @@
 ---
 name: workspace-cleanup
-description: Use when the user asks to reclaim disk space or clean up project or machine development storage, including worktrees, Docker, build caches, .workbench, .tmp and stale artifacts. Never on the agent's own initiative or automatically after delivery or epic completion.
+description: Use when the user asks to reclaim disk space or clean up project or machine development storage, including worktrees, Docker, smolvm, build caches, .workbench and .tmp. Never for unsolicited machine cleanup or a session's ordinary temporary-artifact retirement.
 ---
 
 # Workspace Cleanup
@@ -11,9 +11,10 @@ An epic can narrow the targets; no epic, ledger or closure status is required.
 
 ## Scope and authority
 
-Start with the repositories or locations the user names; otherwise use the
-current repository. For a machine-wide request, discover project roots and
-large development-storage locations before drilling down. Read applicable
+Start with the repositories or locations the user names. A bare invocation or
+storage-cleanup request without a narrower scope covers machine development storage: discover
+project roots, harness worktrees, tool caches and VM storage, starting with the
+current workspace, before drilling into the largest consumers. Read applicable
 cleanup and retention rules. Carry exclusions and other sessions' ownership
 forward. Neither a directory name nor who created it decides disposability.
 
@@ -28,19 +29,28 @@ credentials, settings, session transcripts, installed applications or backups.
 Surface large out-of-scope items separately. Remote writes, tracker changes and
 commits need their own authority.
 
+If the user gives a used-space or free-space target, record the filesystem,
+units, baseline and required recovery. Continue through worthwhile candidates
+until that target is measured as met or the remaining gap has concrete holds
+or approval decisions. Finishing one small batch does not meet a larger target.
+
 ## Find the worthwhile candidates
 
 1. Record available space on each affected filesystem using consistent units
    (`df` or the platform equivalent). Size the scoped roots, then inspect their
    largest descendants. Use allocated size where available. Avoid counting a
    parent and its children twice; folder totals and shared layers are estimates,
-   not proof of reclaimable space.
+   not proof of reclaimable space. Reuse size results rather than running
+   overlapping full-tree scans; inaccessible or interrupted scans remain gaps.
 2. Reconcile filesystem findings with Git worktree registrations, harness
    records, active processes and Docker inventories. Include hidden scratch
    directories and harness-owned worktrees outside the usual `.worktrees` path
    when they belong to the requested scope. Do not follow symlinks into new scopes.
    Before selecting a parent directory, apply the same worktree and retention
    checks to its descendants; a scratch root can contain an active checkout.
+   Include build output inside retained worktrees and shared runtime caches:
+   protecting a checkout does not automatically protect all reproducible output,
+   and an unreferenced cache needs consumer checks across every scoped checkout.
 3. Give each candidate a stable selection ID, exact path or resource identity,
    category, size, purpose, remaining consumers, activity, preservation evidence,
    proposed disposition and expected rebuild cost. Mark missing evidence
@@ -55,6 +65,7 @@ commits need their own authority.
 | Build output and dependency/tool caches | Generated contents, reproducibility, correct cache owner/root and no active build or runtime consumer; name the rebuild/download cost |
 | `.workbench`, `.tmp`, `tmp` and scratch copies | Inspect each work scope's contents, active run state, references, retention and unique data; ignored or old does not mean disposable |
 | Docker images, containers, builder cache and volumes | Verified endpoint, resource identity, references and data disposition; follow Docker below |
+| smolvm and other local VM storage | Installed version, actual state/cache roots, named machines, host mounts, branch/checkpoint dependencies and data disposition; follow Virtual machines below |
 | Stray processes and open deleted files | Exact PID and current identity, command/cwd, owner and remaining purpose; stopping is a separate selected action |
 
 Retain active runs, frozen audit inputs, pinned reference artifacts, useful
@@ -63,6 +74,13 @@ selected target, use an established or user-selected destination outside all
 removals, verify copied content and repair authorized references first. Do not
 silently archive all scratch or promote it to committed docs. Retire a ledger
 only after its remaining useful records have a verified home.
+
+`.workbench` and `.tmp` are temporary, not permanent evidence archives. Separate
+obsolete bulky outputs from the small records still needed. For each retained
+scope, name its current consumer/purpose and the event that permits removal;
+unknown ownership is a hold to resolve, not a claim of permanent usefulness.
+Keep shared runtime objects referenced by retained checkouts, even when no
+process currently has them open.
 
 ## Worktrees and branches
 
@@ -127,6 +145,32 @@ free space separately: shared layers and Docker Desktop's sparse disk image
 mean logical removal may not immediately free host blocks. Never claim the
 image file's apparent maximum size as recovered space.
 
+## Virtual machines (including smolvm)
+
+Check the installed CLI help and effective storage roots before using commands.
+Inventory named machines and their running state, persistent disks/overlays,
+host mounts, packed artifacts, branches, checkpoints and separate host caches.
+For smolvm, start with `smolvm machine ls`; check help for `machine data-dir`,
+`machine images` and `machine prune`. Inspect only needed metadata, not secrets
+or registry-token contents. No registered machines does not mean no stored data.
+
+Separate reproducible host image seeds/downloads from persistent guest data.
+Record exact cache paths, image/source identity, references, live/open-file
+consumers and recreation cost. Machine-local image pruning may leave host seed
+caches untouched. Prefer the owner's supported scoped eviction; when it has no
+such command, exact host-cache removal needs verified disposable contents and
+an approved selection. Never delete an entire state/cache root containing
+databases, credentials, disks or unknown files.
+
+Named machines, overlays and checkpoints need their own data-retention decision.
+Check host-mounted data and branch/checkpoint backing dependencies before any
+removal. Do not boot or stop a VM just to make it inspectable or removable without
+authority. Use exact supported removal; do not add cascade/force or broad prune
+flags to bypass dependencies. A prune preview is evidence, not authorization.
+Recheck identities, state and dependencies immediately before mutation, then
+verify retained machines/references and selected removals afterward. Measure
+allocated host blocks and free-space change separately from virtual disk capacity.
+
 ## Remove and verify
 
 1. Recheck every selected path/resource, authorization, retention and activity
@@ -151,3 +195,25 @@ removed/already absent targets, measured space change, retained items, unresolve
 entries and the next action for each. A completed scan is not a completed cleanup.
 Unselected candidates may remain; unknown or inaccessible inventory prevents
 claiming exhaustive cleanup.
+Report a requested storage target separately as met or still short, with the
+current measured usage and remaining gap. If nothing was approved, report the
+inventory and pending selection without claiming cleanup completion.
+
+## Make the next cleanup cheaper
+
+Keep one compact receipt at an established local location outside the removals:
+inspection date and roots, endpoint identities, selected IDs/paths and authority,
+removed/held results, measured space change, and retained purposes/removal
+conditions. Reuse and refresh it next time; never treat old activity or approval
+for different resources as current evidence. Avoid copying bulky artifacts into
+the receipt or accumulating full inventory snapshots. It is temporary too:
+retire it when superseded and no remaining selection depends on it.
+If no authorized receipt location exists, put this record in the response until
+a location is selected; receipt creation does not expand filesystem authority.
+
+Identify the largest recurring producers and a concrete prevention action, such
+as retiring completed probe trees, reusing a build cache or setting an approved
+cache budget. Apply changes only within existing task authority; changing shared
+tool settings, scheduling cleanup or deleting newly discovered categories is not
+implied by a cleanup invocation. Report measured growth only when comparable
+earlier measurements exist; otherwise label the source as a current large consumer.

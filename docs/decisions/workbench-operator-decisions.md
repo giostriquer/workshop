@@ -43,6 +43,17 @@ A field session grew a one-ticket change into a 52-file workset because the adve
 
 An audit scattered one scope's evidence across three per-agent temp directories: the orientation named the location, but dispatched agents skip it and the engines' contracts named none. Everything a work-stream produces, agents' evidence included, now lands in one `.workbench/<work_scope>/` folder whose path the dispatcher hands every agent in its contract, never per-agent or system temp directories.
 
+## Temporary artifacts have an end of use (2026-11-02)
+
+Calling `.workbench` disposable without an end-of-use action left finished build
+copies and probe output accumulating between manual cleanups. The owning session
+must retire artifacts when their consumers finish, and account for leftovers at
+closeout. Preserve the small evidence actually needed for review, delivery or
+follow-up, with a reason and removal condition; keeping one receipt does not
+justify retaining its whole build tree. This is scoped housekeeping under existing
+authority, not an automatic machine cleanup. Explicit preservation, stop-tending
+instructions and repository approval requirements still govern deletion.
+
 ## Brainstorming classifies the request first (2026-08-12)
 
 Upstream's three-path classifier was adopted: the session first announces the request as a spike (an answer, not code), bounded (a well-scoped change to existing code), or architectural (unresolved structure or depended-on interfaces). The local copy gave everything architectural ceremony, the over-ceremony the fork exists to remove, so this lightening was adopted, not dismissed as pressure tuning. Adapted: bounded and architectural work ends at the route resolution rather than upstream's dropped plan-writing hand-off, a spike ends in a reported recommendation, and only architectural work gets a written design.

@@ -12,8 +12,34 @@ Inventory first, ranked by likely recoverable space. Reuse the user's existing
 approval for exact targets or clearly bounded categories; otherwise present
 concrete batches for selection before deletion. Protected or uncertain entries
 need their own informed disposition. Preserve active worktrees, undelivered
-content, unique files and retained evidence. Cleanup remains explicitly
-requested, never an automatic response to delivery or incidental leftovers.
+content, unique files and retained evidence. Broad storage cleanup remains
+explicitly requested. Retiring a session's own temporary artifacts belongs to
+the artifact lifecycle in `using-workbench`, subject to deletion authority.
+
+## Recurring cleanup and VM storage (2026-11-02)
+
+Repeated weekly cleanup exposed two gaps: the invocation still needed a scope
+explanation each time, and VM caches were outside the concrete inventory. A bare
+invocation now discovers machine development storage; an explicit repository or
+path still narrows it. Start with known project roots, harness worktrees and
+development caches, then drill into the largest allocated consumers.
+
+A requested used-space or free-space target is a separate completion condition
+from an approved batch. Measure its remaining gap and continue until met or
+concrete holds or approval decisions explain what prevents reaching it.
+
+Separate smolvm host image seeds from named machine disks, overlays, branches,
+checkpoints and registry credentials. Machine-local pruning does not necessarily
+evict host caches. Resolve installed command support and actual storage ownership
+before selecting removals; an empty machine list does not prove the host cache
+or checkpoint store is empty or disposable.
+
+Retained scratch needs a current purpose and a release condition. A small receipt
+records selected targets, results and remaining reasons so the next invocation
+can recheck them without preserving bulky copies. Report recurring producers and
+specific retention or cache-limit changes to consider; do not install schedules
+or change shared settings as a side effect. Age and size remain discovery signals,
+not deletion authority.
 
 ## Evidence behind the rework
 

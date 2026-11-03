@@ -8,6 +8,11 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.60.0: 2026-11-02
+
+- **Reclaim development storage toward an explicit target.** A bare `workspace-cleanup` invocation inventories machine development storage, including Docker, local VMs, worktree build outputs and temporary artifacts. It separates host caches from VM state, verifies each approved removal and keeps going when measured usage still misses the requested target. ([decision](decisions/workspace-cleanup.md#recurring-cleanup-and-vm-storage-2026-11-02))
+- **Retire temporary Workbench artifacts when their use ends.** Sessions remove their own obsolete `.workbench` outputs within existing authority and account for retained files by their remaining consumer and removal event. Cleanup keeps a small receipt outside deletion targets without creating a permanent evidence archive by default. ([decision](decisions/workbench-operator-decisions.md#temporary-artifacts-have-an-end-of-use-2026-11-02))
+
 ## workbench 0.59.1: 2026-10-30
 
 - **Read Muse event envelopes directly.** `scope-review` names the JSONL event discriminator and nested model, tool-result and terminal-report fields, avoiding output-format rediscovery by native callers. Direct invocation remains script-optional and retains its existing validation gates. ([decision](decisions/scope-review.md#direct-result-envelope-2026-10-30))
@@ -68,7 +73,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 ## toolkit 0.19.0: 2026-10-22
 
 - **Respond to dependency and software security incidents.** `dependency-audit` now covers requested incident work across project dependencies, development tools, containers, installed applications and the OS. It checks current primary advisories before executing suspect software, selects known-safe upgrades or pins, and verifies the active consumer and trust store; pending restarts, unverified surfaces and compromise recovery remain explicit. Ordinary project audits keep their existing scope. ([decision](decisions/dependency-audit.md#incident-response-and-requested-machine-software-2026-10-22))
-
-## workbench 0.52.2: 2026-10-21
-
-- **A bug-fix check must be able to fail on the bug.** `verification-before-completion` and `empirical-proof` count an app or CLI check toward "bug fixed" only when it uses the reported trigger or was seen failing before the fix; a pass on input never shown to reach the defect leaves the fix unverified. A later pre-fix run uses a disposable checkout, never a revert in an active or dirty worktree. ([decision](decisions/empirical-proof.md#a-bug-fix-check-must-be-able-to-fail-on-the-defect-2026-10-21))

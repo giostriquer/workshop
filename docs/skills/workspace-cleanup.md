@@ -6,7 +6,7 @@
 
 Finds and removes development storage you no longer need, across one project,
 several repositories or the machine. It sizes the biggest candidates first:
-worktrees, build output, Docker images/containers/cache/volumes, `.workbench`,
+worktrees, build output, Docker images/containers/cache/volumes, smolvm, `.workbench`,
 `.tmp` and other scratch directories. It checks what still uses them, presents
 concrete selections, performs approved removals and measures the space change.
 No epic or ledger is required.
@@ -17,16 +17,23 @@ Ask in plain words, or invoke `/workbench:workspace-cleanup`:
 
 ```text
 Time for a weekly cleanup. Find the disk bloat across my projects:
-Docker, old worktrees, .workbench and .tmp. Keep ongoing runs.
+Docker, smolvm, old worktrees, .workbench and .tmp. Keep ongoing runs.
 ```
 
 ```text
 Clean up the merged worktrees and unused build output in this repo.
 ```
 
-Name roots or exclusions when useful. Without a wider scope, it starts in the
-current repository. An epic or task name can narrow the targets. The skill
-loads on a cleanup request, never automatically after a merge or epic completion.
+Invoke `/workbench:workspace-cleanup` alone for machine development storage.
+Name a repository or path to narrow it, and carry any exclusions forward.
+An epic or task name can also narrow the targets. Broad cleanup runs only on
+request. A session retiring its own temporary artifacts follows the lifecycle
+in `using-workbench` and the applicable deletion authority.
+
+Include a used-space or free-space target when useful. The skill measures the
+remaining gap and keeps investigating worthwhile candidates until the target
+is met or specific holds or approvals prevent further progress. A completed
+small batch is reported separately from the overall storage goal.
 
 ## Common questions
 
@@ -42,8 +49,18 @@ selection; a broad cleanup request does not discard them.
 
 No. Those locations can contain ongoing runs, frozen inputs, useful reports and
 follow-up evidence alongside disposable logs and build copies. It checks their
-purpose and references. Material worth retaining is moved only to an established
-or selected destination, verified before the original is removed.
+purpose and references, separates obsolete bulky output from needed receipts,
+and gives retained material a current purpose and removal condition. Material
+worth moving goes only to an established or selected destination, verified before
+the original is removed. These folders are temporary working storage, not archives.
+
+**Does it cover smolvm even when no machines are listed?**
+
+Yes. It discovers actual state and cache roots and distinguishes host image seeds
+from persistent machine disks, overlays, branches and checkpoints. Host caches may
+remain after all machines are gone. Cache eviction needs reproducible contents,
+consumer checks and approval; guest data and checkpoints need their own retention
+decision. It does not wipe a state root, registry credentials or mounted host data.
 
 **What protects my worktrees?**
 
@@ -84,4 +101,6 @@ The report separates candidate size, Docker's accounting and the observed host
 free-space change. Moving files to Trash does not count as reclaimed space.
 Active work and useful retained material remain available, and unfinished items
 have a concrete next action. A repeated request resumes from checked current
-state.
+state. A compact receipt preserves the scope, results and retention conditions,
+and the report identifies recurring storage producers and concrete prevention
+actions. Tool-setting changes and scheduled cleanup need their own authority.

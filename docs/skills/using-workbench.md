@@ -102,10 +102,16 @@ independent work continues. Explicit declines and superseding repo rules
 still apply. Broad `qa-sweep` remains offered and runs only on an explicit
 ask, immediate or standing.
 
-**Artifacts are disposable.** Working material lives in
+**Artifacts are temporary.** Working material lives in
 `.workbench/<work_scope>/` (or `.tmp/workbench/<work_scope>/`), typically
 gitignored. Promotion to a committed doc is the user's call. The dispatching
-session hands that folder's path to every agent it dispatches.
+session hands that folder's path to every agent it dispatches. The owning session
+must remove disposable outputs once their purpose ends, using existing deletion
+authority. At closeout it accounts for what was removed, what still has a concrete
+consumer and removal condition, and what awaits required approval. Keep the small
+evidence needed for review or follow-up without retaining the entire build tree.
+Preservation and stop-tending instructions still apply; this does not trigger a
+machine-wide cleanup.
 
 **Worktree location.** Prefer the harness's native worktree mechanism and any
 established repo or user pattern; otherwise `<repo>/.worktrees/<task-name>`,

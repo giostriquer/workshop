@@ -45,7 +45,7 @@ you want them, and skip to keep sessions lean.
 | Implementing a lane dispatched through epic-orchestration | [epic-implementation](epic-implementation.md) |
 | Auditing a lane dispatched through epic-orchestration | [epic-auditor](epic-auditor.md) |
 | Asking or telling another local session on this machine | [session-messaging](session-messaging.md) |
-| Reclaiming project or machine disk space from worktrees, Docker, build caches, `.workbench` and `.tmp`, when you ask | [workspace-cleanup](workspace-cleanup.md) |
+| Reclaiming project or machine disk space from worktrees, Docker, smolvm, build caches, `.workbench` and `.tmp`, when you ask | [workspace-cleanup](workspace-cleanup.md) |
 | Looking back at how the process itself ran | [self-audit](self-audit.md) |
 
 ## The optional toolkit
