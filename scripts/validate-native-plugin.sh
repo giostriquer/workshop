@@ -22,8 +22,12 @@ set -eu
 
 cd "$(dirname "$0")/.."
 
+# A handler that only cleans up lets the script run on without its temp dir.
+WORK=
+trap 'rm -rf "$WORK"' EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
 WORK=$(mktemp -d)
-trap 'rm -rf "$WORK"' EXIT INT TERM
 
 fail() {
     echo "native plugin validation failed: $1" >&2
@@ -464,6 +468,27 @@ for spec in .claude/skills/*/SKILL.md; do
         || fail "repo-local mirror drift: .codex/skills/$skill differs from canonical .claude/skills/$skill (Muse runs the .codex copy):
 $_diff"
 done
+
+# The parent builds the prompt from the skill's contract and validates the report
+# against review.schema.json. A broken pair surfaces only as a recorded SKIPPED.
+SCOPE_REVIEW=plugins/workbench/skills/scope-review
+read_json "$SCOPE_REVIEW/review.schema.json"
+node_check '
+const fs = require("fs");
+const dir = process.argv[1];
+const schema = JSON.parse(fs.readFileSync(`${dir}/review.schema.json`, "utf8"));
+const parts = fs.readFileSync(`${dir}/SKILL.md`, "utf8").split("\n## Reviewer contract\n");
+if (parts.length !== 2 || !parts[1].trim()) {
+  console.error("scope-review SKILL.md needs one nonempty Reviewer contract section"); process.exit(1);
+}
+const finding = schema.properties.findings.items;
+const names = [...schema.required, ...schema.properties.verdict.enum,
+  ...finding.required, ...finding.properties.concern.enum];
+const missing = names.filter((name) => !parts[1].includes(`\`${name}\``));
+if (missing.length) {
+  console.error(`scope-review contract omits schema names: ${missing.join(", ")}`); process.exit(1);
+}
+' "$SCOPE_REVIEW"
 
 # ── em dash ban ───────────────────────────────────────────────────────────
 # The repo bans U+2014 everywhere. Sweeps kept finding em dashes re-added

@@ -82,8 +82,8 @@ instructions.
 
 ## Everyday skills
 
-The completion round also attempts `scope-review` once through the configured
-Muse CLI on every host. It is an advisory opinion with no provider fallback:
+The completion round also attempts `scope-review` once through Muse on every host,
+using the surface's native Muse handler when it has one. It is an advisory opinion with no provider fallback:
 invocation problems record `SKIPPED` and never hold delivery. It is not a generic
 registered reviewer agent; code, test and contract review retain their gates.
 

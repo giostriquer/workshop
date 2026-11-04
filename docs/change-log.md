@@ -8,6 +8,11 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.61.0: 2026-11-04
+
+- **Let the Muse scope review read the whole checkout.** `scope-review` starts from named files and follows them through the reviewed checkout, under one 10-minute deadline instead of 120 seconds and 8 model steps. The packet-only runner is gone. A read or search result from a secret-bearing file or outside the checkout rejects the run and is reported to the user. ([decision](decisions/scope-review.md#checkout-reads-no-runner-2026-11-04))
+- **Run Muse through the surface's own handler.** When the session's surface can start Muse itself, such as T3 Code's `delegate_task`, the review goes through it, and `muse exec` remains the route elsewhere. Native handlers may gate tools behind approvals rather than remove them, so any approval or question cancels the run as a skip. ([decision](decisions/scope-review.md#checkout-reads-no-runner-2026-11-04))
+
 ## workbench 0.60.0: 2026-11-02
 
 - **Reclaim development storage toward an explicit target.** A bare `workspace-cleanup` invocation inventories machine development storage, including Docker, local VMs, worktree build outputs and temporary artifacts. It separates host caches from VM state, verifies each approved removal and keeps going when measured usage still misses the requested target. ([decision](decisions/workspace-cleanup.md#recurring-cleanup-and-vm-storage-2026-11-02))
@@ -69,7 +74,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 ## workbench 0.53.0: 2026-10-22
 
 - **Reclaim workspace disk space with `workspace-cleanup`.** This replaces `epic-cleanup` with one workflow for project and machine cleanup, covering worktrees, Docker, build caches, `.workbench` and `.tmp` artifacts. It measures bloat, preserves active and unique work, acts on selected targets under existing authorization, and verifies recovered space. ([decision](decisions/workspace-cleanup.md#purpose-and-authority-2026-10-22))
-
-## toolkit 0.19.0: 2026-10-22
-
-- **Respond to dependency and software security incidents.** `dependency-audit` now covers requested incident work across project dependencies, development tools, containers, installed applications and the OS. It checks current primary advisories before executing suspect software, selects known-safe upgrades or pins, and verifies the active consumer and trust store; pending restarts, unverified surfaces and compromise recovery remain explicit. Ordinary project audits keep their existing scope. ([decision](decisions/dependency-audit.md#incident-response-and-requested-machine-software-2026-10-22))

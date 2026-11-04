@@ -2,10 +2,12 @@
 // Each case validates a throwaway copy of what the validator reads, so the
 // real checkout is never touched and a mutation shows up only in the copy.
 import assert from 'node:assert/strict';
-import { appendFileSync, cpSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, unlinkSync, writeFileSync } from 'node:fs';
+import { once } from 'node:events';
+import { appendFileSync, cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, unlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { spawnSync } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
+import { setTimeout as delay } from 'node:timers/promises';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 
@@ -14,6 +16,9 @@ const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..'
 const inputs = ['scripts/validate-native-plugin.sh', 'scripts/check-skill-size.mjs', 'plugins', '.claude-plugin', '.agents/plugins', '.cursor-plugin', '.claude/skills', '.codex/skills', '.gitignore'];
 const EM_DASH = String.fromCharCode(0x2014); // built, so this file never contains one
 const OK = 'native plugin validation ok';
+// A hang guard, not a speed budget: loaded machines stretched healthy runs past 30 seconds.
+// SIGKILL, because the validator's TERM handler waits for its foreground child; a real hang leaves its temp dir.
+const VALIDATE_TIMEOUT_MS = 120000;
 
 const userOnly = 'plugins/workbench/skills/epic-orchestration';
 const userOnlySkill = `${userOnly}/SKILL.md`;
@@ -37,7 +42,7 @@ function copyRepo(t, { git = true, before } = {}) {
     write: (rel, text) => { mkdirSync(path.dirname(path.join(dir, rel)), { recursive: true }); writeFileSync(path.join(dir, rel), text); },
     // Runs from outside the copy: the validator must find its root by itself.
     validate: () => spawnSync('sh', [path.join(dir, 'scripts/validate-native-plugin.sh')], {
-      cwd: base, env, encoding: 'utf8', timeout: 20000,
+      cwd: base, env, encoding: 'utf8', timeout: VALIDATE_TIMEOUT_MS, killSignal: 'SIGKILL',
     }),
   };
   before?.(copy);
@@ -50,12 +55,18 @@ function copyRepo(t, { git = true, before } = {}) {
   return copy;
 }
 
+function assertFinished(result) {
+  assert.equal(result.error?.code, undefined, `the validator did not finish: ${result.error?.message}`);
+}
+
 function assertPasses(result) {
+  assertFinished(result);
   assert.equal(result.status, 0, result.stderr);
   assert.equal(result.stdout.trim(), OK);
 }
 
 function assertFails(result, pattern) {
+  assertFinished(result);
   assert.equal(result.status, 1, `expected a failure, got stdout ${JSON.stringify(result.stdout)}`);
   assert.match(result.stderr, pattern);
   assert.doesNotMatch(result.stdout, new RegExp(OK));
@@ -217,6 +228,47 @@ test('every repo-local skill needs its complete Codex mirror', (t) => {
   assertFails(copy.validate(), /repo-local mirror drift: \.codex\/skills\/acme-guide/);
 });
 
+
+test('the scope-review schema and reviewer contract stay in step', async (t) => {
+  const skill = 'plugins/workbench/skills/scope-review/SKILL.md';
+  const schema = 'plugins/workbench/skills/scope-review/review.schema.json';
+  for (const [label, edit, pattern] of [
+    ['a deleted schema fails', (c) => unlinkSync(c.file(schema)), /missing JSON file: .*review\.schema\.json/],
+    ['an invalid schema fails', (c) => c.write(schema, '{'), /invalid JSON in .*review\.schema\.json/],
+    ['a removed contract fails', (c) => c.write(skill, c.read(skill).split('\n## Reviewer contract\n')[0]), /needs one nonempty Reviewer contract/],
+    ['a duplicated contract heading fails', (c) => c.write(skill, `${c.read(skill)}\n## Reviewer contract\n\nextra\n`), /needs one nonempty Reviewer contract/],
+    ['a contract dropping report and finding fields fails', (c) => c.write(skill, c.read(skill).replaceAll('`limitations`', 'none').replaceAll('`evidence`', 'none')), /omits schema names: limitations, evidence/],
+    ['a renamed schema concern fails', (c) => c.write(schema, c.read(schema).replace('"claim_gap"', '"proof_gap"')), /omits schema names: proof_gap/],
+    ['a contract dropping a verdict fails', (c) => c.write(skill, c.read(skill).replaceAll('`INSUFFICIENT_CONTEXT`', 'none')), /omits schema names: INSUFFICIENT_CONTEXT/],
+  ]) {
+    await t.test(label, (t) => {
+      const copy = copyRepo(t);
+      edit(copy);
+      assertFails(copy.validate(), pattern);
+    });
+  }
+});
+
+for (const [signal, status] of [['SIGTERM', 143], ['SIGINT', 130]]) {
+  test(`a validator stopped by ${signal} during mktemp exits ${status} and removes its temp dir`, async (t) => {
+    const copy = copyRepo(t);
+    const work = copy.file('../work');
+    const release = copy.file('../release');
+    const bin = copy.file('../bin');
+    mkdirSync(bin);
+    writeFileSync(path.join(bin, 'mktemp'), `#!/bin/sh\nmkdir '${work}' && echo '${work}'\nwhile [ ! -e '${release}' ]; do sleep 0.01; done\n`, { mode: 0o755 });
+    const child = spawn('sh', [copy.file('scripts/validate-native-plugin.sh')], {
+      env: { ...copy.env, PATH: `${bin}${path.delimiter}${copy.env.PATH}` }, stdio: 'ignore',
+    });
+    const closed = once(child, 'close');
+    while (!existsSync(work) && child.exitCode === null && child.signalCode === null) await delay(5);
+    child.kill(signal);
+    writeFileSync(release, '');
+    const [code] = await closed;
+    assert.equal(code, status);
+    assert.equal(existsSync(work), false);
+  });
+}
 
 test('an oversized entrypoint fails the native package gate', (t) => {
   const copy = copyRepo(t);

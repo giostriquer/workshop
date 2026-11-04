@@ -115,7 +115,7 @@ FEEDBACK
 | The comment trim: **required** once the work-stream is complete, before the adversarial pass, **dispatched** to an agent that did not write the code | `trim-comments`, run by the `comment-trimmer` agent |
 | The initial adversarial pass: **required** on the trimmed diff, right before PR-or-merge, **dispatched** to reviewers that did not write the code | `code-quality-review`, run by the `code-quality-reviewer` agent; plus `test-quality-review`, run by the `test-quality-reviewer` agent, when the diff changes production logic or tests |
 | Changed behavior, consumer contracts or cross-component wiring, at completion | `contract-review`, run by `contract-reviewer`, given accepted outcomes, approved design and exclusions, diff/base and revision, and verification evidence; behavior and contract review, not convention compliance |
-| Additional scope opinion at the completion round | `scope-review`, one Muse-only CLI attempt; skip any invocation problem, no fallback or delivery hold |
+| Additional scope opinion at the completion round | `scope-review`, one Muse-only attempt; skip any invocation problem, no fallback or delivery hold |
 | Checking existing tests or recommending a testing approach | `test-quality-review`, run by the `test-quality-reviewer` agent; give it the question and target |
 | Landing | outline gate → `file-pr` for opening or pushing to a PR; merge or branch-only push; `fix-ci`. Delegated PR delivery names `file-pr` |
 | Review feedback arrives | `receiving-code-review` |
@@ -228,10 +228,9 @@ Epic returns require verified acknowledgment and a concrete next action; see
 
 ## Workbench agents on Codex
 
-`scope-review` is a separate CLI-backed role on every host, not a registered
-Workbench agent. Follow its direct Muse invocation directions for the current
-host, or its optional packet-only runner. The host-agent instructions below do
-not apply to the reviewer itself.
+`scope-review` is a separate Muse-backed role on every host, not a registered
+Workbench agent. Follow its Muse invocation directions for the current surface.
+The host-agent instructions below do not apply to the reviewer itself.
 
 Each workbench agent file carries a **Dispatch** line near its top that names
 how to dispatch it; the calling skill supplies only the run's inputs. On
