@@ -50,10 +50,10 @@ in `AGENTS.md` as separate blocks. Muse is the same shape: no rules directory
 and no output-style surface, so its document and rules land as blocks in its
 user `AGENTS.md`. That target assumes the default XDG config home
 (`~/.config`); a machine that sets `XDG_CONFIG_HOME` elsewhere keeps its Muse
-configuration there instead, and the muse host will not find it. Muse also
-reads `~/.claude/CLAUDE.md`, so the claude host's document reaches Muse
-sessions too, but its rules directory does not: the muse host is what carries
-the rules there.
+configuration there instead, and the muse host will not find it. Muse reads
+`~/.claude/CLAUDE.md` only while `~/.config/muse/AGENTS.md` does not exist; once
+it exists, Muse loads that file alone. The claude host's rules directory never
+reaches Muse: the muse host is what carries the rules there.
 
 ## Run the plan
 
@@ -88,7 +88,7 @@ the machine.
 
 ## Then reconcile
 
-The script reports mechanics. Three things need a reader, and they are the
+The script reports mechanics. Four things need a reader, and they are the
 reason this skill exists:
 
 1. **`unmanaged`**: everything on the machine the pack does not own, returned
@@ -103,6 +103,12 @@ reason this skill exists:
    whether it is the same rule, a conflicting one, or unrelated.
 3. **Skipped rules**: report the precondition that failed. A rule skipped for a
    missing MCP server is correct behaviour, not a failure.
+4. **Takeovers**: `takeovers` lists each host whose first adoption stops it
+   reading another host's document. For Muse, creating `~/.config/muse/AGENTS.md`
+   stops `~/.claude/CLAUDE.md` reaching its sessions. Read that file and name
+   what Muse would lose. The user chooses: apply and copy what matters into the
+   new file outside the fences, apply and let it go, or leave Muse out with
+   `--host`, which also keeps the pack's rules off Muse.
 
 ## Output styles install, they do not activate
 
@@ -134,7 +140,8 @@ npx github:giostriquer/workshop --dry-run
 The pack is edited in the plugin's own repository and released, never patched on
 a machine. `rules/manifest.json` holds the host list, each host's targets, and
 the rule and output-style lists. Hosts are data: adding one is an entry plus
-its `globals/<HOST>.md`, not a code change, and a host gets output styles only
-if its entry declares a target for them. Rules declare a `tier`: `core` installs
+its `globals/<HOST>.md`, not a code change, a host gets output styles only
+if its entry declares a target for them, and `replaces` names the document a
+host stops reading once its own exists. Rules declare a `tier`: `core` installs
 unconditionally, while a rule with a `requires` precondition is skipped, with a
 reason, where it is unmet.

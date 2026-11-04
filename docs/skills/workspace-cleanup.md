@@ -88,7 +88,7 @@ and a stopped run does not prove its inputs are no longer needed.
 
 **Can it remove session transcripts?**
 
-No. Claude Code, Codex and other agent session history never appears as a
+No. Claude Code, Codex, Muse and other agent session history never appears as a
 candidate, in a size estimate or in a suggestion, and it stays in place even
 when a storage target falls short. The report gives the remaining gap instead.
 

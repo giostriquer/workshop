@@ -21,8 +21,8 @@ already there rather than replacing it.
 | Codex | `~/.codex/AGENTS.md` | `~/.codex/AGENTS.md`, one block each | None; `AGENTS.md` carries the guidance inline |
 | Muse | `~/.config/muse/AGENTS.md` | `~/.config/muse/AGENTS.md`, one block each | None; `AGENTS.md` carries the guidance inline |
 
-The pack ships the `model-floor` rule and the `bluf-ste` output style
-(answer-first responses in plain technical English). Installing a style does
+The pack ships the `model-floor` and `session-transcripts` rules and the
+`bluf-ste` output style (answer-first responses in plain technical English). Installing a style does
 not turn it on: select it with `/output-style`. The session never switches your
 active style.
 
@@ -44,6 +44,8 @@ else.
 
 - **A file you wrote is never touched.** An unmarked file at a rule's or
   style's path is reported as a **collision** and left byte-for-byte as found.
+- **Additive describes files, not what a host reads.** Creating a host's own
+  document can stop it reading another one; see the Muse question below.
 - **Prose outside the fences is preserved.** Your notes around the blocks in
   `CLAUDE.md` or `AGENTS.md` survive verbatim.
 - **A managed block is pack-owned.** A re-run overwrites a drifted block and
@@ -98,6 +100,15 @@ derived from another's.
 No; Claude Code, Codex, and Muse ship as targets. Adding a host is a
 manifest entry plus its `globals/<HOST>.md`, not a code change. The Muse
 target assumes the default XDG config home (`~/.config`).
+
+**Does adopting Muse change what Muse reads?**
+
+Yes. Muse reads `~/.claude/CLAUDE.md` only until `~/.config/muse/AGENTS.md`
+exists, so a first adoption replaces it. Pack rules carry over, and rules kept
+only in `CLAUDE.md` do not. The script warns on every route, and the skill also
+names what Muse would lose. Copy what matters into the new file outside the
+fences, or leave Muse out with `--host`, which also keeps the pack's rules off
+Muse.
 
 ## It's working if
 

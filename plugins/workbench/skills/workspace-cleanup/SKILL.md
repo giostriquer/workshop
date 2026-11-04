@@ -31,8 +31,10 @@ commits need their own authority.
 
 **Session transcripts are never a candidate.** This covers every agent host's
 session history in any form, compressed or not, such as `~/.claude/projects`,
-`~/.claude/history.jsonl`, `~/.codex/sessions`, `~/.codex/archived_sessions` and
-`~/.codex/history.jsonl`. They are the only record of past work and cannot be
+`~/.claude/history.jsonl`, `~/.codex/sessions`, `~/.codex/archived_sessions`,
+`~/.codex/history.jsonl`, `~/.local/share/muse/sessions`,
+`~/.local/share/muse/session-index.db*` and `~/.local/share/muse/tui-history.jsonl`.
+They are the only record of past work and cannot be
 rebuilt. Leave them out of inventories, size totals, batches, reclaim estimates
 and prevention actions. Never suggest, delete, move, compress or truncate them,
 directly or through a parent directory, and never shorten a host's retention

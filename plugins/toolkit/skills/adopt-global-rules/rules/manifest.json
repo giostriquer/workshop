@@ -1,5 +1,5 @@
 {
-  "packVersion": 3,
+  "packVersion": 4,
   "description": "The workshop's shipped global agent configuration, installed onto a machine by adopt-global-rules. Three kinds: a per-host global instruction document (globals/), discrete single-source rules fanned out to every host (rules/), and output styles for hosts that have a first-class surface for them (output-styles/). Paths are relative to the skill directory; targets are relative to the home directory (or to --root). This is plugin payload; it ships with the plugin the same way its skills do, and changes to it are released, not configured per machine.",
   "globalDocId": "globals",
   "hosts": [
@@ -36,6 +36,7 @@
       "detect": ".config/muse",
       "mode": "file",
       "target": ".config/muse/AGENTS.md",
+      "replaces": ".claude/CLAUDE.md",
       "globalDoc": {
         "file": "globals/MUSE.md",
         "target": ".config/muse/AGENTS.md"
@@ -48,6 +49,12 @@
       "tier": "core",
       "title": "Model floor",
       "file": "rules/core/model-floor.md"
+    },
+    {
+      "id": "session-transcripts",
+      "tier": "core",
+      "title": "Session transcripts",
+      "file": "rules/core/session-transcripts.md"
     }
   ],
   "outputStyles": [

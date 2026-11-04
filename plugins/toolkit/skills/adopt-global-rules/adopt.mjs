@@ -353,6 +353,11 @@ for (const host of hosts) {
   }
 }
 
+// A host that stops reading another host's document once its own exists.
+const takeovers = hosts
+  .filter((h) => h.present && h.replaces && !existsSync(join(root, h.target)) && existsSync(join(root, h.replaces)))
+  .map((h) => ({ hostId: h.id, creates: h.target, stopsReading: h.replaces }));
+
 // ── apply ────────────────────────────────────────────────────────────────────
 const writes = [];
 for (const st of fileStates.values()) {
@@ -379,6 +384,7 @@ const result = {
   orphans,
   collisions,
   unmanaged,
+  takeovers,
 };
 
 if (asJson) {
@@ -390,6 +396,11 @@ if (asJson) {
 const icon = { added: "+", updated: "~", unchanged: "=", skipped: ".", collision: "!" };
 console.log(`adopt-global-rules: pack v${manifest.packVersion}${dryRun ? " (dry run: nothing written)" : ""}`);
 console.log(`home: ${root}\n`);
+
+for (const t of takeovers) {
+  const label = hosts.find((h) => h.id === t.hostId).label;
+  console.log(`! ${label}: ${t.creates} replaces ${t.stopsReading}. Rules kept only there no longer reach ${label}.\n`);
+}
 
 for (const host of hosts) {
   const mine = actions.filter((a) => a.hostId === host.id);

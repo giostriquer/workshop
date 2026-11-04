@@ -2,6 +2,12 @@
 
 This is the rationale for the toolkit plugin's `adopt-global-rules` skill and its root `bin/` launcher; superseded choices are omitted, and git history keeps the originals.
 
+## Session transcripts ship as a core rule (2026-11-04)
+
+A storage cleanup permanently deleted hundreds of transcripts after listing session history as a reclaimable item. `workspace-cleanup` now excludes transcripts, but that covers one skill, so the same prohibition ships as the `session-transcripts` core rule and reaches every session on every host.
+
+The rule also closes a Muse gap. Scratch-home probes on Muse 1.4.14 showed Muse loads `~/.claude/CLAUDE.md` only while `~/.config/muse/AGENTS.md` is absent, and loads that file alone once it exists. `--no-foreign-personal-context` and a persisted `context.foreign_personal_rules: false` also skip `CLAUDE.md`. Adopting the muse host therefore replaces what Muse reads, so a rule kept only in a personal `CLAUDE.md` is lost. Pack rules survive that switch, and personal rules do not. The host entry declares this as `replaces`, so the script reports a `takeovers` entry on every route, including the bare-machine launcher, and the skill names what Muse would lose before applying.
+
 ## Haiku gets a narrow lane (2026-10-07)
 
 With Haiku 5.5 released, the operator replaced the shipped `model-floor`

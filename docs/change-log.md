@@ -8,6 +8,15 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## toolkit 0.22.0: 2026-11-04
+
+- **Ship the session-transcript rule on every host.** `adopt-global-rules` adds a `session-transcripts` core rule to Claude Code, Codex and Muse, so sessions never suggest, delete, move, compress or truncate agent session history or shorten a host's retention setting. ([decision](decisions/adopt-global-rules.md#session-transcripts-ship-as-a-core-rule-2026-11-04))
+- **Report when adoption replaces what a host reads.** A host entry can declare `replaces`, and `adopt.mjs` reports a `takeovers` entry with a printed notice on every route, including the launcher. A first Muse adoption replaces `~/.claude/CLAUDE.md` in Muse sessions, so the skill names what Muse would lose and the user chooses how to proceed. ([decision](decisions/adopt-global-rules.md#session-transcripts-ship-as-a-core-rule-2026-11-04))
+
+## workbench 0.62.1: 2026-11-04
+
+- **Name Muse's session storage in cleanup.** `workspace-cleanup` now lists Muse's sessions, session index and prompt history among the transcripts it never touches. ([decision](decisions/workspace-cleanup.md#session-transcripts-are-never-a-candidate-2026-11-04))
+
 ## workbench 0.62.0: 2026-11-04
 
 - **Open reports with holds that stop several lanes.** `epic-orchestration` owner returns gain a required **Active holds** slot ahead of **Progress**, and every other operator reply carries it too. Each line names what is stopped, who ordered it, the source's exact words and what releases it. A reading wider than those words is recorded as the epic owner's, with a request to confirm or narrow it in the same reply. ([decision](decisions/epic-orchestration.md#a-wide-hold-opens-every-report-2026-11-04))
@@ -67,11 +76,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 ## workbench 0.54.0: 2026-10-29
 
 - **Advance epics along their primary journey.** `epic-orchestration` writes the epic's end-to-end steps from its acceptance criteria before the first workset, completes the thinnest path first, and has each dispatch name the step it moves and the tickets it closes. Valid findings that block no current step wait or go to the operator's follow-up list. Repeated partial deliveries trigger a re-plan, and owner returns open with criteria closed and remaining. Holds stop only the step that consumes the missing input, and user-reachable changes are accepted on the running app. ([decision](decisions/epic-orchestration.md#the-epic-advances-along-its-primary-journey-2026-10-29))
-
-## workbench 0.53.2: 2026-10-28
-
-- **Route lane questions through the orchestrator.** `epic-implementation` sends questions and approvals unresolved by the active contract through the normal `need-guidance` handback, including user-input requests from other skills. The orchestrator rules within delegated authority or escalates to the operator; independent authorized work continues while the dependent action waits. ([decision](decisions/epic-implementation.md#questions-through-the-orchestrator-2026-10-28))
-
-## workbench 0.53.1: 2026-10-26
-
-- **Keep epic and ticket statuses current.** `epic-orchestration` now explicitly moves active tickets and their epic to In Progress or the workflow's equivalent, reconciles later transitions, and reports confirmed or pending tracker updates. Queued work and existing completion gates are preserved. ([decision](decisions/epic-orchestration.md#tracker-status-follows-the-work-2026-10-26))
