@@ -16,6 +16,11 @@ import sys
 import tempfile
 import unittest
 
+try:
+    from compression import zstd  # Python 3.14+, as in codex.py
+except ImportError:
+    zstd = None
+
 sys.dont_write_bytecode = True  # keep the skill folder free of __pycache__
 
 SCRIPTS = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "scripts")
@@ -381,6 +386,170 @@ class MineOverFixture(unittest.TestCase):
                         for c in (("reviewers", "--rows"), ("friction",), ("skills",), ("spend",)))
         for detail in (CWD, CLAUDE_PROMPT, CODEX_PROMPT, CUSTOM_AGENT, f"user:{CUSTOM_SKILL}"):
             self.assertIn(detail, out)
+
+
+def compress(path):
+    """Replace a session with its .jsonl.zst form, as Codex does to older sessions."""
+    with open(path, "rb") as src, zstd.open(path + ".zst", "wb") as dst:
+        dst.write(src.read())
+    os.remove(path)
+
+
+@unittest.skipIf(zstd is None, "compressing the fixture needs Python 3.14+")
+class CompressedCodexTree(MineOverFixture):
+    """Every fixture test again, with every Codex session compressed."""
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        for base, _, files in os.walk(os.path.join(cls.root, "codex")):
+            for name in files:
+                compress(os.path.join(base, name))
+
+    def test_sessions_with_no_event_in_the_window_are_not_damage(self):
+        self.assertNotIn("INCOMPLETE", self.mine("friction"))
+
+
+def cut_in_second_frame(path):
+    """Compress a session, then damage it past the lines a reader can already decode."""
+    with open(path, "rb") as src:
+        head = zstd.compress(src.read())
+    tail = zstd.compress(b'{"timestamp":"2026-09-02T09:02:00.000Z","type":"event_msg"}\n' * 50)
+    with open(path + ".zst", "wb") as dst:
+        dst.write(head + tail[:len(tail) // 2])
+    os.remove(path)
+
+
+class CodexCoverage(unittest.TestCase):
+    def setUp(self):
+        self.root = tempfile.mkdtemp(prefix="mine-transcripts-")
+        self.addCleanup(shutil.rmtree, self.root, ignore_errors=True)
+        self.codex = os.path.join(self.root, "codex")
+        self.day = os.path.join(self.codex, "sessions", "2026", "09", "02")
+        self.env = {**os.environ, "HOME": self.root, "CLAUDE_CONFIG_DIR": os.path.join(self.root, "claude"),
+                    "CODEX_HOME": self.codex, "TZ": "UTC"}
+
+    def session(self, name, tid, day=None):
+        path = os.path.join(day or self.day, name)
+        write_jsonl(path, [x_meta(at(9, 0), tid, "cli"), x_user(at(9, 1), 1, PLAIN_PROMPT, ["user.text"])])
+        return path
+
+    def junk(self, name, day=None):
+        path = os.path.join(day or self.day, name)
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, "wb") as fh:
+            fh.write(b"not a zstd frame")
+        return path
+
+    def run_mine(self, command, host):
+        return subprocess.run([sys.executable, "-B", os.path.join(SCRIPTS, "mine.py"), command, "--host", host,
+                               *WINDOW], env=self.env, capture_output=True, text=True, timeout=60)
+
+    def mine(self, command="friction", host="codex"):
+        r = self.run_mine(command, host)
+        self.assertEqual(r.returncode, 0, r.stderr)
+        return r.stdout
+
+    def assert_no_path_leaks(self, out):
+        self.assertNotIn(self.root, out)
+        self.assertNotIn("rollout-", out)
+
+
+class NoZstdInterpreter(CodexCoverage):
+    def test_it_says_so_instead_of_undercounting(self):
+        self.session("rollout-plain.jsonl", "c-plain")
+        self.junk("rollout-old.jsonl.zst")
+        stub = os.path.join(self.root, "stub", "compression")
+        os.makedirs(stub)
+        open(os.path.join(stub, "__init__.py"), "w").close()
+        self.env["PYTHONPATH"] = os.path.dirname(stub)  # shadows the stdlib package, as a pre-3.14 Python has none
+        out = self.mine()
+        self.assertIn("threads: codex main 1\n", out)
+        self.assertIn("INCOMPLETE: 1 compressed Codex sessions skipped; reading them needs Python 3.14+", out)
+        self.assert_no_path_leaks(out)
+
+
+class PlainSessionCoverage(CodexCoverage):
+    @unittest.skipIf(os.geteuid() == 0, "root reads a mode-0 file")
+    def test_an_unreadable_plain_session_still_raises(self):
+        os.chmod(self.session("rollout-a.jsonl", "c-a"), 0)
+        r = self.run_mine("friction", "codex")
+        self.assertNotEqual(r.returncode, 0)
+        self.assertIn("PermissionError", r.stderr)
+        self.assertNotIn("INCOMPLETE", r.stdout)
+
+    def test_a_subagent_source_given_as_a_string_is_read(self):
+        write_jsonl(os.path.join(self.day, "rollout-a.jsonl"), [
+            x_meta(at(9, 0), "c-a", {"subagent": "review"}),
+            x_user(at(9, 1), 1, PLAIN_PROMPT, ["user.text"]),
+        ])
+        self.assertIn("threads: codex sub 1\n", self.mine())
+
+    def test_a_claude_only_run_needs_no_codex_scan(self):
+        self.assertNotIn("INCOMPLETE", self.mine(host="claude"))
+
+
+@unittest.skipIf(zstd is None, "compressing the fixture needs Python 3.14+")
+class CompressedSessionCoverage(CodexCoverage):
+    def test_a_session_in_both_forms_reads_the_plain_copy(self):
+        self.session("rollout-a.jsonl", "c-a")
+        self.junk("rollout-a.jsonl.zst")
+        out = self.mine()
+        self.assertIn("threads: codex main 1\n", out)
+        self.assertNotIn("INCOMPLETE", out)
+
+    def test_the_plain_copy_wins_across_session_trees(self):
+        self.junk("rollout-a.jsonl.zst")
+        self.session("rollout-a.jsonl", "c-a", day=os.path.join(self.codex, "archived_sessions"))
+        out = self.mine()
+        self.assertIn("threads: codex main 1\n", out)
+        self.assertNotIn("INCOMPLETE", out)
+
+    def test_a_session_damaged_partway_is_dropped_whole_and_every_command_says_so(self):
+        path = self.session("rollout-cut.jsonl", "c-cut")
+        cut_in_second_frame(path)
+        for command in ("skills", "reviewers", "friction", "spend"):
+            with self.subTest(command):
+                out = self.mine(command)
+                self.assertIn("threads: none\n", out)
+                self.assertIn("INCOMPLETE: 1 compressed Codex sessions unreadable", out)
+                self.assert_no_path_leaks(out)
+
+    def test_damaged_sessions_are_counted_and_the_others_still_count(self):
+        self.session("rollout-good.jsonl", "c-good")
+        cut_in_second_frame(self.session("rollout-cut.jsonl", "c-cut"))
+        self.junk("rollout-bad.jsonl.zst")
+        out = self.mine()
+        self.assertIn("threads: codex main 1\n", out)
+        self.assertIn("INCOMPLETE: 2 compressed Codex sessions unreadable", out)
+
+    @unittest.skipIf(os.geteuid() == 0, "root reads a mode-0 file")
+    def test_a_compressed_session_that_cannot_be_opened_is_counted(self):
+        compress(self.session("rollout-a.jsonl", "c-a"))
+        os.chmod(os.path.join(self.day, "rollout-a.jsonl.zst"), 0)
+        self.assertIn("INCOMPLETE: 1 compressed Codex sessions unreadable", self.mine())
+
+    def test_a_compressed_file_that_is_not_a_session_is_counted(self):
+        os.makedirs(self.day)
+        for name, content in (("rollout-garbage.jsonl.zst", b"not json\n"), ("rollout-empty.jsonl.zst", b"")):
+            with open(os.path.join(self.day, name), "wb") as fh:
+                fh.write(zstd.compress(content))
+        out = self.mine()
+        self.assertIn("threads: none\n", out)
+        self.assertIn("INCOMPLETE: 2 compressed Codex sessions unreadable", out)
+
+    def test_a_compressed_session_with_undecodable_bytes_is_counted(self):
+        path = self.session("rollout-a.jsonl", "c-a")
+        with open(path, "ab") as fh:
+            fh.write(b'{"timestamp":"\xff","type":"event_msg"}\n')
+        compress(path)
+        self.assertIn("INCOMPLETE: 1 compressed Codex sessions unreadable", self.mine())
+
+    def test_a_complete_read_prints_no_warning(self):
+        compress(self.session("rollout-old.jsonl", "c-old"))
+        out = self.mine()
+        self.assertIn("threads: codex main 1\n", out)
+        self.assertNotIn("INCOMPLETE", out)
 
 
 class LaterPassPatterns(unittest.TestCase):

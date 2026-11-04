@@ -2,18 +2,24 @@
 
 An owner return has these parts, in order:
 
-1. **Progress:** acceptance criteria closed, criteria remaining, and the journey
+1. **Active holds:** present whenever a hold stops more than one lane or workset.
+   One line per such hold; any other hold stays out of this slot:
+   `HOLD: <lanes or worksets stopped, n of m> · ordered by <operator | epic owner> · source: "<exact words>" · released by <owner and condition>`
+   Name the operator only when the quoted words cover everything stopped. For a
+   wider reading, write `epic owner`, and ask the operator to confirm or narrow it
+   in the same reply.
+2. **Progress:** acceptance criteria closed, criteria remaining, and the journey
    step now in work.
-2. **Verified disposition:** results, revision and remaining gates. Distinguish
+3. **Verified disposition:** results, revision and remaining gates. Distinguish
    validation, PR readiness, merge and epic completion. Include **Tracker sync**:
    confirmed ticket and epic statuses, pending updates with their owner and
    reason, or not applicable when no tracker is used.
-3. **Required lane handoff:** the lane-specific label and populated fenced pointer
+4. **Required lane handoff:** the lane-specific label and populated fenced pointer
    from **Dispatching** for each affected lane. Include it when accepting or
    rejecting a report, returning a correction or ruling, or authorizing delivery, including after
    recovery and when no more implementation is needed. If only an operator
    decision remains, return the lane's disposition and current hold.
-4. **Immediate next action:** continue authorized work or dispatch a revalidated
+5. **Immediate next action:** continue authorized work or dispatch a revalidated
    workset; advance pending delivery; issue the closing audit; propose closure;
    or name a blocker, owner and unblock while advancing independent work. Put
    operator decisions here, outside the paste blocks. Do not ask the operator
@@ -23,7 +29,8 @@ Before sending the final reply, check that every lane-facing disposition has
 its actual file, its own `Paste this into <LANE>:` label and its fenced pointer
 in the reply, with the same canonical name in the label, pointer and ledger.
 Progress updates and answers that carry no lane-facing disposition
-can stay brief prose; a progress update still opens with **Progress**.
+can stay brief prose, but both still open with any **Active holds** lines. A
+progress update then gives **Progress**.
 
 **Audit returns name what is finished.** In the return file and the operator-facing
 disposition, state these separately:

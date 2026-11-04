@@ -1,5 +1,9 @@
 # mine-transcripts: decisions in force
 
+## Compressed Codex sessions count (2026-11-04)
+
+Codex now compresses older sessions to `.jsonl.zst`, including some from the current week. The reader matched only `.jsonl`, so a two-week speed comparison silently missed 3,197 files and made earlier weeks look almost idle. The reader now streams both forms through the standard library's `compression.zstd`, keeping the skill dependency-free. A session present in both forms counts once, as the plain copy, even when the copies sit in different session trees. A compressed session that cannot be read or does not open with `session_meta`, or an interpreter older than Python 3.14, prints an `INCOMPLETE` banner line with the count, because an undercount that looks like a quiet week is the failure this fixes. A session the decoder rejects is dropped whole, with no partial thread. Codex writes frames without a content checksum, so damage the decoder cannot detect can still alter a thread unnoticed. `tests/test_mine.py` reruns every fixture test with the whole Codex tree compressed.
+
 ## Role evidence is separate from inference (2026-10-14)
 
 Reading a reviewer rubric does not establish that a thread was dispatched as a

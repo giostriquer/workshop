@@ -50,6 +50,8 @@ Record fields used: `type` (`user`, `assistant`, `attachment`, `system`, ...),
 
 Root: `$CODEX_HOME` or `~/.codex`, then `sessions/YYYY/MM/DD/rollout-<time>-<id>.jsonl`
 and `archived_sessions/`. One file per thread; a spawned subagent gets its own file.
+Older sessions, and some from the current week, are compressed to `.jsonl.zst` with their
+mtime kept, and hold most of the history. Reading them needs Python 3.14+ (`compression.zstd`).
 
 Every line starts `{"timestamp":..,"ordinal":N,"type":T,"payload":{"type":P,...` (the
 ordinal is sometimes absent), so a regex on the head decides whether to parse. Tool

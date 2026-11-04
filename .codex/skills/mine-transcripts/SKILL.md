@@ -8,7 +8,7 @@ description: Use when a question needs numbers from this machine's Claude Code o
 ## Overview
 
 Committed scripts that answer cross-session questions over `~/.claude/projects` and
-`~/.codex/sessions` in under a minute. The JSONL schemas, rubric-version detection and
+`~/.codex/sessions` in about a minute. The JSONL schemas, rubric-version detection and
 round segmentation are solved here and reproduce past audit numbers. Run a command before
 writing any parser; extend `mine.py` when no command fits.
 
@@ -82,3 +82,4 @@ change there, with placeholder strings only, and run from the repo root:
 | Reading a trend off a week marked `*` | That week is partial; pick `--since`/`--until` on whole weeks or compare equal spans |
 | Comparing Claude and Codex numbers directly | Compare within a host |
 | Pasting `--local-detail` output into a note | Quote the default output only |
+| Quoting numbers under an `INCOMPLETE` banner line | Compressed Codex sessions were left out; rerun on Python 3.14+ or say what is missing |

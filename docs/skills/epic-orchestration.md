@@ -81,8 +81,8 @@ Worksets complete the thinnest end-to-end path first, then widen it, unless you
 set another order. Each implementation dispatch names the step it moves and the
 tickets its delivery closes. A delivery that leaves a ticket open names what
 remains and the workset that closes it; a second partial delivery without one
-re-plans that ticket. Every owner return opens with the criteria closed, the
-criteria remaining and the step now in work.
+re-plans that ticket. After any active holds, every owner return opens with the
+criteria closed, the criteria remaining and the step now in work.
 
 **Does it check that a ticket is still valid before assigning it?**
 
@@ -151,6 +151,11 @@ dependency or an unfinished review names that step, who can release it and
 the governing source. Independent work, and work against an agreed interface,
 keeps moving, with the reconciliation point recorded. A review you schedule for
 later holds nothing unless you name it as a gate.
+
+A hold that stops more than one lane or workset opens every reply to you, with
+what it stops, who ordered it, the exact words it rests on and what releases it.
+When the coordinator's reading goes wider than your words, the hold shows the
+coordinator as the one who ordered it, and you are asked to confirm or narrow it.
 
 **How does it group work into lanes?**
 
@@ -302,8 +307,8 @@ needs its closure gates and your decision.
 
 **How does each reply end?**
 
-An owner return opens with progress (criteria closed, criteria remaining, the
-journey step in work), then gives the verified result and revision, the required
+After any active holds, an owner return opens with progress (criteria closed,
+criteria remaining, the journey step in work), then gives the verified result and revision, the required
 copyable handoff for each affected lane, and a concrete next action with its owner.
 Accepting or rejecting a report, issuing a ruling and authorizing delivery all
 require the file and fenced pointer. A prose recap or ledger update alone does
@@ -359,6 +364,7 @@ review mechanics.
 - Each return tells you which criteria closed and which remain; tickets close as
   their steps are accepted.
 - A hold names the one step it stops; the rest of the epic keeps moving.
+- A hold across several lanes is the first thing you read in every reply.
 - User-reachable changes are accepted on the running app.
 - Every auditor dispatch requires `epic-auditor`; audit handbacks remain complete
   copyable reports across follow-ups and recovery.

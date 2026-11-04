@@ -25,9 +25,19 @@ rechecking evidence; do not ask for the same approval again. Unclear scope
 holds only the affected entries. An epic request follows these same rules.
 
 A general cleanup request does not authorize deleting personal documents,
-credentials, settings, session transcripts, installed applications or backups.
+credentials, settings, installed applications or backups.
 Surface large out-of-scope items separately. Remote writes, tracker changes and
 commits need their own authority.
+
+**Session transcripts are never a candidate.** This covers every agent host's
+session history in any form, compressed or not, such as `~/.claude/projects`,
+`~/.claude/history.jsonl`, `~/.codex/sessions`, `~/.codex/archived_sessions` and
+`~/.codex/history.jsonl`. They are the only record of past work and cannot be
+rebuilt. Leave them out of inventories, size totals, batches, reclaim estimates
+and prevention actions. Never suggest, delete, move, compress or truncate them,
+directly or through a parent directory, and never shorten a host's retention
+setting. When a storage target cannot be met without them, report the remaining
+gap without naming them as a way to close it.
 
 If the user gives a used-space or free-space target, record the filesystem,
 units, baseline and required recovery. Continue through worthwhile candidates

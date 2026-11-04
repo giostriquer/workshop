@@ -62,11 +62,12 @@ def load(args):
     until = args.until or dt.date.today()
     since = args.since or until - dt.timedelta(days=args.days)
     window = Window(since, until)
-    threads = []
+    threads, skipped = [], Counter()
     if args.host in ("claude", "all"):
         threads += claude_code.scan(window, keep_text=args.local_detail)
     if args.host in ("codex", "all"):
-        threads += codex.scan(window, keep_text=args.local_detail)
+        codex_threads, skipped = codex.scan(window, keep_text=args.local_detail)
+        threads += codex_threads
     labeler = Labeler(args.local_detail, [p for p in args.public_plugins.split(",") if p])
     index = {(th.host, th.id): th for th in threads}
     for th in threads:
@@ -77,15 +78,21 @@ def load(args):
             root, hops = index[(th.host, root.parent)], hops + 1
         if root is not th and root.project != "unknown":
             th.project = root.project
+    banner(args, window, threads, skipped)
     return window, threads, labeler, index
 
 
-def banner(title, args, window, threads):
+def banner(args, window, threads, skipped):
     if args.local_detail:
         print("LOCAL DETAIL: real names and text below. Never paste this output into a repository, PR or ticket.")
     counts = Counter((th.host, th.origin) for th in threads)
     parts = ", ".join(f"{h} {o} {n}" for (h, o), n in sorted(counts.items()))
-    print(f"{title}  window {window}  host={args.host}  threads: {parts or 'none'}")
+    print(f"{args.command}  window {window}  host={args.host}  threads: {parts or 'none'}")
+    if skipped["no_zstd"]:
+        print(f"INCOMPLETE: {skipped['no_zstd']} compressed Codex sessions skipped; "
+              "reading them needs Python 3.14+")
+    if skipped["unreadable"]:
+        print(f"INCOMPLETE: {skipped['unreadable']} compressed Codex sessions unreadable")
 
 
 def keep(th, args):
@@ -104,7 +111,6 @@ def fmt(value, digits=1):
 
 def cmd_skills(args):
     window, threads, labeler, _ = load(args)
-    banner("skills", args, window, threads)
     weeks = window.weeks()
     for host in sorted({th.host for th in threads}):
         agg = defaultdict(Counter)
@@ -189,7 +195,6 @@ def rubric_version(th, kind, index):
 
 def cmd_reviewers(args):
     window, threads, _, index = load(args)
-    banner("reviewers", args, window, threads)
     kinds = [k.strip() for k in args.kinds.split(",") if k.strip() in KINDS]
     dispatches, excluded, unknown = [], Counter(), Counter()
     for th in threads:
@@ -271,7 +276,6 @@ def cmd_reviewers(args):
 
 def cmd_friction(args):
     window, threads, _, _ = load(args)
-    banner("friction", args, window, threads)
     weeks = window.weeks()
     for host in sorted({th.host for th in threads}):
         per = defaultdict(Counter)
@@ -333,7 +337,6 @@ def agent_label(th, labeler):
 
 def cmd_spend(args):
     window, threads, labeler, _ = load(args)
-    banner("spend", args, window, threads)
     weeks = window.weeks()
     for host in sorted({th.host for th in threads}):
         hs = [th for th in threads if th.host == host and keep(th, args)]

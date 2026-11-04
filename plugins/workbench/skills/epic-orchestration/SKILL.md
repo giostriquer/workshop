@@ -159,7 +159,8 @@ sessions go through the operator; helpers do not replace that handoff.
 
 **Holds stop one step.** Missing authority, a dependency or unfinished review
 holds only the step that consumes it. Name that step, its release owner and its
-governing source. Advance independent authorized work. A later operator review
+governing source, quoting its exact words; a wider reading is your own ruling.
+Advance independent authorized work. A later operator review
 is a gate only when the operator says so. Resolve your own delivery gate, preserve
 operator-reserved decisions, and do not infer merge authority or issue work whose
 trigger has not fired.
@@ -298,6 +299,8 @@ and Tracker sync, each required lane's complete file/label/pointer handoff, and
 the immediate next authorized action or a named blocker and owner. Check that
 every lane-facing disposition has its own populated handoff with the same
 canonical name. Routine progress with no lane disposition can stay brief prose.
+A hold stopping more than one lane or workset opens every operator reply, in
+the **Active holds** form from Owner returns.
 
 Keep audit-report acceptance, auditor-assignment completion and epic closure
 separate. When no assigned audit work remains, explicitly release the auditor

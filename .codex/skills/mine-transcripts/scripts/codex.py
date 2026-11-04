@@ -1,4 +1,4 @@
-"""Codex reader: streams ~/.codex/sessions/YYYY/MM/DD/*.jsonl (and archived_sessions) into Thread records.
+"""Codex reader: streams ~/.codex/sessions/YYYY/MM/DD/*.jsonl[.zst] (and archived_sessions) into Thread records.
 
 Every line starts {"timestamp":..,"ordinal":..,"type":..,"payload":{"type":..}, so the head
 is matched with a regex and only the few line types the reports need are JSON-parsed.
@@ -9,6 +9,11 @@ import json
 import os
 import re
 from collections import Counter
+
+try:
+    from compression import zstd  # Python 3.14+
+except ImportError:
+    zstd = None
 
 from common import CODEX_HOME, DEF_PATH_RE, PLUGIN_PATH_RE, Thread, local_scope, ts_of
 
@@ -32,23 +37,44 @@ def _load(raw):
 
 
 def transcript_files(window):
-    seen = set()
+    chosen = {}  # session file name -> path; a plain copy replaces a compressed one wherever each lives
     for base in (os.path.join(CODEX_HOME, "sessions"), os.path.join(CODEX_HOME, "archived_sessions")):
         for d, _, files in os.walk(base):
             for f in sorted(files):
+                name = f.removesuffix(".zst")
                 fp = os.path.join(d, f)
-                if f.endswith(".jsonl") and f not in seen and os.path.getmtime(fp) >= window.start:
-                    seen.add(f)
-                    yield fp
+                if name.endswith(".jsonl") and os.path.getmtime(fp) >= window.start:
+                    if name not in chosen or (chosen[name].endswith(".zst") and f == name):
+                        chosen[name] = fp
+    return chosen.values()
 
 
 def scan(window, keep_text=False):
-    threads = []
+    """Returns the threads and a Counter of compressed sessions left out: no_zstd and unreadable."""
+    threads, skipped = [], Counter()
     for path in transcript_files(window):
-        th = _scan_file(path, window, keep_text)
+        if path.endswith(".zst"):
+            th = _scan_compressed(path, window, keep_text, skipped)
+        else:
+            with open(path, "rb") as fh:
+                th = _scan_stream(fh, path, window, keep_text)
         if th is not None and th.first is not None:
             threads.append(th)
-    return threads
+    return threads, skipped
+
+
+def _scan_compressed(path, window, keep_text, skipped):
+    if zstd is None:
+        skipped["no_zstd"] += 1
+        return None
+    try:
+        with zstd.open(path, "rb") as fh:
+            th = _scan_stream(fh, path, window, keep_text)
+    except (OSError, EOFError, ValueError, zstd.ZstdError):
+        th = None  # dropped whole: a partial thread would skew every report
+    if th is None:  # a finished session always opens with session_meta
+        skipped["unreadable"] += 1
+    return th
 
 
 def _origin(source):
@@ -60,62 +86,62 @@ def _origin(source):
     return "sub"
 
 
-def _scan_file(path, window, keep_text):
-    with open(path, "rb") as fh:
-        meta = _load(fh.readline())
-        if meta.get("type") != "session_meta":
-            return None
-        p = meta.get("payload") or {}
-        th = Thread("codex", p.get("id") or os.path.basename(path), _origin(p.get("source")))
-        source = p.get("source")
-        spawn = ((source.get("subagent") or {}).get("thread_spawn") or {}) if isinstance(source, dict) else {}
-        th.parent = p.get("parent_thread_id") or spawn.get("parent_thread_id")
-        th.cwd = p.get("cwd")
-        th.name = (p.get("agent_path") or spawn.get("agent_path") or "").rsplit("/", 1)[-1]
-        th.agent_type = p.get("agent_role") or spawn.get("agent_role")
-        th.automated = p.get("source") == "exec"
-        start_ordinal = p.get("subagent_history_start_ordinal")
-        tokens_before = tokens_last = None
-        for i, raw in enumerate(fh, 1):
-            m = HEAD_RE.match(raw, 0, 300)
-            if not m:
+def _scan_stream(fh, path, window, keep_text):
+    meta = _load(fh.readline())
+    if meta.get("type") != "session_meta":
+        return None
+    p = meta.get("payload") or {}
+    th = Thread("codex", p.get("id") or os.path.basename(path), _origin(p.get("source")))
+    source = p.get("source")
+    sub = source.get("subagent") if isinstance(source, dict) else None
+    spawn = (sub.get("thread_spawn") or {}) if isinstance(sub, dict) else {}
+    th.parent = p.get("parent_thread_id") or spawn.get("parent_thread_id")
+    th.cwd = p.get("cwd")
+    th.name = (p.get("agent_path") or spawn.get("agent_path") or "").rsplit("/", 1)[-1]
+    th.agent_type = p.get("agent_role") or spawn.get("agent_role")
+    th.automated = p.get("source") == "exec"
+    start_ordinal = p.get("subagent_history_start_ordinal")
+    tokens_before = tokens_last = None
+    for i, raw in enumerate(fh, 1):
+        m = HEAD_RE.match(raw, 0, 300)
+        if not m:
+            continue
+        ordinal = int(m.group(2)) if m.group(2) else i
+        if start_ordinal is not None and ordinal < start_ordinal:
+            continue  # history copied from the parent into a forked subagent
+        ts = ts_of(m.group(1).decode())
+        kind, ptype = m.group(3), m.group(4)
+        if (th.origin == "sub" and th.contract is None and ts is not None and ts < window.start
+                and kind == b"response_item" and ptype == b"message" and b'"role":"user"' in raw[:400]):
+            _contract(th, _load(raw).get("payload") or {})
+        if kind == b"event_msg" and ptype == b"token_count":
+            if ts is not None and ts < window.start:
+                tokens_before = raw
+            elif ts in window:
+                tokens_last = raw
+            continue
+        if ts not in window:
+            continue
+        if kind == b"event_msg":
+            if ptype == b"task_started" and th.origin != "main":
+                th.start_round(ts, "initial" if not th.rounds else "followup")
+            elif ptype in (b"task_complete", b"turn_aborted"):
+                th.touch(ts)
+                th.round_open = False
+                if ptype == b"turn_aborted" and b'"interrupted"' in raw:
+                    th.interrupts.append(ts)
                 continue
-            ordinal = int(m.group(2)) if m.group(2) else i
-            if start_ordinal is not None and ordinal < start_ordinal:
-                continue  # history copied from the parent into a forked subagent
-            ts = ts_of(m.group(1).decode())
-            kind, ptype = m.group(3), m.group(4)
-            if (th.origin == "sub" and th.contract is None and ts is not None and ts < window.start
-                    and kind == b"response_item" and ptype == b"message" and b'"role":"user"' in raw[:400]):
-                _contract(th, _load(raw).get("payload") or {})
-            if kind == b"event_msg" and ptype == b"token_count":
-                if ts is not None and ts < window.start:
-                    tokens_before = raw
-                elif ts in window:
-                    tokens_last = raw
-                continue
-            if ts not in window:
-                continue
-            if kind == b"event_msg":
-                if ptype == b"task_started" and th.origin != "main":
-                    th.start_round(ts, "initial" if not th.rounds else "followup")
-                elif ptype in (b"task_complete", b"turn_aborted"):
-                    th.touch(ts)
-                    th.round_open = False
-                    if ptype == b"turn_aborted" and b'"interrupted"' in raw:
-                        th.interrupts.append(ts)
-                    continue
-            elif kind == b"response_item":
-                if ptype in (b"function_call", b"custom_tool_call") and (b"SKILL.md" in raw or b"/agents/" in raw):
-                    _tool_call(th, raw, ts)
-                elif ptype == b"message" and b'"role":"user"' in raw[:400]:
-                    _user_message(th, raw, ts, keep_text)
-            elif kind == b"turn_context":
-                model = (_load(raw).get("payload") or {}).get("model")
-                if model:
-                    th.models[model] += 1
-            th.touch(ts)
-        th.tokens = _token_delta(tokens_before, tokens_last)
+        elif kind == b"response_item":
+            if ptype in (b"function_call", b"custom_tool_call") and (b"SKILL.md" in raw or b"/agents/" in raw):
+                _tool_call(th, raw, ts)
+            elif ptype == b"message" and b'"role":"user"' in raw[:400]:
+                _user_message(th, raw, ts, keep_text)
+        elif kind == b"turn_context":
+            model = (_load(raw).get("payload") or {}).get("model")
+            if model:
+                th.models[model] += 1
+        th.touch(ts)
+    th.tokens = _token_delta(tokens_before, tokens_last)
     return th
 
 

@@ -1,5 +1,21 @@
 # Workspace cleanup and disk recovery
 
+## Session transcripts are never a candidate (2026-11-04)
+
+A cleanup toward a used-space target listed agent session history as a 41 GB item
+in a numbered step. The operator approved the step, and it permanently deleted 815
+Claude Code transcripts, 378 session folders and 45 Codex session files older than
+two days. The earlier rule only kept a general request from authorizing that
+deletion, and its instruction to surface large out-of-scope items is what put
+transcripts on the list. A later speed audit then had no Claude Code history
+before the cleanup to compare against.
+
+Transcripts are now excluded outright: they appear in no inventory, estimate,
+batch or prevention action, and no approval wording reaches them. A target that
+cannot be met without them ends as a reported gap. The exclusion is categorical
+because the loss is unrecoverable, while the space is small next to what Docker
+and build output reclaim.
+
 ## Purpose and authority (2026-10-22)
 
 Rename `epic-cleanup` to `workspace-cleanup`. Cleanup serves recurring disk
@@ -79,8 +95,8 @@ it does not treat old, ignored, untagged or unattached data as disposable.
 - Keep host disk recovery distinct from Docker's logical accounting and apparent
   disk-image size. Permission failures and unavailable daemons remain gaps while
   independent approved cleanup continues.
-- A general cleanup ask does not authorize application uninstall, transcript
-  deletion, remote branch deletion, forced removal or manual Docker storage deletion.
+- A general cleanup ask does not authorize application uninstall, remote branch
+  deletion, forced removal or manual Docker storage deletion.
 
 ## Verification
 

@@ -9,7 +9,8 @@ closure bar, exclusions and scope sources distinct from discovered follow-ups,
 including findings that move no step. Track each workset's state, assigned lane,
 readiness dependencies and next action separately from a lane's completed history.
 Track active lanes and contract revisions, worktrees, holds, decisions and their
-sources and owners.
+sources and owners. Record each hold with what it stops and its source's exact
+words, so a recovered session cannot widen it.
 Index briefs, evidence, recovery material and the tracker backlog; governing
 scope sources determine membership. Record local tooling locations and their
 publication boundary, including the source of any explicit promotion, so recovery

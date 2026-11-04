@@ -2,6 +2,26 @@
 
 This note is the rationale for the `epic-orchestration` skill, shipped in the `workbench` plugin; superseded choices are omitted and git history keeps the originals.
 
+## A wide hold opens every report (2026-11-04)
+
+The operator asked whether one service's PR should wait for a first run on a
+hosting platform. The owner recorded that question as a ruling that nothing
+reaches the integration branch until that run, attributed the ruling to the
+operator, and enforced it for about 30 hours while 8 of 10 work streams sat idle.
+Reports described idle lanes without leading on the cause. The operator asked why
+nothing was moving and lifted the hold only after learning its full reach, and
+the owner then acknowledged having widened the question. **Holds stop one step**
+already forbade that width, and an earlier epic had the same failure, but no
+output carried a hold's reach to the operator.
+
+The owner return gains a required **Active holds** slot ahead of **Progress**,
+for any hold stopping more than one lane or workset, and every other reply to
+the operator carries it too. A hold keeps its source's exact words in the ledger, and a
+reading wider than those words is recorded as the epic owner's, with a request
+to confirm or narrow it. A structural slot fits because the owner was not
+choosing to hide the hold: it omitted an element from a report it already wrote.
+Any other hold stays out of the slot so it keeps its signal.
+
 ## The epic advances along its primary journey (2026-10-29)
 
 A long multi-person access epic kept dispatching worksets while its own ledger
@@ -27,8 +47,8 @@ second partial delivery on one ticket without a closing workset triggers a
 re-plan. A finding enters a workset only when it blocks the next step on the
 current path. One that serves a later step waits against that step, and one
 that moves no step goes to the operator's follow-up list. Defects in a lane's
-own change remain ordinary corrections. Owner returns open with criteria
-closed, criteria remaining and the step in work.
+own change remain ordinary corrections. After any active holds, owner returns
+open with criteria closed, criteria remaining and the step in work.
 
 Holds now stop only the exact step that consumes the missing ruling, dependency
 or review output. Independent work, and work against an agreed interface, keeps

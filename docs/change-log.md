@@ -8,6 +8,11 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.62.0: 2026-11-04
+
+- **Open reports with holds that stop several lanes.** `epic-orchestration` owner returns gain a required **Active holds** slot ahead of **Progress**, and every other operator reply carries it too. Each line names what is stopped, who ordered it, the source's exact words and what releases it. A reading wider than those words is recorded as the epic owner's, with a request to confirm or narrow it in the same reply. ([decision](decisions/epic-orchestration.md#a-wide-hold-opens-every-report-2026-11-04))
+- **Never touch session transcripts during cleanup.** `workspace-cleanup` leaves agent session history out of inventories, totals, batches, estimates and prevention advice. It never suggests, deletes, moves, compresses or truncates that history, never shortens a host's retention setting, and reports a storage target it cannot reach without them as a remaining gap. ([decision](decisions/workspace-cleanup.md#session-transcripts-are-never-a-candidate-2026-11-04))
+
 ## workbench 0.61.0: 2026-11-04
 
 - **Let the Muse scope review read the whole checkout.** `scope-review` starts from named files and follows them through the reviewed checkout, under one 10-minute deadline instead of 120 seconds and 8 model steps. The packet-only runner is gone. A read or search result from a secret-bearing file or outside the checkout rejects the run and is reported to the user. ([decision](decisions/scope-review.md#checkout-reads-no-runner-2026-11-04))
@@ -70,7 +75,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 ## workbench 0.53.1: 2026-10-26
 
 - **Keep epic and ticket statuses current.** `epic-orchestration` now explicitly moves active tickets and their epic to In Progress or the workflow's equivalent, reconciles later transitions, and reports confirmed or pending tracker updates. Queued work and existing completion gates are preserved. ([decision](decisions/epic-orchestration.md#tracker-status-follows-the-work-2026-10-26))
-
-## workbench 0.53.0: 2026-10-22
-
-- **Reclaim workspace disk space with `workspace-cleanup`.** This replaces `epic-cleanup` with one workflow for project and machine cleanup, covering worktrees, Docker, build caches, `.workbench` and `.tmp` artifacts. It measures bloat, preserves active and unique work, acts on selected targets under existing authorization, and verifies recovered space. ([decision](decisions/workspace-cleanup.md#purpose-and-authority-2026-10-22))

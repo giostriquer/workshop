@@ -9,8 +9,8 @@ and disposition, and state the lane's current authorized action or hold.
 
 **Holds stop one step.** Missing or conflicting authority, a pending dependency
 or an unfinished review holds only the exact step that consumes its output.
-Each hold names that step, who can release it and its governing source. Keep
-independent work, and work against an agreed interface, moving; record where it
+Each hold names that step, who can release it and its governing source, quoting
+its exact words; a wider reading is the owner's own ruling. Keep independent work, and work against an agreed interface, moving; record where it
 reconciles with the held input. A review the operator schedules for later holds
 neither implementation nor delivery unless the operator names it as a gate.
 
