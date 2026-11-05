@@ -14,7 +14,7 @@ on failure. Code, test and contract review retain their existing gates.
 Use the already configured Muse. Trust its authentication and billing;
 do not inspect credentials, select subscription versus API billing, or change
 account settings. The reviewer always runs on `meta` / `muse-wonder-full-1.0`
-with high reasoning.
+with xhigh reasoning.
 
 In the work scope's scratch folder, prepare a prompt with the reviewer contract
 below and these inputs. Plain text or existing scope documents are sufficient;
@@ -44,8 +44,8 @@ Otherwise run `muse exec` directly. Choose the route before the attempt.
 A wrapper can run Muse itself: T3 Code's `delegate_task` takes Muse as a target
 provider, and other surfaces may offer an equivalent. Run the review through that
 handler rather than shelling out: a fresh Muse session on `meta` /
-`muse-wonder-full-1.0` with high reasoning, the prepared prompt, the reviewed
-checkout and a 10-minute deadline. A Muse session's own child agents are not a
+`muse-wonder-full-1.0` with xhigh reasoning, the prepared prompt, the reviewed
+checkout and a 15-minute deadline. A Muse session's own child agents are not a
 handler, so a Muse host runs `muse exec`.
 
 A native handler may not remove tools the way `muse exec` does. Use the surface's
@@ -55,8 +55,8 @@ or question from the reviewer is unexpected tool use: never approve it, cancel t
 run and record `SKIPPED`.
 
 In T3 Code call `delegate_task` with `target: { driverKind: "muse", model:
-"muse-wonder-full-1.0", options: { reasoningEffort: "high" } }`,
-`runtimeMode: "approval-required"`, `mode: "wait"` and `timeoutMs: 600000`. That mode
+"muse-wonder-full-1.0", options: { reasoningEffort: "xhigh" } }`,
+`runtimeMode: "approval-required"`, `mode: "wait"` and `timeoutMs: 900000`. That mode
 gates shell and writes behind approval rather than removing them, and the session
 keeps T3's MCP tools. A timeout, approval or question ends the wait with the child
 still alive, so call `task_cancel` unless the task completed. Read what Muse did with
@@ -80,7 +80,7 @@ Example, with paths resolved to the current skill and work scope:
 
 ```sh
 MUSE_NO_AUTO_UPDATE=1 MUSE_LOGIN=0 muse exec \
-  --provider meta --model muse-wonder-full-1.0 --reasoning-effort high \
+  --provider meta --model muse-wonder-full-1.0 --reasoning-effort xhigh \
   --preset native-basic --permission-profile :read-only \
   --disable-shell --disable-write --disable-web-tools --disable-reminders \
   --disable-request-user-input --no-foreign-personal-context --no-session-log \
@@ -89,7 +89,7 @@ MUSE_NO_AUTO_UPDATE=1 MUSE_LOGIN=0 muse exec \
   > .workbench/example/scope-events.jsonl 2> .workbench/example/scope-stderr.txt
 ```
 
-Use a 10-minute total deadline, the run's only limit on time or model steps.
+Use a 15-minute total deadline, the run's only limit on time or model steps.
 Preserve the same process until completion or cancellation; polling never means
 starting a second Muse invocation. Keep raw local diagnostics private and report
 only a sanitized failure category.
@@ -97,7 +97,7 @@ only a sanitized failure category.
 | Host | Process lifecycle |
 | --- | --- |
 | Codex | Start with `exec_command`, short `yield_time_ms`, and `tty: true` so the owned session can be interrupted. Continue with `write_stdin` on its returned `session_id`; a yield is not a timeout. At the deadline send Ctrl-C to that session and verify exit. If the host returns a separate outer tool-cell ID, resume that cell through its own wait tool first. |
-| Claude Code | Use `Bash` with its background-task option, not a foreground `timeout`, which moves the command to the background instead of ending it. Start a second background `sleep 600` as the deadline timer, because a background task ignores `timeout`. If the timer fires first, `TaskStop` the run and record `SKIPPED`; if Muse finishes first, `TaskStop` the timer. Keep the task ID and output file. Read the task output with `Read` and use its completion notification. Use the tools actually exposed by that host version; current Claude has no `TaskOutput`. |
+| Claude Code | Use `Bash` with its background-task option, not a foreground `timeout`, which moves the command to the background instead of ending it. Start a second background `sleep 900` as the deadline timer, because a background task ignores `timeout`. If the timer fires first, `TaskStop` the run and record `SKIPPED`; if Muse finishes first, `TaskStop` the timer. Keep the task ID and output file. Read the task output with `Read` and use its completion notification. Use the tools actually exposed by that host version; current Claude has no `TaskOutput`. |
 | Other hosts | Use their native shell, process handle, completion output and cancellation. Apply the same deadline and evidence checks. |
 
 A host subagent may carry out the invocation when delegation is already authorized,

@@ -138,3 +138,14 @@ With the runner's test gone, nothing failed if the reviewer contract or schema
 broke, and a broken pair would surface only as a silent `SKIPPED`. The plugin
 validator now checks that the schema parses and that its fields and values appear
 in the contract. It validates shipped files and manages no Muse run.
+
+## Higher effort, longer deadline (2026-11-05)
+
+The operator raised the reviewer from `high` to `xhigh` reasoning and the deadline
+from 10 to 15 minutes on every route: `muse exec`, T3 Code's `delegate_task`
+(`timeoutMs: 900000`) and the Claude Code timer. The model stays
+`muse-wonder-full-1.0` with no fallback. Muse 1.4.14 accepts `xhigh` for that
+model and completed a placeholder run at it; the event stream records model and
+provider but not effort, so the effort is set by the invocation and cannot be
+checked from the saved events. Whether T3 accepts a 15-minute wait is unverified,
+like the rest of its directions.

@@ -8,6 +8,11 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.62.2: 2026-11-05
+
+- **Run the Muse scope review at xhigh effort with a 15-minute deadline.** `scope-review` now invokes `muse-wonder-full-1.0` at `xhigh` reasoning instead of `high` on every route: `muse exec`, T3 Code's `delegate_task` and other native handlers. Its deadline rises from 10 to 15 minutes, including the T3 `timeoutMs` and the Claude Code timer. The model stays pinned with no fallback. ([decision](decisions/scope-review.md#higher-effort-longer-deadline-2026-11-05))
+- **Re-grade the model-reference fleet table.** `model-reference` lowers gpt-6-astra and fable-5.1 on intelligence and fable-5.1 on code, re-grades gpt-6.1-sol, opus-5.5, sonnet-5.5 and grok-4.7, and adds rows for haiku-5.5 and muse-wonder-full-1.0.
+
 ## toolkit 0.22.0: 2026-11-04
 
 - **Ship the session-transcript rule on every host.** `adopt-global-rules` adds a `session-transcripts` core rule to Claude Code, Codex and Muse, so sessions never suggest, delete, move, compress or truncate agent session history or shorten a host's retention setting. ([decision](decisions/adopt-global-rules.md#session-transcripts-ship-as-a-core-rule-2026-11-04))
@@ -72,7 +77,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 
 - **Let the host carry CI waiting.** On supported Claude Code hosts, `ci-watcher` uses background command completion notifications; other hosts retain bounded foreground slices or process waits. Watcher model and reasoning settings are unchanged. ([decision](decisions/fix-ci.md#let-the-host-own-waiting-and-the-runner-own-evidence-2026-10-29))
 - **Bind watcher results to their protocol and target.** Protocol 2 rejects stale runner/state contracts, shares target ownership across state filenames, and reports compact verdicts with observation times. Completed job details are reused only with matching fresh run metadata; rate limits pause reads within the original deadline. ([decision](decisions/fix-ci.md#let-the-host-own-waiting-and-the-runner-own-evidence-2026-10-29))
-
-## workbench 0.54.0: 2026-10-29
-
-- **Advance epics along their primary journey.** `epic-orchestration` writes the epic's end-to-end steps from its acceptance criteria before the first workset, completes the thinnest path first, and has each dispatch name the step it moves and the tickets it closes. Valid findings that block no current step wait or go to the operator's follow-up list. Repeated partial deliveries trigger a re-plan, and owner returns open with criteria closed and remaining. Holds stop only the step that consumes the missing input, and user-reachable changes are accepted on the running app. ([decision](decisions/epic-orchestration.md#the-epic-advances-along-its-primary-journey-2026-10-29))

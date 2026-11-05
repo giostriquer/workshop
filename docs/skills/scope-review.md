@@ -39,7 +39,7 @@ Without a native handler, the skill provides directions for direct `muse exec`,
 including its read-only profile and native JSON-schema output. Codex manages the
 process with `exec_command` and `write_stdin`. Claude uses `Bash`, a background
 timer for the deadline and `Read` on its output file. Both retain the same process
-handle, apply a 10-minute deadline, and check the complete result before recording
+handle, apply a 15-minute deadline, and check the complete result before recording
 it.
 
 ## Can Muse read outside the checkout?
