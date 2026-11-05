@@ -8,6 +8,10 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.62.3: 2026-11-05
+
+- **Keep Muse's session log for scope reviews.** The direct `muse exec` example in `scope-review` no longer passes `--no-session-log`, so each review leaves an ordinary Muse session and its token usage reaches usage tracking that reads Muse's logs. The breach report now names that session log, which also holds every read and search result. ([decision](decisions/scope-review.md#session-log-kept-2026-11-05))
+
 ## workbench 0.62.2: 2026-11-05
 
 - **Run the Muse scope review at xhigh effort with a 15-minute deadline.** `scope-review` now invokes `muse-wonder-full-1.0` at `xhigh` reasoning instead of `high` on every route: `muse exec`, T3 Code's `delegate_task` and other native handlers. Its deadline rises from 10 to 15 minutes, including the T3 `timeoutMs` and the Claude Code timer. The model stays pinned with no fallback. ([decision](decisions/scope-review.md#higher-effort-longer-deadline-2026-11-05))
@@ -72,8 +76,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 ## workbench 0.55.1: 2026-10-29
 
 - **Choose lane assignments before reusing names.** New worksets select available lanes by current file ownership, dependencies and capacity. Corrections and delivery preserve their session, independent ready work can proceed during PR checks within governing limits, and the ledger separates new assignments from completed history. ([decision](decisions/epic-orchestration.md#assignment-precedes-naming-2026-10-29))
-
-## workbench 0.55.0: 2026-10-29
-
-- **Let the host carry CI waiting.** On supported Claude Code hosts, `ci-watcher` uses background command completion notifications; other hosts retain bounded foreground slices or process waits. Watcher model and reasoning settings are unchanged. ([decision](decisions/fix-ci.md#let-the-host-own-waiting-and-the-runner-own-evidence-2026-10-29))
-- **Bind watcher results to their protocol and target.** Protocol 2 rejects stale runner/state contracts, shares target ownership across state filenames, and reports compact verdicts with observation times. Completed job details are reused only with matching fresh run metadata; rate limits pause reads within the original deadline. ([decision](decisions/fix-ci.md#let-the-host-own-waiting-and-the-runner-own-evidence-2026-10-29))

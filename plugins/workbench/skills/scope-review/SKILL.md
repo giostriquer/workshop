@@ -83,7 +83,7 @@ MUSE_NO_AUTO_UPDATE=1 MUSE_LOGIN=0 muse exec \
   --provider meta --model muse-wonder-full-1.0 --reasoning-effort xhigh \
   --preset native-basic --permission-profile :read-only \
   --disable-shell --disable-write --disable-web-tools --disable-reminders \
-  --disable-request-user-input --no-foreign-personal-context --no-session-log \
+  --disable-request-user-input --no-foreign-personal-context \
   --json --output-schema /path/to/scope-review/review.schema.json \
   --prompt-file .workbench/example/scope-prompt.txt \
   > .workbench/example/scope-events.jsonl 2> .workbench/example/scope-stderr.txt
@@ -92,7 +92,8 @@ MUSE_NO_AUTO_UPDATE=1 MUSE_LOGIN=0 muse exec \
 Use a 15-minute total deadline, the run's only limit on time or model steps.
 Preserve the same process until completion or cancellation; polling never means
 starting a second Muse invocation. Keep raw local diagnostics private and report
-only a sanitized failure category.
+only a sanitized failure category. Muse's own session log is not such a
+diagnostic: leave it on, because it is the only record of the run's token usage.
 
 | Host | Process lifecycle |
 | --- | --- |
@@ -135,8 +136,8 @@ limitations. Reject incomplete, malformed, wrong-model or unauthorized-tool runs
 Check the recorded tool events to establish which files were actually read; a
 request to read a file is not proof it was read successfully. A read or search
 result from outside the checkout or from a secret-bearing file is a breach: reject
-the run, record `SKIPPED`, and tell the user the path, because the model and the
-saved events now hold its contents.
+the run, record `SKIPPED`, and tell the user the path, because the model, the
+saved events and Muse's session log now hold its contents.
 
 Record `REVIEWED` with the checkout fingerprint, report and source-read coverage,
 or `SKIPPED` with a short reason such as timeout, invocation failure, wrong model,

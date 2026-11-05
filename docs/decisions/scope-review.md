@@ -149,3 +149,15 @@ model and completed a placeholder run at it; the event stream records model and
 provider but not effort, so the effort is set by the invocation and cannot be
 checked from the saved events. Whether T3 accepts a 15-minute wait is unverified,
 like the rest of its directions.
+
+## Session log kept (2026-11-05)
+
+The direct `muse exec` example had passed `--no-session-log` since the first
+runner. Muse records a run's token usage only in its session log, so no scope
+review since 2026-10-30 reached usage tracking that reads those logs. A local
+usage dashboard showed no Muse activity after 2026-10-16, across 77 direct
+reviewer runs. The `--json` stream's `run.usage` summary is no substitute: it
+lands in the work scope's scratch folder and is retired with it. The operator
+asked to drop the flag. A direct review now leaves an ordinary Muse session,
+which also holds the content of every read and search result, so the breach
+report names Muse's session log alongside the saved events.

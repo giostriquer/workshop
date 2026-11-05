@@ -76,7 +76,9 @@ versus subscription billing.
 
 The completion record contains `REVIEWED`, the complete structured report, the
 checkout fingerprint, and which files Muse actually read. The process completed on
-the required provider/model and the checkout fingerprint is unchanged.
+the required provider/model and the checkout fingerprint is unchanged. A direct
+run also leaves a session in Muse's own history, which is where its token usage
+is recorded.
 Findings cite request, source or proof evidence and suggest proportionate actions;
 missing proof stays a limitation. The parent validates and records dispositions.
 Confirmed defects use the normal correction process; no mandatory Muse clearance
