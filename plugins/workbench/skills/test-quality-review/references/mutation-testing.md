@@ -115,6 +115,14 @@ named tests.
   Scope both mutation targets and tests; create or adapt a run-specific config in
   the isolated copy when the existing config targets unrelated work. Preserve the
   author's config.
+  Stryker links a `node_modules` into its sandbox only when it is a real
+  directory: it skips a symlinked one, and the sandbox then cannot load
+  dependencies. Before the first dry run, replace each linked `node_modules` in
+  the copy with a real directory of links to the author's entries (`rm` on the
+  link removes only the link):
+  `rm <copy>/node_modules && mkdir <copy>/node_modules && find <author>/node_modules -mindepth 1 -maxdepth 1 -exec ln -s {} <copy>/node_modules/ \;`.
+  Its sandbox copy treats any other symlink to a directory as a file and fails
+  with `ENOTSUP`; exclude such links with `ignorePatterns`.
   For Bun, a verified combination is StrykerJS 10, `@hughescr/stryker-bun-runner`
   1.6, Bun >=1.4, Node >=22 and TypeScript 6 for config parsing. Check installed
   package requirements when choosing other versions. Load the community runner
@@ -180,24 +188,37 @@ named tests.
   Report caught / missed / timeout / unviable counts; review missed mutants as
   survivors and keep timeouts separate from caught. Do not infer coverage from
   cargo-mutants outcomes.
-- **One run per scope, one campaign at a time.** A completed run is the
-  round's evidence for its scope; the same scope does not run again in the
-  round under another runner, coverage setting or test set to confirm or
-  reconcile its counts. A survivor the reviewer wants to check by hand gets
-  one hand-applied defect in the copy. Campaigns run one at a time on the
-  host: a second Stryker or cargo-mutants process never starts while one is
-  running. Before each launch, list running campaigns with
-  `ps -axo pid,etime,command | grep -E '[s]tryker|[c]argo-mutants'`, run as its
-  own command rather than chained before the launch; the brackets keep the
-  listing from matching itself, and a shell or poller that only names the tools
-  is not a campaign. A listing without PID 1 or other
-  users' processes cannot see other sessions, so it does not show a free host;
-  the Mutation run line says so. While another campaign runs, wait for it:
-  waiting time is outside the lane budget, at most 15 minutes per round, and
-  goes on the Mutation run line. Scope still uncovered when the wait reaches
-  that limit or the round must hand back is `partial`, with its command under
-  Strategy notes; when no required scope ran at all, record `blocked: host busy`
-  instead, and the next round carries it.
+- **One run per scope.** A completed run is the round's evidence for its
+  scope; the same scope does not run again in the round under another runner,
+  coverage setting or test set to confirm or reconcile its counts. A survivor
+  the reviewer wants to check by hand gets one hand-applied defect in the copy.
+- **One campaign at a time, through the slot helper.** Campaigns run one at a
+  time on the host, in arrival order. Launch every Stryker and cargo-mutants
+  invocation, dry runs included, through `scripts/mutation-slot.mjs` beside
+  this skill's `SKILL.md`:
+  `node "<skill dir>/scripts/mutation-slot.mjs" --wait-limit <seconds> -- <campaign command>`.
+  It queues the launch host-wide, waits for any running campaign, including
+  one started without the helper, then runs the command and exits with its
+  status. To stop a campaign early, signal the helper's PID: it passes the
+  signal to the campaign, whose tool stops its own workers, and frees the slot
+  when the campaign exits; the cleanup step above still applies. Waiting is
+  outside the lane budget, at most 15 minutes per round, so pass the round's
+  remaining wait as `--wait-limit`. Exit 75 means the wait limit ended before
+  the slot came. Scope still uncovered when the wait reaches that limit or the
+  round must hand back is `partial`, with its command under Strategy notes;
+  when no required scope ran at all, record `blocked: host busy` instead, and
+  the next round carries it.
+  The helper's last stderr line, `mutation-slot: {...}`, gives the seconds
+  waited, the queue mode and `listingSeesHost`; all three go on the Mutation
+  run line. Queue mode `ps-only` (an unwritable queue directory) means waiters
+  were not ordered. `listingSeesHost: false`, with a `listingError` when a
+  sandbox refuses `ps`, means the helper could not see campaigns other
+  sessions started without it; `null` means it waited behind other tickets or
+  a lock the whole time and never took a listing. Without Node, run
+  `ps -axo pid,etime,command | grep -E '[s]tryker|[c]argo-mutants'` as its own
+  command before each launch and wait while a campaign runs; a listing without
+  PID 1 or other users' processes has the same blind spot, and the Mutation
+  run line says so.
   Timeouts from a run that shared the host with another campaign cannot
   establish detection: record their lines as `partial` with the single-campaign
   command under Strategy notes.

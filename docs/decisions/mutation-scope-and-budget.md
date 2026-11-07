@@ -126,7 +126,8 @@ the same host cannot run it. The review's copy is cloned to an absent path insid
 a fresh `mktemp -d` directory and reused by follow-up rounds; processes stop by
 the run's own paths. Before each launch the reviewer lists running campaigns
 with a self-excluding pattern and waits for another campaign, outside the budget
-and for at most fifteen minutes per round. A listing that cannot see other
+and for at most fifteen minutes per round (since 2026-11-06 the slot helper
+below does this, and the listing is the fallback without Node). A listing that cannot see other
 sessions is not evidence of a free host. Scope the wait leaves uncovered is
 `partial`, unless no required scope ran at all, which is `blocked` and carried to
 the next round. `partial` records the budget ending, estimate sampling, the wait
@@ -138,3 +139,62 @@ change.
 
 The fifteen-minute wait and the budget exclusion are defaults chosen with the
 correction; they did not come from a measured trade-off.
+
+## Queued campaigns, two reviewers per session, real dependency directories (2026-11-06)
+
+A transcript scan of the previous 30 days found about 150 sessions with
+mutation records, nearly all reporting no campaign wait. The exceptions cluster
+on days when one session fans out several test-quality reviewers at once. On
+2026-11-06 one session ran eleven, four to six at a time, each launching
+cargo-mutants campaigns back to back, and four reviews on the host ended
+`blocked: host busy`, including both rounds of a reviewer from another session.
+That reviewer's wait log shows the mechanism: when a campaign ended, waiting
+reviewers saw the free host in the same polling interval and launched together,
+and the reviewer that backed off from the collision lost the slot every time
+until its fifteen-minute wait ran out. Listing and then launching is not
+atomic, and nothing ordered the waiters.
+
+Campaigns now launch through `scripts/mutation-slot.mjs` in the
+`test-quality-review` skill. It writes a ticket into a per-user queue directory,
+waits until its ticket is the oldest live one, the lock directory is free and
+no Stryker or cargo-mutants process runs (which covers reviewers still on the
+listing procedure), then takes the lock with an atomic `mkdir`, runs the
+campaign as its child and releases the lock when it exits. Tickets and locks
+whose process has died or that stopped refreshing for two minutes are cleared,
+so a crashed helper cannot hold the queue; a campaign it leaves running stays
+in the process listing until the reviewer's cleanup stops it. Exit 75 reports
+the wait limit. Where the queue directory cannot be written, the helper still
+waits on the process listing and reports `ps-only`; where `ps` itself is
+refused, as in Codex's macOS sandbox modes, it relies on the queue and reports
+`listingError`, and every summary says whether the listing could see other
+sessions. Every campaign re-queues, so concurrent reviewers alternate instead
+of one reviewer running its whole series first.
+
+The campaign stays in the caller's process group, and the helper passes each
+signal it receives to the campaign. A host that kills the group on a timeout
+therefore ends the campaign too; a detached campaign survived that kill in the
+completion review's probe. Stryker 10.1.1 and cargo-mutants 27.1.0 both stop
+their own workers on SIGINT, SIGTERM and SIGHUP (Stryker's exit handlers,
+cargo-mutants' `ctrlc` termination handler and `killpg` of its children), so
+the helper signals only its direct child. A host that signals the whole group
+delivers the signal twice, and Stryker treats a second signal as a forced exit
+that can leave workers or its sandbox behind; the rubric's cleanup step, which
+stops processes by the review's paths, handles them.
+
+The queue makes the slot fair but does not add capacity, so a session also
+keeps at most two test-quality reviewers running at once, with other review
+stages unlimited. Two lets one reviewer read and judge while the other's
+campaign runs. Like the fifteen-minute wait, the number is a default chosen
+with the correction, not a measured trade-off.
+
+The same scan found six reviews in the period that repaired one Stryker setup
+failure, all following the rubric's advice to link the author's dependency
+directory into the disposable copy. Stryker 10.1.1's `findNodeModulesList`
+keeps only `readdir` entries that are directories, so a symlinked
+`node_modules` is never linked into the sandbox and dependencies fail to load;
+its sandbox copy treats any other symlink to a directory as a file, and
+`copyFile` fails with `ENOTSUP`. A probe against that function confirmed both:
+the symlinked layout returned no `node_modules` and the sandbox raised
+`MODULE_NOT_FOUND`, while a real directory of links to the author's entries was
+found and resolved scoped packages. The rubric now gives that layout before
+the first dry run.

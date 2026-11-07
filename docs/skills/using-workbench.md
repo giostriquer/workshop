@@ -17,7 +17,9 @@ production logic or tests, plus `contract-review` for changed observable behavio
 consumer contracts or cross-component wiring) fire once the implementation is complete, before
 PR-or-merge. Each runs unless the user explicitly declines it or the repo's own
 process supersedes it; a small diff, time pressure, or the session's confidence
-are not reasons to skip. Everything else fires on relevance.
+are not reasons to skip. Across several work sets, at most two test-quality
+reviewers run at once, since their mutation campaigns share one slot per host.
+Everything else fires on relevance.
 
 At that initial round, `scope-review` also attempts one Muse opinion on the same
 revision, through the surface's native Muse handler or a direct `muse exec`, with

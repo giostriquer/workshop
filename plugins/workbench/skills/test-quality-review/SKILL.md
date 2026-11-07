@@ -37,6 +37,9 @@ their inputs and assertions, so the gaps between them read as coverage.
   test-quality question or target, plus the base branch when known, in a separate
   prompt. Never let it inherit the parent's model, effort, or history; the reviewer
   never dispatches another agent.
+- **How many at once:** at most two test-quality reviewers per session, because
+  every reviewer's mutation campaigns queue for one slot per host. Dispatch the
+  next work set's review when one returns; other review stages are not limited.
 
 ## Workflow
 

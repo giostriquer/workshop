@@ -37,8 +37,11 @@ owns exact tool recipes, estimates, budgets, and reuse requirements.
 
 **Limits.** Initial rounds have a thirty-minute ceiling including setup;
 follow-ups have fifteen and cover the correction delta. Campaigns run one at a
-time on the host: the reviewer checks `ps` before each launch and waits, up to
-fifteen minutes outside the budget, for another session's campaign. The review's
+time on the host, in arrival order: the reviewer launches each one through the
+bundled slot helper, which queues it and waits, up to fifteen minutes outside
+the budget, for campaigns ahead of it, including ones another session started
+without the helper. A session runs at most two test-quality reviewers at once,
+since all of their campaigns share that one slot. The review's
 disposable copy gets a new, absence-checked path, and follow-up rounds reuse it.
 Completed scope is not rerun under another runner. Unsupported syntax,
 slow tests, and parsed behavior tools cannot mutate use the rubric's bounded

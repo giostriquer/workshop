@@ -8,6 +8,12 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.63.0: 2026-11-07
+
+- **Queue mutation campaigns host-wide.** `test-quality-review` now launches every Stryker and cargo-mutants run through a bundled `scripts/mutation-slot.mjs`, which runs one campaign at a time per host in arrival order, recovers locks left by crashed reviewers, still waits for campaigns started without it, and keeps working where a sandbox refuses `ps`. Its summary line gives the seconds waited, the queue mode and whether the process listing could see other sessions, for the Mutation run line. ([decision](decisions/mutation-scope-and-budget.md#queued-campaigns-two-reviewers-per-session-real-dependency-directories-2026-11-06))
+- **At most two test-quality reviewers per session.** `test-quality-review` and `using-workbench` cap concurrent test-quality reviewers at two, since their campaigns share one slot per host; other review stages stay unlimited. ([decision](decisions/mutation-scope-and-budget.md#queued-campaigns-two-reviewers-per-session-real-dependency-directories-2026-11-06))
+- **Give Stryker a real `node_modules`.** The mutation rubric now replaces a linked `node_modules` in the disposable copy with a real directory of links before the first dry run, because Stryker skips a symlinked one and the sandbox then cannot load dependencies. ([decision](decisions/mutation-scope-and-budget.md#queued-campaigns-two-reviewers-per-session-real-dependency-directories-2026-11-06))
+
 ## workbench 0.62.3: 2026-11-05
 
 - **Keep Muse's session log for scope reviews.** The direct `muse exec` example in `scope-review` no longer passes `--no-session-log`, so each review leaves an ordinary Muse session and its token usage reaches usage tracking that reads Muse's logs. The breach report now names that session log, which also holds every read and search result. ([decision](decisions/scope-review.md#session-log-kept-2026-11-05))
@@ -72,7 +78,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 - **Reconstruct historical rationale with `why`.** The new explicit-only skill follows relevant dated evidence, separates documented intent from inference and unknowns, and identifies what needs checking before revisiting a decision. It adds no mandatory swarm or write authority. ([decision](decisions/why.md#decision-2026-10-30))
 - **Explain PRs with inspectable source.** The conditional HTML walkthrough recipe connects core and supporting changes, retains every available hunk including imports, discloses missing content, and separates source, execution and CI evidence. Offline, dark, keyboard and print behavior remain part of verification. ([decision](decisions/html-artifact.md#pr-walkthrough-reference-2026-10-30))
 - **Give independent helpers a fresh brief.** Architecture explorers and grilling fact-finders start from accepted scope, source paths and evidence requirements rather than inherited exploratory history. Related follow-ups reuse the same helper; open user decisions remain with the user. ([decision](decisions/mattpocock-skills.md#independent-helpers-start-with-fresh-context-2026-10-30))
-
-## workbench 0.55.1: 2026-10-29
-
-- **Choose lane assignments before reusing names.** New worksets select available lanes by current file ownership, dependencies and capacity. Corrections and delivery preserve their session, independent ready work can proceed during PR checks within governing limits, and the ledger separates new assignments from completed history. ([decision](decisions/epic-orchestration.md#assignment-precedes-naming-2026-10-29))

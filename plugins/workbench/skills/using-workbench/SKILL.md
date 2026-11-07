@@ -78,7 +78,8 @@ through a PR or the repository's delivery process, not an intermediate checkpoin
   Initial adversarial review round on the trimmed diff: REQUIRED, not offered
   (code-quality-review; test-quality-review when production logic or tests changed;
   contract-review when observable behavior, consumer contracts or cross-component
-  wiring changed). Run applicable stages in parallel within one initial round.
+  wiring changed). Run applicable stages in parallel within one initial round;
+  across work sets, at most two test-quality reviewers run at once.
   Give each the same accepted scope and revision in a separate prompt. Each owns
   its findings, verdict, follow-ups, and pass record. A missing stage runs without
   repeating a completed one; one verdict does not waive another applicable stage.
