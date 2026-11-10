@@ -6,11 +6,21 @@ Reuse the epic scope folder's README or CURRENT entry point; otherwise create
 
 Open with the primary journey and each step's state. Keep the approved goal,
 closure bar, exclusions and scope sources distinct from discovered follow-ups,
-including findings that move no step. Track each workset's state, assigned lane,
+including findings that move no step. Each follow-up and debt item carries the
+operator's disposition (`do before close`, `separate ticket accepted` or `drop`)
+or `awaiting operator`. Track each workset's state, assigned lane,
 readiness dependencies and next action separately from a lane's completed history.
 Track active lanes and contract revisions, worktrees, holds, decisions and their
-sources and owners. Record each hold with what it stops and its source's exact
-words, so a recovered session cannot widen it.
+sources and owners. For each active lane keep the latest reconciliation: the
+date observed, its newest handback, worktree HEAD, working-tree fingerprint
+(`git status --porcelain` plus a hash of `git diff HEAD`), whether the host's
+session list shows the lane running (unknown where the host cannot list
+sessions, which does not count as running), and `current`, `unrelayed handback`
+or `silent since <last activity>`. A lane is `silent` only after two
+reconciliations in a row with the same handback, HEAD and fingerprint. A closed-out lane, including one whose work was withdrawn or
+reassigned, keeps its closeout date and leaves the active list. Record each hold with what it stops, its source's exact words, the
+date it began and the date and evidence of its last recheck, so a recovered
+session can neither widen it nor repeat it unobserved.
 Index briefs, evidence, recovery material and the tracker backlog; governing
 scope sources determine membership. Record local tooling locations and their
 publication boundary, including the source of any explicit promotion, so recovery

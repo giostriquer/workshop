@@ -16,7 +16,10 @@ range.
 The update opens with the number of human decisions or steps pending, then
 gives meaningful results and their consequences. Each decision includes the
 options, a recommendation, and what can proceed without your answer. Tests,
-retries, and other work the agent can do are kept with the agent.
+retries, and other work the agent can do are kept with the agent. Every
+pending decision is listed, never only counted or linked. When several items
+share one decision, it is asked once with a line per item, riskiest first.
+Numbers are checked against their source before they are shown.
 
 Current observations, agent reports, running work, and older evidence are
 distinguished. A report that tests passed is not a verified result, and checks

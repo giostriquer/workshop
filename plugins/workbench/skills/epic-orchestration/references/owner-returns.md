@@ -1,39 +1,48 @@
-## Close every handoff with a next step
+## Owner returns
 
-An owner return has these parts, in order:
+The entrypoint's **Close every handoff with a next step** section holds the
+return's six parts and their order. This reference gives one worked return and
+the wording for audit returns.
 
-1. **Active holds:** present whenever a hold stops more than one lane or workset.
-   One line per such hold; any other hold stays out of this slot:
-   `HOLD: <lanes or worksets stopped, n of m> · ordered by <operator | epic owner> · source: "<exact words>" · released by <owner and condition>`
-   Name the operator only when the quoted words cover everything stopped. For a
-   wider reading, write `epic owner`, and ask the operator to confirm or narrow it
-   in the same reply.
-2. **Progress:** acceptance criteria closed, criteria remaining, and the journey
-   step now in work.
-3. **Verified disposition:** results, revision and remaining gates. Distinguish
-   validation, PR readiness, merge and epic completion. Include **Tracker sync**:
-   confirmed ticket and epic statuses, pending updates with their owner and
-   reason, or not applicable when no tracker is used.
-4. **Required lane handoff:** the lane-specific label and populated fenced pointer
-   from **Dispatching** for each affected lane. Include it when accepting or
-   rejecting a report, returning a correction or ruling, or authorizing delivery, including after
-   recovery and when no more implementation is needed. If only an operator
-   decision remains, return the lane's disposition and current hold.
-5. **Immediate next action:** continue authorized work or dispatch a revalidated
-   workset; advance pending delivery; issue the closing audit; propose closure;
-   or name a blocker, owner and unblock while advancing independent work. Put
-   operator decisions here, outside the paste blocks. Do not ask the operator
-   to select a routine next lane already determined by the plan.
+### A worked return
 
-Before sending the final reply, check that every lane-facing disposition has
-its actual file, its own `Paste this into <LANE>:` label and its fenced pointer
-in the reply, with the same canonical name in the label, pointer and ledger.
-Progress updates and answers that carry no lane-facing disposition
-can stay brief prose, but both still open with any **Active holds** lines. A
-progress update then gives **Progress**.
+```
+HOLD: L2, L4 (2 of 5 lanes) · since 2026-11-03 · ordered by epic owner · source: "hosted deploy probe returned 403" · released by operator, when the deploy token is reissued · rechecked 2026-11-05, probe still 403 · operator action: reissue the deploy token, or narrow this hold to L4
+HOLD: L5 (1 of 5 lanes) · since 2026-11-05 · ordered by epic owner · source: "L5 has no live session; its HEAD is unchanged since 2026-11-04" · released by operator, by resuming L5 · rechecked 2026-11-05, session list and worktree · operator action: resume L5 with its last dispatch, or say to reassign its workset
 
-**Audit returns name what is finished.** In the return file and the operator-facing
-disposition, state these separately:
+Progress: 3 of 9 criteria closed, 6 remaining; step 4 in work; 2 follow-ups open.
+
+Lane reconciliation: L1 had an unrelayed report from 2026-11-04, validated below; L5 is silent (held above); L2, L3 and L4 current.
+
+Verified: L3 delivery merged at abc1234, checks green. L1 report validated at def5678; delivery gates satisfied. Tracker sync: ABC-123 Done confirmed; ABC-124 In Review confirmed.
+```
+
+`Paste this into L3:`
+
+```
+Lane L3, existing session. Delivery at abc1234 accepted; your implementation assignment is complete. Acknowledge only. Use workbench:epic-implementation. Read and execute:
+/Users/me/acme/.workbench/webapp/dispatches/L3-closeout.md
+```
+
+`Paste this into L1:`
+
+```
+Lane L1. Implementer, delivery authorized, existing session. Read and execute:
+/Users/me/acme/.workbench/webapp/dispatches/L1-delivery.md
+```
+
+```
+Next actions: W7 is held on L1's interface (source: "W7 consumes the parser interface L1 delivers", from its ticket); the epic owner releases it when L1 merges. Every other open workset is active in a lane, dispatched above or held above.
+```
+
+Every workset in that return is done, active, dispatched or held with a release
+owner. Each hold line carries this turn's recheck. The first hold stops more
+than one lane and the second is one only the operator can release, so both open
+the reply; W7's hold is the owner's to release and stays in **Next actions**.
+
+### Audit returns name what is finished
+
+In the return file and the operator-facing disposition, state these separately:
 
 - **Audit report:** accepted after owner corroboration, follow-up required, or
   blocked, with the contract and audited revision.
@@ -43,10 +52,14 @@ disposition, state these separately:
 - **Epic:** open, closure proposed to the operator, or closed with the operator's
   decision source. Report acceptance and assignment completion do not close it.
 
-When the report is accepted and no assigned audit work remains, explicitly tell
-the auditor its assignment is complete; request acknowledgment only. Lead its
-fenced pointer with that disposition, for example: "Auditor A2, audit-r2 at
-c0ffee1 accepted; your audit assignment is complete. Acknowledge only. Epic
-closure awaits the operator." Keep the dispatch path and reporting skill in
-the pointer. Use the same explicit nouns when saying "validated", "done" or
-"closed" in the ledger and final reply.
+When the report is accepted and no assigned audit work remains, release the
+auditor with the entrypoint's closeout pointer:
+
+```
+Lane A2, existing session. Audit at c0ffee1 accepted; your audit assignment is complete. Acknowledge only. Use workbench:epic-auditor. Read and execute:
+/Users/me/acme/.workbench/webapp/dispatches/A2-closeout.md
+```
+
+Say where epic closure stands in the closeout file and in the return's prose,
+for example "Epic closure awaits the operator." Use the same explicit nouns
+when saying "validated", "done" or "closed" in the ledger and final reply.

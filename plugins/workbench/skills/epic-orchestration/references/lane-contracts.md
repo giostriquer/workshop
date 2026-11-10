@@ -2,7 +2,9 @@
 
 **Choose the assignment first.** For each revalidated workset, select an
 available existing or fresh lane by current file ownership, dependencies and
-capacity. Completed work gives its former lane no ownership of later work.
+capacity. Completed work gives its former lane no ownership of later work: when
+its delivery is verified merged and nothing remains assigned, release the lane
+with the entrypoint's closeout pointer.
 Continue the existing session for unfinished assigned work, corrections,
 delivery and recovery. Reusing an idle lane for new work needs an explicit new
 assignment; keep the earlier workset's completed disposition. Useful context and
@@ -64,7 +66,13 @@ The initial dispatch is a complete brief that works without tracker access:
   gates, and the role's reporting skill: `workbench:epic-implementation` for the
   complete [lane report](lane-report.md), or
   `workbench:epic-auditor` for the complete
-  [audit report](audit-report.md).
+  [audit report](audit-report.md). Give the absolute path where the lane saves
+  each final report block, `<scope folder>/reports/<LANE>-<n>.md`, where `<n>` is
+  one more than the highest number that lane already has there: the owner's
+  lane reconciliation reads that folder. An implementation contract also names
+  the completion round's inputs from [Delivery](delivery.md): the epic goal and
+  journey step for the lane's `scope-review` attempt, and the trim's commit
+  subject.
 
 Name required skills by host name, task inputs, outcome and evidence. Do not
 copy their procedures or model routing, pin plugin versions/cache paths, or add

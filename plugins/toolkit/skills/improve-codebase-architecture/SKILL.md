@@ -58,15 +58,15 @@ Apply the **deletion test** to anything you suspect is shallow: would deleting i
 
 **Screen before presenting.** Check each candidate's proposed deepening against the same tells: one that adds a pass-through, splits by execution order, or carries a transport type through the new interface is not a deepening; revise or drop it. A deep call chain is not a deep module: depth concentrates behaviour behind one interface, a chain scatters it across modules. A few special cases don't make a candidate; complexity in the data is not complexity in the design.
 
-For a recurring-mistake candidate, explain in its Solution and Benefits how
-ownership, visibility, or an existing check prevents the traced mistake. Keep
-required compatibility and distinct adapters. Name a possible negative and
-positive verification case in Gaps until exercised; a survey proposes checks,
-it does not claim implementation or proof.
+A recurring-mistake candidate's card carries a **Prevention** line: the
+ownership, visibility rule, or existing check that stops the traced mistake.
+Keep required compatibility and distinct adapters. Its **Gaps** names one
+negative and one positive verification case, marked unrun; a survey proposes
+checks, it does not claim implementation or proof.
 
 ### 2. Present candidates as an HTML report
 
-Write a self-contained HTML file to the OS temp directory so nothing lands in the repo. Resolve the temp dir from `$TMPDIR`, falling back to `/tmp` (or `%TEMP%` on Windows), and write to `<tmpdir>/architecture-review-<timestamp>.html` so each run gets a fresh file. Open it for the user (`xdg-open <path>` on Linux, `open <path>` on macOS, `start <path>` on Windows) and tell them the absolute path.
+Write a self-contained HTML file outside the repo so nothing lands in it: in the session's scratch directory when the host names one, otherwise the OS temp directory (`$TMPDIR`, falling back to `/tmp`, or `%TEMP%` on Windows). Name it `architecture-review-<YYYYMMDD-HHMMSS>.html`, date and time both, so a second run on the same day gets its own file. Open it for the user (`xdg-open <path>` on Linux, `open <path>` on macOS, `start <path>` on Windows) and tell them the absolute path.
 
 The report is one file that works offline and opens in dark mode: inline CSS, diagrams drawn as inline SVG or plain HTML, no scripts, nothing fetched from a CDN. Draw graph-shaped relationships (call graphs, dependencies, sequences) as SVG graphs, and use more editorial visuals (mass diagrams, cross-sections, collapse views) when the weight of a module is the point. Each candidate gets a **before/after visualisation**. Be visual.
 
@@ -75,10 +75,11 @@ For each candidate, render a card with:
 - **Files**: which files/modules are involved, with the `file:line` evidence from the traced path
 - **Problem**: why the current architecture is causing friction
 - **Solution**: plain English description of what would change
-- **Benefits**: explained in terms of locality and leverage, and how tests would improve
+- **Wins**: the locality and leverage gained, and how tests would improve
+- **Prevention** (recurring-mistake candidate): the ownership, visibility rule, or existing check that stops the traced mistake
 - **Before / After diagram**: side-by-side, custom-drawn, illustrating the shallowness and the deepening
 - **Recommendation strength**: one of `Strong`, `Worth exploring`, `Speculative`, rendered as a badge
-- **Gaps**: what the trace could not settle, when anything
+- **Gaps**: what the trace could not settle, when anything; for a recurring-mistake candidate, also its unrun negative and positive verification cases
 
 End the report with a **Top recommendation** section: which candidate you'd tackle first and why.
 
@@ -86,9 +87,12 @@ End the report with a **Top recommendation** section: which candidate you'd tack
 
 **ADR conflicts**: if a candidate contradicts an existing ADR, only surface it when the friction is real enough to warrant revisiting the ADR. Mark it clearly in the card (e.g. a warning callout: _"contradicts ADR-0007, but worth reopening because…"_). Don't list every theoretical refactor an ADR forbids.
 
-See [HTML-REPORT.md](HTML-REPORT.md) for the full HTML scaffold, diagram patterns, and styling guidance.
+See [HTML-REPORT.md](HTML-REPORT.md) for the full HTML scaffold, the card's field limits, diagram patterns, and styling guidance.
 
-Do NOT propose interfaces yet. After the file is written, ask the user: "Which of these would you like to explore?"
+Do NOT propose interfaces yet. After the file is written, the invocation decides the next step:
+
+- **It asked for the survey** (the default): ask the user: "Which of these would you like to explore?" Continue with the grilling loop for the candidate they pick.
+- **Its own words already authorize implementing candidates** (for example "address the candidates yourself"): follow [4. Implementation already authorized](#4-implementation-already-authorized) in place of the question and the grilling loop.
 
 ### 3. Grilling loop
 
@@ -100,3 +104,28 @@ Side effects happen inline as decisions crystallize; load `workbench:domain-mode
 - **Sharpening a fuzzy term during the conversation?** Update that glossary right there.
 - **User rejects the candidate with a load-bearing reason?** Offer an ADR, framed as: _"Want me to record this as an ADR so future architecture reviews don't re-suggest it?"_ Only offer when the reason would actually be needed by a future explorer to avoid re-suggesting the same thing; skip ephemeral reasons ("not worth it right now") and self-evident ones.
 - **Want to explore alternative interfaces for the deepened module?** Use the design-it-twice pattern in `workbench:codebase-design` (its `DESIGN-IT-TWICE.md`).
+
+### 4. Implementation already authorized
+
+The grilling loop needs the user in the conversation. When the invocation has
+already told the session to implement, this step replaces it. For each candidate
+the authorization covers, write one decision record in the work scope's folder
+(`.workbench/<work_scope>/`, or the repository's scratch convention), outside the
+tracked files:
+
+- the candidate's title, **Files** evidence and dependency category from its card;
+- each decision the grilling loop would have walked (constraints, dependencies,
+  the deepened module's interface, what sits behind the seam, which tests
+  survive), with the option taken and the `file:line` evidence that settles it;
+- every decision the code does not settle, as an open question.
+
+The glossary and ADR side effects listed under the grilling loop apply to these
+decisions too. A candidate whose record holds an open question, or that
+contradicts an ADR, is not implemented: name it and its question in the reply.
+Each other candidate is a settled design, so it skips `workbench:brainstorming`'s
+design steps and goes to implementation on the route the invocation authorized
+(direct from this session, or the user's planning mechanism when they named
+one), with its record as the context. This step
+is complete when every authorized candidate has a record and is either handed
+to that route or named with its open question. The invocation's words bound the
+authority: worktrees, merges and pushes happen only where it names them.

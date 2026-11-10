@@ -62,6 +62,43 @@ arm discarded the useful draft or inferred repair/publication authority.
 One application per arm supports these scenarios only; it does not establish
 a comparative reliability improvement.
 
+**Self-consistency corrections (2026-11-09).** A static audit found the skill
+arguing with itself and with the validator. `testing-skills-with-subagents.md`
+said "Don't test: pure reference skills" while the entrypoint said references
+get retrieval tests and "Test before deploying. No exceptions.", and the same
+entrypoint called its checklist "MANDATORY for EACH skill" two lines above
+"track the checks relevant to this change" and allowed mechanical corrections
+to apply directly. The one rule the Evidence section states is kept: a behavior
+change is tested before it ships, a mechanical correction is not. The
+"Don't test" list and the MANDATORY line are gone. `authoring-format.md` taught
+a capitalized `name`, a 1024-character limit on the whole frontmatter and
+150/200/500-word targets; the validator requires a lowercase name of at most 64
+characters that matches the folder, the 1024 limit belongs to the description,
+and every shipped skill exceeds those word targets under the 20,000-byte bound
+that replaced them. The template, limits and verification command now match
+what is enforced, and a stale `superpowers:` cross-reference names the
+workbench skill. Second-level files (`persuasion-principles.md`, the worked
+example, the flowchart conventions and renderer) get conditional pointers from
+the entrypoint, since a file reached only through another reference tends to be
+read in part. The four maintenance sessions that week had already followed the
+conditional rule, so this removes a contradiction; it changes no practice.
+
+The validator's mirror check now skips `__pycache__`, and `.gitignore` lists
+it: a helper that imported `mine-transcripts`' readers left one beside the
+scripts and the gate reported mirror drift
+([mine-transcripts](mine-transcripts.md#a-round-ends-at-its-report-and-five-counting-corrections-2026-11-09)).
+`scripts/validate-native-plugin.test.mjs` pins both halves: the cache passes,
+an unmirrored script beside it still fails.
+
+`workbench-drift` had two stale lines. Its first numbered step repeated the
+script as a bare `node scripts/drift-check.mjs`, which clones into the OS temp
+directory, against the repo-local ignored `--cache` its own preamble requires;
+the step now points at the preamble's command and says to always pass
+`--cache`. Its "repository's hook-setup rule" named a rule this repository does
+not carry; it now names the operator's always-loaded instructions and states
+the one thing that holds everywhere: the cache is an upstream checkout, never
+committed in or pushed from.
+
 ## The plugin validator is POSIX sh (2026-09-04)
 
 `scripts/validate-native-plugin.sh` is POSIX `sh`, with `awk` for frontmatter and `node` for JSON, and runs from any working directory. Its PowerShell predecessor could not run on macOS, so it was skipped and a skill-list mismatch went unnoticed; a gate that silently does not execute is not a gate. `node` beats `jq` because the repo already needs node and Git Bash on Windows lacks `jq`; `sh` beats `bash` because macOS ships bash 3.2. The `.ps1` was deleted, since two implementations of one gate drift unseen until they disagree. Checks, messages, and the `native plugin validation ok` line are preserved because decision notes cite that string as evidence, and running the validator stays manual, with no CI.
@@ -102,9 +139,19 @@ an ES module whenever the temp directory sat under this repo's module-typed
 
 ## `release` ships plugin changes and refreshes this machine's caches (2026-10-14)
 
-`.claude/skills/release/` (mirrored to `.codex/skills/release/`) runs when the user asks for a release, never on the agent's own initiative. It was user-invoked only until 2026-10-29, when that gate stopped a session from running a release the user had asked for in plain words; the user's request, not the slash command, carries the authority. It versions every plugin with unreleased changes, writes the release notes through `change-log`, pushes through `push`, then updates this machine's Claude Code and Codex installs and checks them. Both hosts install Workshop from GitHub `main` and keep one cache folder per version, so a change pushed without a new version never reaches an installed copy: `claude plugin update` reports the plugin as current and keeps the old files. Releases had been run by hand from a recipe in one host's memory, and a request to "update global caches" meant nothing to a session without it.
+`.claude/skills/release/` (mirrored to `.codex/skills/release/`) runs when the user asks for a release, never on the agent's own initiative. It was user-invoked only until 2026-10-29, when that gate stopped a session from running a release the user had asked for in plain words; the user's request, not the slash command, carries the authority. It versions every plugin with unreleased changes, writes the release notes through `change-log`, pushes through `push`, then updates this machine's Claude Code and Codex installs and checks them. Both hosts install Workshop from GitHub `main` and key the installed copy by version (Claude Code keeps a folder per version, Codex one folder that each refresh replaces; see the 2026-11-09 correction below), so a change pushed without a new version never reaches an installed copy: `claude plugin update` reports the plugin as current and keeps the old files. Releases had been run by hand from a recipe in one host's memory, and a request to "update global caches" meant nothing to a session without it.
 
 The deterministic steps live in `scripts/release.mjs`, the only state-changing host step included. `plan` measures changes from the commit on `origin/main` that set the released version, following first parents so a merged bump resolves to the merge, so an earlier push that skipped the bump still shows as `needs-bump`; a manifest diff that only moves the version is the bump, not a change. `bump` updates every host manifest, including Muse, and rewrites the version text in place, because the manifests are hand-formatted and a JSON round trip rewrites them. `refresh` and `verify-caches` share one reading of each host's installed Workshop plugins: `refresh` updates the marketplace and each user-scope plugin `origin/main` releases, skipping a project- or local-scope install whose folder the run cannot know, and `verify-caches` compares each copy's git object ids with `origin/main`, ignoring the markers hosts and the OS add, and names a Workshop plugin the marketplace no longer lists instead of dropping it. A host whose CLI is missing is skipped, not failed. The release names the shipping paths in both `git add` and `git commit`, so another session's work in the tree, staged or not, does not ride along. Invoking the skill authorizes the bump, the push to `main` and updating installed plugins; it installs and removes nothing. The helper's tests run by hand with `node --test .claude/skills/release/tests/release.test.mjs`, including a check that the Codex copy of `SKILL.md` matches the canonical one. On Windows a CLI installed only as a `.cmd` shim reads as missing, which is unverified.
+
+### Release reports what each host keeps (2026-11-09)
+
+The skill said both hosts keep one cache folder per version and that running sessions keep the version they loaded. That holds for Claude Code only. Codex keeps a single folder per plugin and `codex plugin add` replaces it, so a release removes the files a running Codex session resolved: 36 missing-file reads in 16 Codex threads followed releases in the week of 2026-11-02, on skill entrypoints, references, an agent file and the bundled CI runner. The skill now states each host's behavior, counts live Codex processes with `pgrep -x codex` before `refresh`, and reports that those sessions need a new session before their next skill, reference or script read. The release still runs: the user's request authorizes the refresh, and deferring Codex would need per-host refresh the helper does not have. `fix-ci` and `ci-watcher` separately re-resolve a vanished runner path from the host's plugin record ([watcher decision](fix-ci.md#stalled-watches-resume-and-dispatches-carry-labelled-inputs-2026-11-09)).
+
+Muse stays outside the helper. `bump` writes the Muse manifest, but `refresh` and `verify-caches` read only Claude Code and Codex, and this machine's Muse install sat several minor versions behind without the report saying so. The skill now reads `muse plugins list --json` and reports each Workshop plugin's installed and released version as not refreshed. Teaching the helper a third host is deferred until Muse updates are wanted from a release.
+
+### `push` commits a named path list (2026-11-09)
+
+`push` still carried its template text: a description that recited the procedure, an instruction to adapt a trailer line, and `git add -A`. No commit in this repository has carried a trailer since 2026-09-09, and `git add -A` takes whatever another session left in the tree, which `release` had to override. Two of the week's four releases also tripped on the override itself: the file list sat in a shell variable that zsh does not word-split, and a plain `git add` refuses a `.codex/` mirror path that a local exclude rule ignores. `push` now has a trigger-only description, writes the change's paths to a list file, and stages and commits with `git add -f --pathspec-from-file=<list>` and `git commit --pathspec-from-file=<list>`, checked on git 2.56 to leave another session's staged file out of the commit. `release` supplies the shipping files as that list. Whether `.codex/` stays in the local exclude is the operator's choice; `-f` makes the recipe work either way.
 
 ## Bounded skill entrypoints (2026-10-30)
 
@@ -138,3 +185,24 @@ reference repair. Consumers loaded the applicable references and retained the
 authority and evidence boundaries. These are bounded scenario checks, not live
 compaction trials or a reliability estimate. Ten shipped procedure extractions
 also retain their original text after relative-link and terminal-newline repairs.
+
+## Corrections from the independent review of the 2026-11-09 changes (2026-11-09)
+
+`push` built its path list from `git status --short`, which hides new files
+under a locally excluded `.codex/` and collapses new directories, so a new
+mirror file never reached the list its `-f` was there to stage. It now reads
+`-uall` plus an `--ignored` listing of `.codex`, passes
+`--literal-pathspecs` so a path with glob characters cannot match other files,
+and checks the commit with `git show --name-only`, which does not truncate
+paths. `release` said its list held the files from step 2 "and nothing else",
+which read literally leaves out the version bump and release notes; it now
+names the files step 3 writes. Its `pgrep -x codex` count included helper
+processes and the releasing session, so the report gives it as an estimate of
+whether Codex is running. `writing-skills` pointed at a render script that
+writes into the skill folder and needs Graphviz; the pointer now says both.
+`mine.py` labelled a Codex reviewer named only by its contract header as an
+anonymous agent; a header naming one of the six workbench agents now prints as
+that role, and any other name stays hashed so default output cannot leak a
+private agent's name, each with a test. `push` lists ignored paths under
+`.codex/skills` only, so a local Codex config file is never a candidate. A release test that had failed since the Muse manifest was added (it
+expected five manifest files, there are six) is corrected.

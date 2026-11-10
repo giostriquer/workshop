@@ -10,7 +10,9 @@ Answer from observations; source inspection alone cannot establish a limiter.
 
 ## Frame the measurement
 
-Write the intended claim, workload, and metric with units. Identify revisions,
+Write the intended claim, workload, and metric with units. For a comparison,
+also write the decision before any run: the result that would change it, and
+the noise floor you expect; the trials are read against it. Identify revisions,
 builds, configuration, data, and concurrency. Read the harness: what does the
 timer include, what counts as success, and what is omitted? Reuse suitable
 project tooling. Work within the authorized time and resource budget; an

@@ -13,33 +13,36 @@ applicable engine and ask only for missing decisions that change the investigati
 
 ## Steps
 
-1. **Ask the user to size the workload**: skip the question only when they
-   already stated or clearly implied the coverage (such as "full audit"). The tiers:
+1. **Size the workload.** State the tier and engine that fit, with one line of
+   reasoning. Ask the user to pick only when two tiers both fit and differ in
+   what the user pays (a team sweep, or delegated readers not yet authorized)
+   or in runtime modality (below), and the request has not already stated or
+   clearly implied the coverage (such as "full audit"). The tiers:
 
    | Tier | Engine | Fits |
    | --- | --- | --- |
    | **quick look** | inline, this session: a few reads/greps, minutes | "is this config even used?", a suspicion worth five minutes |
    | **deep audit** | the `claim-check` skill | one premise investigated to evidence-graded verdict: a bug to pin down, a ticket to validate, "is the refactor complete?" |
-   | **static review** | inline or independent readers where delegation is authorized | cross-cutting instruction, configuration, or document review |
+   | **static review** | inline or independent readers where delegation is authorized | a read-only audit across many files with no single premise: code, instructions, configuration, or documents |
    | **team sweep** | the `qa-sweep` skill | a broad, decomposable surface: a release, a feature area, corroborated findings at team scale |
 
-   Ask with a structured question tool (`AskUserQuestion` or the host's
-   equivalent) when one is available: one option per tier, the recommended
-   tier first and marked; otherwise present the tiers as a numbered list and
-   wait for the pick. Recommend a tier with one line of reasoning, but the
-   pick is the user's.
+   When the pick is asked, use a structured question tool (`AskUserQuestion`
+   or the host's equivalent) when one is available: one option per fitting
+   tier, the recommended tier first and marked; otherwise present them as a
+   numbered list and wait for the pick. Recommend a tier with one line of
+   reasoning; an asked pick is the user's.
 
    **Runtime modality flag.** The tiers size breadth; this flags *where the
    evidence must come from*. When the thing to check is behavior a real
    client can drive (an endpoint, a flow in the running app, a CLI) code
-   reading alone cannot settle it: say so in the recommendation and confirm,
-   as part of the same sizing question, whether the check should drive the
-   booted app. A confirmed runtime check is part of the workload handed to
+   reading alone cannot settle it: say so in the recommendation and confirm
+   whether the check should drive the booted app, inside the sizing question
+   when one is asked and as its own question otherwise. A confirmed runtime check is part of the workload handed to
    the engine (a team sweep is runtime by construction; for the other tiers,
    pass the confirmation along so the evidence comes from the running
    surface, not reading alone).
 
-2. **Run the engine.** Static review: inventory the requested surface, inspect its contracts and interactions, and report coverage and source evidence. Quick look: investigate inline and keep it genuinely
+2. **Run the engine.** Static review: inventory the requested surface, inspect its contracts and interactions, and report coverage and source evidence. When independent readers did the reading, read the cited lines yourself for each reader claim the verdict rests on before reporting it; a claim not checked that way is reported as the reader's, unverified. Quick look: investigate inline and keep it genuinely
    quick, if it starts growing past its size, stop and say so; growing the
    workload is the user's call, not drift. Deep audit / team sweep: invoke the
    engine skill and let it run per its own rules (they own their rigor;
@@ -74,8 +77,8 @@ applicable engine and ask only for missing decisions that change the investigati
 - The sized tier and engine that ran, with the runtime modality when it was
   flagged.
 - Findings, verdict-first; flagged uncertainties with the user's resolutions.
-- The exit taken: report-and-done, handed to brainstorming, or at the route
-  gate.
+- The exit taken: report-and-done, handed to brainstorming, authorized repairs
+  continued, or at the route gate.
 
 ## Boundaries
 

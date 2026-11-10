@@ -41,3 +41,24 @@ results and current CI from an old revision, continued authorized work after
 a status request, and paused only when asked. The standalone and empty cases
 ended with their reports. This is application evidence for those cases, not
 live host-discovery proof or a reliability estimate.
+
+## Accuracy rules from the later upstream revision (2026-11-09)
+
+Five commits landed upstream after the first port. The operator approved
+adapting the five rules in them that protect what the reader can trust, at
+`236e5481d05cbadc315b374a5de54971858c27bb` (source manifest 0.15.36): every waiting item is listed, with no
+count or link standing in for one; each number shown is checked against its
+source; a line stays true read alone and waiting work is not called done; an
+action item exists only where the work needs one; and items that share a
+decision get the decision once and a line each, riskiest first, with the risk
+stated even when low. They are written as what the update contains, since the
+failures are in the update's shape. Upstream's word caps, visuals-first order
+and six-box limit are not taken; the earlier choices on plain output and
+optional visuals stand.
+
+One scenario probe (Opus 5.5, fresh context, one run) covered the new rules:
+three pull requests waiting on one merge decision, a subagent's test count
+that the refreshed run contradicted, and an older unanswered question. The
+update asked the merge decision once with a line per pull request, riskiest
+first and each with its risk, corrected the count and said so, and carried the
+older question. Regression evidence for that scenario only.

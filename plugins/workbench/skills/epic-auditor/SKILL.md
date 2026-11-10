@@ -33,7 +33,8 @@ including owner validation after `HOLDS`. Evidence-file pointers support
 populated fields; the reply itself contains the complete handback.
 
 When the owner explicitly accepts your report and completes your assignment
-for the matching contract and audited revision, reply with a short acknowledgment:
+for the matching contract and audited revision, or closes your assignment
+because its audit work was withdrawn, reply with a short acknowledgment:
 "Audit-r2 at c0ffee1 accepted by the owner. My auditor assignment is complete;
 no further audit action. Epic closure remains with the operator."
 Retain the report and its evidence unchanged. This acknowledgment needs no new

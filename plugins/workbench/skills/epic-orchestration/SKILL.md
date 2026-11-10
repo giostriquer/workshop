@@ -6,8 +6,9 @@ disable-model-invocation: true
 
 # Epic Orchestration
 
-You own the epic's scope, independent acceptance and coordination. The operator
-carries your dispatches to implementation sessions and their reports back.
+You own the epic's scope, independent acceptance and coordination. The operator,
+or tooling acting for them, carries your dispatches to implementation sessions
+and their reports back.
 Within the agreed scope and authority, lanes choose implementation and
 verification methods under repository rules and the skills that own the work.
 A lane returns for a ruling when the existing contract does not settle a decision.
@@ -21,12 +22,9 @@ A lane returns for a ruling when the existing contract does not settle a decisio
 
 ## When this is the right seat
 
-Use this for an epic too large for one session, with implementation in other
-sessions dispatched by hand. For one premise or ticket use `claim-check`;
-for broad verification use `qa-sweep`; for one finished
-change at a running artifact use `empirical-proof`. To implement yourself, have
-the operator recast the role first. Local support tooling below remains part of
-coordination and validation.
+For one premise or ticket use `claim-check`; for broad verification use
+`qa-sweep`; for one finished change at a running artifact use `empirical-proof`. To implement yourself, have
+the operator recast the role first.
 
 You may use subagents for bounded support when saved context or time justifies
 the overhead. Helpers inherit the assigned workset's scope and your role
@@ -37,28 +35,36 @@ acceptance are not trivial. Work owned by another skill follows its routing.
 
 ## The loop
 
-Establish scope and the primary journey → refresh and revalidate → dispatch
-ready lanes → independently validate reports → correct or authorize delivery →
-verify delivery → blind audit → resolve findings or propose closure to the
-operator.
+Reconcile lanes → establish scope and the primary journey → refresh and
+revalidate → dispatch every ready lane → independently validate reports →
+correct or authorize delivery → verify delivery → close finished lanes out →
+blind audit → resolve findings or propose closure to the operator.
+
+## Reconcile lanes every turn
+
+At the start of every owner turn, and before writing that the epic is idle or
+waiting, compare each active lane with the ledger:
+
+- the lane's highest-numbered report file under the scope folder's `reports/`;
+- the lane worktree's HEAD and working-tree fingerprint;
+- whether its session is live, where the host can list sessions.
+
+The check is done when the ledger holds this turn's observation for every active
+lane: `current`, `unrelayed handback` or `silent since <last activity>`. Validate
+an unrelayed handback now, as if it had been relayed. `silent` means two
+reconciliations in a row found no new handback, no HEAD change and the same
+fingerprint, and the session list does not show the lane running; that lane
+gets a HOLD line asking the operator to resume it or reassign its workset.
 
 ## Plan the primary journey
 
 Before the first implementation workset, or on resume when the ledger has none,
-write the epic's **primary journey**: numbered end-to-end steps from its
-acceptance criteria, from the user's first action to the goal holding. For an
-epic with no user-facing flow, the steps are the ordered outcomes that complete
-it. Every acceptance criterion belongs to a step; criteria outside the user
-path, such as docs or migration, are steps after it. Record the journey at the
-top of the ledger with each step's state, tickets and criteria. It orders
-approved scope and adds none.
-
-Complete the thinnest end-to-end path first, then widen it, unless the operator
-has set another order. Each implementation dispatch names the journey step it
-moves and the tickets its delivery closes. A delivery that leaves its ticket
-open records what remains and the workset that closes it. A second partial
-delivery on one ticket without that closing workset triggers a re-plan of the
-ticket before more work is dispatched against it.
+read [Primary journey](references/primary-journey.md) and write the epic's
+numbered end-to-end steps from its acceptance criteria at the top of the ledger.
+Read it again when a delivery leaves its ticket open. The journey orders approved
+scope and adds none. Complete the thinnest end-to-end path first, then widen it,
+unless the operator has set another order. Each implementation dispatch names
+the journey step it moves and the tickets its delivery closes.
 
 Before dispatching a workset, or folding a finding into an active one, name the
 step it moves. A finding, however valid, takes one of three dispositions:
@@ -95,8 +101,9 @@ Before a new implementation workset, reopened work or scope-changing amendment:
    it, under **Holds stop one step**.
    Helpers and audits inherit this boundary; a helper does not need a separate
    scope argument for every check within its assigned workset.
-2. **Refresh the base.** Use `origin/dev` unless the repository or operator names
-   another target. In a clean checkout of that branch, pull fast-forward-only
+2. **Refresh the base.** Resolve the integration branch from the operator's
+   instruction, else repository rules, else the remote's default branch, and
+   record it in the ledger. In a clean checkout of that branch, pull fast-forward-only
    and verify HEAD equals the refreshed remote SHA. Otherwise fetch the target
    and inspect that exact SHA in an isolated checkout under repository and
    `using-workbench` worktree rules. A local branch ahead of the remote is not
@@ -150,52 +157,65 @@ conclusions or PR history.
 
 ## Dispatching
 
-Before every lane-facing prompt, ruling, acceptance or authorization, read
-[Dispatching](references/dispatching.md) for the dispatch file and complete
-paste-ready label/pointer pair. Reread after compaction or resume before the next
-handoff. The file, label and pointer use the ledger's same canonical lane name;
-a saved file or prose recap alone does not complete a handoff. Implementation
-sessions go through the operator; helpers do not replace that handoff.
+Every lane-facing prompt, amendment, acceptance, ruling, audit brief or
+authorization is a file plus a labeled pointer in your reply. A saved file,
+ledger update or prose recap alone is not a handoff. Helpers do not replace
+that handoff.
+
+1. Write the file under the scope folder's `dispatches/`. Its first line is
+   `Lane: <LANE>`, the ledger's canonical name; the brief follows.
+2. Give each destination its own label directly above its own fenced pointer:
+
+`Paste this into <LANE>:`
+
+```
+Lane <LANE>. <Role, what is authorized, fresh or existing session>. Read and execute:
+<absolute dispatch path>
+<lines governing instructions require verbatim, if any>
+```
+
+The label, the pointer and the `Lane:` line are read as written by the tooling
+that carries handoffs. The path is absolute: the lane reads it from its own
+worktree. The pointer repeats no brief and carries no operator decision.
+
+**Closeout.** When nothing remains assigned to a lane, because its delivery is
+verified merged, its audit report is accepted, or its remaining work was
+withdrawn or reassigned, release it in that reply:
+
+```
+Lane <LANE>, existing session. <Delivery at <sha> accepted | Audit at <sha> accepted | No further lane work is assigned>; your <implementation | audit> assignment is complete. Acknowledge only. Use <reporting skill>. Read and execute:
+<absolute dispatch path>
+```
+
+A closeout assigns and removes nothing: later work needs a new assignment, and
+removing the worktree needs the operator's separate approval. Before writing an
+acceptance, hold or closeout file, read [Dispatching](references/dispatching.md)
+for what each records.
 
 **Holds stop one step.** Missing authority, a dependency or unfinished review
 holds only the step that consumes it. Name that step, its release owner and its
 governing source, quoting its exact words; a wider reading is your own ruling.
-Advance independent authorized work. A later operator review
-is a gate only when the operator says so. Resolve your own delivery gate, preserve
-operator-reserved decisions, and do not infer merge authority or issue work whose
-trigger has not fired.
+Re-observe the release condition in every turn that repeats a hold; one that no
+longer holds is released in that reply. Advance independent authorized work. A
+later operator review is a gate only when the operator says so. Resolve your own
+delivery gate, preserve operator-reserved decisions, and do not infer merge
+authority or issue work whose trigger has not fired.
 
 ## Completion review and delivery
-
-Before accepting a delivery range, inspect its full diff and proposed new files
-for local support tooling and its integration changes, not only the current
-working tree. Return accidental inclusion to the lane to separate from delivery
-while preserving the tools and evidence locally. Required verification still
-runs; excluding its harness does not waive the evidence.
 
 When the full agreed work set is verified and ready to ship, the lane uses
 `trim-comments`, then `code-quality-review` over the trimmed range, plus
 `test-quality-review` when production logic or tests changed and `contract-review`
 when observable behavior, consumer contracts or cross-component wiring changed.
-Give the behavior reviewer the accepted outcomes, approved design and exclusions,
-range and revision, and verification evidence; follow its Dispatch line. Applicable
-reviews run in parallel. Trim edits belong
-in RANGE as `trim-comments`' *Who runs it* requires. Intermediate validation
-reports and requests for rulings do not trigger review.
+Applicable reviews run in parallel. Alongside that round the lane attempts
+`scope-review` once and records the outcome in its report's `REVIEW` scope slot.
+Intermediate validation reports and requests for rulings do not trigger review.
 
-Alongside that round, attempt `scope-review` once through its Muse-only invocation
-directions for the current host.
-Include the original epic goal, the accepted lane increment and exclusions, and
-the claimed versus verified journey. Record its report or `SKIPPED`; invocation
-problems never trigger fallback, setup repair or a delivery hold. The parent
-triages its advisory findings without requiring another Muse pass.
-
-Retain the reviewed revision and the review record: finding IDs, dispositions,
-reviewer confirmations, evidence for rejections and correction pass number.
-Return findings to their owning reviewer under that discipline's follow-up
-rules; preserve unaffected reviews' results. A pending required review or
-unconfirmed blocking disposition holds delivery unless the operator explicitly
-waives it or repository rules supersede the gate.
+A pending required review or unconfirmed blocking disposition holds delivery
+unless the operator explicitly waives it or repository rules supersede the gate.
+Before accepting a delivery range or writing an authorization, read
+[Delivery](references/delivery.md) for the range inspection, reviewer inputs and
+review record, the authorization's contents and the lane's latitude.
 
 **You decide routine lane delivery authorization within the approved epic.**
 Once independent acceptance and required pre-publication gates are satisfied,
@@ -207,24 +227,8 @@ decision or the action exceeds delegated scope or authority; identify that
 source or boundary. Your own dispatch, ledger or recovery note cannot create
 such a reservation. Merge decisions remain with the operator.
 
-Issue the authorization file and copyable pointer now. Reference the active
-contract, scope the tickets and range, and state which gates are satisfied with
-evidence or still pending. Require the actual integration branch to be merged,
-never rebased, affected checks/local gates to run, and `file-pr` to prepare the
-PR and tend it to green and mergeable.
-
-The lane chooses a title under repository conventions and `file-pr`. It may
-resolve merge conflicts within settled contracts; a new scope, product, policy
-or authority choice returns for a ruling. Conflict resolution that changes
-behavior requires affected validation and review before delivery. Reuse still
-valid review evidence instead of restarting a satisfied gate.
-
-Present open encoding offers from `REVIEW` to the operator with authorization;
-an approved offer returns to the lane as a correction. PR text describes the
-change and its stakes, with ticket links in the repository's template fields;
-omit lane names and process history. Verify terminal CI and delivery state
-before calling the wave done. A watcher's promise or an opened PR is not a
-completed delivery.
+Verify terminal CI and delivery state before calling the wave done. A watcher's
+promise or an opened PR is not a completed delivery.
 
 ## Rulings and findings
 
@@ -255,27 +259,14 @@ completed delivery.
 You own status synchronization for the epic and its tickets. When a tracker is
 available and writes are authorized, reconcile status on start or resume, when
 work begins, after meaningful handbacks or rulings, and at delivery and closure.
-Use existing authority without asking the operator to repeat it.
+Use existing authority without asking the operator to repeat it. Before a
+tracker write, or when the tracker, write authority or a suitable state is
+unavailable, read [Tracker sync](references/tracker-sync.md) for the state
+mapping, read-back and how an unavailable or failed update stays pending.
 
-Read current statuses and the available workflow states for both tickets and
-the parent epic or project. Map the work's actual phase to those states:
-
-- When work begins, move the active tickets and their epic to **In Progress**
-  or the workflow's equivalent. Leave unstarted, queued tickets unchanged.
-- Reflect review, blockers and resumed work as they occur. Keep an accurate
-  review or blocked state instead of resetting every open item to In Progress.
-  One blocked ticket does not block an epic whose other work can advance.
-- Mark a ticket **Done** only after independent acceptance and required
-  delivery are verified. A lane report, open PR or green CI alone is insufficient.
-  Close the epic only after its closure gates and the operator's decision.
-
-Apply only needed transitions to operator-owned items, then read back the result.
-On recovery, repair stale statuses against verified work; preserve accurate
-terminal states unless the work has been explicitly reopened within scope.
-If the tracker, write authority or a suitable state is unavailable, or an update
-fails, record the intended transition, reason and responsible owner as pending
-in the ledger. Continue independent authorized work and retry when the blocker
-clears; report confirmed tracker state separately from intended state.
+Mark a ticket **Done** only after independent acceptance and required delivery
+are verified; close the epic only after its closure gates and the operator's
+decision.
 
 ## Keep a local epic ledger
 
@@ -293,36 +284,56 @@ Retirement and epic closure grant no deletion, worktree or tracker authority.
 
 ## Close every handoff with a next step
 
-Before an owner return, read [Owner returns](references/owner-returns.md) for its
-ordered output and audit-closeout wording. Report progress, verified disposition
-and Tracker sync, each required lane's complete file/label/pointer handoff, and
-the immediate next authorized action or a named blocker and owner. Check that
-every lane-facing disposition has its own populated handoff with the same
-canonical name. Routine progress with no lane disposition can stay brief prose.
-A hold stopping more than one lane or workset opens every operator reply, in
-the **Active holds** form from Owner returns.
+A reply that ends an owner turn has these parts, in order:
 
-Keep audit-report acceptance, auditor-assignment completion and epic closure
-separate. When no assigned audit work remains, explicitly release the auditor
-with acknowledgment only. Only the operator closes the epic; accepting an audit
-does not authorize fixes or close it.
+1. **Active holds:** one line for each hold that the operator releases or that
+   stops more than one lane or workset; any other hold stays out of this slot:
+   `HOLD: <lanes or worksets stopped, n of m> · since <date> · ordered by <operator | epic owner> · source: "<exact words>" · released by <owner and condition> · rechecked <date, evidence> · operator action: <exact ask, or none>`
+   Name the operator as orderer only when the quoted words cover everything
+   stopped.
+   A wider reading, or a hold nobody ordered such as a dependency or missing
+   access, is `epic owner`'s: its source quotes the observed blocker and
+   `operator action` asks to confirm, narrow or supply it. A lane's `NEXT STEP`
+   owned by the operator is such a hold, its ask verbatim in `operator action`.
+2. **Progress:** criteria closed and remaining, the journey step in work and the
+   count of open follow-ups.
+3. **Lane reconciliation:** each unrelayed handback or silent lane found this
+   turn, or `all lanes current`.
+4. **Verified disposition:** results, revision and remaining gates, keeping
+   validation, PR readiness, merge and epic completion distinct. Include
+   **Tracker sync**: confirmed statuses and pending updates with owner and reason.
+5. **Lane handoffs:** the label and fenced pointer from **Dispatching** for each
+   affected lane, when accepting or rejecting a report, returning a correction
+   or ruling, authorizing delivery or closing a lane out, including when no
+   implementation remains. A lane waiting only on an operator decision gets its
+   disposition and that hold.
+6. **Next actions:** every workset that is neither done nor active has its
+   dispatch in part 5 or a hold naming its release owner. A step named without
+   its dispatch file and pointer is not a next action. With no workset open,
+   the reply carries the closing audit's brief, the closure proposal, or a hold
+   naming what stops both and who releases it. Operator decisions go
+   here, outside the paste blocks; dispatch a routine next lane the plan already
+   determines instead of asking.
+
+Before sending, check that every lane-facing disposition has its file, label and
+pointer under one canonical name, and that part 6 accounts for every open
+workset. An answer or progress update with no lane disposition still gives parts
+1 to 3 and 6; messages inside a turn stay brief prose. Before a session's first
+owner return and before each audit return, read
+[Owner returns](references/owner-returns.md): a worked return and the three
+dispositions an audit return states separately.
 
 ## Closing the epic
 
 Closure requires every journey step verified end to end, acceptance evidence,
-regression checks for relevant fix
-families, dispositioned findings, verified required delivery and a **blind audit**.
-The auditor starts from the artifact, not PR history, probes declared epic
-surfaces against approved criteria and attacks prior fixes. Require each fix
-family's held/broken result with evidence, and each finding's repro and current
-source anchor. An unreproduced finding stays uncorroborated or blocked; calling
-it disproved requires contrary evidence. Successful-run-only corpora cannot
-establish absence of failures.
+regression checks for relevant fix families, dispositioned findings, verified
+required delivery and a **blind audit** whose verdict-moving claims you
+corroborated yourself. Before briefing the closing audit or proposing closure,
+read [Closing](references/closing.md) for the audit's required evidence and the
+proposal's contents.
 
-Corroborate the audit's verdict-moving claims yourself. A HOLDS label does not
-replace missing required evidence. When the conditions above are met, summarize
-coverage, accepted limits and remaining dispositions, and propose closure to
-the operator. Another round needs an unresolved finding, changed behavior or an
-evidence gap; round count is not a closure criterion. Preserve the audit report
-locally, publish a concise verdict under existing authority, and retire working
-instructions only when their ledger obligations are satisfied.
+Propose closure only when every open follow-up and debt item is listed on its
+own line with the operator's disposition: `do before close`, `separate ticket
+accepted` or `drop`. An item without one goes to the operator for a ruling
+first. Only the operator closes the epic; accepting an audit does not authorize
+fixes or close it.

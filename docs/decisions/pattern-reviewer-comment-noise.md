@@ -52,6 +52,23 @@ design, with all three probes executed through their real consumer. These are
 bounded scenarios, not a reliability estimate; detailed evidence and workflow
 checks live in the ignored work scope.
 
+## Dispatch lines, verdict line and ground (2026-11-09)
+
+`contract-reviewer` takes six labelled lines and nothing else (`Worktree`,
+`Base or range`, `Revision`, `Accepted scope`, `Verification evidence`, `Scope
+folder`), named in its description because a Claude Code parent reads nothing
+else of the agent. It carries verification evidence as the checks run at this revision with their
+results, or a path to that record, since the rubric
+reuses adequate existing checks. Every round's report opens with the verdict
+line, and one without it reads as `ISSUES_FOUND`: 5 of 225 reports in a
+transcript audit of 2026-11-02 to 2026-11-09 had none. "The current revision is
+covered" left the finish rule; after a pass this reviewer sees a later delta
+only when it changes observable behavior, a consumer contract or
+cross-component wiring. Rationale and counts:
+[bounded correction review](bounded-correction-review.md#a-passed-reviewer-sees-a-later-delta-only-when-its-ground-changes-2026-11-09)
+and
+[code-quality-review](code-quality-review.md#the-dispatch-is-pointers-agent-descriptions-name-them-2026-11-09).
+
 ## A built-in check with a provenance exception (2026-06-05)
 
 The pattern reviewer normally derives findings from project-documented

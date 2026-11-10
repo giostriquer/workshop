@@ -184,6 +184,26 @@ async function snapshot(state, read) {
   return summary(state, 'passed', 'All reported checks settled without failure');
 }
 
+// A watch that stopped without a verdict on the head (its deadline expired, or
+// four reads in a row failed) continues under a new deadline. Every other saved
+// result is a verdict on the pinned head and stays as recorded. A read block is
+// resumed once per streak, whatever its reason (failed reads often carry a
+// request id): a second one with no good read between is a standing fault.
+export function reopen(state, deadline) {
+  const status = state.result?.status;
+  const readBlocked = status === 'blocked' && state.errors >= 4;
+  if (status !== 'pending' && !readBlocked) return false;
+  if (readBlocked) {
+    if (state.resumedPast) return false;
+    state.resumedPast = true;
+  }
+  delete state.result;
+  delete state.error;
+  state.errors = 0;
+  state.config.deadline = deadline;
+  return true;
+}
+
 export async function watch(state, { read, now = Date.now, sleep = ms => new Promise(r => setTimeout(r, ms)),
   save = () => {}, callLimitMs = Infinity } = {}) {
   if (state.result) return state.result;
@@ -211,6 +231,7 @@ export async function watch(state, { read, now = Date.now, sleep = ms => new Pro
       state.rateLimits = 0;
       delete state.retryAt;
       delete state.error;
+      delete state.resumedPast;
       if (result) {
         state.result = result;
         save(state);
@@ -262,9 +283,10 @@ export function options(argv, now = Date.now()) {
   if (values.protocol && values.protocol !== String(PROTOCOL)) throw new Error(`Unsupported watcher protocol: ${values.protocol}`);
   if (values['wait-mode'] && !['foreground', 'background'].includes(values['wait-mode'])) throw new Error('Invalid --wait-mode');
   if (values.resume) {
-    if (Object.keys(values).some(k => !['expected', 'resume', 'call-limit-ms', 'protocol', 'wait-mode'].includes(k)) || values.expected.length) {
-      throw new Error('--resume accepts only protocol and host waiting options');
+    if (Object.keys(values).some(k => !['expected', 'resume', 'deadline', 'call-limit-ms', 'protocol', 'wait-mode'].includes(k)) || values.expected.length) {
+      throw new Error('--resume accepts only a new deadline, protocol and host waiting options');
     }
+    if (values.deadline) values.deadline = positive(values.deadline, '--deadline');
     return values;
   }
   if (!/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(values.repo ?? '')) throw new Error('--repo must be OWNER/REPO');
@@ -297,6 +319,7 @@ const HELP = `Read-only PR or branch CI watcher (Node 18+, authenticated gh).
 node watch-ci.mjs --protocol 2 --repo acme/webapp --pr 123 --sha <full-sha> --state <scratch>/watch.json
 node watch-ci.mjs --repo acme/webapp --branch main --sha <full-sha> --state <scratch>/watch.json
 node watch-ci.mjs --resume <scratch>/watch.json
+node watch-ci.mjs --resume <scratch>/watch.json --deadline <Unix-seconds>
 
 Optional: --deadline <Unix-seconds> (default: ten minutes), --expect <required-check-name>
 (repeatable), --rerun <run-id> --after-attempt <failed-attempt>, --call-limit-ms <milliseconds>,
@@ -306,6 +329,10 @@ WORKBENCH_CI_WATCH_REGISTRY overrides the per-user registry in the system tempor
 A duplicate target returns its existing stateFile and verdict, or watching/resumable without another poll.
 A PR watch returns conflicted at once when GitHub reports merge conflicts; passed needs a mergeable PR.
 On slice, resume the same state file. No log reads, reruns, repository edits or pushes occur.
+A saved pending result, or blocked after four failed reads, continues under --resume with a new
+--deadline and its saved expected checks; every other saved verdict is returned unchanged.
+A read block is resumed once: a second one with no successful read between stays blocked.
+An offered --deadline that was not applied to this state comes back as deadlineIgnored.
 Exit 0: reported verdict. Exit 2: invocation/runtime gap. Inspect status; exit 0 is not CI green.
 `;
 
@@ -435,6 +462,8 @@ export async function main(argv) {
     }
     if (!args.resume && existsSync(file)) throw new Error('State already exists; use --resume or a new state file');
     locks.push(acquire(`${file}.lock`, String(process.pid)));
+    const ignored = args.resume && args.deadline && !reopen(state, args.deadline)
+      ? { deadlineIgnored: args.deadline } : {};
     let limit = args['call-limit-ms'];
     if (!limit && args['wait-mode'] !== 'background' && process.env.CLAUDECODE) {
       limit = String(Math.min(180000, positive(process.env.BASH_MAX_TIMEOUT_MS || '180000', 'Host call limit')));
@@ -446,7 +475,7 @@ export async function main(argv) {
     const reused = Boolean(state.result);
     save(state);
     writeState(entry, { stateFile: file });
-    output(await watch(state, { read: github, save, callLimitMs }), file, reused ? { reused: true } : {});
+    output(await watch(state, { read: github, save, callLimitMs }), file, { ...(reused ? { reused: true } : {}), ...ignored });
   } catch (error) {
     console.log(JSON.stringify({ protocolVersion: PROTOCOL, status: 'blocked', reason: String(error.message).slice(0, 500) }));
     process.exitCode = 2;

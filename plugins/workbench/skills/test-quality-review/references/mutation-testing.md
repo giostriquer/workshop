@@ -54,9 +54,17 @@ named tests.
    compare the author checkout with that baseline. Remove only run-created
    artifacts whose ownership is established; preserve pre-existing work and useful
    evidence. Keep evidence in the scope's scratch location, verified to be outside
-   the commit set. The disposable copy itself stays for the task's later rounds
-   and goes after the final round's verdict. Never reset the checkout or delete
+   the commit set and outside the copy. Never reset the checkout or delete
    unrelated files for cleanup.
+   The disposable copy has one owner at a time. When this round's verdict is
+   `PASS`, remove the copy before reporting: type its absolute path out in the
+   command (`rm -rf /abs/scratch/tq.Ab12Cd/tree`, then `rmdir` on its emptied
+   `mktemp` directory; `git worktree remove --force /abs/path` for a worktree
+   copy), with no variable, glob or substitution, and report `Disposable copy:
+   removed`. On any other verdict keep it for the next
+   round and report `Disposable copy: <absolute path> (clone)` or `(worktree of
+   <author repo path>)`; the dispatching session removes it when the review
+   ends without another round.
    Unexpected writes outside the isolated runtime are this review's preservation
    gap even if the faulty test predates the diff. Stop affected runs, record owned
    changes and unresolved paths, and respect existing cleanup authority. Never
@@ -109,8 +117,12 @@ named tests.
   (`copy="$(mktemp -d <scratch>/tq.XXXXXX)/tree"`), and never clone into, clean
   or delete a folder another reviewer may hold. One copy holds every run of the
   round, mutation tools and hand-applied defects alike. Bound a run with the host's
-  tool timeout or a background job polled by an `until` loop: macOS has no
-  `timeout` command, and some hosts reject a `sleep` chained before a command.
+  tool timeout, or start it as the host's background command and wait for that
+  command's own exit: the host's completion notice, `wait <pid>`, or a loop on
+  `kill -0 <pid>` that also stops at the invocation's limit. The exit status is
+  the signal that a run ended; a line in its log is not, because a tool that
+  words its output differently leaves that wait running. macOS has no `timeout`
+  command, and some hosts reject a `sleep` chained before a command.
 - For StrykerJS, prefer a compatible framework runner with coverage analysis.
   Scope both mutation targets and tests; create or adapt a run-specific config in
   the isolated copy when the existing config targets unrelated work. Preserve the
@@ -193,21 +205,26 @@ named tests.
   coverage setting or test set to confirm or reconcile its counts. A survivor
   the reviewer wants to check by hand gets one hand-applied defect in the copy.
 - **One campaign at a time, through the slot helper.** Campaigns run one at a
-  time on the host, in arrival order. Launch every Stryker and cargo-mutants
-  invocation, dry runs included, through `scripts/mutation-slot.mjs` beside
-  this skill's `SKILL.md`:
+  time on the host, in arrival order, across every session on it. Launch every
+  Stryker and cargo-mutants invocation that builds or runs tests, dry runs
+  included, through `scripts/mutation-slot.mjs` beside this skill's `SKILL.md`:
   `node "<skill dir>/scripts/mutation-slot.mjs" --wait-limit <seconds> -- <campaign command>`.
   It queues the launch host-wide, waits for any running campaign, including
   one started without the helper, then runs the command and exits with its
-  status. To stop a campaign early, signal the helper's PID: it passes the
+  status. A listing that executes no mutant (`cargo mutants --list` or
+  `--list-files`, a tool's `--version` or `--help`) takes no slot: run it
+  directly, and the helper runs one it is handed at once (queue mode `bypass`).
+  To stop a campaign early, signal the helper's PID: it passes the
   signal to the campaign, whose tool stops its own workers, and frees the slot
   when the campaign exits; the cleanup step above still applies. Waiting is
   outside the lane budget, at most 15 minutes per round, so pass the round's
   remaining wait as `--wait-limit`. Exit 75 means the wait limit ended before
   the slot came. Scope still uncovered when the wait reaches that limit or the
-  round must hand back is `partial`, with its command under Strategy notes;
-  when no required scope ran at all, record `blocked: host busy` instead, and
-  the next round carries it.
+  round must hand back is `partial`, with its command under Strategy notes.
+  When no required scope ran at all, record `blocked: host busy` with the
+  uncovered scope and the minutes waited. The verdict is `ISSUES_FOUND` for the
+  missing evidence, its Issue asks for no code change, and a later round's
+  mutation scope carries it.
   The helper's last stderr line, `mutation-slot: {...}`, gives the seconds
   waited, the queue mode and `listingSeesHost`; all three go on the Mutation
   run line. Queue mode `ps-only` (an unwritable queue directory) means waiters
@@ -276,11 +293,21 @@ named tests.
   test-quality review round (see Revision rounds), never as the implementer's
   sweep. Code this host cannot build, such as another platform's target, is
   `blocked` with that platform and the command for a host that builds it. No
-  later round on this host can run it, so it waits for the user to supply such
-  a host or waive the run; it is neither `waived` nor `not applicable`.
+  later round on this host can run it; it is neither `waived` nor `not
+  applicable`. When the dispatching session returns that command's results from
+  a host it was already authorised to use, such as the repository's CI runner
+  for that platform, judge them in that follow-up round like any run and record
+  them on the Mutation run line with the host and run id. Until results or a
+  user waiver arrive the line stays `blocked`.
   `waived: <rule or user instruction>` records a run a repository rule or the
   user removed in advance, never a successful run and never a decision the
   reviewer, a caller or an epic owner makes.
+  If a dispatch forbids or narrows the run and cites a user instruction or a
+  repository rule, record `waived` with that citation. If it cites neither,
+  leave the removed scope unrun and record `blocked: dispatch restriction
+  "<the dispatch's words>"` with the command, which is the same Issue as any
+  required run that never happened. Wait limits and budgets come from this
+  reference; a number in a dispatch does not replace them.
   `not applicable` requires source evidence that the content has no executable
   behavior, or that it is an input the named tool does not parse; zero generated
   mutants alone does not establish either. For other languages, use the

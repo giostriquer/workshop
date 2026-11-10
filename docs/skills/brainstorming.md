@@ -66,8 +66,13 @@ request spanning multiple independent subsystems is flagged immediately and
 decomposed before any detail work; each sub-project gets its own design, route,
 and implementation cycle. Independent questions are batched, dependent ones
 stay sequential, and anything the codebase can establish it answers itself.
+Until you have said what you want the thing for, it asks that as an open
+question with no options attached, beside any questions whose choices it can
+name, and each question says what your answer would change.
 
-**Exploring approaches.** Two or three, with trade-offs, recommendation first.
+**Exploring approaches.** Weak alternatives are dropped first. Two or three
+that remain, with trade-offs, recommendation first; or one, with the reason
+the others do not fit.
 "YAGNI ruthlessly."
 
 **Presenting the design.** Sections scaled to complexity, related sections
@@ -129,7 +134,7 @@ settled. Architectural work keeps its written design and self-review first.
 - It announces the path before the first question.
 - It reads the project before asking questions it could answer itself.
 - Architectural work presents two or three approaches with a recommendation,
-  then a written design with no TBDs and a completed self-review.
+  or one with why the others do not fit, then a written design with no TBDs and a completed self-review.
 - Bounded work uses a short in-chat design; a spike reports its result.
 - Negative signal: dependent implementation starts while an outcome-changing
   decision is unresolved, or full ceremony runs for a fix an audit already

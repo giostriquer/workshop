@@ -177,6 +177,36 @@ preserving the same-cause CI limit, failed-fetch blocking, conflict authority,
 branch-only CI, and merged-PR handling. These checks cover the wording, not live
 Git delivery or general reliability. Scenario evidence stays in local scratch.
 
+### Unaffected clean merges keep their check evidence (2026-11-09)
+
+Removing the retry cap left "repeat synchronization and affected checks" with
+no rule for when a newly merged target commit leaves the checks' evidence
+intact. In the week of 2026-11-02 ten sessions repeated the round 31 times; one
+push took four merge-and-validate rounds over 49 minutes, one of them a
+thirty-minute rebuild.
+
+Synchronization is unchanged: every push still includes the latest fetched
+target. The affected checks keep their evidence only when the merge is clean
+and `git diff --name-only --no-renames <evidence tip>..<fetched target tip>`
+lists no path the branch changes, no path an affected check reads (its
+package or directory, what that imports or builds from, and the dependency,
+build and tool configuration it loads) and no path that imports, builds from
+or tests one the branch changes. An independent review of the first wording
+built two cases where it held and the kept evidence was wrong: a target that
+renamed the branch's files, which rename detection hid from the path list,
+and a target that added a new consumer of what the branch changed. The
+`--no-renames` flag and the third clause close them, and the evidence tip is
+now defined as the target tip in the revision the evidence ran on. A second
+pass built a transitive case (an incoming file that depends on the branch's
+change through another module), so the clause reads "directly or through
+other modules" and a path whose dependencies cannot be bounded counts as
+read. The rule keeps local evidence only: the pull request's own CI still runs
+on the merged head. A path that cannot be placed counts as
+read, so doubt reruns the checks as before. The report records the compared
+range. `fix-ci` carries the same rule for repair pushes. This amends the
+2026-10-01 decision, whose scenarios were plan-only; this predicate has no
+consuming-agent or live Git trial yet.
+
 ### Earlier pre-filing correction (2026-09-25)
 
 The preparation step required a base merge only when the branch was behind and
@@ -246,6 +276,24 @@ Review found that the preparation step still unconditionally reran local checks.
 It now reuses adequate current evidence after a no-op synchronization, while
 retaining fresh checks for invalidated coverage and explicit delivery gates.
 Missing evidence returns to completion. The usage page follows that boundary.
+
+### The gate names the verification record (2026-11-09)
+
+The gate named every review stage by skill and left verification as an
+unnamed "should already be recorded". Across 746 Claude Code transcripts in the
+week of 2026-11-02, `file-pr` loaded 20 times and neither
+`verification-before-completion` nor `empirical-proof` loaded once; Codex
+sessions, which open skills by path, read them in 72 and 29 threads. One Claude
+Code session then built a pre-fix baseline by reverting files in its active
+worktree and hand-applied mutants there, which the unloaded skill forbids.
+
+The gate now opens with a verification slot that names
+`verification-before-completion` and the three properties its record must
+show: the changed behavior exercised through its consumer boundary, on an
+artifact that contains this revision's change, with any pre-fix comparison run
+in a disposable checkout. A gap is closed by loading that skill. `file-pr`
+still verifies nothing itself. The cause is inferred from load counts and one
+transcript; no consuming-agent trial has run on the new wording.
 
 ## Compaction-safe entrypoint (2026-10-30)
 

@@ -115,6 +115,16 @@ checkout; use supported harness removal or non-force `git worktree remove`.
 A refusal holds the entry; forcing requires explicit authority for that entry.
 Never reset or broadly clean a worktree to bypass a refusal.
 
+Before a non-force `git worktree remove`, check the worktree for directories
+this user cannot write:
+`find <path> -type d \( ! -user "$(id -u)" -o ! -perm -u+w \) -print -quit 2>&1`.
+Any output, a traversal error included, means removal would stop partway, and
+Git drops the registration even when it cannot delete the files. Hold that
+entry. For a directory this user owns, ask the user to approve the permission
+change for that exact path (`chmod -R u+rwX <path>`) and remove the worktree only
+after the check prints nothing. A directory another user owns is reported and
+stays held: changing ownership needs its own explicit approval.
+
 Delete local branches only when included in the selection; use `git branch -d`
 and report refusals. Inspect the worktree-prune preview: prune only if every
 affected registration is selected and verified stale. An unavailable mount is

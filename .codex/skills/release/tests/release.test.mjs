@@ -433,9 +433,9 @@ test('installed copies that match the released tree pass, ignoring host markers 
   const r = f.run('verify-caches');
   assert.equal(r.status, 0, r.stdout + r.stderr);
   assert.deepEqual(JSON.parse(r.stdout).rows.map(({ host, plugin, status, files }) => ({ host, plugin, status, files })), [
-    { host: 'claude', plugin: 'alpha', status: 'match', files: 5 },
+    { host: 'claude', plugin: 'alpha', status: 'match', files: 6 },
     { host: 'claude', plugin: 'retired', status: 'not-released', files: undefined },
-    { host: 'codex', plugin: 'alpha', status: 'match', files: 5 },
+    { host: 'codex', plugin: 'alpha', status: 'match', files: 6 },
     { host: 'codex', plugin: 'retired', status: 'not-released', files: undefined },
   ]);
   assert.deepEqual([...calls(f, 'claude'), ...calls(f, 'codex')], []);

@@ -10,13 +10,17 @@ import json
 import os
 import re
 
-from common import CLAUDE_HOME, DEF_PATH_RE, PLUGIN_PATH_RE, Thread, local_scope, ts_of
+from common import (CLAUDE_HOME, PLUGIN_PATH_RE, Reach, Thread, definition_mentions, inline_slash_names,
+                    local_scope, ts_of)
 
 SKILL_BASE = "Base directory for this skill:"
 COORDINATOR = "The coordinator sent a message"
 CMD_RE = re.compile(r"<command-name>/?([^<]+)</command-name>")
 REJECT_RE = re.compile(r"doesn't want to proceed|tool use was rejected", re.I)
 NOT_HUMAN_PREFIXES = ("<task-notification", "<local-command", "Caveat:", "<command-", "<system-reminder")
+# A subagent delivers its report with SubagentHandback, once; later rounds report by SendMessage to the
+# dispatcher, whose address is "main".
+COORDINATOR_ADDRESS = "main"
 
 
 def _text(content):
@@ -32,8 +36,9 @@ def _result_text(block):
     return "\n".join(x.get("text", "") for x in c or [] if isinstance(x, dict))
 
 
-def transcript_files(window):
-    """Yield (path, origin, session_id, workflow_run) for files touched since the window start."""
+def transcript_files(window, reach=None):
+    """Yield (path, origin, session_id, workflow_run) for files touched since the window start.
+    reach sees every main session's last-write time, kept or not."""
     root = os.path.join(CLAUDE_HOME, "projects")
     if not os.path.isdir(root):
         return
@@ -43,8 +48,12 @@ def transcript_files(window):
             continue
         for entry in sorted(os.listdir(pdir)):
             path = os.path.join(pdir, entry)
-            if entry.endswith(".jsonl") and os.path.getmtime(path) >= window.start:
-                yield path, "main", entry[:-6], None
+            if entry.endswith(".jsonl"):
+                mtime = os.path.getmtime(path)
+                if reach is not None:
+                    reach.saw(mtime)
+                if mtime >= window.start:
+                    yield path, "main", entry[:-6], None
             sub = os.path.join(path, "subagents")
             if not os.path.isdir(sub):
                 continue
@@ -58,8 +67,9 @@ def transcript_files(window):
 
 
 def scan(window, keep_text=False):
-    threads = []
-    for path, origin, session, run in transcript_files(window):
+    """Returns the threads and the host's Reach."""
+    threads, reach = [], Reach()
+    for path, origin, session, run in transcript_files(window, reach):
         tid = session if origin == "main" else os.path.basename(path)[:-6]
         th = Thread("claude", tid, origin)
         if origin != "main":
@@ -73,7 +83,7 @@ def scan(window, keep_text=False):
         _scan_file(th, path, window, keep_text)
         if th.first is not None:
             threads.append(th)
-    return threads
+    return threads, reach
 
 
 def _scan_file(th, path, window, keep_text):
@@ -118,11 +128,15 @@ def _assistant(th, d, ts, seen_requests):
         if not isinstance(b, dict) or b.get("type") != "tool_use":
             continue
         inp = b.get("input") or {}
-        if b.get("name") == "Read":
-            th.note_definition(str(inp.get("file_path") or ""), ts)
-        elif b.get("name") == "Bash":
-            for p in DEF_PATH_RE.findall(str(inp.get("command") or "")):
-                th.note_definition(p, ts)
+        name, cwd = b.get("name"), d.get("cwd") or th.cwd
+        if name == "Read":
+            th.note_definition(str(inp.get("file_path") or ""), ts, cwd)
+        elif name == "Bash":
+            for p, opened in definition_mentions(str(inp.get("command") or "")):
+                th.note_definition(p, ts, cwd, opened)
+        elif name == "SubagentHandback" or (name == "SendMessage" and inp.get("to") == COORDINATOR_ADDRESS):
+            if th.origin != "main":
+                th.note_report()
 
 
 def _user(th, d, ts, last_slash, keep_text):
@@ -141,6 +155,8 @@ def _user(th, d, ts, last_slash, keep_text):
             _skill_load(th, text, ts, last_slash)
         elif th.origin != "main" and (origin_kind == "coordinator" or text.startswith(COORDINATOR)):
             th.start_round(ts, "followup")
+        elif th.origin != "main" and origin_kind == "task-notification":
+            th.note_wakeup()
         return last_slash
     if text.startswith("[Request interrupted by user"):
         th.interrupts.append(ts)
@@ -152,7 +168,9 @@ def _user(th, d, ts, last_slash, keep_text):
         if not th.rounds:
             th.first_prompt = text[:900]
             th.start_round(ts, "initial")
-        elif not text.startswith("[Workflow harness") and not text.lstrip().startswith("<task-notification"):
+        elif text.lstrip().startswith("<task-notification"):
+            th.note_wakeup()
+        elif not text.startswith("[Workflow harness"):
             th.start_round(ts, "other")
         return last_slash
     if text.lstrip().startswith(NOT_HUMAN_PREFIXES) or origin_kind not in (None, "human"):
@@ -160,6 +178,7 @@ def _user(th, d, ts, last_slash, keep_text):
     if d.get("promptSource") in ("system", "sdk"):
         return last_slash
     th.note_prompt(ts, text, keep_text)
+    th.named = inline_slash_names(text)
     return last_slash
 
 
@@ -175,4 +194,5 @@ def _skill_load(th, text, ts, last_slash):
         qualified = f"{local_scope(path)}:{name}"
     slash, slash_ts = last_slash
     by_user = slash is not None and slash.split(":")[-1] == name and ts - slash_ts < 120
+    by_user = by_user or any(n.split(":")[-1] == name for n in th.named)
     th.skills.append((ts, qualified, "user" if by_user else "model"))

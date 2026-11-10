@@ -2,8 +2,8 @@
 
 **Frontmatter (YAML):**
 - Two required fields: `name` and `description` (see [agentskills.io/specification](https://agentskills.io/specification) for all supported fields)
-- Max 1024 characters total
-- `name`: Use letters, numbers, and hyphens only (no parentheses, special chars)
+- `name`: lowercase letters, numbers, and single hyphens between them, at most 64 characters, identical to the skill's folder name (`scripts/validate-native-plugin.sh` fails a shipped skill on any of these)
+- `description`: at most 1024 characters
 - `description`: Third-person, describes ONLY when to use (NOT what it does)
   - Start with "Use when..." to focus on triggering conditions
   - Include specific symptoms, situations, and contexts
@@ -12,7 +12,7 @@
 
 ```markdown
 ---
-name: Skill-Name-With-Hyphens
+name: skill-name-with-hyphens
 description: Use when [specific triggering conditions and symptoms]
 ---
 
@@ -120,12 +120,9 @@ Use words an agent would search for:
 
 ### 4. Token Efficiency (Critical)
 
-**Problem:** getting-started and frequently-referenced skills load into EVERY conversation. Every token counts.
+**Problem:** a loaded skill spends context in every conversation that uses it, and an entrypoint that grows too large is cut short by compaction.
 
-**Target word counts:**
-- getting-started workflows: <150 words each
-- Frequently-loaded skills: <200 words total
-- Other skills: <500 words (still be concise)
+**Bound:** each active `SKILL.md` stays under 20,000 UTF-8 bytes. Inside that bound, spend words where a reader would otherwise go wrong. Move a substantial procedure that only some branches need behind a conditional pointer; keep shared gates and useful examples in the entrypoint.
 
 **Techniques:**
 
@@ -168,9 +165,7 @@ You: Searching...
 
 **Verification:**
 ```bash
-wc -w skills/path/SKILL.md
-# getting-started workflows: aim for <150 each
-# Other frequently-loaded: aim for <200 total
+node scripts/check-skill-size.mjs   # from the repository root; fails an entrypoint at or over the bound
 ```
 
 **Name by what you DO or core insight:**
@@ -189,7 +184,7 @@ wc -w skills/path/SKILL.md
 
 Use skill name only, with explicit requirement markers:
 - ✅ Good: `**REQUIRED SUB-SKILL:** Use workbench:test-driven-development`
-- ✅ Good: `**REQUIRED BACKGROUND:** You MUST understand superpowers:systematic-debugging`
+- ✅ Good: `**REQUIRED BACKGROUND:** You MUST understand workbench:systematic-debugging`
 - ❌ Bad: `See skills/testing/test-driven-development` (unclear if required)
 - ❌ Bad: `@skills/testing/test-driven-development/SKILL.md` (force-loads, burns context)
 

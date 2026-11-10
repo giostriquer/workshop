@@ -53,6 +53,7 @@ requires a design choice. Install Workbench alongside Toolkit for those paths.
 | [`html-artifact`](skills/html-artifact/SKILL.md) | creates HTML reports, plans, architecture explanations, PR walkthroughs, and interactive product targets |
 | [`anatomy`](skills/anatomy/SKILL.md) | launches pinned, unchanged upstream Anatomy for detailed interactive isometric figures; user-invoked only, with an on-demand fetch |
 | [`ketchup`](skills/ketchup/SKILL.md) | catches up on meaningful results, current evidence, and decisions waiting on the user; user-invoked only |
+| [`recall`](skills/recall/SKILL.md) | rebuilds your recent working context from earlier sessions in the workspace, checked against live state; read-only and user-invoked only |
 | [`why`](skills/why/SKILL.md) | reconstructs historical decision rationale, separating documented intent, inference and unknowns; user-invoked only |
 | [`web-demo-video`](skills/web-demo-video/SKILL.md) | records a browser walkthrough with reusable CLI capture, scene frames, and optional MP4 |
 | [`get-pr-comments`](skills/get-pr-comments/SKILL.md) | triages the PR's conversation, review, and inline comments into a prioritized action list; read-only |
@@ -78,6 +79,12 @@ bundled here. See the [usage page](https://github.com/giostriquer/workshop/blob/
 task's authority and makes visuals optional. See its
 [usage page](https://github.com/giostriquer/workshop/blob/main/docs/skills/ketchup.md) and
 [decision](https://github.com/giostriquer/workshop/blob/main/docs/decisions/ketchup.md).
+
+`recall` adapts Lauren Tan's MIT-licensed pstack skill from
+[cursor/plugins](https://github.com/cursor/plugins). It reads session history
+across hosts read-only and routes no models. See its
+[usage page](https://github.com/giostriquer/workshop/blob/main/docs/skills/recall.md) and
+[decision](https://github.com/giostriquer/workshop/blob/main/docs/decisions/recall.md).
 
 > **Attribution:** `test-audit` is derived from OpenClaw's [openclaw/openclaw](https://github.com/openclaw/openclaw) `.agents/skills/test-audit` (MIT, Copyright (c) 2026 OpenClaw Foundation): adapted per the [test-audit decision](https://github.com/giostriquer/workshop/blob/main/docs/decisions/test-audit.md): user-invoked only, validation and landing made host- and stack-neutral, OpenClaw examples replaced with placeholders.
 

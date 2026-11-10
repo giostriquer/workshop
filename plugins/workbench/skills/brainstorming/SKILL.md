@@ -121,7 +121,7 @@ digraph brainstorming {
     "Present short design in chat" [shape=box];
     "Explore project context" [shape=box];
     "Ask clarifying questions" [shape=box];
-    "Propose 2-3 approaches" [shape=box];
+    "Propose approaches" [shape=box];
     "Present design sections" [shape=box];
     "Material choices approved?" [shape=diamond];
     "Write design doc (if repo keeps specs)" [shape=box];
@@ -135,8 +135,8 @@ digraph brainstorming {
     "Present question + probe" -> "Investigate; report recommendation" [label="approved"];
     "Present short design in chat" -> "Follow authorized route\nask only for a missing choice" [label="approved"];
     "Explore project context" -> "Ask clarifying questions";
-    "Ask clarifying questions" -> "Propose 2-3 approaches";
-    "Propose 2-3 approaches" -> "Present design sections";
+    "Ask clarifying questions" -> "Propose approaches";
+    "Propose approaches" -> "Present design sections";
     "Present design sections" -> "Material choices approved?";
     "Material choices approved?" -> "Present design sections" [label="no, revise"];
     "Material choices approved?" -> "Write design doc (if repo keeps specs)" [label="yes"];
@@ -164,15 +164,23 @@ plus a short in-chat design is the whole process.
   should they be built? Then brainstorm the first sub-project through the
   normal flow. Each sub-project gets its own design → route → implementation
   cycle.
-- **Batch independent questions** in one structured prompt. Ask sequentially
-  when a later question depends on an earlier answer. Answer from the codebase
-  what it can establish; spend the user's attention on missing decisions.
-- Prefer multiple choice questions when possible, but open-ended is fine too
+- **Batch independent questions** in one message. Ask sequentially when a
+  later question depends on an earlier answer. Answer from the codebase what
+  it can establish; spend the user's attention on missing decisions.
+- Until the user has said what they want it for, in the request or an answer,
+  ask that as a plain-text open question with no options: their own words
+  carry intent that offered options steer away from. Questions whose choices
+  you can name go in one structured prompt beside it, each choice with what
+  it trades off and which you would pick.
+- Say why you are asking: what the answer would change about what gets built.
 - Focus on understanding: purpose, constraints, success criteria
 
 **Exploring approaches:**
 
-- Propose 2-3 different approaches with trade-offs
+- Come up with several real alternatives and drop the weak ones, including
+  any that work against why the user wants it and any the existing work rules
+  out. Propose the two or three that remain, with trade-offs. When there is
+  one sensible way, say so and say why the others do not fit.
 - Present options conversationally with your recommendation and reasoning
 - Lead with your recommended option and explain why
 - YAGNI ruthlessly: remove unnecessary features from every approach and design

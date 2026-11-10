@@ -15,7 +15,7 @@ try:
 except ImportError:
     zstd = None
 
-from common import CODEX_HOME, DEF_PATH_RE, PLUGIN_PATH_RE, Thread, local_scope, ts_of
+from common import CODEX_HOME, PLUGIN_PATH_RE, Reach, Thread, definition_mentions, local_scope, ts_of
 
 HEAD_RE = re.compile(rb'\{"timestamp":"([^"]+)",(?:"ordinal":(\d+),)?"type":"(\w+)"(?:,"payload":\{"type":"(\w+)")?')
 NAME_RE = re.compile(r"<name>([^<]+)</name>")
@@ -36,23 +36,29 @@ def _load(raw):
     return d if isinstance(d, dict) else {}
 
 
-def transcript_files(window):
+def transcript_files(window, reach=None):
+    """Session files touched since the window start. reach sees every file's last-write time."""
     chosen = {}  # session file name -> path; a plain copy replaces a compressed one wherever each lives
     for base in (os.path.join(CODEX_HOME, "sessions"), os.path.join(CODEX_HOME, "archived_sessions")):
         for d, _, files in os.walk(base):
             for f in sorted(files):
                 name = f.removesuffix(".zst")
                 fp = os.path.join(d, f)
-                if name.endswith(".jsonl") and os.path.getmtime(fp) >= window.start:
-                    if name not in chosen or (chosen[name].endswith(".zst") and f == name):
-                        chosen[name] = fp
+                if not name.endswith(".jsonl"):
+                    continue
+                mtime = os.path.getmtime(fp)
+                if reach is not None:
+                    reach.saw(mtime)
+                if mtime >= window.start and (name not in chosen or (chosen[name].endswith(".zst") and f == name)):
+                    chosen[name] = fp
     return chosen.values()
 
 
 def scan(window, keep_text=False):
-    """Returns the threads and a Counter of compressed sessions left out: no_zstd and unreadable."""
-    threads, skipped = [], Counter()
-    for path in transcript_files(window):
+    """Returns the threads, a Counter of compressed sessions left out (no_zstd and unreadable) and the
+    host's Reach."""
+    threads, skipped, reach = [], Counter(), Reach()
+    for path in transcript_files(window, reach):
         if path.endswith(".zst"):
             th = _scan_compressed(path, window, keep_text, skipped)
         else:
@@ -60,7 +66,7 @@ def scan(window, keep_text=False):
                 th = _scan_stream(fh, path, window, keep_text)
         if th is not None and th.first is not None:
             threads.append(th)
-    return threads, skipped
+    return threads, skipped, reach
 
 
 def _scan_compressed(path, window, keep_text, skipped):
@@ -150,8 +156,8 @@ def _tool_call(th, raw, ts):
     args = p.get("arguments") or p.get("input") or ""
     if not isinstance(args, str):
         args = json.dumps(args)
-    for path in DEF_PATH_RE.findall(args):
-        th.note_definition(path, ts, th.cwd)
+    for path, opened in definition_mentions(args):
+        th.note_definition(path, ts, th.cwd, opened)
 
 
 def _user_message(th, raw, ts, keep_text):

@@ -2,7 +2,7 @@
 """Cross-session statistics over this machine's Claude Code and Codex transcripts.
 
   skills     skill invocations per skill and week, per host
-  reviewers  test-quality-reviewer, code-quality-reviewer and ci-watcher time by rubric version
+  reviewers  test-quality, code-quality and contract reviewer and ci-watcher time by rubric version
   friction   candidate user corrections, interrupts and tool rejections (counts only by default)
   spend      subagent and workflow dispatches, agent-hours and tokens
 
@@ -25,9 +25,13 @@ from common import (  # noqa: E402
     BUILTIN_AGENTS, PASTE_LEN, Labeler, Window, human_tokens, later_pass_name, later_pass_prompt, summary, table, vkey,
     workbench_version_at)
 
+WORKBENCH_AGENTS = {"ci-watcher", "code-quality-reviewer", "comment-trimmer", "contract-reviewer",
+                    "spec-reviewer", "test-quality-reviewer"}
 KINDS = {"tq": ("test-quality-reviewer", "test-quality-review"),
          "cq": ("code-quality-reviewer", "code-quality-review"),
+         "ct": ("contract-reviewer", "contract-review"),
          "ci": ("ci-watcher", None)}
+RUBRIC_KINDS = [k for k, (_, rubric) in KINDS.items() if rubric]
 # Generic rubric readers are candidates; workflow agents may be verifying the rubric itself.
 RUBRIC_AGENT_TYPES = {"general-purpose", "claude"}
 
@@ -50,7 +54,7 @@ def parse_args(argv):
     p.add_argument("--min-count", type=int, default=1, help="hide skills used fewer times")
     p = sub.add_parser("reviewers", parents=[shared], help="reviewer timing by rubric version")
     p.add_argument("--split-at", metavar="VERSION", help="two buckets, <VERSION and >=VERSION, instead of one per version")
-    p.add_argument("--kinds", default="tq,cq,ci", help="any of tq,cq,ci (default all three)")
+    p.add_argument("--kinds", default=",".join(KINDS), help=f"any of {','.join(KINDS)} (default all)")
     p.add_argument("--rows", action="store_true", help="also print one neutral JSON line per dispatch")
     sub.add_parser("friction", parents=[shared], help="candidate corrections and interrupts")
     p = sub.add_parser("spend", parents=[shared], help="subagent and workflow spend")
@@ -62,11 +66,12 @@ def load(args):
     until = args.until or dt.date.today()
     since = args.since or until - dt.timedelta(days=args.days)
     window = Window(since, until)
-    threads, skipped = [], Counter()
+    threads, skipped, reach = [], Counter(), {}
     if args.host in ("claude", "all"):
-        threads += claude_code.scan(window, keep_text=args.local_detail)
+        claude_threads, reach["claude"] = claude_code.scan(window, keep_text=args.local_detail)
+        threads += claude_threads
     if args.host in ("codex", "all"):
-        codex_threads, skipped = codex.scan(window, keep_text=args.local_detail)
+        codex_threads, skipped, reach["codex"] = codex.scan(window, keep_text=args.local_detail)
         threads += codex_threads
     labeler = Labeler(args.local_detail, [p for p in args.public_plugins.split(",") if p])
     index = {(th.host, th.id): th for th in threads}
@@ -78,11 +83,11 @@ def load(args):
             root, hops = index[(th.host, root.parent)], hops + 1
         if root is not th and root.project != "unknown":
             th.project = root.project
-    banner(args, window, threads, skipped)
+    banner(args, window, threads, skipped, reach)
     return window, threads, labeler, index
 
 
-def banner(args, window, threads, skipped):
+def banner(args, window, threads, skipped, reach):
     if args.local_detail:
         print("LOCAL DETAIL: real names and text below. Never paste this output into a repository, PR or ticket.")
     counts = Counter((th.host, th.origin) for th in threads)
@@ -93,6 +98,11 @@ def banner(args, window, threads, skipped):
               "reading them needs Python 3.14+")
     if skipped["unreadable"]:
         print(f"INCOMPLETE: {skipped['unreadable']} compressed Codex sessions unreadable")
+    for host, r in sorted(reach.items()):
+        first_day = r.starts_after(window)
+        if first_day:
+            print(f"NOTICE: the oldest {host} transcript on this machine was last written {first_day}; the "
+                  f"window starts {window.since}, so the days before {first_day} are undercounted")
 
 
 def keep(th, args):
@@ -138,8 +148,9 @@ def cmd_skills(args):
         print(f"\n[{host}] interactive main sessions per week: "
               + " ".join(f"{window.show(w)}={sessions[w]}" for w in weeks))
         print(table(["skill", "total", "model", "user", "read", "in-sub", *map(window.show, weeks)], rows))
-    print("\nmodel = Skill tool call; user = slash command (Claude) or $mention (Codex); read = SKILL.md opened "
-          "by path, once per thread (Codex has no Skill tool, so a read is how its model invokes a skill); "
+    print("\nmodel = Skill tool call; user = slash command or a /name typed in the prompt (Claude), or $mention "
+          "(Codex); read = SKILL.md opened by path (Read, cat, sed -n and the like, not a search, diff or edit), "
+          "once per thread (Codex has no Skill tool, so a read is how its model invokes a skill); "
           "in-sub = inside a subagent. Weeks start Monday; * marks a partial week.")
 
 
@@ -156,7 +167,7 @@ def classify(th):
     if th.host == "claude":
         if th.agent_type in RUBRIC_AGENT_TYPES:
             rubrics = {v[4] for v in th.versions if v[3] == "skills"}
-            for kind in ("tq", "cq"):
+            for kind in RUBRIC_KINDS:
                 if KINDS[kind][1] in rubrics:
                     return kind, "rubric-read"
         return None, "agent-type" if base else "unknown"
@@ -168,14 +179,16 @@ def classify(th):
             return kind, "agent-read"
     n = th.name.lower()
     rubrics = {v[4] for v in th.versions if v[3] == "skills"}
-    tq, cq = KINDS["tq"][1] in rubrics, KINDS["cq"][1] in rubrics
+    tq, cq, ct = (KINDS[k][1] in rubrics for k in ("tq", "cq", "ct"))
     if "watch" in n or ("ci_" in n and "fix" not in n):
         return "ci", "task-name"
     if ("test" in n and "review" in n) or "test_quality" in n or "tqr" in n:
         return "tq", "task-name"
+    if "contract" in n and "review" in n:
+        return "ct", "task-name"
     if any(x in n for x in ("review", "audit_diff", "adversarial")):
-        return ("tq" if tq and not cq else "cq"), "task-name"
-    return ("tq" if tq else "cq", "rubric-read") if tq or cq else (None, "unknown")
+        return ("tq" if tq and not cq else "ct" if ct and not cq and not tq else "cq"), "task-name"
+    return ("tq" if tq else "cq" if cq else "ct", "rubric-read") if tq or cq or ct else (None, "unknown")
 
 
 def rubric_version(th, kind, index):
@@ -193,10 +206,20 @@ def rubric_version(th, kind, index):
     return None, "none"
 
 
+def other_reviewer(th, identity_source, labeler):
+    """Label for a dispatch whose confirmed role is a reviewer this command has no table for."""
+    role = th.contract if identity_source == "contract" else th.agent_type
+    if not role or not role.split(":")[-1].endswith("-reviewer"):
+        return None
+    if identity_source == "contract" and role in WORKBENCH_AGENTS:
+        role = f"workbench:{role}"  # the header drops the plugin; any other name stays hashed
+    return f"{th.host} {labeler.name(role if ':' in role else f'custom:{role}')}"
+
+
 def cmd_reviewers(args):
-    window, threads, _, index = load(args)
+    window, threads, labeler, index = load(args)
     kinds = [k.strip() for k in args.kinds.split(",") if k.strip() in KINDS]
-    dispatches, excluded, unknown = [], Counter(), Counter()
+    dispatches, excluded, unknown, untabulated = [], Counter(), Counter(), Counter()
     for th in threads:
         if th.origin not in ("sub", "workflow"):
             continue
@@ -209,6 +232,8 @@ def cmd_reviewers(args):
         kind, identity_source = classify(th)
         if identity_source == "unknown":
             unknown[th.host] += 1
+        if kind is None and identity_source in {"contract", "agent-type"}:
+            untabulated[other_reviewer(th, identity_source, labeler)] += 1
         if kind not in kinds:
             continue
         version, source = rubric_version(th, kind, index)
@@ -261,6 +286,10 @@ def cmd_reviewers(args):
           "Candidates need manual role verification; session durations are not mutation-lane times.")
     if unknown:
         print("unknown role: " + ", ".join(f"{host} {n}" for host, n in sorted(unknown.items())))
+    del untabulated[None]
+    if untabulated:
+        print("not tabulated: " + ", ".join(f"{label} {n}" for label, n in sorted(untabulated.items()))
+              + "  (confirmed reviewer roles with no table here; spend lists their time)")
     print("\nversion source: " + ", ".join(f"{k} {v}" for k, v in sorted(sources.items()))
           + "  (read = the agent opened its rubric or agent file; parent = the dispatching session's loaded version)")
     if excluded:

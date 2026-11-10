@@ -15,7 +15,9 @@ that wrote the diff wrote its comments too, so its narration reads as
 explanation and its stale comments read as current. Dispatch the
 `comment-trimmer` agent by name with no model (on Codex, paste the agent file
 and use its Dispatch line, per `using-workbench`'s *Workbench agents on
-Codex*), with the base branch or diff range. On a host without subagents, use
+Codex*). The prompt is `Worktree: <absolute path>` and `Base or range: <base
+branch, or base..head>`, plus the `Commit subject:` line below when the work is
+delivered as commits, and nothing else. On a host without subagents, use
 `code-quality-review`'s fresh-session route.
 
 It runs once the full agreed work set is verified and about to ship, before
@@ -35,13 +37,15 @@ the user.
 **How the trim reaches the round.** All applicable reviewers read one revision: the
 working tree against the base's merge base, untracked files included. Where
 the work is delivered as commits (an epic lane, or a session that has already
-committed its work under its existing authority), commit the trim's edits as
-their own comment-only commit, following the repository's commit conventions,
-before the round; a lane's RANGE and pinned head then include that commit.
-Commit the author's own changes before dispatching the trim, so that commit
-stays comment-only, and confirm from `git show` that its diff is comment-only.
-Otherwise the edits stay in the working tree, where the round reads them.
-Never add a commit the session has no authority to make.
+committed its work under its existing authority), commit the author's own
+changes first, then add `Commit subject: <subject following the repository's
+commit conventions>` to the dispatch. The trimmer then commits its verified
+edits as one comment-only commit and returns the SHA; confirm from `git show
+<sha>` that its diff is comment-only, and a lane's RANGE and pinned head then
+include that commit. When it reports `Commit: not made`, its edits are in the
+working tree and the session commits them the same way. Without a `Commit
+subject:` line the edits stay in the working tree, where the round reads them.
+Give a subject only when the session has authority to commit.
 
 **Later changes.** A correction batch is not re-trimmed. Its comments are the
 implementer's ordinary editing, and the focused correction review's standard 8
@@ -89,12 +93,17 @@ checklist below.
 5. Handle constraint comments and suppressions as below.
 6. Make no functional edits. Change only comments; leave defensive checks,
    `try`/`catch`, casts, helpers, fallbacks and style to the review. If removing
-   a comment could change behavior (a tool reads it), leave it. Before
+   a comment could change behavior (a tool reads it), leave it. When the
+   repository documents a format command or a commit hook enforces one, run it
+   over the files this pass edited, and only those, after the last edit. Before
    reporting, confirm every edit is a comment-only change: a line that differs
    from its original only in comment text (its code tokens identical, as when a
    trailing comment is removed from a code line), a deleted whole-line comment, a
-   changed line inside a block comment, or a blank line deleted with the comment
-   it set off.
+   changed line inside a block comment, a blank line deleted with the comment
+   it set off, or lines the formatter re-wrapped inside a hunk the trim edited
+   whose code tokens are identical
+   and in the same order. That check is the pass's whole verification: a
+   comment-only change needs no build, lint or test run.
 7. Report the result in 1 to 3 sentences of plain prose, one sentence per
    part, in this order: what changed; each item left for the author, in a few
    words; and, when an encoding offer is waiting, the offer as a question. For

@@ -143,6 +143,35 @@ inline SVG or HTML diagrams, no scripts, dark mode first. Mermaid's automatic
 layout is the cost: graph diagrams are laid out by hand. The survey keeps its own report procedure. Removing remote scripts eliminates
 that dependency failure; it does not establish rendered layout correctness.
 
+## One card vocabulary, and an exit for authorized implementation (2026-11-09)
+
+The survey's `SKILL.md` asked for recurring-mistake content in "Solution and
+Benefits" while `HTML-REPORT.md` named the field "Wins" and capped Solution at
+one sentence and Wins at six-word bullets. The report contract won: a ten-card
+report from that week had no prevention text and no verification cases at all.
+Both files now say **Wins**, and a recurring-mistake card has its own
+**Prevention** line plus one Gaps line for its unrun negative and positive
+checks. An omitted element gets a slot in the template it is written into, not
+prose beside a template that has no room for it.
+
+The skill ended at "Which of these would you like to explore?" and the grilling
+loop. Both runs that week were invoked with words that already authorized
+implementing every candidate, so the sessions skipped the question and
+improvised what followed; one rebuilt its implementer contract from an earlier
+round's scratch file. A fourth step now applies when the invocation's own words
+authorize implementation: one decision record per candidate in the work
+scope's folder, holding the decisions the interview would have walked and the
+code evidence for each. A candidate with a decision the code cannot settle, or
+one that contradicts an ADR, is named and left alone; the rest are settled
+designs, which `brainstorming` skips by its own scope rule, so they go to
+implementation on the route the invocation authorized. The survey still implements nothing itself,
+and the invocation's words bound worktrees, merges and pushes.
+
+The report file moves from `$TMPDIR` alone to the session's scratch directory
+when the host names one, and its name carries date and time: one run had used
+the scratch directory anyway, and both had rendered `<timestamp>` as a bare
+date, which a second run the same day would overwrite.
+
 ## Improvements taken from pstack's architect (2026-09-24)
 
 Lauren Tan's pstack (`pstack/`, MIT, Copyright (c) 2026 Lauren Tan, in

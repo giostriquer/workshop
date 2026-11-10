@@ -14,12 +14,38 @@ recurring one-liner "CI is failing, take a look."
 ## Who waits, and where
 
 The wait runs in the bundled `scripts/watch-ci.mjs` command, inside one
-separate `ci-watcher` agent. Resolve the runner's absolute path from this
-loaded skill's directory and pass it with the repository, PR number or branch,
-full pinned SHA, one scratch state-file path, deadline and known expected
-required checks. The agent invokes that file; neither agent generates polling
-code. Node 18+ and authenticated `gh` are prerequisites. A missing runner or
-runtime is a reported gap, not a reason to synthesize a replacement.
+separate `ci-watcher` agent. The agent invokes that file; neither agent
+generates polling code. Node 18+ and authenticated `gh` are prerequisites. A
+missing runner or runtime is a reported gap, not a reason to synthesize a
+replacement.
+
+Every watcher dispatch carries this block. All seven slots are REQUIRED:
+
+```
+Runner: <absolute path of scripts/watch-ci.mjs in this loaded skill's directory>
+Repo: <OWNER/REPO whose checks are watched>
+PR: <number>    (branch-only CI: Branch: <name>)
+SHA: <full 40-character pinned head>
+State file: <session scratch dir>/ci-watch-<SHA>.json    (flake rerun: ci-watch-<SHA>-rerun-<run id>-<attempt>.json)
+Deadline: <Unix seconds>
+Expected checks: <required check names, or "not known">
+```
+
+- **Runner.** If the path no longer exists at dispatch (a plugin update
+  replaced that version's folder), pass the installed version's path from the
+  host's plugin record (`claude plugin list --json` or `codex plugin list
+  --json`), never another version found by search.
+- **Deadline.** Size it with one read of the last successful runs:
+  `gh run list --repo <repo> --event pull_request --status success --limit 50
+  --json workflowName,startedAt,updatedAt` (branch-only CI: `--branch <branch>`
+  in place of `--event pull_request`). Take the longest `updatedAt` minus
+  `startedAt` among each workflow's newest run, add half again, cap the window
+  at sixty minutes, and add it to now; a longer CI continues under `Resume`.
+  With no successful run to read, use ten minutes.
+- A flake rerun adds `Rerun: <run id>, failed attempt <n>` and takes its own
+  state file, named as above: the first watch's file holds a verdict. A resume carries
+  `Resume: <returned state file>` in place of `State file`, with a new
+  `Deadline`.
 
 Dispatch `ci-watcher` by name with no model (on Codex, paste the agent file,
 `agents/ci-watcher.md` two directories above this `SKILL.md`, and use its Dispatch
@@ -43,15 +69,16 @@ Host notes, of which only the first is Claude Code behavior:
   Bash too. Neither builds Monitor, `sleep`, `pgrep` or
   repeated output-read loops. Hosts without that lifecycle use the watcher's
   bounded foreground fallback with the actual tool ceiling.
-- **Codex.** After `spawn_agent`, call `wait_agent` with the longest timeout
-  permitted by the active host instructions (up to `600000` ms) and repeat
-  until the watcher's final answer. Do not end the turn meanwhile:
+- **Codex.** After `spawn_agent`, call `wait_agent` with `timeout_ms: 600000`
+  and repeat until the watcher's final answer. Lower the value only after the
+  host returns an error that names a limit, and then use that limit. Do not
+  end the turn meanwhile:
   a finished child does not wake the parent. Run no `gh` read or `sleep`
   between waits, and do not ask the watcher for progress updates. A
   follow-up to a returned watcher follows `using-workbench`'s *Workbench
   agents on Codex*: a new pinned head and nothing else. The flake rerun's
-  watcher is therefore a fresh spawn, since its head is not new, and the fix,
-  the commit and the push stay in this session.
+  watcher and a `Resume` dispatch are therefore fresh spawns, since their head
+  is not new, and the fix, the commit and the push stay in this session.
 - **Other hosts.** The parent dispatches the watcher and waits for its return
   through the host's mechanism; it does not poll `gh` itself.
 
@@ -63,14 +90,17 @@ a new head and therefore a new watcher. The flake rerun is the one same-head
 re-watch: step 5 dispatches one watcher for the head, naming the rerun's run
 id and the attempt that failed, and that watcher waits for the new attempt,
 then watches every check on the head. No other second watcher on a red head.
+A `Resume` dispatch (step 2) continues a saved watch that ended `pending` or
+`blocked` by failed reads; it is the same watch, not a second one.
 The runner additionally shares ownership across filenames for the same target,
 including its GitHub host. A resume with a changed `GH_HOST` is blocked.
 A `watching` response names the original owner's state file: await that owner's
 handback, or report an unavailable owner rather than polling it. A `resumable`
 response uses that state file and its original deadline. Reused terminal results
-are dated saved evidence; they do not establish current merge readiness. Different
-expected-check sets are a reported gap. Keep the default per-user registry across
-dispatches so this safeguard applies.
+are dated saved evidence; they do not establish current merge readiness. A
+reused `pending` or read-error `blocked` result names the state file a `Resume`
+dispatch continues. Different expected-check sets are a reported gap. Keep the
+default per-user registry across dispatches so this safeguard applies.
 The rule covers polling and watching; a single `gh pr checks` or `gh run view`
 read, such as the pre-push snapshot in step 8 or the attempt read in step 5,
 is not polling and the parent runs it itself.
@@ -87,7 +117,7 @@ is not polling and the parent runs it itself.
    and identify the required checks. No branch, no CI, or unavailable access
    gets a precise report; missing checks are not green.
 2. **Dispatch one designated watcher to execute the bundled command.** Pass the
-   runner and state-file paths with the target from step 1. The same command
+   filled dispatch block with the target from step 1. The same command
    handles PR checks and branch-only runs; the watcher does not compose CLI loops.
    - Merged or closed (`gh pr view --json state,mergedAt,closedAt`) → the
      watcher reports `merged` or `closed` at once and the loop ends: a closed
@@ -122,6 +152,17 @@ is not polling and the parent runs it itself.
      remaining checks: any check still running when the fix is pushed reruns
      on the new head anyway, so waiting buys nothing and a failure visible in
      the first minute is acted on in the first minute.
+   - `pending` at the deadline → dispatch a `Resume` for the same head with
+     the returned state file and a new `Deadline` sized the same way. The
+     runner keeps the saved target and expected checks. A resumed watch that returns `pending` again with the same
+     pending checks, none newly settled, is a stalled run: report it with the
+     check links instead of resuming again.
+   - `blocked` whose reason is a failed read (expired `gh` auth, network) →
+     restore access, confirm it with one `gh auth status`, then dispatch a
+     `Resume` the same way. If the resumed watch blocks on reads again, report
+     it with its reason: a further `Resume` would only return it with
+     `reused: true` and `deadlineIgnored`. A `blocked` naming cancelled checks or
+     no passing check is a verdict: report it.
    - Old-head, missing, cancelled, or superseded checks → report that state,
      not green. A new push requires a newly pinned target SHA.
 3. **Red → the parent collects evidence.** GitHub Actions: `gh run view <run-id>
@@ -169,6 +210,16 @@ is not polling and the parent runs it itself.
    Immediately before pushing to an open PR, refresh its target and fetch it
    again. Verify the fetched target tip is an ancestor of HEAD; if the target
    changed or has missing commits, integrate it and repeat affected checks.
+   The checks' evidence stands without a rerun when that merge is clean and
+   the incoming paths (`git diff --name-only --no-renames <evidence tip>..<fetched
+   target tip>`, the evidence tip being the target tip in the revision the
+   evidence ran on) pass three checks: none is a path the branch changes; none
+   is read by an affected check (its package or directory, what that imports
+   or builds from, and the dependency, build and tool configuration it loads);
+   and none imports, builds from or tests a path the branch changes, directly
+   or through other modules. A path you cannot place, or whose dependencies
+   you cannot bound, counts as read. Record the compared range with the reused
+   evidence.
    **Synchronization has no retry cap**: continue integrating and validating
    concurrent target or head updates. A remote-head push rejection returns to
    synchronization and validation, never a force-push. These rounds neither

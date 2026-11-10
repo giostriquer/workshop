@@ -80,6 +80,14 @@ https://github.com/giostriquer/workshop/blob/main/docs/decisions/ketchup.md
 
 ---
 
+The `recall` skill adapts the `pstack` skill of the same name from Cursor's
+plugins (https://github.com/cursor/plugins), Copyright (c) 2026 Lauren Tan,
+under the MIT License. The MIT permission and warranty notices apply to
+those portions. Adaptations are documented at
+https://github.com/giostriquer/workshop/blob/main/docs/decisions/recall.md
+
+---
+
 The `why` skill adapts the `pstack` skill of the same name and its epistemics
 reference from Cursor's plugins (https://github.com/cursor/plugins), Copyright
 (c) 2026 Lauren Tan, under the MIT License. Adaptations are documented at

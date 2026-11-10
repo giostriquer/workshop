@@ -66,8 +66,9 @@ the spawn message (`using-workbench`, *Workbench agents on Codex*). Antigravity 
 ## Agents: read-only reviewers and the comment-trimmer
 
 The reviewers inspect and report, and their instructions forbid editing your
-files. `comment-trimmer` edits the diff's code comments, never code, and never
-commits. No agent pins a tool allowlist, because Muse rejects a definition
+files. `comment-trimmer` edits the diff's code comments, never code, and commits
+only its own comment-only edits, when the dispatch gives it a commit subject. Each
+agent's description names the labelled lines to dispatch it with. No agent pins a tool allowlist, because Muse rejects a definition
 whose list names Claude Code tools, so these limits live in each agent's
 instructions.
 
@@ -103,7 +104,6 @@ registered reviewer agent; code, test and contract review retain their gates.
 | [`epic-implementation`](skills/epic-implementation/SKILL.md) | uses the shared [lane report template](skills/epic-orchestration/references/lane-report.md) across amendments, recovery and delivery; only for lanes dispatched through epic-orchestration |
 | [`epic-auditor`](skills/epic-auditor/SKILL.md) | uses the shared [audit report template](skills/epic-orchestration/references/audit-report.md) across audit follow-ups, amendments and recovery; only for auditor lanes dispatched through epic-orchestration |
 | [`workspace-cleanup`](skills/workspace-cleanup/SKILL.md) | on request, reclaims project or machine development storage: worktrees, build caches, Docker, smolvm, `.workbench` and `.tmp`; a bare invocation discovers machine storage, preserves active work and measures approved removals |
-| [`session-messaging`](skills/session-messaging/SKILL.md) | asks or tells another local session through the available messaging route; epic handoffs stay with epic-orchestration |
 | [`model-reference`](skills/model-reference/SKILL.md) | reference table for the model fleet across cost, intelligence, taste, code, and speed, plus the hard routing invariants; a lookup, not a dispatch step |
 
 ## Workbench: the process layer

@@ -1,6 +1,6 @@
 # HTML Report Format
 
-The architectural review is rendered as a single self-contained HTML file in the OS temp directory. It works offline: inline CSS, inline SVG and plain HTML diagrams, no scripts and no CDN, so a blocked network, a strict content policy or an SRI hook cannot leave it unstyled or missing its diagrams. It opens in dark mode. SVG graphs handle the graph-shaped diagrams; hand-built divs handle the more editorial visuals (mass diagrams, cross-sections). Mix the two: don't draw every candidate as the same boxes-and-arrows, it'll start to look generic.
+The architectural review is rendered as a single self-contained HTML file outside the repo (the session's scratch directory, or the OS temp directory). It works offline: inline CSS, inline SVG and plain HTML diagrams, no scripts and no CDN, so a blocked network, a strict content policy or an SRI hook cannot leave it unstyled or missing its diagrams. It opens in dark mode. SVG graphs handle the graph-shaped diagrams; hand-built divs handle the more editorial visuals (mass diagrams, cross-sections). Mix the two: don't draw every candidate as the same boxes-and-arrows, it'll start to look generic.
 
 ## Scaffold
 
@@ -65,7 +65,8 @@ Each candidate is one `<article>`:
 - **Problem**: one sentence. What hurts.
 - **Solution**: one sentence. What changes.
 - **Wins**: bullets, ≤6 words each. e.g. "Tests hit one interface", "Pricing logic stops leaking", "Delete 4 shallow wrappers".
-- **Gaps** (if any): one line naming what the trace could not settle.
+- **Prevention** (recurring-mistake candidate): one line naming the ownership, visibility rule, or existing check that stops the traced mistake. e.g. "Only the Order intake module writes `status`; the schema check rejects other writers."
+- **Gaps** (if any): one line naming what the trace could not settle. A recurring-mistake candidate adds one line: its negative and its positive verification case, marked unrun.
 - **ADR callout** (if applicable): one line in an amber-bordered box.
 
 No paragraphs of explanation. If the diagram needs a paragraph to be understood, redraw the diagram.

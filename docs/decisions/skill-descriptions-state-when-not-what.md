@@ -15,3 +15,12 @@ Current triggers come from each spec; older notes about empirical proof being
 optional, reviewer exemptions, and model grades do not override those specs.
 The usage handbook links the contracts rather than maintaining another trigger
 catalog. Unresolved historical suggestions are not current requirements.
+
+## using-workbench's description excludes dispatched subagents (2026-11-09)
+
+The orientation's body told a subagent dispatched for a specific task to skip
+it, but the description, which decides the load, did not. In the week of
+2026-11-02, 131 of 170 Codex subagent threads read the file, 117 of them in
+full, as comment trimmers, reviewers and CI watchers; Claude Code subagents
+read it 0 times. An exclusion in the body cannot prevent a load, so the
+description now ends "Not for a subagent dispatched to execute a specific task."

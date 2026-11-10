@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { spawn, spawnSync } from 'node:child_process';
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync, symlinkSync, unlinkSync, utimesSync, writeFileSync } from 'node:fs';
+import { chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync, symlinkSync, unlinkSync, utimesSync, writeFileSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { test } from 'node:test';
@@ -8,7 +8,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const helper = path.resolve(path.dirname(fileURLToPath(import.meta.url)),
   '../plugins/workbench/skills/test-quality-review/scripts/mutation-slot.mjs');
-const { campaigns, defaultQueue, parse, Queue, queuePosition, readListing } = await import(pathToFileURL(helper).href);
+const { campaigns, defaultQueue, isListing, parse, Queue, queuePosition, readListing } = await import(pathToFileURL(helper).href);
 const TIMEOUT = { timeout: 30000 };
 
 function rig(t) {
@@ -104,7 +104,28 @@ test('recognizes campaign processes and ignores shells, pollers, builds and the 
     '  210 node',
     '  211 node --inspect',
   ].join('\n');
-  assert.deepEqual(campaigns(listing, 0).map(c => c.pid), [101, 102, 103, 104, 105, 106]);
+  assert.deepEqual(campaigns(listing, 0).map(c => c.pid), [101, 103, 104, 105, 106]);
+});
+
+test('a listing that executes no mutant is not a campaign', () => {
+  for (const argv of [
+    ['cargo', 'mutants', '--list'],
+    ['cargo', 'mutants', '--list-files', '--file', 'src/parser.rs'],
+    ['/Users/me/.cargo/bin/cargo-mutants', 'mutants', '--version'],
+    ['node_modules/.bin/stryker', '--help'],
+  ]) assert.equal(isListing(argv), true, argv.join(' '));
+  for (const argv of [
+    ['cargo', 'mutants', '--in-place'],
+    ['cargo', 'mutants', '--in-place', '--', '--list'],
+    ['node_modules/.bin/stryker', 'run', '--dryRunOnly'],
+    ['cargo', 'build', '--list'],
+    // cargo-mutants reads -V as --unviable, which runs the campaign.
+    ['cargo', 'mutants', '--in-place', '-V', '--file', 'src/parser.rs'],
+    ['cargo-mutants', '-V'],
+  ]) assert.equal(isListing(argv), false, argv.join(' '));
+  for (const argv of [['stryker', '-V'], ['node', 'node_modules/.bin/stryker', '--version']]) assert.equal(isListing(argv), true, argv.join(' '));
+  assert.deepEqual(campaigns('  401 cargo mutants --in-place -V\n', 0).map(c => c.pid), [401]);
+  assert.deepEqual(campaigns('  301 cargo mutants --list-files\n  302 cargo mutants --in-place -- --list\n', 0).map(c => c.pid), [302]);
 });
 
 test('never counts its own process as a running campaign', () => {
@@ -248,6 +269,24 @@ test('waits for a campaign started outside the queue', TIMEOUT, async t => {
   assert.equal(result.code, 0);
   assert.equal(existsSync(ran), true);
   assert.ok(result.summary.waitedSeconds > 0 && result.summary.waitedSeconds < 10);
+});
+
+test('runs a listing at once while another campaign holds the slot', TIMEOUT, async t => {
+  const r = rig(t);
+  holdLock(r);
+  writeFileSync(r.ps, '  999 cargo mutants --in-place\n');
+  const ran = path.join(r.root, 'ran');
+  const tool = path.join(r.root, 'cargo-mutants');
+  writeFileSync(tool, `#!${process.execPath}\nrequire('fs').writeFileSync(${quote(ran)}, process.argv.slice(2).join(' '));\n`);
+  chmodSync(tool, 0o755);
+  const result = await within(start(r, [tool, 'mutants', '--list'], ['--wait-limit', '0']).done);
+  assert.equal(result.code, 0);
+  assert.equal(readFileSync(ran, 'utf8'), 'mutants --list');
+  assert.equal(result.summary.status, 'ran');
+  assert.equal(result.summary.queue, 'bypass');
+  assert.equal(result.lines.some(line => line.status === 'waiting'), false);
+  assert.equal(existsSync(ownerFile(r)), true);
+  assert.deepEqual(tickets(r), []);
 });
 
 test('a zero wait limit still runs a campaign when the slot is free', TIMEOUT, async t => {

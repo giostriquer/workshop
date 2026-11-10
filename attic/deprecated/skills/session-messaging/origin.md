@@ -1,9 +1,21 @@
-# Decision: sessions message each other through `so post`
+# session-messaging: historical decisions
+
+## Retired (2026-11-09)
+
+Retired from Workbench at the operator's request. Delivery between sessions
+is carried by the operator's own tooling, outside the session, so no shipped
+skill has to teach a session to send. The complete skill and its former usage
+page are preserved here as history. Plugin discovery, catalogs and active
+workflow routes no longer offer it.
+
+Historical rationale for `session-messaging`, formerly shipped in Workbench.
+
+## Sessions message each other through `so post`
 
 **Date:** 2026-10-03
 **Release:** workbench 0.46.0
 
-## Problem
+### Problem
 
 Session Orchestrator could already deliver a plain message between any two
 registered sessions, Claude Code or Codex, with `so post`. No session knew it
@@ -11,7 +23,7 @@ could. An operator who wanted one session to consult another relayed the words
 by hand, and a session that received a message had no way to tell how to
 answer it.
 
-## Change
+### Change
 
 Add `session-messaging` to the Workbench skills. It covers finding a peer
 (`so ls --live` and its `to:` column), sending one plain `so post` command,
@@ -28,7 +40,7 @@ The skill states the Codex sandbox step because Codex runs shell commands
 where `so post` cannot reach the store; an exec-policy rule for `so post`,
 written by Codex when the operator allows it for good, lets it out.
 
-## Validation
+### Validation
 
 See the Session Orchestrator pull request that adds the budget: two real
 sessions, Claude Code on Sonnet and Codex on gpt-5.6-luna, each with this

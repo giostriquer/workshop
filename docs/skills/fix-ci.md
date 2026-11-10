@@ -39,9 +39,12 @@ checks should be seen through to green.
    required checks. No branch, no CI or no access
    gets a precise report.
 2. **Dispatch one watcher** for that SHA: a separate `ci-watcher`, even when
-   your session is idle, with the repository, PR or branch, full pinned SHA,
-   deadline, known required
-   checks, and paths to the bundled runner and scratch state file. On
+   your session is idle, with a labelled block whose seven slots are all
+   filled: `Runner`, `Repo`, `PR` (or `Branch`), `SHA`, `State file` (named by
+   the SHA, and by run and attempt for a flake rerun), `Deadline` and `Expected
+   checks`. The deadline comes from one read of the repository's last
+   successful runs: the longest workflow's run time, plus half again, capped at
+   sixty minutes; ten minutes only when there is no run to read. On
    Claude Code it is dispatched by name with no model, since its agent file
    pins the model; on Muse, by its approved scoped definition
    (`workbench/ci-watcher`) with no model. Codex registers no agents, so the spawn uses the arguments
@@ -54,7 +57,8 @@ checks should be seen through to green.
    watcher after it yields; its final handback wakes the parent. Older hosts use
    bounded foreground slices. On Codex the process stays running between tool
    waits. The
-   parent waits through the host mechanism at its longest permitted interval.
+   parent waits through the host mechanism: on Codex, `wait_agent` at
+   `timeout_ms: 600000`, lowered only after a host error that names a limit.
    It returns at the
    **first failed check or job on the pinned revision**, including failures not
    listed as required, at a **merge conflict**, or the moment the PR **merges
@@ -64,7 +68,10 @@ checks should be seen through to green.
    fix attempt. The runner's `passed` verdict describes reported checks on a PR
    GitHub reports mergeable. Green also requires every known required check to pass on
    the pinned SHA; unspecified coverage, missing, cancelled or superseded
-   checks are not green.
+   checks are not green. A watch that ends `pending` at its deadline, or
+   `blocked` by failed reads, is continued: a `Resume` dispatch names the
+   returned state file and a new deadline, and the runner keeps the saved
+   target and expected checks.
 3. **The parent collects evidence after the watcher returns.** `gh run view <run-id> --log-failed`, then read the
    failing step's output. For an external check, surface the link; if the cause
    isn't reachable from the repo, report rather than guess.
@@ -96,8 +103,13 @@ checks should be seen through to green.
    Read the old head's checks once and fold any new in-scope failure into the fix.
    Immediately before pushing, refresh and fetch the target again and verify its
    tip is in HEAD. If it changed or has missing commits, synchronize and validate
-   again. Synchronization has no retry cap; remote-head push rejections also
-   return to synchronization and validation. These rounds neither consume nor
+   again. A clean merge keeps the existing check evidence when the incoming
+   target paths, with renames expanded, include no path the branch changes, no
+   path an affected check reads and no path that imports, builds from or tests
+   one the branch changes, directly or through other modules; a path that
+   cannot be placed or bounded counts as read. Synchronization
+   has no retry cap; remote-head push rejections also return to
+   synchronization and validation. These rounds neither consume nor
    reset CI fix attempts. An unresolved merge or failed fetch leaves the push
    pending. Branch-only CI pulls its upstream without inventing a PR target.
    No-commit or no-push instructions hold; the report names the remaining step.
@@ -113,7 +125,9 @@ gap instead of inheriting newer mergeability guarantees. A per-user registry
 shares ownership for the same GitHub host, repository, PR or branch, SHA and rerun attempt,
 even across different state filenames. A duplicate gets the original state
 location or saved terminal result, with its observation time. Expected-check
-sets must match; a saved result is not a fresh readiness check. Resuming under
+sets must match; a saved result is not a fresh readiness check. A saved
+`pending` or read-error `blocked` result is the one kind that continues, and
+only through a `Resume` dispatch with a new deadline. Resuming under
 a changed `GH_HOST` is blocked so the saved target cannot silently change.
 
 **Does it still poll GitHub?** Yes, every thirty seconds. The runner reuses
@@ -176,6 +190,10 @@ meantime.
 
 **How does the watcher wait on Claude Code?** On supported persistent hosts,
 it starts background Bash and yields until command completion re-invokes it.
+A background command is not bound by the ten-minute foreground maximum, so its
+timeout is the whole remaining window plus sixty seconds and the watch runs as
+one command. It slices only after the host rejects that timeout with an error
+naming a limit.
 An interim yield notice may reach your session; that is not a verdict, so yield
 again until the final handback. A one-shot CLI that exits on the initial result,
 or a host without completion notifications, uses foreground slices below its
@@ -183,8 +201,9 @@ actual call ceiling instead. The one-shot parent also dispatches the watcher
 in the foreground so it stays alive until the verdict.
 
 **On Codex, my session sits in `wait_agent`.** That is the wait. A finished
-watcher does not wake your session, so it waits at the longest interval the
-active host instructions permit, up to ten minutes, until the final answer.
+watcher does not wake your session, so it waits ten minutes at a time
+(`timeout_ms: 600000`) until the final answer, using a shorter wait only after
+the host returns an error that names a limit.
 Host-required status updates do not require another GitHub poll.
 
 **On Codex, why does the spawn message carry the whole watcher contract?**
@@ -194,13 +213,27 @@ pasted contract keeps the watcher read-only. A follow-up to that watcher
 carries only a new pinned head; the fix stays in your session.
 ([decision](../decisions/plugin-surfaces.md))
 
-**The watcher came back with checks still pending.** Its watch window is bounded
-(ten minutes unless set otherwise). Pending is reported as pending, with the next
-action, never as green.
+**The watcher came back with checks still pending.** Its watch window is
+bounded by the deadline your session sized from the repository's recent runs.
+Pending is reported as pending, never as green. Your session then dispatches a
+`Resume` with the returned state file and a new deadline, which continues the
+same watch. If the resumed watch returns pending again with the same checks
+still unsettled, it reports a stalled run with the check links instead of
+resuming again.
 
 **The watcher came back `blocked`.** Four polls in a row could not read the PR,
 as when `gh` auth has expired or the network is down. The report carries the
-last `gh` error; fix access, then dispatch a watcher again.
+last `gh` error; fix access, confirm it with `gh auth status`, then dispatch a
+`Resume` with the returned state file and a new deadline. If the resumed watch
+blocks on reads again, it is reported instead of resumed again. A
+`blocked` that names cancelled checks or no passing check is a verdict and is
+reported as is.
+
+**The plugin updated while my session was running and the runner path is
+gone.** The session passes the installed version's runner, taken from the
+host's plugin record (`claude plugin list --json` or `codex plugin list
+--json`). A watcher handed a missing path resolves it the same way and names
+the path it used. Neither searches the cache for another version.
 
 **The PR merged while the watcher was running.** It returns right then with
 `merged`, the merge time and the checks' state at that moment; it does not wait
@@ -230,8 +263,9 @@ rerunning, and tells you plainly what happened and what it chose.
   parent does not duplicate GitHub polling.
 - **Negative signal:** a force-push, an amended commit, a skipped test, a third
   attempt on one cause, a second watcher on the same head other than the
-  one after a flake rerun, or a Codex watcher handed anything but a head to
-  watch.
+  one after a flake rerun or a `Resume` of a pending or read-blocked watch, a
+  dispatch with an unfilled slot, or a Codex watcher handed anything but a
+  head to watch.
 
 ## Where it fits
 

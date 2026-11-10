@@ -37,6 +37,8 @@ or monorepos in any of them. It uses each ecosystem's own commands, listed in
 the skill's `ecosystems.md`. Project operations stay in the project's environment;
 machine updates use the actual installation owner and its official updater.
 Missing tools require a source/version and execution-risk check before use.
+A read-only substitute that installs nothing can stand in (an OSV lookup for a
+missing `cargo audit`); the report names it and what stays unchecked.
 During a suspected compromise, static inventory comes before installs or builds:
 neither an ephemeral tool nor a throwaway checkout is automatically safe.
 

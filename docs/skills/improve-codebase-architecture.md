@@ -14,9 +14,11 @@ as what it hides) could become a deep one. It writes the candidates up as an
 HTML report, stops, and asks which one you want to explore. Once you pick, it
 [grills](grilling.md) you through that candidate's decisions.
 
-It changes no code. The run produces one HTML file in your OS temp directory
-and a conversation; the refactor itself happens later, through your normal
-build flow.
+The survey itself changes no code. The run produces one HTML file outside the
+repo and a conversation; the refactor happens later, through your normal build
+flow. If your invocation already says to implement the candidates, it skips the
+question and the interview: it writes a decision record per candidate and hands
+each one to that build flow.
 
 It is **user-invoked only** (`disable-model-invocation: true`, plus
 `allow_implicit_invocation: false` for Codex).
@@ -56,8 +58,9 @@ Glossary lookup follows repository pointers, existing `GLOSSARY-MAP.md` or
 names and asks when competing sources have no clear owner. Exploration briefs
 carry the resolved path; the read-only survey creates no glossary.
 
-It writes in two places. The report goes to
-`<tmpdir>/architecture-review-<timestamp>.html`, outside the repo. During the
+It writes in two places. The report goes outside the repo, to
+`architecture-review-<YYYYMMDD-HHMMSS>.html` in the session's scratch directory
+when the host has one, otherwise your OS temp directory. During the
 grilling loop it adds or sharpens terms in that same glossary (creating it lazily
 if needed; `GLOSSARY.md` by default for a new unconfigured repo) and offers to
 record a rejected candidate as an ADR, so a later run
@@ -72,9 +75,10 @@ Each candidate is a card:
 | Files | The modules involved, with `file:line` evidence from a traced call path |
 | Problem / Solution | One sentence each |
 | Wins | The gain in glossary terms: locality, leverage, what tests get simpler |
+| Prevention | Recurring-mistake candidates only: the ownership, visibility rule, or check that stops the traced mistake |
 | Before / After | A side-by-side diagram of the shallowness and the deepening |
 | Strength | `Strong`, `Worth exploring`, or `Speculative` |
-| Gaps | What the trace could not settle, when anything |
+| Gaps | What the trace could not settle, when anything; a recurring-mistake candidate adds its unrun negative and positive checks |
 
 The report ends with a **Top recommendation**. It is one static file with
 inline CSS and SVG, so it renders offline and behind strict content policies.
@@ -85,8 +89,8 @@ that adds a pass-through, splits a module by execution order, or passes a
 transport type through its new interface is revised or dropped.
 
 The survey also traces split ownership, equivalent competing paths, reachable
-internals, and hand-synchronized lists. A recurring-mistake candidate explains
-the prevention mechanism in Solution and Benefits, preserves required
+internals, and hand-synchronized lists. A recurring-mistake candidate names
+the prevention mechanism on its own Prevention line, preserves required
 compatibility, and names unrun negative and positive checks in Gaps.
 
 ## Common questions
@@ -94,6 +98,16 @@ compatibility, and names unrun negative and positive checks in Gaps.
 **I only want the report, not an interview.**
 The interview starts only on a candidate you pick. Read the report, and pick
 nothing or say you are done.
+
+**I already told it to implement the candidates. Why no interview?**
+The interview needs you in the conversation. When your invocation's own words
+authorize implementation, each candidate gets a decision record in the work
+scope's folder instead: the decisions the interview would have walked, the
+option taken, and the code evidence behind it. A candidate with a decision the
+code cannot settle, or one that contradicts an ADR, is named with its open
+question and left alone. The rest are settled designs: they skip
+[brainstorming](brainstorming.md)'s design steps and go to implementation on the
+route you authorized. Worktrees, merges and pushes happen only where you named them.
 
 **It gave me twelve candidates. Do I work through them in one session?**
 One candidate per session. The report is a temp file, so carry the candidate
@@ -122,10 +136,14 @@ load one set.
   "component" or "service".
 - Every card cites `file:line` evidence, and names what it could not trace.
 - Candidates cluster in recently changed files unless you named a direction.
-- The survey changes no code or glossary; it writes the report in your temp
-  directory. A chosen candidate's later interview can update the glossary and
+- The survey changes no code or glossary; it writes the report outside the
+  repo. A chosen candidate's later interview can update the glossary and
   offer an ADR.
-- It stops after the report and asks which candidate to explore.
+- It stops after the report and asks which candidate to explore. When the
+  invocation already authorized implementation, every covered candidate has a
+  decision record instead, and is either in the build flow or named with its
+  open question.
+- A recurring-mistake card has a Prevention line and its unrun checks in Gaps.
 - Rejecting a candidate for a durable reason gets you an ADR offer.
 
 ## Where it fits

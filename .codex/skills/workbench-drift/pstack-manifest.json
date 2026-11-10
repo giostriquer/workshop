@@ -41,14 +41,26 @@
       "localPath": "plugins/toolkit/skills/benchmark-checklist/",
       "disposition": "adopted",
       "why": "Validate performance comparisons.",
-      "adaptations": "Platform-aware tools, bounded experiments, observed-versus-causal claims, explicit ballpark path. Workbench keeps an independent minimal measurement floor."
+      "adaptations": "Platform-aware tools, bounded experiments, observed-versus-causal claims, explicit ballpark path. Workbench keeps an independent minimal measurement floor.",
+      "scopedReview": {
+        "commit": "236e5481d05cbadc315b374a5de54971858c27bb",
+        "version": "0.15.36",
+        "date": "2026-11-09",
+        "note": "Copy edits only in this range; nothing adopted. Range-review pin unchanged."
+      }
     },
     {
       "upstreamPath": "pstack/skills/principle-explain-the-number/",
       "localPath": "plugins/toolkit/skills/benchmark-checklist/",
       "disposition": "adopted",
       "why": "Measured outputs must support the conclusion.",
-      "adaptations": "Folded into the checklist, Workbench verification, and repo-local writing-skills evaluation guidance. No standalone principle skill or mandatory benchmark campaign."
+      "adaptations": "Folded into the checklist, Workbench verification, and repo-local writing-skills evaluation guidance. No standalone principle skill or mandatory benchmark campaign. 2026-11-09: 'write the decision before you run' (decision threshold and noise floor stated in advance) adapted into Frame the measurement.",
+      "scopedReview": {
+        "commit": "236e5481d05cbadc315b374a5de54971858c27bb",
+        "version": "0.15.36",
+        "date": "2026-11-09",
+        "note": "Operator-approved scoped adaptation; range-review pin unchanged."
+      }
     },
     {
       "upstreamPath": "pstack/skills/poteto-mode/playbooks/perf-issue.md",
@@ -198,12 +210,25 @@
       "localPath": "plugins/toolkit/skills/ketchup/",
       "disposition": "adopted",
       "why": "Explicit catch-up on current task state and human-only decisions.",
-      "adaptations": "Self-contained plain-language output, optional existing visuals, read-only gathering, verified versus reported evidence. Continue authorized work after a status interruption; report-only and explicit pause requests stay bounded. Claude and Codex explicit-only controls. No bro dependency or new external-write authority.",
+      "adaptations": "Self-contained plain-language output, optional existing visuals, read-only gathering, verified versus reported evidence. Continue authorized work after a status interruption; report-only and explicit pause requests stay bounded. Claude and Codex explicit-only controls. No bro dependency or new external-write authority. 2026-11-09: five accuracy rules adapted from the later revision (list every waiting item, check shown numbers, lines true read alone, no invented action items, shared decisions asked once per item set); word caps, visuals-first order and box limits not taken.",
       "scopedReview": {
-        "commit": "1b6d44ff26d4e242f4e8f68c391e6d2f7ca16def",
-        "version": "0.15.20",
-        "date": "2026-10-12",
-        "note": "Operator-approved scoped adaptations after source comparison. Source snapshot is not publication proof; range-review pin remains unchanged."
+        "commit": "236e5481d05cbadc315b374a5de54971858c27bb",
+        "version": "0.15.36",
+        "date": "2026-11-09",
+        "note": "Operator-approved scoped adaptation after source comparison; range-review pin unchanged."
+      }
+    },
+    {
+      "upstreamPath": "pstack/skills/recall/",
+      "localPath": "plugins/toolkit/skills/recall/",
+      "disposition": "adopted",
+      "why": "Rebuild recent working context across earlier sessions, checked against live state.",
+      "adaptations": "Explicit-only on Claude and Codex. Host-neutral history across Claude Code, Codex, Muse and Cursor, with layouts in a reference; transcripts read in place and never changed. No model routing or dispatcher coupling: parallel readers only where the host and standing model rules allow. The shared-record sweep reads commits, PRs and issues directly. Routes name ketchup, why and self-audit; session-pickup, automate-me and unslop are not carried. Adds an unverified status tag and ends with the brief.",
+      "scopedReview": {
+        "commit": "236e5481d05cbadc315b374a5de54971858c27bb",
+        "version": "0.15.36",
+        "date": "2026-11-09",
+        "note": "Operator-requested port; range-review pin unchanged."
       }
     },
     {

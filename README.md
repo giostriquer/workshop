@@ -97,7 +97,7 @@ Workbench operates without Toolkit. Toolkit's architecture survey requires
 Workbench's design references; its correction skill uses them for unresolved
 design choices. Grilling remains in Toolkit.
 
-`me-human` and `handoff-goal` are retired. Their complete skills and historical
+`me-human`, `handoff-goal` and `session-messaging` are retired. Their complete skills and historical
 docs live in [`attic/deprecated/skills/`](attic/deprecated/skills/), outside all
 plugin discovery paths.
 

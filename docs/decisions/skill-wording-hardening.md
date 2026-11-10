@@ -9,7 +9,7 @@ Correct the audit's concrete behavioral hazards with narrow changes to the origi
 
 ## Preserved safeguards
 
-- TDD retains RED → GREEN → REFACTOR, intended-failure checks, concrete examples, and its completion checklist. Valid existing code is preserved; missing test sensitivity is established in an isolated comparison instead of deleting working code.
+- TDD retains RED → GREEN → REFACTOR, intended-failure checks, concrete examples, and its completion checklist. Valid existing code is preserved; missing test sensitivity is established in an isolated comparison instead of deleting working code. Its red-flag list still named "keep as reference or adapt existing code" and "deleting is wasteful" as warning signs, which flagged the preservation this decision requires; both items were removed on 2026-11-09, and "code before test" and "test after implementation" became questions about defect sensitivity and where the expectations come from.
 - Systematic debugging retains four phases, evidence gathering, causal tracing, hypothesis tests, and supporting guides. Invoke it for persistent, unclear, intermittent, cross-component, or failed-hypothesis investigations and explicit requests; expected RED, obvious localized fixes, and incidental out-of-scope defects do not activate it.
 - Verification retains command selection, result inspection, and evidence-backed claims. Evidence stays current until relevant code, inputs, environment, or requirements change; message boundaries do not invalidate it.
 - Empirical proof and QA retain real-client preparation, health checks, scenario coverage, raw transcripts, source/baseline comparison, independent corroboration, and cleanup. Missing proof remains unresolved or blocked; only contrary evidence disproves a claim. A recorded verdict does not cancel separately authorized repairs.
@@ -61,3 +61,36 @@ trial counts, failures, missing runs, and variation. Check that the task was
 attempted and the rubric grades its outcome, not compliance with the proposed
 wording. Comparable fresh contexts support comparisons; small or reused-context
 probes remain bounded evidence. Harnesses and raw evidence stay local.
+
+## brainstorming takes three question techniques from upstream v7.0.2 (2026-11-09)
+
+Upstream rebuilt its brainstorming skill between v6.4.1 and v7.0.2. Most of
+the rebuild is the compulsory trigger and plan pipeline this port removed, and
+it deletes the three-path classifier adopted at v6.3.0, so the rebuild itself
+is not taken. Three techniques in it are improvements to material the local
+copy carries, and the operator approved adapting them:
+
+- Open questions before options. The local text said to prefer multiple
+  choice; until the reason behind a request is known, offered options steer
+  the answer. Options come once the why is known and the choices can be named.
+- Say why a question is asked: what the answer would change.
+- Approaches are filtered before they are counted. The local text asked for
+  two or three; weak ones, and any that work against the user's reason or the
+  existing work, are dropped first, and one sensible way is stated as such.
+
+Batching independent questions stays, as decided earlier in this note:
+upstream's one-question-at-a-time rule is not taken. Its playback-attribution
+rule was declined again as overlap, and its builder-check prompt is covered by
+the `spec-reviewer` agent.
+
+An independent review found the first wording set "open questions with no
+options" against "batch questions in one structured prompt", whose tool asks
+with fixed options. The rule is now keyed to something observable: until the
+user has said what they want the thing for, that one question is asked as
+plain text, beside a structured prompt for the questions whose choices can be
+named. One scenario probe (Opus 5.5, fresh context, one run) gave the skill a
+one-line feature request in a known project: the reply asked what people would
+do with the result as an open question, said what the answer would settle, and
+put three decisions with nameable choices in one structured prompt, each with
+a trade-off and a pick. That is regression evidence for the scenario, not a
+reliability estimate.

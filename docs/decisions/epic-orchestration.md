@@ -2,6 +2,84 @@
 
 This note is the rationale for the `epic-orchestration` skill, shipped in the `workbench` plugin; superseded choices are omitted and git history keeps the originals.
 
+## The owner reconciles lanes, drains ready work and closes lanes out (2026-11-09)
+
+A review of the week of 2026-11-02 found the same stall in two long-lived owner
+sessions on two hosts. Seven of the operator's 21 flagged prompts that week
+asked why nothing was moving. The causes were five gaps in the owner's output
+contract, each an element the owner omitted from a reply it was already writing,
+so each fix is a slot or a completion criterion in that reply.
+
+- **No wake signal.** The owner waited for reports to be carried to it. At
+  least six lane handbacks sat in the scope folder unrelayed, and both owners
+  said they noticed a stopped lane only when a report was passed to them. Every
+  owner turn now starts by comparing each active lane with the ledger, and the
+  return has a **Lane reconciliation** part.
+- **One named step counted as a next action.** Owners admitted three times to
+  ready worksets left undispatched. The return is now complete only when every
+  open workset is active, dispatched in that reply or held with a release owner.
+- **Holds went stale.** One owner opened 118 consecutive messages over two days
+  with the same hold line, none with a confirm-or-narrow ask, over an access
+  failure nobody had re-observed. A single-lane hold that only the operator
+  could release sat outside the slot for about 40 hours. The line gains `since`,
+  `rechecked` and `operator action` slots, the slot also takes any hold the
+  operator releases, a hold nobody ordered is attributed to the epic owner with
+  the observed blocker as its source, and the lines open the reply that ends a
+  turn instead of every message inside it. This amends the 2026-11-04 slot below.
+- **Implementation lanes had no closeout.** Only the auditor had a release form,
+  and its example did not fit the pointer template. One ledger held 12 open
+  lanes when the operator asked why lanes never close, and improvised closing
+  pointers landed in freshly opened sessions. One closeout pointer now serves
+  both roles, fired when delivery is verified merged, or the audit accepted, and
+  nothing remains assigned. It removes no worktree.
+- **Closure carried open work as limits.** A closure proposal listed seven open
+  items as recorded limits, and the operator objected after agreeing to close.
+  Closure is now proposed only after every follow-up and debt item has the
+  operator's disposition.
+
+The label, pointer, closeout form and return order moved into the entrypoint.
+One owner read the dispatching reference 32 times in a day; another read it
+three times in ten days across six compactions, and 9 of about 152 of its labels
+matched the template. Content used on nearly every reply is a common step, not a
+branch. Journey planning, tracker mapping, delivery details and the closing
+audit moved to references to keep the entrypoint under its size bound; scope,
+authority, hold and closure gates stayed inline. A session that outlives a
+release can keep the version it loaded, so the usage page asks the operator to
+re-invoke the skill after one.
+
+The lane is named as the actor for `scope-review`, with a `scope` slot in the
+report's `REVIEW` field, because lanes had been inventing where to record it.
+The integration branch is resolved from the operator, repository rules or the
+remote's default instead of a named default branch, which was one project's
+convention.
+
+An independent review of this change found gaps it had left, corrected in the
+same pass. A turn with no workset open could still end with no next action, so
+that case now carries the closing audit's brief, the closure proposal or a
+hold. `silent` had no test and no action; it now has both. The owner's main
+signal for an unrelayed handback was a saved report nothing asked the lane to
+write, so the contract names a `reports/` path. A lane whose work was withdrawn
+or reassigned could never be closed out, so the closeout covers it. A
+`do before close` ruling could not be dispatched under the step rule, so it is
+recorded as a governing source and added to the journey first. The closeout
+pointer names the lane's reporting skill, which a closeout landing in a fresh
+session otherwise never sees. The lane now reads the completion round's inputs
+from the delivery reference, which only the owner read before.
+
+The pointer, closeout, report and acknowledgment forms were run through Session
+Orchestrator's recognition code at its current and previous stable revisions.
+Every block was recognized, the closeout read as closing its lane for both
+roles and for withdrawn work, with and without the reporting skill named, and
+an acceptance on a lane with work still assigned did not. A closeout that
+opened "Workset withdrawn;" did not read as closing, which is why the form
+fixes its wording. The transcripts are the recorded failures. Two scenario
+probes covered the owner's reply. Asked why nothing was moving, with an
+unrelayed report, a silent lane, a stale hold, two ready worksets and a merged
+lane, the owner validated the report, held the silent lane for the operator,
+released the stale hold, dispatched both worksets, closed the merged lane out
+and accounted for every open workset. Asked to close an epic with two unruled
+follow-ups, it listed each for a disposition and did not propose closure. Each scenario ran once, in a fresh context on Opus 5.5, before the last round of review corrections: regression evidence for that scenario, not a reliability estimate.
+
 ## A wide hold opens every report (2026-11-04)
 
 The operator asked whether one service's PR should wait for a first run on a
@@ -15,8 +93,8 @@ already forbade that width, and an earlier epic had the same failure, but no
 output carried a hold's reach to the operator.
 
 The owner return gains a required **Active holds** slot ahead of **Progress**,
-for any hold stopping more than one lane or workset, and every other reply to
-the operator carries it too. A hold keeps its source's exact words in the ledger, and a
+for any hold stopping more than one lane or workset; since 2026-11-09 the slot
+opens the reply that ends a turn and also takes any hold the operator releases. A hold keeps its source's exact words in the ledger, and a
 reading wider than those words is recorded as the epic owner's, with a request
 to confirm or narrow it. A structural slot fits because the owner was not
 choosing to hide the hold: it omitted an element from a report it already wrote.
@@ -101,7 +179,8 @@ that names its own lane needs no other signal.
 
 So each dispatch file lives under the scope folder's `dispatches/` and opens with
 `Lane: <LANE>`, the pointer's path is absolute, and the skill says these lines are
-read as written and asks for a reread of the section after compaction. In fresh
+read as written. The reread after compaction it once asked for went on
+2026-11-09, when the label and pointer moved into the entrypoint. In fresh
 sonnet sessions writing two existing lanes' amendments, with the old wording no
 file opened with its lane and half the files left `dispatches/` when no earlier
 example showed it (5 of 10); with the new wording all 10 runs wrote both files

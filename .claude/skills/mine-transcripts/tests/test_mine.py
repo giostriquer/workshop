@@ -7,6 +7,7 @@ common.py reads HOME, CLAUDE_CONFIG_DIR and CODEX_HOME at import, so every comma
 mine.py in a subprocess pointed at a temporary tree. Only the regex tables import common.
 """
 
+import datetime as dt
 import json
 import os
 import re
@@ -642,6 +643,20 @@ class ReviewerIdentityOverFixture(unittest.TestCase):
         rows = [json.loads(line) for line in result.stdout.splitlines() if line.startswith("{")]
         return result.stdout, rows
 
+
+    def test_a_codex_contract_role_outside_the_tables_is_named_as_a_workbench_role(self):
+        self.codex_agent("spec", contract="spec-reviewer", rubric=False)
+        out, _rows = self.run_cli()
+        line = re.search(r"(?m)^not tabulated: (.*)$", out).group(1)
+        self.assertIn("codex workbench:spec-reviewer 1", line)
+
+    def test_a_codex_contract_role_from_another_plugin_stays_hashed(self):
+        self.codex_agent("own", contract="acme:secret-reviewer", rubric=False)
+        out, _rows = self.run_cli()
+        line = re.search(r"(?m)^not tabulated: (.*)$", out).group(1)
+        self.assertRegex(line, r"^codex agent-[0-9a-f]{4} 1  ")
+        self.assertNotIn("secret", out)
+
     def test_rubric_read_is_candidate_even_with_encrypted_dispatch(self):
         self.codex_agent("implement_storage")
         output, rows = self.run_cli()
@@ -724,6 +739,374 @@ class ReviewerIdentityOverFixture(unittest.TestCase):
         _, rows = self.run_cli()
         self.assertEqual(len(rows), 1)
         self.assertEqual(rows[0]["identity"], "candidate")
+
+
+
+TOOLKIT_CACHE = "/Users/me/.claude/plugins/cache/acme-market/toolkit"
+
+
+def c_tool(name, **inp):
+    return {"type": "tool_use", "name": name, "input": inp}
+
+
+def c_notification(ts):
+    """A background task of the agent's own finished: the harness wakes the agent with this record."""
+    return c_user(ts, "[SYSTEM NOTIFICATION - NOT USER INPUT]\n<task-notification>\n<task-id>t-1</task-id>",
+                  isMeta=True, origin={"kind": "task-notification"})
+
+
+def c_followup(ts):
+    return c_user(ts, "The coordinator sent a message while you were working: the fix is in",
+                  isMeta=True, origin={"kind": "coordinator"})
+
+
+def x_code(ts, n, code):
+    """Codex code mode: the command sits inside JavaScript, not a JSON argument."""
+    return {"timestamp": ts, "ordinal": n, "type": "response_item",
+            "payload": {"type": "custom_tool_call", "name": "exec", "input": code}}
+
+
+class SmallTree(unittest.TestCase):
+    """One temporary tree per test, for cases the shared fixture's pinned counts leave no room for."""
+
+    def setUp(self):
+        self.root = tempfile.mkdtemp(prefix="mine-small-")
+        self.addCleanup(shutil.rmtree, self.root, ignore_errors=True)
+        self.claude_home, self.codex_home = os.path.join(self.root, "claude"), os.path.join(self.root, "codex")
+        self.project = os.path.join(self.claude_home, "projects", "-Users-me-acme")
+        self.day = os.path.join(self.codex_home, "sessions", "2026", "09", "02")
+
+    def claude_main(self, records, session="sess-1"):
+        write_jsonl(os.path.join(self.project, f"{session}.jsonl"), records)
+
+    def claude_agent(self, name, agent_type, records, session="sess-1"):
+        sub = os.path.join(self.project, session, "subagents")
+        write_jsonl(os.path.join(sub, f"agent-{name}.jsonl"), records)
+        with open(os.path.join(sub, f"agent-{name}.meta.json"), "w") as fh:
+            json.dump({"agentType": agent_type}, fh)
+
+    def codex_file(self, name, records):
+        write_jsonl(os.path.join(self.day, f"rollout-{name}.jsonl"), records)
+
+    def mine(self, command, *extra):
+        env = {**os.environ, "HOME": self.root, "CLAUDE_CONFIG_DIR": self.claude_home,
+               "CODEX_HOME": self.codex_home, "TZ": "UTC"}
+        r = subprocess.run([sys.executable, "-B", os.path.join(SCRIPTS, "mine.py"), command, *extra, *WINDOW],
+                           env=env, capture_output=True, text=True, timeout=60)
+        self.assertEqual(r.returncode, 0, r.stderr)
+        return r.stdout
+
+    def rows(self, *extra):
+        return [json.loads(line) for line in self.mine("reviewers", "--rows", *extra).splitlines()
+                if line.startswith("{")]
+
+
+class RoundEndsAtTheReport(SmallTree):
+    """A reviewer's own background task can finish long after its report. That wake-up is not review time."""
+
+    def reviewer(self, *records):
+        self.claude_agent("tq", "workbench:test-quality-reviewer", [
+            c_user(at(10, 0), "Review the test quality of the webapp retry change."), *records])
+        [row] = self.rows()
+        return row
+
+    def test_a_notification_after_the_handback_adds_no_time(self):
+        row = self.reviewer(
+            c_assistant(at(10, 10), "r-1", c_tool("SubagentHandback", report="PASS")),
+            c_notification(at(15, 0)),
+            c_assistant(at(15, 1), "r-2"))
+        self.assertEqual((row["initial"], row["active"], row["wall"]), (10.0, 10.0, 10.0))
+
+    def test_a_notification_before_any_report_is_a_wait_inside_the_round(self):
+        row = self.reviewer(
+            c_assistant(at(10, 2), "r-1", c_tool("Bash", command="node run-campaign.mjs", run_in_background=True)),
+            c_notification(at(10, 20)),
+            c_assistant(at(10, 25), "r-2", c_tool("SubagentHandback", report="PASS")))
+        self.assertEqual((row["initial"], row["active"], row["wall"]), (25.0, 25.0, 25.0))
+
+    def test_a_later_round_reports_by_message_and_its_late_notification_adds_no_time(self):
+        row = self.reviewer(
+            c_assistant(at(10, 10), "r-1", c_tool("SubagentHandback", report="ISSUES_FOUND")),
+            c_followup(at(11, 0)),
+            c_assistant(at(11, 5), "r-2", c_tool("SendMessage", to="main", message="PASS")),
+            c_notification(at(16, 0)),
+            c_assistant(at(16, 1), "r-3"))
+        self.assertEqual((row["initial"], row["followups"], row["active"], row["wall"]), (10.0, [5.0], 15.0, 65.0))
+
+    def test_a_tail_that_reports_again_was_work(self):
+        row = self.reviewer(
+            c_assistant(at(10, 10), "r-1", c_tool("SubagentHandback", report="slice done")),
+            c_notification(at(10, 20)),
+            c_assistant(at(10, 24), "r-2", c_tool("SendMessage", to="main", message="PASS")))
+        self.assertEqual((row["initial"], row["active"], row["wall"]), (24.0, 24.0, 24.0))
+
+    def test_a_round_after_a_stale_tail_counts_from_its_own_start(self):
+        row = self.reviewer(
+            c_assistant(at(10, 10), "r-1", c_tool("SubagentHandback", report="ISSUES_FOUND")),
+            c_notification(at(12, 0)),
+            c_assistant(at(12, 1), "r-2"),
+            c_followup(at(13, 0)),
+            c_assistant(at(13, 5), "r-3"))  # still working: no report yet, and the time already counts
+        self.assertEqual((row["initial"], row["followups"], row["active"], row["wall"]), (10.0, [5.0], 15.0, 185.0))
+
+    def test_a_message_to_another_agent_is_not_the_report(self):
+        row = self.reviewer(
+            c_assistant(at(10, 2), "r-1", c_tool("SendMessage", to="acme-helper", message="status?")),
+            c_notification(at(10, 20)),
+            c_assistant(at(10, 25), "r-2"))
+        self.assertEqual((row["initial"], row["active"]), (25.0, 25.0))
+
+
+class ContractReviewerAndOtherRoles(SmallTree):
+    def test_contract_reviewer_has_its_own_table_on_both_hosts(self):
+        self.claude_agent("ct", "workbench:contract-reviewer", [
+            c_user(at(10, 0), "Review the webapp change against its agreed behavior."),
+            c_assistant(at(10, 1), "r-1", c_read(f"{CACHE}/0.48.2/skills/contract-review/SKILL.md")),
+            c_assistant(at(10, 7), "r-2")])
+        self.codex_file("ct", x_sub("c-ct", "check_webapp", [
+            x_event(at(11, 0), 1, "task_started"),
+            x_user(at(11, 0, 1), 2, "You are the contract-reviewer. Your contract:\nReview the webapp.", ["user.text"]),
+            x_event(at(11, 9), 3, "task_complete")]))
+        out = self.mine("reviewers", "--rows")
+        rows = [json.loads(line) for line in out.splitlines() if line.startswith("{")]
+        self.assertEqual(sorted((r["host"], r["kind"], r["identity"], r["initial"]) for r in rows),
+                         [("claude", "ct", "confirmed", 7.0), ("codex", "ct", "confirmed", 9.0)])
+        self.assertEqual(rows[0]["version"] if rows[0]["host"] == "claude" else rows[1]["version"], "0.48.2")
+        self.assertRegex(out, r"(?m)^contract-reviewer \(minutes\)\n.*\n0\.48\.2\s+claude\s+confirmed\s+1\s")
+        self.assertIn("contract-reviewer", self.mine("spend"))
+
+    def test_a_codex_spawn_without_a_header_is_a_contract_candidate_by_name_or_rubric(self):
+        self.codex_file("named", x_sub("c-named", "contract_review_webapp", [
+            x_event(at(10, 0), 1, "task_started"), x_event(at(10, 3), 2, "task_complete")]))
+        self.codex_file("read", x_sub("c-read", "check_webapp", [
+            x_event(at(11, 0), 1, "task_started"),
+            x_exec(at(11, 1), 2, f"cat {CODEX_CACHE}/0.48.2/skills/contract-review/SKILL.md"),
+            x_event(at(11, 4), 3, "task_complete")]))
+        self.assertEqual(sorted((r["kind"], r["identity"], r["identity_source"]) for r in self.rows()),
+                         [("ct", "candidate", "rubric-read"), ("ct", "candidate", "task-name")])
+        self.assertIn("candidate contract-reviewer", self.mine("spend"))
+
+    def test_a_generic_agent_that_read_the_contract_rubric_is_a_candidate(self):
+        self.claude_agent("generic", "general-purpose", [
+            c_user(at(10, 0), "Implement storage."),
+            c_assistant(at(10, 1), "r-1", c_read(f"{CACHE}/0.48.2/skills/contract-review/SKILL.md"))])
+        [row] = self.rows()
+        self.assertEqual((row["kind"], row["identity"]), ("ct", "candidate"))
+
+    def test_reviewer_roles_outside_the_tables_are_named_not_dropped(self):
+        for name, agent_type in (("spec", "workbench:spec-reviewer"), ("own", "acme-secret-reviewer"),
+                                 ("helper", CUSTOM_AGENT)):
+            self.claude_agent(name, agent_type, [c_user(at(10, 0), "Review the webapp plan."),
+                                                 c_assistant(at(10, 4), "r-1")])
+        out = self.mine("reviewers")
+        line = re.search(r"(?m)^not tabulated: (.*)$", out).group(1)
+        self.assertRegex(line, r"^claude agent-[0-9a-f]{4} 1, claude workbench:spec-reviewer 1  ")
+        self.assertNotIn("acme", out)
+        self.assertIn("claude acme-secret-reviewer 1", self.mine("reviewers", "--local-detail"))
+
+    def test_no_line_when_every_reviewer_role_has_a_table(self):
+        self.claude_agent("tq", "workbench:test-quality-reviewer", [
+            c_user(at(10, 0), "Review the webapp tests."), c_assistant(at(10, 4), "r-1")])
+        self.assertNotIn("not tabulated", self.mine("reviewers"))
+
+
+class SkillReadsAndLabels(SmallTree):
+    def skill_row(self, out, name):
+        m = re.search(rf"(?m)^{re.escape(name)}\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s", out)
+        return m and tuple(int(x) for x in m.groups())  # total, model, user, read
+
+    def test_this_repos_own_skill_read_by_a_relative_path_labels_as_self(self):
+        records = [c_user(at(9, 0), PLAIN_PROMPT),
+                   c_assistant(at(9, 1), "m-1", c_tool("Bash", command="cat .claude/skills/change-log/SKILL.md"))]
+        for r in records:
+            r["cwd"] = common.SELF_ROOT  # this checkout, wherever it is; never a literal path
+        self.claude_main(records)
+        out = self.mine("skills", "--host", "claude")
+        self.assertEqual(self.skill_row(out, "self:change-log"), (1, 0, 0, 1))
+        self.assertNotRegex(out, r"(?m)^project-")
+
+    def test_only_a_command_that_opens_the_file_is_a_read(self):
+        cache = f"{CACHE}/0.48.2/skills"
+        local = ".claude/skills/acme-notes/SKILL.md"
+        commands = [
+            f"grep -n 'verdict' {cache}/fix-ci/SKILL.md",
+            f"wc -c {cache}/fix-ci/SKILL.md; git log --oneline -- {cache}/fix-ci/SKILL.md",
+            f"cat > {local} <<'EOF'\n# Notes\nEOF",
+            f"sed -i '' 's/old/new/' {local}",
+            f"cp {cache}/fix-ci/SKILL.md /Users/me/acme/copy.md",
+            f"sed -n '1,40p' {cache}/file-pr/SKILL.md | head -20",
+            f"cd /Users/me/acme && head -50 {cache}/audit/SKILL.md",
+        ]
+        self.claude_main([c_user(at(9, 0), PLAIN_PROMPT),
+                          *(c_assistant(at(9, 1 + i), f"m-{i}", c_tool("Bash", command=cmd))
+                            for i, cmd in enumerate(commands))])
+        out = self.mine("skills", "--host", "claude")
+        self.assertEqual(self.skill_row(out, "workbench:file-pr"), (1, 0, 0, 1))
+        self.assertEqual(self.skill_row(out, "workbench:audit"), (1, 0, 0, 1))
+        self.assertIsNone(self.skill_row(out, "workbench:fix-ci"))
+        self.assertNotRegex(out, r"(?m)^project-")
+
+    def test_codex_code_mode_reads_count_and_searches_do_not(self):
+        cache = f"{CODEX_CACHE}/0.48.2/skills"
+        self.codex_file("main", [
+            x_meta(at(9, 0), "c-main", "cli"),
+            x_code(at(9, 1), 1, f'text(await tools.exec_command({{cmd:"cat {cache}/file-pr/SKILL.md",max_output_tokens:12000}}));'),
+            x_code(at(9, 2), 2, f'text(await tools.exec_command({{cmd:"rg -n Dispatch {cache}/fix-ci/SKILL.md"}}));'),
+            x_code(at(9, 3), 3, f"text(require('fs').readFileSync('{cache}/audit/SKILL.md', 'utf8'));"),
+            x_exec(at(9, 4), 4, f"diff -u {cache}/fix-ci/SKILL.md /Users/me/acme/copy.md"),
+        ])
+        out = self.mine("skills", "--host", "codex")
+        self.assertEqual(self.skill_row(out, "workbench:file-pr"), (1, 0, 0, 1))
+        self.assertEqual(self.skill_row(out, "workbench:audit"), (1, 0, 0, 1))
+        self.assertIsNone(self.skill_row(out, "workbench:fix-ci"))
+
+    def test_a_mention_still_dates_the_reviewer(self):
+        # The version a reviewer ran is evidence from any mention of its rubric path; only the read count is strict.
+        self.claude_agent("tq", "workbench:test-quality-reviewer", [
+            c_user(at(10, 0), "Review the webapp tests."),
+            c_assistant(at(10, 1), "r-1", c_tool("Bash", command=f"grep -n Verdict {CACHE}/0.48.2/skills/test-quality-review/SKILL.md"))])
+        [row] = self.rows()
+        self.assertEqual((row["version"], row["version_source"]), ("0.48.2", "read"))
+
+    def test_a_skill_the_prompt_names_inline_is_user_invoked(self):
+        self.claude_main([
+            c_user(at(9, 0), "please run /toolkit:test-audit on the webapp tests, then stop"),
+            c_skill_load(at(9, 6), f"{TOOLKIT_CACHE}/0.22.0/skills/test-audit"),
+            c_skill_load(at(9, 7), f"{CACHE}/0.48.2/skills/fix-ci"),  # same turn, but the prompt did not name it
+            c_user(at(9, 30), "now compare /Users/me/acme/audit/notes.md with the report"),
+            c_skill_load(at(9, 31), f"{CACHE}/0.48.2/skills/audit"),  # a path component is not a slash name
+        ])
+        out = self.mine("skills", "--host", "claude")
+        self.assertEqual(self.skill_row(out, "toolkit:test-audit"), (1, 0, 1, 0))
+        self.assertEqual(self.skill_row(out, "workbench:fix-ci"), (1, 1, 0, 0))
+        self.assertEqual(self.skill_row(out, "workbench:audit"), (1, 1, 0, 0))
+
+    def test_a_bare_inline_name_matches_and_an_earlier_prompt_does_not(self):
+        self.claude_main([
+            c_user(at(9, 0), "use /fix-ci here."),
+            c_skill_load(at(9, 1), f"{CACHE}/0.48.2/skills/fix-ci"),
+            c_user(at(9, 10), PLAIN_PROMPT),
+            c_skill_load(at(9, 11), f"{CACHE}/0.48.2/skills/fix-ci"),
+        ])
+        self.assertEqual(self.skill_row(self.mine("skills", "--host", "claude"), "workbench:fix-ci"), (2, 1, 1, 0))
+
+
+
+class ReadAndSlashPatterns(unittest.TestCase):
+    """What counts as opening a definition file, and as naming a skill in a prompt. Each row is a decision."""
+
+    P = f"{CACHE}/0.48.2/skills/audit/SKILL.md"
+
+    COMMANDS = [
+        ("cat {p}", True),
+        ("sed -n '1,40p' {p}", True),
+        ("head -50 {p}", True),
+        ("cat notes.md {p}", True),  # a later operand of the same reader
+        ("echo done; cat {p}", True),
+        ("cd /Users/me/acme && tail -20 {p}", True),
+        ("cat {p} > /Users/me/acme/copy.md", True),  # read here, written elsewhere
+        ("sed -i '' 's/old/new/' {p}", False),
+        ("sed -Ei 's/old/new/' {p}", False),
+        ("cat > {p} <<'EOF'", False),  # the redirect target is written, not read
+        ("cat notes.md >> {p}", False),
+        ("grep -n verdict {p}", False),
+        ("rg -n verdict {p}", False),
+        ("wc -c {p}", False),
+        ("diff -u /Users/me/acme/copy.md {p}", False),
+        ("cp {p} /Users/me/acme/copy.md", False),
+        ("ls -l {p}", False),
+        ("git log --oneline -- {p}", False),
+        ("python3 - <<'EOF'\npath = '{p}'\nEOF", False),  # a bare mention inside a script
+        ('{{"cmd": "cat {p}"}}', True),  # Codex function_call arguments
+        ('{{"cmd":"rg -n verdict {p}"}}', False),
+        ('{{"cmd":"cat notes.md\\ngrep -n verdict {p}"}}', False),  # an escaped newline ends the cat
+        ('text(await tools.exec_command({{cmd:"sed -n 1,80p {p}"}}));', True),  # Codex code mode
+        ("fs.readFileSync('{p}', 'utf8')", True),
+        ('Path("{p}").read_text()', True),
+        ('Path("{p}").write_text(body)', False),
+        ("open('{p}').read()", True),
+        ("open('{p}', 'w').write(body)", False),
+    ]
+
+    PROMPTS = [
+        ("please run /toolkit:test-audit on the webapp tests", {"toolkit:test-audit"}),
+        ("use /fix-ci.", {"fix-ci"}),
+        ("either /audit or /claim-check, your call", {"audit", "claim-check"}),
+        ("compare /Users/me/acme/audit/notes.md with the report", set()),
+        ("open /audit/notes and summarize", set()),
+        ("see https://example.com/audit for the format", set()),
+        ("read ~/audit first", set()),
+        ("keep the and/or wording", set()),
+        ("check /notes.md", set()),
+    ]
+
+    def test_commands(self):
+        for template, expected in self.COMMANDS:
+            with self.subTest(command=template):
+                self.assertEqual(list(common.definition_mentions(template.format(p=self.P))), [(self.P, expected)])
+
+    def test_prompts(self):
+        for text, expected in self.PROMPTS:
+            with self.subTest(text=text):
+                self.assertEqual(common.inline_slash_names(text), expected)
+
+
+class HistoryReach(SmallTree):
+    """Files are picked by last-write time, so a host whose older transcripts are gone shows early days as
+    quiet when they are only missing. The banner names the day the surviving history starts."""
+
+    IN_WINDOW = dt.datetime(2026, 9, 2, 12, tzinfo=dt.timezone.utc).timestamp()
+    BEFORE_WINDOW = dt.datetime(2026, 8, 20, 12, tzinfo=dt.timezone.utc).timestamp()
+
+    def last_written(self, stamp, *paths):
+        for path in paths:
+            os.utime(path, (stamp, stamp))
+
+    def both_hosts(self):
+        self.claude_main([c_user(BEFORE, PLAIN_PROMPT), c_user(at(9, 0), PLAIN_PROMPT)])
+        self.codex_file("main", [x_meta(BEFORE, "c-main", "cli"), x_user(at(9, 1), 1, PLAIN_PROMPT, ["user.text"])])
+        return os.path.join(self.project, "sess-1.jsonl"), os.path.join(self.day, "rollout-main.jsonl")
+
+    def test_a_window_that_starts_before_the_oldest_transcript_says_so_per_host(self):
+        # Both sessions hold an event before the window, and it changes nothing: the files that would
+        # hold the other sessions of those days are what is missing.
+        self.last_written(self.IN_WINDOW, *self.both_hosts())
+        for command in ("skills", "reviewers", "friction", "spend"):
+            with self.subTest(command):
+                out = self.mine(command)
+                for host in ("claude", "codex"):
+                    self.assertIn(f"NOTICE: the oldest {host} transcript on this machine was last written "
+                                  "2026-09-02; the window starts 2026-09-01, so the days before 2026-09-02 "
+                                  "are undercounted\n", out)
+        self.assertNotIn(self.root, self.mine("friction"))
+
+    def test_a_transcript_last_written_before_the_window_means_history_reaches_it(self):
+        claude, codex = self.both_hosts()
+        self.last_written(self.IN_WINDOW, claude, codex)
+        old_claude = os.path.join(self.project, "sess-old.jsonl")
+        write_jsonl(old_claude, [c_user("2026-08-20T09:00:00.000Z", PLAIN_PROMPT)])
+        old_codex = os.path.join(self.codex_home, "sessions", "2026", "08", "20", "rollout-old.jsonl")
+        write_jsonl(old_codex, [x_meta("2026-08-20T09:00:00.000Z", "c-old", "cli")])
+        self.last_written(self.BEFORE_WINDOW, old_claude, old_codex)
+        self.assertNotIn("NOTICE", self.mine("friction"))
+
+    def test_only_the_host_that_lacks_history_is_named(self):
+        claude, codex = self.both_hosts()
+        self.last_written(self.IN_WINDOW, claude)
+        self.last_written(self.BEFORE_WINDOW, codex)
+        out = self.mine("friction")
+        self.assertIn("NOTICE: the oldest claude transcript", out)
+        self.assertNotIn("oldest codex transcript", out)
+
+    def test_a_subagent_file_does_not_stand_in_for_older_sessions(self):
+        self.last_written(self.IN_WINDOW, *self.both_hosts())
+        self.claude_agent("tq", "workbench:test-quality-reviewer", [c_user(at(10, 0), "Review the webapp tests.")])
+        sub = os.path.join(self.project, "sess-1", "subagents", "agent-tq.jsonl")
+        self.last_written(self.BEFORE_WINDOW, sub)
+        self.assertIn("NOTICE: the oldest claude transcript", self.mine("friction", "--host", "claude"))
+
+    def test_a_host_with_no_transcripts_prints_nothing(self):
+        self.assertNotIn("NOTICE", self.mine("friction"))
 
 
 if __name__ == "__main__":

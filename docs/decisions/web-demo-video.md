@@ -2,6 +2,23 @@
 
 **Date:** 2026-09-29
 
+## Walkthroughs only, and setup authority in the entrypoint (2026-11-09)
+
+The description fired on "a recorded walkthrough or visual evidence". A session
+that only had to put screenshots in a PR body loaded the skill, found no
+screenshot path, never ran the capture helper, and wrote its own capture
+scripts, which the repository's format and lint commands then picked up. The
+description now covers recorded walkthroughs and excludes a screenshot-only
+need. For a session that loads it anyway, one inline paragraph says what a
+screenshot-only need takes: the host's browser tools, or the helper's `frame`
+PNGs when the CLI is already present, with nothing installed.
+
+"Use the shared setup when recording prerequisites are missing" stood in the
+entrypoint without the condition its reference carries ("If recording setup is
+authorized"). A reader who stops at the entrypoint would install. The condition
+is now inline: install inside authorized setup, otherwise report the gap. One
+observed run motivates this; no wording comparison was run.
+
 ## Browser-specific name (2026-09-29)
 
 The operator renamed `ui-demo-video` to `web-demo-video` because the skill

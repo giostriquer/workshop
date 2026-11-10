@@ -38,8 +38,9 @@ uncertain-delete defaults, and upstream handoffs were not adopted.
 The trim runs after verification and before the initial review round, at full
 implementation readiness. A separate `comment-trimmer` applies the skill as its
 rubric because the author is likely to read their own narration as useful
-explanation. It edits comments only, never commits, stages, pushes, or applies
-constraint encodings. The same explicit-user-decline and superseding-repository
+explanation. It edits comments only and never pushes or applies constraint
+encodings; since 2026-11-09 it commits its own edits when the dispatch asks, as
+the last section records. The same explicit-user-decline and superseding-repository
 exceptions apply as for the completion review. An explicit trim request can run
 outside delivery; ordinary editing does not trigger it mid-implementation.
 
@@ -51,8 +52,9 @@ re-dispatch and unresolved decisions.
 
 Code and test reviewers inspect the same trimmed working tree, including
 untracked files. When delivery already uses commits and commit authority exists,
-the parent commits the trim separately before review and verifies it is
-comment-only. Otherwise the edits stay uncommitted. A late trim changes only
+the trim lands as its own commit before review, verified comment-only (made by
+the parent until 2026-11-09, by the trimmer since). Otherwise the edits stay
+uncommitted. A late trim changes only
 comments and does not invalidate a completed review; correction batches use
 ordinary editing rather than another trim stage.
 
@@ -67,3 +69,42 @@ constraint offers, suppressions, verdicts and rollback. They support those cases
 not a reliability percentage. The canonical skill and agent carry the exact
 preservation procedure and report contract; this note records why those rules
 exist rather than retaining the probe scripts or repeating their matrices.
+
+## The trimmer commits when the dispatch gives a subject (2026-11-09)
+
+The agent said "never commit, push or stage"; the skill said to commit the
+trim's edits as their own commit and named no one. Parents do not load the
+skill (1 of 216 uses in Claude Code main sessions over 30 days), so they put
+the commit in the dispatch: in a transcript audit of 2026-11-02 to 2026-11-09,
+trimmers ran `git commit` in 47 of 148 threads, against their own contract.
+69 ran a formatter and 29 ran builds or tests, which neither spec mentioned,
+and at least four dispatches re-trimmed a correction delta.
+
+The commit is now a conditional in the trimmer's contract. A dispatch for work
+delivered as commits carries `Commit subject:`. The trimmer then stages exactly
+the files it edited, commits them with that subject and returns the SHA,
+provided each file was clean before its first edit; otherwise it reports
+`Commit: not made` and the session commits. Without the line the edits stay in
+the working tree. It never pushes or amends. The clean-file condition keeps
+the commit comment-only without the trimmer touching the author's uncommitted
+work.
+
+The repository's format command runs over the edited files when the repository
+documents one or a commit hook enforces it, since a removed comment can leave
+lines the hook would reject. Lines the formatter re-wraps count as comment-only
+when their code tokens are identical and in the same order. The comment-only
+check is the pass's whole verification, so it runs no build, lint or test.
+"Once per work set, never for a correction batch" now sits in the agent's
+description and in `receiving-code-review`, where a dispatcher reads it. One
+scenario probe gave the trimmer a commit subject and an index that already held
+the author's staged file: it checked the index, made no commit and reported
+`Commit: not made (index held staged work)`. Each scenario ran once, in a fresh context on Opus 5.5, before the last round of review corrections: regression evidence for that scenario, not a reliability estimate.
+
+## The trimmer's commit takes only its own files (2026-11-09)
+
+The conditional commit staged the trimmer's files and then ran a plain commit,
+which also takes whatever the author had already staged. The trimmer now
+checks that the index is empty first and commits by path, and reports `Commit:
+not made (index held staged work)` otherwise. A formatter re-wrap counts as
+comment-only only inside a hunk the trim edited, so the format step cannot
+widen the trim past the lines the diff changed.

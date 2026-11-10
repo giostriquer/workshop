@@ -247,7 +247,6 @@ qa-sweep
 receiving-code-review
 scope-review
 self-audit
-session-messaging
 systematic-debugging
 test-driven-development
 test-quality-review
@@ -274,6 +273,7 @@ grilling
 html-artifact
 improve-codebase-architecture
 ketchup
+recall
 test-audit
 web-demo-video
 why"
@@ -460,11 +460,12 @@ done
 
 # Muse 1.4.8 resolves project skills in .agents > .codex > .claude order,
 # so a stale Codex mirror also changes Muse's behavior. Codex agents/ policy
-# sidecars have no canonical counterpart.
+# sidecars have no canonical counterpart. An interpreter's __pycache__ is
+# git-ignored and never part of either copy.
 for spec in .claude/skills/*/SKILL.md; do
     skill=${spec%/SKILL.md}
     skill=${skill##*/}
-    _diff=$(diff -r -x agents ".claude/skills/$skill" ".codex/skills/$skill" 2>&1) \
+    _diff=$(diff -r -x agents -x __pycache__ ".claude/skills/$skill" ".codex/skills/$skill" 2>&1) \
         || fail "repo-local mirror drift: .codex/skills/$skill differs from canonical .claude/skills/$skill (Muse runs the .codex copy):
 $_diff"
 done

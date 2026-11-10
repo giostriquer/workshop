@@ -69,7 +69,11 @@ live sessions/processes. Dirty, undelivered, active or uncertain worktrees stay
 unless you select that exact entry after seeing the evidence. A squash merge
 needs a content check, and a gone upstream is not proof of delivery. It does
 not stop another session or clean files to make a worktree removable. Refused
-non-force removal is reported; forcing needs explicit authorization.
+non-force removal is reported; forcing needs explicit authorization. A worktree
+holding directories you cannot write is held before removal, and you are asked
+to approve the permission change for that path first, so a removal cannot stop
+halfway with the registration gone and the files still on disk. A directory
+another user owns stays held and is reported.
 
 **Does Docker cleanup include build cache and volumes?**
 

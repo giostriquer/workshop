@@ -2,6 +2,68 @@
 
 This note is the rationale for the `fix-ci` skill and the `ci-watcher` agent it dispatches, both shipped in the `workbench` plugin; superseded choices are omitted and git history keeps the originals.
 
+## Stalled watches resume, and dispatches carry labelled inputs (2026-11-09)
+
+A review of the week's watcher runs (2026-11-02 to 2026-11-09: 95 Claude Code
+dispatches, 195 runner invocations, 937 Codex parent waits) found five defects
+in how the wait was specified. The runner's verdict logic was sound.
+
+**A watch that stopped without a verdict could not continue.** The runner
+saved `pending` and the four-failed-reads `blocked` as terminal results, and
+the registry then replayed them for every later invocation on that head. The
+default deadline is ten minutes and the observed CI ran twenty to forty, so
+three watches dead-ended, each taking two or three dispatches and a registry
+override the contract forbids. `--resume <state> --deadline <t>` now clears
+exactly those two results and continues the watch with its saved target and
+expected checks. Failed, passed, conflicted, superseded, merged and closed
+verdicts, and a `blocked` that names cancelled or absent passing checks, stay
+terminal whatever deadline is offered. The incompatible-coverage guard is
+unchanged. Only the parent sets the new deadline, through a `Resume` dispatch;
+a second `pending` with the same unsettled checks is reported as a stalled run,
+so the loop has an exit. The parent now sizes the first deadline from the
+repository's last successful runs (longest workflow plus half again), keeping
+ten minutes for a repository with no run to read. The half-again margin is a
+starting value, not a measured one.
+
+**Dispatch inputs were a prose list.** 27 of the 95 dispatches carried no
+runner path, 12 no deadline and 22 no full SHA; all 27 watchers without a path
+searched the plugin cache, which the contract forbids. On Claude Code the
+parent sees only the agent's frontmatter description, so the inputs moved into
+a labelled block in `fix-ci` whose seven slots are all required, and the
+description names them. The description no longer offers the watcher for "CI
+has failed": diagnosis belongs to the parent. A watcher cannot locate its own
+agent file, so "resolve it relative to this agent file" became a lookup in the
+host's plugin record, which names the installed version and nothing else. The
+same lookup covers a path that vanished mid-session: a Codex release replaces
+its single cache folder, and 36 missing-file reads in 16 Codex threads followed
+releases that week ([release decision](repo-tooling.md#release-reports-what-each-host-keeps-2026-11-09)).
+A dispatch without a repository, target or full SHA comes back as a gap, since
+the pin is the parent's.
+
+**The background wait named a ceiling without a value.** 175 of 195 runner
+invocations passed a call limit at or under the ten-minute foreground maximum
+and 55 of 95 watchers sliced their watch, costing a watcher turn and a parent
+wake-up per slice, while single background commands were observed running
+past thirty minutes. The recipe now states that a background command is not
+bound by the foreground maximum, sets the timeout to the window plus sixty
+seconds, and slices only after the host rejects that timeout with a named
+limit.
+
+**"Longest permitted" was not an observable value.** 680 of 937 Codex parent
+waits used sixty seconds, although three-minute waits ran to completion on the
+same host. The parent wait is now `timeout_ms: 600000` and the watcher's
+`yield_time_ms: 300000`, lowered only on a host error that names a limit.
+
+The harness gained cases for a pending watch continuing under a new deadline, a
+read-blocked watch continuing after one more failed read, seven verdict kinds
+staying terminal, and the command-line flow (duplicate dispatch, resume without
+and with a deadline, a later deadline against a fresh verdict). Three named
+mutants covered the reopen guard at this point (five after the later
+correction below); a fourth, removing the command-line wiring, was
+killed by assertion in a disposable copy, because the mutant loader does not
+reach spawned commands. The wording changes have no consuming-agent trials yet:
+the counts above are the recorded problem, not evidence of the correction.
+
 ## Let the host own waiting and the runner own evidence (2026-10-29)
 
 Recent watcher transcripts exposed foreground commands moved to the background
@@ -200,3 +262,24 @@ A failed head gets no second watcher for its pending checks, except the explicit
 flake-rerun path. A new head gets a new watch. The two fix attempts are per
 failing cause, and target synchronization neither consumes nor resets them.
 The later first-failure rule covers every check, not only required checks.
+
+## Corrections from the independent review of the 2026-11-09 change (2026-11-09)
+
+A flake rerun watches the same SHA, so the SHA-named state file the dispatch
+block required already existed and the runner refused it; a rerun's file is
+now named by SHA, run and attempt. A watch blocked by failed reads could be
+resumed without end when the read failure was permanent, such as malformed
+data: the runner now resumes a read block once per streak, whatever its reason
+(a first version compared reasons, which request ids in the error text
+defeated), a successful read clears that guard, and the skill reports the
+second block instead of resuming. Five named mutants cover reopening. An offered deadline the runner does not apply
+comes back as `deadlineIgnored` rather than being dropped silently. The
+deadline was sized from `createdAt`, which for a re-run is the first attempt's
+creation time and could size a watch in days; it now uses `startedAt`, reads
+50 runs and caps the window at sixty minutes, with `Resume` covering longer
+CI. The clean-merge rule's correction is recorded in the `file-pr` note.
+
+One scenario probe covered the parent's side: it filled all seven slots of the
+dispatch block, sized the deadline from the last successful run, answered a
+`pending` verdict with a `Resume` on the same state file and a new deadline,
+and reported a second unchanged `pending` as a stalled run without resuming. It ran once, in a fresh context on Opus 5.5, before the last round of review corrections: regression evidence for this scenario, not a reliability estimate.

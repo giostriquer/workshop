@@ -40,9 +40,15 @@ follow-ups have fifteen and cover the correction delta. Campaigns run one at a
 time on the host, in arrival order: the reviewer launches each one through the
 bundled slot helper, which queues it and waits, up to fifteen minutes outside
 the budget, for campaigns ahead of it, including ones another session started
-without the helper. A session runs at most two test-quality reviewers at once,
-since all of their campaigns share that one slot. The review's
-disposable copy gets a new, absence-checked path, and follow-up rounds reuse it.
+without the helper. A listing that executes no mutant, such as
+`cargo mutants --list`, takes no slot. A session runs at most two test-quality
+reviewers at once; every session on the host shares the one slot, so reviewers
+from other sessions lengthen a wait and never count toward the two. The reviewer
+waits for the helper's own exit, never for a line in a log. The review's
+disposable copy gets a new, absence-checked path, and follow-up rounds reuse it
+while it exists. A reviewer that passes removes its copy; on any other verdict
+the report's `Disposable copy:` line gives the path, and the session removes it
+when the review ends without another round.
 Completed scope is not rerun under another runner. Unsupported syntax,
 slow tests, and parsed behavior tools cannot mutate use the rubric's bounded
 fallbacks. Hand-applied defects need an inspected production diff and unchanged
@@ -53,8 +59,10 @@ test expectations before a failure counts.
 | Behavioral survivor or newly lost protection | Issue with the assertion needed to catch it |
 | Equivalent mutant or irrelevant wording change | Observation |
 | Partial run or uncertain timeout | Scope and reason disclosed in strategy notes; no waiver or extension |
+| The slot never came within the wait limit | Uncovered scope is `partial`; when nothing ran at all, `blocked: host busy` with the minutes waited, which asks for no code change and a later round carries |
 | Required run blocked after bounded setup | `ISSUES_FOUND`, with attempts, remaining work and the command; the next review round runs it, not the implementer |
-| Code this host cannot build | `blocked` with the platform and a capable host's command; open until the user supplies that host or waives the run |
+| Code this host cannot build | `blocked` with the platform and a capable host's command. A session already authorised to use such a host runs it there and returns the run id for a follow-up round to judge; otherwise it stays open until the user supplies a host or waives the run |
+| The dispatch forbade or narrowed the run and cited no waiver | `blocked: dispatch restriction`, quoting the dispatch, and `ISSUES_FOUND`; wait or budget numbers in a dispatch are not applied |
 | Run waived by the user or a superseding repository rule | Explicit waiver, not a passing run |
 | Unresolved writes outside the review's isolated state | Preservation gap and `ISSUES_FOUND` |
 
@@ -78,10 +86,13 @@ Yes, in isolation, with a focused config and a passing, nonempty baseline. For R
 The functions the changed test cases call, selected by name or line range, not the whole file. A changed or removed assertion that loses protection creates an Issue even when production is unchanged. Gaps that predate both the production and test diff stay under Strategy notes.
 
 **What does a follow-up round rerun?**
-The delta: the lines the correction changed and the lines behind each finding it claims to close, plus scope a prior round left `blocked` (including `blocked: host busy`), in the initial round's copy brought to the new revision, within 15 minutes. Another platform's code is the exception: it stays blocked until you supply a host that builds it or waive the run.
+The delta: the lines the correction changed and the lines behind each finding it claims to close, plus scope a prior round left `blocked`, a busy host included, in the previous round's copy brought to the new revision, within 15 minutes. Another platform's code is the exception: it stays blocked until a capable host's results arrive or you waive the run.
 
 **Who owns follow-ups and when do they stop?**
-This skill does. Return verified fixes or evidence-based rejections to the same reviewer for confirmation. Follow-ups run automatically while findings close or narrow. Delivery holds on no progress, a rejection repeated without new evidence, or two consecutive passes that each add a blocker without reducing the open count. The owning authority decides the next step; a hold is never PASS. Once all blockers are confirmed closed, a later edit or SHA alone does not reopen review.
+The reviewer owns its findings and pass record; the session's side of the loop is in [receiving-code-review](receiving-code-review.md). Return the verified batch of fixes or evidence-based rejections to the same reviewer for confirmation. Follow-ups run automatically while findings close or narrow. Delivery holds on no progress, a rejection repeated without new evidence, or two consecutive passes that each add a blocker without reducing the open count. The owning authority decides the next step; a hold is never PASS. Once all blockers are confirmed closed, a later commit alone does not reopen review: after a pass the reviewer sees a later delta only when it changes production logic or tests, and answers any other delta in one line.
+
+**What does the dispatch contain?**
+For a change review, five labelled lines and nothing else: `Worktree`, `Base or range`, `Revision`, `Accepted scope` and `Scope folder`. For an audit or a strategy question, the question and its target. The rubric sets the mutation scope, wait limit and budgets.
 
 **Can it use Bun through Stryker's command runner?**
 Yes, as the fallback when no framework runner works in the copy, with `coverageAnalysis: "off"` and an explicit command that selects the relevant test files and propagates failures; a bare full-suite command does not qualify. The report shows `NoCoverage: unavailable`. It is never a second pass over a scope a framework runner already completed.
@@ -93,7 +104,7 @@ The reviewer records the evidence within the existing budget. Keep timeouts sepa
 No. One strengthened assertion or table case can kill several. Injected defects, mutant copies, and probe tests stay out of the deliverable.
 
 **Why does the Codex spawn name the effort and fork no history?**
-A spawn that names a model but no effort runs at that model's default effort, and a forked history hands the reviewer the author's reasoning about the tests. The `test-quality-reviewer` agent file's Dispatch line names the spawn's model, effort and `fork_turns: "none"`, and since Codex registers no plugin agents, the spawn message pastes that file's body ahead of the question or target and the base branch. On Claude Code the agent file pins the model and effort, so pass no model. Which model and effort, and why, is `model-reference`'s test-quality review exception.
+A spawn that names a model but no effort runs at that model's default effort, and a forked history hands the reviewer the author's reasoning about the tests. The `test-quality-reviewer` agent file's Dispatch line names the spawn's model, effort and `fork_turns: "none"`, and since Codex registers no plugin agents, the spawn message pastes that file's body ahead of the dispatch lines. On Claude Code the agent file pins the model and effort, so pass no model. Which model and effort, and why, is `model-reference`'s test-quality review exception.
 
 **Can one prompt ask for code and test quality together?**
 No. The reviewer answers `## Verdict: REFUSED - out-of-scope dispatch`; each stage is a separate dispatch.
@@ -103,9 +114,10 @@ No. The reviewer answers `## Verdict: REFUSED - out-of-scope dispatch`; each sta
 - Every PR that changed logic or tests had this review, run by a context that did not write the tests.
 - The report has a `Mutation run` line with scope, its estimate, real counts and the lane's elapsed time against its budget, or an explicit `partial`, `blocked`, `waived`, or `not applicable` record.
 - The `Workspace preservation` line verifies the author's checkout and isolated runtime destinations, with no unresolved external writes.
+- Every round's report opens with its verdict line and fills the `Disposable copy` line, and no copy outlives the review.
 - Issues name concrete mutants and the assertions that kill them.
 
-It's misapplied if the author's session ran it, missing tools produced a qualitative PASS, a pure move's bodies were mutated, a whole file was swept because one of its tests changed, a test file was mutated, a completed campaign was rerun under another runner, two campaigns ran at once, a follow-up round rebuilt the copy and reran the initial scope, a copy was cloned into a folder another reviewer held, a custom harness was built for unparsed files, the lane ran past its budget, another platform's code was recorded as `waived`, an implementer ran the campaign a review left blocked, or a mutation decision was sent to the caller or an epic owner.
+It's misapplied if the author's session ran it, missing tools produced a qualitative PASS, a pure move's bodies were mutated, a whole file was swept because one of its tests changed, a test file was mutated, a completed campaign was rerun under another runner, two campaigns ran at once, a follow-up round rebuilt the copy and reran the initial scope, a copy was cloned into a folder another reviewer held, a custom harness was built for unparsed files, the lane ran past its budget, another platform's code was recorded as `waived`, an implementer ran the campaign a review left blocked, a busy host produced an Issue, a dispatch's limit turned a required run into a silent PASS, a wait hung on a log line, or a mutation decision was sent to the caller or an epic owner.
 
 ## Where it fits
 

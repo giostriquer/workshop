@@ -17,6 +17,8 @@ The agent can load it when relevant. You can also invoke
 - Configurations and workloads are comparable and relevant to production.
 - A separate profile or counters identify the limiter, or uncertainty is stated.
 - Units and results are plausible against resource and elapsed-time limits.
+- A comparison states in advance the result that would change the decision,
+  and the noise floor it expects.
 - Repeated interleaved trials distinguish an effect from variation.
 - A microbenchmark's result is kept separate from the user's end-to-end wait.
 

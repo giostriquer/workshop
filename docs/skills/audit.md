@@ -24,27 +24,34 @@ build goes to `brainstorming` instead.
 
 ## The protocol
 
-**Step 1: size the workload.** It asks you to pick a tier unless you already
-stated or clearly implied the coverage ("full audit").
+**Step 1: size the workload.** It states the tier that fits, with one line of
+reasoning. It asks you to pick only when two tiers both fit and differ in what
+you pay (a team sweep, or delegated readers you have not authorized) or in
+runtime modality, and you have not already stated or clearly implied the
+coverage ("full audit").
 
 | Tier | Engine | Fits |
 | --- | --- | --- |
 | **quick look** | inline: a few reads/greps, minutes | "is this config even used?" |
 | **deep audit** | `claim-check` | one premise to an evidence-graded verdict: a bug, a ticket, "is the refactor complete?" |
-| **static review** | inline, or independent readers where delegation is authorized | cross-cutting instruction, configuration, or document review |
+| **static review** | inline, or independent readers where delegation is authorized | a read-only audit across many files with no single premise: code, instructions, configuration, or documents |
 | **team sweep** | `qa-sweep` | a release or feature area, corroborated at team scale |
 
-It recommends a tier with one line of reasoning, via a structured question
-tool when available; the pick is yours.
+When it asks, it uses a structured question tool when available, recommended
+tier first; an asked pick is yours.
 
 **Runtime modality flag.** Tiers size breadth; this flags where evidence
 must come from. When the check concerns behavior a real client can drive (an
-endpoint, an app flow, a CLI), code reading alone cannot settle it, so the same
-question confirms whether to drive the booted app. A confirmed runtime check
+endpoint, an app flow, a CLI), code reading alone cannot settle it, so the skill
+confirms whether to drive the booted app: in the sizing question when it asks
+one, otherwise as its own question. A confirmed runtime check
 travels to the engine.
 
 **Step 2: run the engine.** A static review inventories the surface and
-reports coverage with source evidence. A quick look stays quick: "if it starts
+reports coverage with source evidence. When independent readers did the
+reading, the session reads the cited lines itself for every reader claim the
+verdict rests on; anything it did not check is reported as the reader's,
+unverified. A quick look stays quick: "if it starts
 growing past its size, stop and say so." Deep and sweep tiers invoke their
 engine and let it run by its own rules.
 
@@ -70,8 +77,10 @@ answer is pending.
 
 **Why is it asking me to size something before it even looks?**
 
-Engines differ in cost and coverage, and the pick is yours. State the
-coverage in the ask ("full audit") and it skips the question.
+It asks only when two tiers fit and differ in cost or in whether the running
+app gets driven; then the pick is yours. State the coverage in the ask ("full
+audit") and it skips the question. When one tier plainly fits, it names that
+tier and starts, and you can redirect it.
 
 **I asked it to check whether a feature works and it only read code.**
 

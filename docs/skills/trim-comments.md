@@ -97,12 +97,21 @@ a line inside a block comment changes, or a blank line goes with the comment
 it set off.
 
 **Does it commit?**
-The agent never commits, stages or pushes. If your work is already delivered
-as commits (an epic lane, or a branch the session committed under its existing
-authority), the session commits the trim's edits as their own comment-only
-commit before the review. Otherwise they stay in your working tree. Either way
-all applicable reviewers read the same revision: the working tree against the merge
-base, untracked files included.
+Only when the session asks. If your work is already delivered as commits (an
+epic lane, or a branch the session committed under its existing authority), the
+session adds a `Commit subject:` line to the dispatch, and the agent commits
+its own verified comment-only edits as one commit and returns the SHA. It
+stages only the files it edited, and only when each was clean before its first
+edit; otherwise it reports `Commit: not made` and leaves the edits for the
+session. Without that line the edits stay in your working tree. It never pushes
+or amends. Either way all applicable reviewers read the same revision: the
+working tree against the merge base, untracked files included.
+
+**Does it run my formatter, build or tests?**
+It runs the repository's format command over the files it edited, when the
+repository documents one or a commit hook enforces it. Lines the formatter
+re-wraps count as comment-only when their code tokens are unchanged. It runs no
+build, lint or test: the comment-only check is its verification.
 
 **It ended with `BLOCKED`.**
 It could not resolve the diff, load the skill, or confirm its edits were
@@ -161,7 +170,8 @@ have run, unless you waived them.
 - Every edit removes or changes a code comment inside the branch's changes,
   and no code line changed, your uncommitted code included.
 - Committed work gets the trim as its own comment-only commit before the
-  review; otherwise the edits sit in the working tree the reviewers read.
+  review, made by the agent from the dispatch's `Commit subject:` line;
+  otherwise the edits sit in the working tree the reviewers read.
 - Narration, banners, commented-out code and stale comments are gone.
 - License headers, vendor and platform notes with their issue links, public
   API docs and tool directives are still there.
@@ -174,8 +184,10 @@ have run, unless you waived them.
 - Negative signal: a code edit, an edit outside the diff or to a doc, PR or
   review comment, a deleted constraint comment you never approved, a deleted
   license header or vendor note, a trim that fired on its own
-  mid-implementation, a commit made by the agent, or a `BLOCKED` run that left
-  its edits in place.
+  mid-implementation, a second trim over a correction batch, a commit the
+  dispatch did not ask for or one that holds more than the agent's own edits, a
+  build or test run by the agent, or a `BLOCKED` run that left its edits in
+  place.
 
 ## Where it fits
 

@@ -68,7 +68,11 @@ its actual installation owner; do not remove these safeguards from project work.
 - **Go:** never `go install`. `go run golang.org/x/vuln/cmd/govulncheck@latest
   ./...` runs govulncheck without installing it.
 - **Cargo:** never `cargo install`. A missing `cargo audit`, `cargo deny`,
-  `cargo outdated` or `cargo machete` is reported as missing.
+  `cargo outdated` or `cargo machete` is reported as missing. A read-only
+  substitute that installs nothing may fill the gap, such as an OSV query for
+  the `crates.io` versions in `Cargo.lock` when `cargo audit` is absent: the
+  report then names the substitute beside the missing tool, and the checks
+  only that tool makes stay "not checked".
 - **Maven and Gradle:** check with `./mvnw -DskipTests verify`, not
   `install`, which copies the artifact into the shared `~/.m2`; never
   `publishToMavenLocal`.
@@ -120,7 +124,7 @@ afterwards (`uvx pip-audit` runs it without installing it):
   `poetry-plugin-export`; without it, audit the environment the baseline
   installed: `uvx pip-audit --path <site-packages>`, under the path `poetry
   env info --path` prints, once that path is the project's own environment
-  (see Stay inside the checkout).
+  (see Stay inside the selected project environment).
 
 Gradle with dependency locking writes `gradle.lockfile` only through
 `--write-locks` or `--update-locks <group>:<module>`; the commands above leave

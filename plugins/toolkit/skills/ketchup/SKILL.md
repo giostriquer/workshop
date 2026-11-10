@@ -16,7 +16,9 @@ when raised earlier. Use the project, PR, and agent names the user knows.
 Read the relevant conversation, task records, and agent reports. Refresh only
 the current state needed for this update, such as a touched PR's head and
 checks, a running job, or a task's governing ledger. Keep gathering read-only.
-Use available authorized tools; name anything you could not refresh.
+Use available authorized tools; name anything you could not refresh. Check
+each number you will show against the fact it comes from, and say so when you
+correct one.
 
 Distinguish what you verified from what an agent reported, what is still
 running, and what rests on older evidence. A green check on an earlier head
@@ -27,17 +29,25 @@ An action item is a decision or step only the user can take: a product choice,
 missing access, or approval that the existing instructions actually require.
 Routine investigation, retries, tests, and already authorized work belong to
 the agent. Do not turn uncertainty you can investigate into a user decision.
+An action item exists only where the work needs one; when nothing is waiting,
+say so.
 
 ## Give the catch-up
 
 1. Open with the number of decisions or steps waiting on the user, or say
-   there are none. If nothing changed and nothing is pending, say so briefly.
+   there are none. Every one of them is listed below: a count or a link does
+   not stand in for an item. If nothing changed and nothing is pending, say so briefly.
 2. Summarize meaningful results and their implications, most important first.
-   Label reported, stale, running, or unverified results accurately.
+   Label reported, stale, running, or unverified results accurately. Each
+   line stays true read on its own, and work still waiting on the user is
+   labelled waiting, not done.
 3. For each human action item, state the decision, why it matters now, the
    viable options and consequences, your recommendation, and what can proceed
    without an answer. Say when a consequence is unknown; link existing detail
-   where useful. The user should be able to decide from the summary.
+   where useful. The user should be able to decide from the summary. When
+   several items share one decision, state the decision and your
+   recommendation once, then give each item its own line, riskiest first,
+   with its risk even when it is low.
 4. Name the next agent-owned action, or say that the checkpoint is complete.
 
 Use concise plain language. A table or existing visual can clarify a choice;
@@ -54,5 +64,5 @@ stops other agents nor authorizes edits, publication, or external messages.
 
 ---
 
-Adapted from Lauren Tan's [pstack ketchup](https://github.com/cursor/plugins/tree/1b6d44ff26d4e242f4e8f68c391e6d2f7ca16def/pstack/skills/ketchup)
+Adapted from Lauren Tan's [pstack ketchup](https://github.com/cursor/plugins/tree/236e5481d05cbadc315b374a5de54971858c27bb/pstack/skills/ketchup)
 (MIT, Copyright (c) 2026 Lauren Tan).

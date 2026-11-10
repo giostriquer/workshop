@@ -56,11 +56,15 @@ artifact settles it, and would it survive the operator pushing back once?
 
 | Verdict | Meaning |
 | --- | --- |
-| `confirmed` | The premise holds |
-| `refuted` / `obsolete` | Already fixed, or never true |
-| `mis-scoped` | Real, but framed wrong; includes a corrected framing |
-| `confirmed-but-blocked` | Holds, but needs information or a decision first |
+| `confirmed` | The premise holds against the current repo |
+| `refuted` | It never held as stated; the evidence disproves it |
+| `obsolete` | It held when written, and the repo already addresses it in full |
+| `mis-scoped` | Real, but framed wrong or only partly addressed; includes a corrected framing |
 | `inconclusive` | A real wall was hit; names the wall and the input that would get past it |
+
+A premise that holds but cannot be acted on yet is still `confirmed`: the
+Readiness section opens `blocked` and says on what. You may see that written as
+`confirmed-but-blocked`; it is a readiness call, not a sixth verdict.
 
 When claims come out differently, the verdict may hold a per-claim table.
 `confirmed` and `obsolete` results both get an adversarial second pass.

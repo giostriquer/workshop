@@ -9,21 +9,28 @@ description: Always use before opening a PR or pushing to a branch with an open 
 
 This skill handles landing. Verification and review belong to completion and
 should already be recorded before filing. Check the evidence covers this scope
-and revision, including the applicable independently dispatched stages:
+and revision. First the verification record that `verification-before-completion`
+requires, with all three of:
+
+- each changed behavior exercised through its user or consumer boundary
+  (`empirical-proof` gives the route for the surface);
+- on an artifact identified as containing this revision's change;
+- any pre-fix comparison, such as a regression test seen failing before the
+  fix, run in a disposable checkout, with the active worktree left unmodified.
+
+Then the applicable independently dispatched stages:
 
 1. The `trim-comments` skill, run by the `comment-trimmer` agent as that skill
    describes. It goes first, so the review sees the trimmed diff.
 2. The `code-quality-review` skill, dispatched as that skill describes.
-3. When the diff changes production logic or tests: the `test-quality-review` skill
-   given the PR's base branch in a separate, test-scoped prompt, run by the
-   `test-quality-reviewer` agent, dispatched by name with no model (on Codex, paste
-   the agent file and use its Dispatch line, per `using-workbench`'s *Workbench
-   agents on Codex*).
+3. When the diff changes production logic or tests: the `test-quality-review` skill,
+   run by the `test-quality-reviewer` agent, dispatched by name with no model and
+   the lines its description names (on Codex, paste the agent file and use its
+   Dispatch line, per `using-workbench`'s *Workbench agents on Codex*).
 4. When observable behavior, consumer contracts or cross-component wiring changed:
-   the `contract-review` skill, dispatched to `contract-reviewer` as that skill
-   describes, given the accepted outcomes, approved design and
-   exclusions, diff/base and revision, and verification evidence. Follow the
-   agent's Dispatch line. The applicable reviews run in parallel after trimming.
+   the `contract-review` skill, dispatched to `contract-reviewer` with the six
+   lines its description names. Follow the agent's Dispatch line. The applicable
+   reviews run in parallel after trimming.
 
 Also retain the optional `scope-review` outcome from the completion round: a Muse
 report or `SKIPPED` with its reason. If never attempted, follow its invocation
@@ -33,9 +40,10 @@ an earlier attempt or require Muse confirmation of findings. This optional
 opinion is outside the required-stage gate below.
 
 If verification or a required stage is missing, hold filing and return that gap
-to the completion workflow. Resume landing after it is resolved; do not restart
+to the completion workflow; a verification gap is closed by loading
+`verification-before-completion`. Resume landing after it is resolved; do not restart
 completed stages. Carry the trim's encoding offers as `trim-comments` describes.
-Record each required verdict against the same trimmed scope and revision;
+Record each required verdict against the revision its record covers;
 each review discipline owns its own findings, follow-ups, and pass record.
 
 **Violating the letter of this gate is violating the spirit of it.** The
@@ -155,9 +163,18 @@ Reusing the merged head branch requires an explicit instruction.
 3. **Confirm focused checks and required local gates.** Discover the repo's gates
    from its CI workflows, hooks, build/package scripts, and contributor docs.
    Reuse current evidence that covers the synchronized candidate and relevant
-   environment; a no-op sync does not invalidate it. Run fresh checks when
-   integration or corrections invalidate coverage, or the repo explicitly requires
-   them at delivery. Missing completion evidence returns to completion as above.
+   environment; a no-op sync does not invalidate it. Neither does a clean merge
+   whose incoming paths pass three checks. The paths are `git diff --name-only
+   --no-renames <evidence tip>..<fetched target tip>`, where the evidence tip is
+   the target tip contained in the revision the evidence ran on. None is a path
+   the branch changes; none is read by an affected check (its package or
+   directory, what that imports or builds from, and the dependency, build and
+   tool configuration it loads); and none imports, builds from or tests a path
+   the branch changes, directly or through other modules. A path you cannot
+   place, or whose dependencies you cannot bound, counts as read. Record the
+   compared range with the reused evidence. Run
+   fresh checks when integration or corrections invalidate coverage, or the
+   repo explicitly requires them at delivery. Missing completion evidence returns to completion as above.
    When checks need to run, run fast static checks (format, lint, type-check)
    separately before affected tests. Full suites normally run in PR CI; a wider
    local run needs an explicit local gate or a specific unresolved integration
@@ -214,7 +231,8 @@ Reusing the merged head branch requires an explicit instruction.
    fetch it again. Verify the fetched target tip is an ancestor of HEAD
    (for example, `git merge-base --is-ancestor
    <fetched-target> HEAD`). If the target changed or has missing commits, repeat
-   synchronization and affected checks until the latest fetched target is included.
+   synchronization until the latest fetched target is included, and repeat the
+   affected checks unless step 3 keeps their evidence.
    Resolve remote-head push rejection by syncing and validating again, never by
    force. **Synchronization has no retry cap**: continue through concurrent
    target or head updates. These rounds neither consume nor reset `fix-ci`'s

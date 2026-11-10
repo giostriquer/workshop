@@ -33,13 +33,20 @@ their inputs and assertions, so the gaps between them read as coverage.
 - **Who:** the `test-quality-reviewer` agent, dispatched by name with no model (on
   Codex, paste the agent file and use its Dispatch line, per `using-workbench`'s
   *Workbench agents on Codex*); on another host without that agent type, a reviewer
-  context that loads this skill, on the host's default model. Give it the
-  test-quality question or target, plus the base branch when known, in a separate
-  prompt. Never let it inherit the parent's model, effort, or history; the reviewer
-  never dispatches another agent.
-- **How many at once:** at most two test-quality reviewers per session, because
-  every reviewer's mutation campaigns queue for one slot per host. Dispatch the
-  next work set's review when one returns; other review stages are not limited.
+  context that loads this skill, on the host's default model. For a change
+  review the prompt is five labelled lines and nothing else: `Worktree`,
+  `Base or range`, `Revision`, `Accepted scope` (a file path, or the ask quoted
+  when no file holds it) and `Scope folder`. For any other request it is the
+  question and its target. This skill sets the mutation scope, waits and
+  budgets. Never let the reviewer inherit the parent's model, effort, or
+  history; the reviewer never dispatches another agent.
+- **How many at once:** at most two test-quality reviewers per session. Every
+  session on the host shares one campaign slot, in arrival order, so reviewers
+  from other sessions lengthen a wait without counting toward the two, and a
+  wait that outlasts its limit leaves the uncovered scope `partial`, or
+  `blocked: host busy` when nothing ran.
+  Dispatch the next work set's review when one returns; other review stages
+  are not limited.
 
 ## Workflow
 
@@ -71,11 +78,17 @@ their inputs and assertions, so the gaps between them read as coverage.
 
 ## Revision rounds
 
-Continue the same reviewer session for the same task. Return each blocking fix
-or evidence-based rejection with its finding ID, revisions, correction delta,
-and focused test evidence once the batch is verified. Passing tests alone do
-not close a finding: this reviewer confirms closure. If replaced, give the new
-reviewer the existing record. Requests outside delivery keep their agreed scope.
+This section is the reviewer's half of a correction round. The dispatching
+session's half (what it returns, which reviewers see a later delta, when it
+holds delivery, when it removes the disposable copy) is in
+`receiving-code-review`. Passing tests alone do not close a finding: this
+reviewer confirms closure, in the same session, and a replacement works from the
+existing record. Requests outside delivery keep their agreed scope.
+
+After this review's `PASS`, a follow-up is this review's when its delta changes
+production logic or tests, or when it carries an `Uncovered mutation scope:` or
+`Requested by the user:` line. For any other delta, reply `## Verdict: PASS`, the revision the record
+covers and `no test-quality ground in this delta`, and stop.
 
 1. Resolve the current scope again; never review a cached change set.
 2. Re-read only the test and production files that changed between rounds, unless a prior
@@ -83,14 +96,15 @@ reviewer the existing record. Requests outside delivery keep their agreed scope.
    when its production files or tests changed between rounds, over the round's
    delta only: the production lines the correction changed and the lines behind
    each finding it claims to close, with the initial round's tool. Bring the
-   initial round's disposable copy to the new revision (check out the reviewed
-   commit or apply the delta there) and keep its build caches; a follow-up round
-   creates no new copy and does not rerun the initial round's scope. Scope a
-   prior round left `blocked` joins this round's mutation scope even when no file
-   changed. It runs in the existing copy, or in a new one when the copy caused
+   previous round's disposable copy to the new revision (check out the reviewed
+   commit or apply the delta there) and keep its build caches; while that copy
+   exists a follow-up round creates no new one, and no follow-up reruns the
+   initial round's scope. Scope a prior round left `blocked`, a busy host
+   included, joins this round's mutation scope even when no file changed. It runs in the existing copy, or in a new one when the copy caused
    the block; what stays uncovered is `partial`. Code this host cannot build
-   stays `blocked` for the user, as the mutation lane says. A follow-up round's
-   mutation lane has 15 minutes of wall clock in total.
+   stays `blocked` until a capable host's results or a waiver arrive, as the
+   mutation lane says. A follow-up round's mutation lane has 15 minutes of wall
+   clock in total.
 3. Delta walk prior findings by stable ID. Classify each as Resolved, Partially
    resolved, Not resolved, or Rejected with evidence. Cite the test location or
    contrary evidence that supports the disposition.
@@ -99,32 +113,23 @@ reviewer the existing record. Requests outside delivery keep their agreed scope.
    New blockers need a demonstrated consequence. A gap outside this focus goes
    under Strategy notes, never as an Issue, unless it proves the change unsafe
    or incorrect as shipped. Unrelated cleanup and preferences do not extend the loop.
-5. Record the reviewed revision, the follow-up pass number, and Delta walk.
-   Unresolved findings or unreviewed corrections hold delivery; a review held for
-   not converging never converts them into PASS.
+5. Record the reviewed revision, the follow-up pass number (from 0, a record and
+   never a limit), and Delta walk. Unresolved findings or unreviewed corrections
+   hold delivery; a review held for not converging never converts them into PASS.
 
-Run focused follow-ups automatically while this review converges. Number its
-submissions from 0 as a record, never a limit. Replacing a reviewer who did not
-return completes the same submission. Corrections and owner validation are not
-review passes; advisory-only findings do not trigger one.
+Name a convergence hold in the Delta walk, with the open findings and both
+sides' evidence, when a pass sent at least one open blocker closes or narrows
+none of them, a rejected finding returns without new evidence, or two
+consecutive follow-ups each raise a new blocker and end with at least as many
+open blockers as they were sent. A pass that only narrows findings neither
+counts toward nor breaks that two-pass sequence. Only reviewer confirmation or
+an explicit user waiver closes a blocker.
 
-Hold further submissions and delivery when a pass sent at least one open blocker
-closes or narrows none of them, a rejected finding returns without new evidence, or
-two consecutive follow-ups each raise a new blocker and end with at least as
-many open blockers as they were sent. A pass that only narrows findings neither
-counts toward nor breaks that two-pass sequence.
-
-Report the open findings, both sides' evidence, and a recommended next step to
-the epic owner for a delegated lane, otherwise the user. Their decision restarts
-automatic passes and the two-pass count unless it ends review. Corrections may
-continue under existing authority, but submission waits while review is held.
-Only reviewer confirmation or an explicit user waiver closes a blocker.
-
-Confirmation of all blockers ends this correction loop. An edit or new SHA
-alone does not reopen it. New scope or a material redesign that invalidates a
-prior conclusion needs review of the affected delta. Explicit review requests
-and superseding repository gates still apply. Preserve this record across
-reviewer replacements, PR preparation, and session handoffs.
+Confirmation of all blockers ends this correction loop; a new commit alone does
+not reopen it. Advisory findings this review raised and the author applied are
+recorded, never re-reviewed; another review's applied advisory is a delta like
+any other. Explicit review requests and superseding repository gates still
+apply.
 
 ## Capability lanes
 
@@ -223,10 +228,14 @@ stricter scrutiny:
 
 ## Output format
 
-For change reviews, use the format below. For other requests, answer with
-prioritized findings or recommendations, the inspected scope, supporting evidence
-and limits. Include mutation results and preservation whenever setup or execution
-occurred; do not turn advice about existing tests into a delivery verdict.
+For change reviews, use the format below, on every round: the report's first
+line is the verdict line, and a report without it reads as `ISSUES_FOUND`. When
+a dispatch uses other verdict or severity words, that line stays as written;
+say in the body which verdict each of the dispatch's words maps to. For other
+requests, answer with prioritized findings or recommendations, the inspected
+scope, supporting evidence and limits. Include mutation results and
+preservation whenever setup or execution occurred; do not turn advice about
+existing tests into a delivery verdict.
 
 ```
 ## Verdict: PASS | ISSUES_FOUND
@@ -247,15 +256,20 @@ Follow-up pass: [0 initial, or the follow-up's number]
   with fresh and reused results separated, and any campaign wait in minutes and
   whether the process listing could see other sessions; or "partial: <covered
   scope> / <uncovered scope>" when the budget, the estimate rule, the wait limit
-  or a handback stopped the lane, or shared-host timeouts left lines unproven;
-  or "blocked: <failure, attempted repair, remaining
+  (a busy host included) or a handback stopped the lane, or shared-host timeouts
+  left lines unproven; or "blocked: <failure, attempted repair, remaining
   scope>", naming the platform and a capable host's command when this host
-  cannot build it; or "waived: <authority and scope>"; or
+  cannot build it, or the host and run id when its results came back; or
+  "blocked: dispatch restriction <the dispatch's words>"; or
+  "waived: <authority and scope>"; or
   "not applicable: <source evidence of no executable behavior, or files the
   tool does not parse>"]
 - Workspace preservation: [verified against pre-run staged, unstaged, and untracked
   state and isolated runtime destinations; or "unresolved: <paths and reason>";
   or "not applicable: no setup or run"]
+- Disposable copy: [REQUIRED. "removed" on PASS; or its absolute path and
+  "(clone)" or "(worktree of <author repo path>)", kept for the next round; or
+  "none created"]
 
 ### Delta walk
 [On revision rounds: prior finding ID, disposition, and supporting evidence.]
@@ -277,9 +291,9 @@ Follow-up pass: [0 initial, or the follow-up's number]
 ```
 
 - `PASS` - no test-trustworthiness issue found that would let a weak or misleading test
-  merge, the required run happened over the scope within the budget (complete
-  or `partial`) or is `not applicable` or `waived` by rule, and workspace
-  preservation is verified after setup or runs.
+  merge, the required run is complete or `partial` within its budget and wait
+  limit, or is `not applicable` or `waived` by rule, and workspace preservation
+  is verified after setup or runs.
 - `ISSUES_FOUND` - at least one such issue, a required run that never happened
   (`blocked`), or unresolved mutation workspace preservation.
 - Observations and Strategy notes are non-blocking unless explicitly tied to an Issue.

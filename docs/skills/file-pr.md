@@ -36,7 +36,11 @@ finishes local preparation and names the delivery step still needed.
 Before opening a PR or pushing to a branch with an open PR, including review
 corrections when CI is green. It assumes verification and review already ran,
 then checks that their evidence covers the scope and revision being filed.
-The applicable stages are comment trimming, code-quality review, test-quality
+The verification record comes from `verification-before-completion` and shows
+three things: each changed behavior exercised through its user or consumer
+boundary, on an artifact that contains this revision's change, with any
+pre-fix comparison run in a disposable checkout and the active worktree left
+unmodified. The applicable stages are comment trimming, code-quality review, test-quality
 review for changed logic or tests, and `contract-review` for changed observable
 behavior, consumer contracts or cross-component wiring.
 
@@ -74,7 +78,14 @@ the accepted requirements; a failed fetch or unresolved merge blocks delivery.
 Discover the repo's PR gates (CI workflows, hooks, build scripts, contributor
 docs) and reuse current evidence covering the synchronized candidate. Run fresh
 checks when integration or corrections invalidate coverage, or a repository gate
-requires them at delivery; a no-op sync does not repeat validation. Missing
+requires them at delivery; a no-op sync does not repeat validation. Neither
+does a clean merge whose incoming target paths, listed with renames expanded,
+include no path the branch changes, no path an affected check reads (its
+package or directory, what that imports or builds from, and the dependency,
+build and tool configuration it loads) and no path that imports, builds from
+or tests one the branch changes, directly or through other modules. A path
+that cannot be placed, or whose dependencies cannot be bounded, counts as read,
+and the report records the compared range. Missing
 completion evidence returns to completion. Full suites run in PR CI. Find the ticket link. Search for the PR
 template case-insensitively in `.github/`, the repo root and `docs/`, and
 record the result; the Summary / Ticket / Caveats fallback is allowed only
@@ -86,7 +97,8 @@ feature head and fetch and merge the current target. A first push skips only the
 nonexistent-head pull. Refresh scope, diff, title and body, run affected checks,
 and refresh any review coverage invalidated by integration. Immediately before
 pushing, refresh and fetch the target again and verify its tip is in HEAD. If it
-changed or advanced beyond HEAD, integrate and validate again. Push per the
+changed or advanced beyond HEAD, integrate again, and validate again unless the
+clean-merge rule above keeps the check evidence. Push per the
 repo's conventions, then open or update the PR, with one
 `--attach` per screenshot. The PR URL is reported as soon as it exists.
 
@@ -207,11 +219,19 @@ target, including a retargeted PR or a target in another remote repository,
 before every push. Pulling the feature branch alone is insufficient. A failed
 target fetch leaves the push pending.
 
-**What if the target keeps advancing?** It continues merging and validating the
-latest target, with no synchronization retry cap. Remote feature-head push
-rejections also return to synchronization and validation. It still requires the
-latest fetched target in HEAD and passing affected checks before pushing. Failed
-fetches and unresolved merges or decisions leave delivery pending.
+**What if the target keeps advancing?** It continues merging the latest target,
+with no synchronization retry cap. Remote feature-head push rejections also
+return to synchronization. It still requires the latest fetched target in HEAD
+and passing affected checks before pushing. Failed fetches and unresolved
+merges or decisions leave delivery pending.
+
+**Does every new target commit rerun my checks?** No. A clean merge keeps the
+existing check evidence when `git diff --name-only --no-renames <evidence
+tip>..<fetched target tip>` lists no path your branch changes, no path an
+affected check reads, and no path that imports, builds from or tests one your
+branch changes. The evidence tip is the target tip in the revision the checks
+ran on. Anything else, including a path it cannot place, reruns the affected
+checks. The report names the compared range for reused evidence.
 
 **How long will it keep fixing CI?** Two fix attempts per failing CI cause.
 Synchronization rounds neither consume nor reset those attempts.

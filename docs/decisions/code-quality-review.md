@@ -8,7 +8,7 @@ The flow had reviewers for specs, pattern conformance and tests, but nothing aim
 
 ## The skill is the rubric; the agent applies it (2026-06-29)
 
-The implementation-review loop always named a code-quality stage ahead of pattern review, but no agent filled it, so every adopting project had to supply its own. `code-quality-reviewer`, adapted from the agent of the same rubric in Cursor's MIT-licensed `cursor-team-kit` plugin, fills it by loading the `code-quality-review` skill as its complete rubric, reading the bundled SKILL.md directly on hosts that do not auto-load skills, and falling back to a harsh maintainability audit in the same spirit only when the skill is unavailable. One rubric in one place means the agent carries no second copy to drift. The agent is host-agnostic: it reviews the `### Git / diff output` and `### Changed file contents` sections a parent supplies, or gathers the diff against the base itself, so it works both as a dispatched stage and standalone. It is review-only; the implementer owns every fix.
+The implementation-review loop always named a code-quality stage ahead of pattern review, but no agent filled it, so every adopting project had to supply its own. `code-quality-reviewer`, adapted from the agent of the same rubric in Cursor's MIT-licensed `cursor-team-kit` plugin, fills it by loading the `code-quality-review` skill as its complete rubric, reading the bundled SKILL.md directly on hosts that do not auto-load skills, and falling back to a harsh maintainability audit in the same spirit only when the skill is unavailable. One rubric in one place means the agent carries no second copy to drift. The agent is host-agnostic: it gathers the diff against the base itself (since 2026-11-09 always, from the dispatch's pointers), so it works both as a dispatched stage and standalone. It is review-only; the implementer owns every fix.
 
 ## The review is default-on at completion (2026-08-12)
 
@@ -20,7 +20,7 @@ Sessions reaching the gate ran the rubric over their own diff and reported that 
 
 ## The reviewer gets the accepted scope (2026-09-24)
 
-The rubric labels findings in scope, advisory or follow-up against "the accepted work's boundary: the ticket, plan, or agreed change under review", but the dispatch handed the reviewer only `### Git / diff output` and `### Changed file contents`, so it had to infer the boundary from the code it was judging. The dispatch now carries an `### Accepted scope` section: the ticket, plan or agreed change stated as the ask, never the author's account of the code, the way pstack's `interrogate` (cursor/plugins, MIT) states the intent before its reviewers run. The section sets where in-scope ends and does not limit what the reviewer reads or traces. An assessment that arrives with it is not the reviewer's to adopt, the stance `test-quality-review` takes toward its caller. A reviewer given no scope takes it from the PR description, the commits or the ticket they reference, and says which scope it used.
+The rubric labels findings in scope, advisory or follow-up against "the accepted work's boundary: the ticket, plan, or agreed change under review", but the dispatch handed the reviewer only `### Git / diff output` and `### Changed file contents`, so it had to infer the boundary from the code it was judging. The dispatch now carries the accepted scope (a pasted `### Accepted scope` section until 2026-11-09, an `Accepted scope:` path since; see the last section): the ticket, plan or agreed change stated as the ask, never the author's account of the code, the way pstack's `interrogate` (cursor/plugins, MIT) states the intent before its reviewers run. The section sets where in-scope ends and does not limit what the reviewer reads or traces. An assessment that arrives with it is not the reviewer's to adopt, the stance `test-quality-review` takes toward its caller. A reviewer given no scope takes it from the PR description, the commits or the ticket they reference, and says which scope it used.
 
 ## The 1k-line rule has one reading (2026-09-24)
 
@@ -33,6 +33,10 @@ Standard 1 still ended "Only waive this if there is a compelling structural reas
 That left two reviewers owning comments with different defaults: `pattern-reviewer` flags restating comments with or without a repository rule, and standard 8 flags only what a rule covers. Each now names the other's share. Standard 8 says a comment that only restates the code, with no rule against it, is `pattern-reviewer`'s built-in check wherever that agent runs, and this review does not flag it; `pattern-reviewer` says the other comment findings (rule-covered comments, suppressions, enforceable constraint comments) are standard 8's. In a plan-only probe, two fresh reviewers per arm judged a diff with narrating comments and no comment rule, a `no-floating-promises` suppression over a call whose rejection crashes the service, and a "keep in sync with the docs" comment. Both arms flagged the suppression with its fix 2 of 2, named a test to enforce the sync comment 2 of 2, and left the narrating comments unflagged 2 of 2; this wording's reviewers named `pattern-reviewer` as their owner 2 of 2, the first draft's 0 of 2. The change settles ownership rather than behavior, and two reps per arm is bounded regression evidence.
 
 The edit pass itself is a separate dispatched stage, `trim-comments` run by the `comment-trimmer` agent, before the one initial review round, so standard 8 reports what the trim left rather than carrying the trim. "Who runs it" says so in one paragraph that points to that skill, placed ahead of the test-quality paragraph so "both dispatches form one initial review round" still follows the two review dispatches. A constraint comment the trim already returned as an encoding offer waits for the outline gate, and standard 8 notes it instead of raising it again, so each offer has one owner. The reviewer's diff is now the revision `test-quality-review` reads, the working tree against the merge base with untracked files, in the agent's fallback, in its parent's gathering step and in the skill's dispatch paragraph: `git diff <base>...HEAD` left out uncommitted edits, so a trim left in the working tree reached the test reviewer and not this one. Rationale and probes: [trim-comments](trim-comments.md#moved-into-workbench-as-a-delivery-stage-2026-09-24).
+
+## Claude Code pins Opus 5.5 at `xhigh` (2026-11-09)
+
+The operator moved `code-quality-reviewer` and `spec-reviewer` off `model: inherit` on Claude Code. Once sessions ran on a newer, costlier model, these two were the only reviewers following the parent there, while test-quality, contract and trim review stayed on Opus. Both files now pin `claude-opus-5-5` at `xhigh`. Codex and other harnesses keep the parent's model and effort, so Muse dispatch overrides the Claude settings with the parent's values. The fresh-context rule in the next section is unchanged; its "parent's model on both hosts" now holds for Codex only.
 
 ## The reviewer runs on the parent's model without the author's history (2026-09-24)
 
@@ -74,6 +78,8 @@ followed by the reviewed revision and findings. Earlier prose verdicts forced
 both sessions and tooling to infer whether review passed. Sharing the two
 labels with test review makes the outcome readable without merging the rubrics.
 PASS means no in-scope blocking finding; a missing verdict does not imply PASS.
+Since 2026-11-09 the line opens every round's report in all three review
+disciplines, and a report without it reads as `ISSUES_FOUND` in each.
 
 ## Pattern review now checks behavior and contracts (2026-10-16)
 
@@ -90,3 +96,48 @@ conditions. Shared authority, preservation and completion gates remain inline.
 The [repo tooling decision](repo-tooling.md#bounded-skill-entrypoints-2026-10-30)
 records the observed truncation and validation boundary. No delivery or review
 requirement is relaxed by this layout change.
+
+## The dispatch is pointers; agent descriptions name them (2026-11-09)
+
+The dispatch recipe asked the parent to paste `### Accepted scope`, `### Git /
+diff output` and `### Changed file contents`, while its own rationale said
+dispatching keeps the diff and file contents out of the implementing session's
+window: pasting them requires the parent to read and re-emit both. In a
+transcript audit of 2026-11-02 to 2026-11-09, 0 of 103 Claude Code code-quality
+dispatch prompts contained any of the three sections or a diff hunk; 92 gave a
+git range, 79 pointed at a brief file, and the median prompt was 1.8 KB. The
+reviewer already gathered the diff itself when none was supplied.
+
+Pointers are now the recipe: `Worktree`, `Base or range`, `Revision`,
+`Accepted scope` (a path, or the ask quoted when no file holds it), `Scope
+folder` and `Encoding offers`, and nothing else. The last line carries the
+trim's open constraint-comment offers, which standard 8 needs. The paste steps
+and the agent's "How a parent invokes this agent" section are deleted.
+
+The same audit found why dispatch prompts drifted: the rules for the
+dispatcher sat in the rubric skills and agent bodies, and a Claude Code parent
+sees only each agent's frontmatter `description` (see
+[bounded correction review](bounded-correction-review.md#the-dispatching-sessions-half-moves-to-receiving-code-review-2026-11-09)).
+Of the 103 prompts, 84 restated "do not edit" and 62 set their own severity
+scale; 38 prompts across the three reviewers set other verdict words. Each
+reviewer agent's description now states when to use it and the labelled lines
+to dispatch it with: five for `test-quality-reviewer`, six for
+`code-quality-reviewer` and `contract-reviewer` (which keeps its verification
+evidence as the checks run at this revision with their results, or a path to
+that record), two or three for `comment-trimmer`, and file paths only
+for `spec-reviewer`. Agent bodies repeat the lines for Codex, where the parent
+pastes the body.
+
+Three smaller corrections ride with it. Every round's report opens with the
+verdict line, and a dispatch's own verdict or severity words are mapped in the
+body: about 35 reports across the three reviewers had used off-contract words
+such as a bare FAIL or PENDING. A reviewer's probe lives in the dispatch's
+scope folder or a temporary directory outside the repository, the rule
+`contract-review` already had: one reviewer had written and removed three
+scratch test files in the author's worktree. `spec-reviewer` lost three stale
+references (a fourth review stage, an in-loop implementation review and a
+plan-reviewer gate, none of which exist); one of its two dispatches that week
+returned no verdict line, so its output section now says the first line is the
+verdict. One scenario probe gave a
+session only the three reviewer descriptions and a temptation to pre-empt a
+finding: each prompt it wrote was the labelled lines and nothing else. Each scenario ran once, in a fresh context on Opus 5.5, before the last round of review corrections: regression evidence for that scenario, not a reliability estimate.

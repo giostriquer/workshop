@@ -5,6 +5,8 @@
 // line is `mutation-slot: {json}` with the status, queue mode, seconds waited and
 // whether the process listing could see other sessions (`listingSeesHost`; null when it
 // waited behind other tickets or a lock the whole time and never took a listing).
+// A listing (`--list`, `--list-files`, `--version`, `--help`) executes no mutant: it
+// runs at once with queue mode `bypass` and never holds another campaign back.
 import { execFileSync, spawn } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmdirSync, statSync, unlinkSync, utimesSync, writeFileSync } from 'node:fs';
 import os from 'node:os';
@@ -16,6 +18,9 @@ const WAIT_LIMIT_EXIT = 75;
 const STALE_MS = 120000;
 const SIGNALS = ['SIGINT', 'SIGTERM', 'SIGHUP'];
 const VALUE_OPTIONS = new Set(['-r', '--require', '--import', '--loader', '--experimental-loader', '-C', '--conditions']);
+// Keyed by tool: cargo-mutants reads -V as --unviable, which runs the campaign.
+const CARGO_LISTING = new Set(['--list', '--list-files', '--version', '--help', '-h']);
+const STRYKER_LISTING = new Set(['--version', '-V', '--help', '-h']);
 
 const base = arg => path.basename(arg || '');
 const isStryker = arg => base(arg) === 'stryker' || base(arg) === 'stryker.js';
@@ -28,19 +33,34 @@ function scriptOf(args) {
   return '';
 }
 
+function isCargoMutants(argv) {
+  const program = base(argv[0]);
+  return program === 'cargo-mutants' || (program === 'cargo' && argv[1] === 'mutants');
+}
+
 function isCampaign(argv) {
   const program = base(argv[0]);
-  if (program === 'cargo-mutants' || (program === 'cargo' && argv[1] === 'mutants')) return true;
+  if (isCargoMutants(argv)) return true;
   if (isStryker(argv[0])) return true;
   return (program === 'node' || program === 'bun') && isStryker(scriptOf(argv.slice(1)));
 }
+
+// Arguments after a bare `--` go to the test phase, so a flag there lists nothing.
+export function isListing(argv) {
+  if (!isCampaign(argv)) return false;
+  const end = argv.indexOf('--');
+  const flags = isCargoMutants(argv) ? CARGO_LISTING : STRYKER_LISTING;
+  return (end < 0 ? argv : argv.slice(0, end)).some(arg => flags.has(arg));
+}
+
+const holdsSlot = argv => isCampaign(argv) && !isListing(argv);
 
 export function campaigns(listing, exclude = process.pid) {
   return listing.split('\n')
     .map(line => line.trim().match(/^(\d+)\s+(.+)$/))
     .filter(Boolean)
     .map(([, pid, command]) => ({ pid: Number(pid), command }))
-    .filter(({ pid, command }) => pid !== exclude && isCampaign(command.split(/\s+/)));
+    .filter(({ pid, command }) => pid !== exclude && holdsSlot(command.split(/\s+/)));
 }
 
 export function readListing() {
@@ -177,10 +197,9 @@ export class Queue {
   }
 }
 
-class ProcessListOnly {
-  mode = 'ps-only';
-
-  constructor(reason) {
+class Unqueued {
+  constructor(mode, reason) {
+    this.mode = mode;
     this.reason = reason;
   }
 
@@ -201,7 +220,7 @@ function openSlot(dir, record) {
   try {
     return new Queue(dir, record);
   } catch (error) {
-    return new ProcessListOnly(error.message);
+    return new Unqueued('ps-only', error.message);
   }
 }
 
@@ -252,7 +271,8 @@ export async function main(argv) {
     return 2;
   }
   const record = JSON.stringify({ pid: process.pid, cwd: process.cwd(), command: options.command.join(' ') });
-  const slot = openSlot(options.queue, record);
+  const bypass = isListing(options.command);
+  const slot = bypass ? new Unqueued('bypass') : openSlot(options.queue, record);
   const abort = new AbortController();
   let child = null;
   const onSignal = signal => {
@@ -263,7 +283,8 @@ export async function main(argv) {
   const report = fields => say({ ...fields, queue: slot.mode, ...(slot.reason ? { queueError: slot.reason } : {}) });
   const signalExit = () => 128 + os.constants.signals[abort.signal.reason];
   try {
-    const wait = await waitForSlot(slot, options, abort.signal, report);
+    const wait = bypass ? { status: 'acquired', waitedMs: 0, listing: { running: [], seesHost: null } }
+      : await waitForSlot(slot, options, abort.signal, report);
     const seen = { waitedSeconds: seconds(wait.waitedMs), listingSeesHost: wait.listing.seesHost,
       ...(wait.listing.error ? { listingError: wait.listing.error } : {}) };
     if (wait.status === 'wait-limit') {

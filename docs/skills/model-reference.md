@@ -29,14 +29,19 @@ dispatch.
 ## Reading the reference
 
 The [table and axis definitions](../../plugins/workbench/skills/model-reference/SKILL.md#the-table)
-live only in the canonical skill. Its scores are legacy illustrations without
-dated calibration, not a basis for current routing. A new or regraded row needs
-an operator-supplied date, task set, method, and observed trade-offs. Until then,
-use available host capabilities and the session's model under standing rules.
+live only in the canonical skill. Its scores are the operator's illustrative
+grades, last revised 2026-11-05 with no recorded task set or method: they rank
+rows against each other and are not a basis for a routing rule. A row showing
+`n/a` is ungraded. A row counts as calibrated once it has a date, a task set with
+an outcome check per task, a method run at two or three effort levels, and the
+observed score against spend. Until then, use available host capabilities and
+the session's model under standing rules.
 
 Cost means subscription-limit burn, speed means turnaround on the same task,
-code means implementation quality, and taste covers user-facing work. Changing
-a model's effort requires recalibration rather than a second score row.
+code means implementation quality, and taste covers user-facing work. The
+`effort` column records the level each row is graded at. Changing a model's
+effort means re-grading its row and updating that column, not adding a second
+row.
 
 ## The invariants
 
@@ -45,8 +50,8 @@ These hold for any fleet ([decision](../decisions/model-reference.md#routing-sta
 | Invariant | In practice |
 | --- | --- |
 | **Orchestration stays home** | Decomposing, dispatching, and judging run on the session's own model (or what the operator's rules file specifies), never a weaker subagent |
-| **Standing escalation permission** | Output that misses the bar gets rerun on a smarter tier without asking |
-| **Cost and speed are tie-breakers only** | For anything that ships: intelligence > taste > cost > speed |
+| **Standing escalation permission** | Output that misses the bar climbs without asking: a self-check first; then one effort level when below `high`, or the next tier at a lower effort when at `high` or above; as a fresh dispatch |
+| **Cost and speed are tie-breakers only** | For anything that ships: intelligence, then the axis the work loads (code or taste), then cost, then speed |
 | **Route inside your harness** | Pick from the models your host exposes. If the fitting row is unreachable, take the best reachable one and name the one you could not reach; crossing harnesses is the operator's move |
 | **Local policy wins** | Repo-local model policies override this table |
 
@@ -56,8 +61,8 @@ These hold for any fleet ([decision](../decisions/model-reference.md#routing-sta
 
 Not as fleet policy. A floor or ban list belongs in your own always-injected
 rules file; `adopt-global-rules` ships one example, `model-floor.md`. The skill
-names models in three exceptions, for separate agents whose model is
-selected explicitly, not inherited:
+names models in four exceptions, for separate agents whose model is
+selected explicitly on at least one host:
 
 - **CI watching:** Sonnet 5.5 (`claude-sonnet-5-5`) on Claude Code or
   gpt-6.1-sol on Codex, both at `xhigh`
@@ -77,6 +82,10 @@ model pin on its own fleet.
   Other harnesses use the parent's model and effort. Muse dispatch explicitly
   overrides the shared definition's Claude settings with the parent's values.
   See [contract-review](contract-review.md); the agent owns exact dispatch settings.
+- **Code-quality and spec review:** `code-quality-reviewer` and `spec-reviewer`
+  use Opus 5.5 at `xhigh` on Claude Code, whatever the parent runs. Codex and
+  other harnesses use the parent's model and effort; Muse dispatch overrides
+  the shared definition's Claude settings with the parent's values.
 
 **The table lists models I don't have.**
 
@@ -89,8 +98,14 @@ No. You read the table and make the call ([decision](../decisions/model-referenc
 
 **What effort should I run these at?**
 
-The effort the row was graded at. If you change a model's habitual effort,
-re-grade its row rather than adding a second one.
+The effort in the row's `effort` column. If you change a model's habitual
+effort, re-grade its row and update the column rather than adding a second row.
+
+**The output missed the bar. Do I jump to a bigger model?**
+
+Not first. Give the work a way to check itself if it has none. Then, below
+`high`, raise effort one level. At `high` or above, rerun on the next tier at a
+lower effort than the current one.
 
 **Two models tie on intelligence. Which do I pick?**
 
@@ -110,5 +125,5 @@ work. Between rows level on that axis, take the faster one.
 
 Off the workbench spine: nothing requires it and no stage hands off to it.
 Consult it wherever a model decision lands, such as `brainstorming`'s route
-gate, `audit`'s sizing question, or a fan-out. `using-workbench` says which
+gate, `audit`'s sizing step, or a fan-out. `using-workbench` says which
 piece owns the moment; this says what to run it on.

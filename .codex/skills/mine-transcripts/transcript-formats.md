@@ -34,12 +34,24 @@ Record fields used: `type` (`user`, `assistant`, `attachment`, `system`, ...),
   call is a `tool_result` with `is_error` and "doesn't want to proceed".
 - **Skill load.** An `isMeta` user record starting `Base directory for this skill: <dir>`.
   A slash command shows just before it as `<command-name>/<name></command-name>`;
-  otherwise the model called the `Skill` tool.
+  otherwise the model called the `Skill` tool. A `/name` typed inside a prompt
+  leaves no `<command-name>`, so the reader matches the loaded skill against the
+  slash names in the latest typed prompt.
+- **Skill read.** A `Read` of a `SKILL.md` path, or a `Bash` command that opens
+  one (`cat`, `sed -n`, `head`, a read call in inline code). The path may be
+  relative, so the record's `cwd` decides its scope. A command that searches,
+  diffs, copies or writes the file only mentions it.
 - **Subagent rounds.** The first non-meta user text is the dispatch prompt (workflow
   agents get `[Workflow harness ...]` relays). Each SendMessage continuation is an
   `isMeta` record with `origin.kind` `coordinator` and text "The coordinator sent a
   message while you were working: ...". Forks start with a `fork-context-ref` record
   and no dispatch prompt.
+- **Subagent reports and wake-ups.** A subagent delivers its report with one
+  `SubagentHandback` tool call; in later rounds it reports with `SendMessage` to
+  `main`. When one of its own background tasks finishes, the harness wakes it
+  with an `isMeta` record whose `origin.kind` is `task-notification` (older
+  transcripts: plain text starting `<task-notification`). Before the report
+  that is a wait inside the round; after it, a stale wake-up.
 - **Versions.** Plugin files live at
   `plugins/cache/<marketplace>/<plugin>/<version>/skills/<name>/SKILL.md` and
   `.../agents/<name>.md`. Reviewer agents `Read` their rubric by that path, which
@@ -78,7 +90,9 @@ and are never parsed.
 - **`response_item` `function_call` / `custom_tool_call`**: `exec`, `exec_command`,
   `spawn_agent`, `send_message`, `followup_task`, `wait_agent`, `sleep`. Codex has no
   Skill tool: the model loads a skill by reading its `SKILL.md` path in a command
-  (`~/.codex/plugins/cache/...`, `.codex/skills/`, `.agents/skills/`). `spawn_agent`
+  (`~/.codex/plugins/cache/...`, `.codex/skills/`, `.agents/skills/`). A
+  `function_call` holds the command in JSON arguments; a code-mode `exec` holds it
+  inside JavaScript (`tools.exec_command({cmd:"cat ..."})`). `spawn_agent`
   and `send_message` payloads are encrypted in the parent. From workbench 0.42.0 the
   child's spawn message, a user message, opens `You are the <name>. Your contract:`,
   which names the agent. Retain a readable header before the date window for role

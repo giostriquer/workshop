@@ -44,7 +44,6 @@ you want them, and skip to keep sessions lean.
 | A multi-ticket epic whose lanes other sessions implement | [epic-orchestration](epic-orchestration.md) |
 | Implementing a lane dispatched through epic-orchestration | [epic-implementation](epic-implementation.md) |
 | Auditing a lane dispatched through epic-orchestration | [epic-auditor](epic-auditor.md) |
-| Asking or telling another local session on this machine | [session-messaging](session-messaging.md) |
 | Reclaiming project or machine disk space from worktrees, Docker, smolvm, build caches, `.workbench` and `.tmp`, when you ask | [workspace-cleanup](workspace-cleanup.md) |
 | Looking back at how the process itself ran | [self-audit](self-audit.md) |
 
@@ -56,6 +55,7 @@ you want them, and skip to keep sessions lean.
 | A detailed interactive isometric figure using upstream Anatomy | [anatomy](anatomy.md), user-invoked only |
 | The historical reason behind a design or workaround | [why](why.md), user-invoked only |
 | A catch-up on ongoing work and the decisions that need you | [ketchup](ketchup.md), user-invoked only |
+| Your recent working context across earlier sessions, checked against live state | [recall](recall.md), user-invoked only |
 | A recorded walkthrough of UI work, with frames the model reads back | [web-demo-video](web-demo-video.md) |
 | To triage a PR's scattered feedback into one action list | [get-pr-comments](get-pr-comments.md) |
 | To install the workshop's host-specific global instructions and rules on a machine | [adopt-global-rules](adopt-global-rules.md) |

@@ -1,6 +1,6 @@
 ---
 name: web-demo-video
-description: Use when a browser-driven UI change needs a recorded walkthrough or visual evidence, such as a new element, layout, or user flow. Not for API-only changes or a regression test suite.
+description: Use when a browser-driven UI change needs a recorded walkthrough of a new element, layout, or user flow. Not for a screenshot-only need, API-only changes or a regression test suite.
 ---
 
 # Web Demo Video
@@ -21,7 +21,14 @@ Use `@playwright/cli` (`0.1.22` tested). [Setup and commands](references/command
 installation and authentication. App package and lockfiles stay untouched.
 Run `node scripts/capture.mjs --help` from this skill's directory for flags.
 Recording needs a launchable browser; MP4 conversion also needs `ffmpeg`.
-Use the shared setup when recording prerequisites are missing.
+When a prerequisite is missing and installing it is inside the setup the user
+authorized, use the shared setup in that reference. Without that authority,
+report the missing prerequisite as the gap; no capture command installs anything.
+
+**Screenshots only.** When still images are the whole need (a PR body, a quick
+visual check), no recording is owed and nothing is installed for it: use the
+host's native browser tools, or this helper's `frame` PNGs when the CLI is
+already present.
 
 ## Capture
 

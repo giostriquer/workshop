@@ -26,10 +26,9 @@ Test skills that:
 - Could be rationalized away ("just this once")
 - Contradict immediate goals (speed over quality)
 
-Don't test:
-- Pure reference skills (API docs, syntax guides)
-- Skills without rules to violate
-- Skills agents have no incentive to bypass
+Pressure scenarios fit those skills. Technique, pattern and reference skills get
+the application, recognition and retrieval tests under *Testing All Skill Types*
+in `SKILL.md`. A mechanical correction (typo, link, formatting) needs no test.
 
 ## TDD Mapping for Skill Testing
 

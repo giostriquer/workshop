@@ -2,6 +2,31 @@
 
 This is the rationale for the `get-pr-comments` skill, shipped by the toolkit plugin; superseded choices are omitted, and git history keeps the originals.
 
+## A number `gh` does not fill, thread state, and a trigger-only description (2026-11-09)
+
+The inline-comment command read `repos/{owner}/{repo}/pulls/{number}/comments`.
+`gh api` fills `{owner}`, `{repo}` and `{branch}` only, so run as written it
+sent a literal `{number}` and got HTTP 404 (checked on gh 2.103.2); it worked
+only when the session substituted the number itself. The command now shows
+`<number>` as a value taken from step 1 and says which placeholders `gh` fills.
+
+The REST comment list carries no resolved or outdated state, so closed threads
+landed in the action list as open work. A paginated GraphQL `reviewThreads` read
+now supplies `isResolved` and `isOutdated` per thread, joined to the REST
+comments by id; the same check ran that query against a live pull request with
+`-F owner='{owner}'` and it returned. Resolved and outdated comments are
+reported as their own counted group. A comment whose thread state could not be
+read stays in the action list labelled `state unknown`, because dropping it
+would turn a failed fetch into "nothing to do". The REST fetch stays the source
+for comment bodies, keeping the pagination behavior tested on 2026-10-12.
+
+The description opened with what the skill does ("Fetch and summarize...") and
+its "Use when" half matched any moment with PR feedback, the ground
+`receiving-code-review` covers. It now names the one condition that is this
+skill's alone: the feedback still has to be fetched and sorted. Read-only scope
+and the no-reply boundary are unchanged. The skill did not run in the audited
+week; these are static corrections, with the two commands checked against `gh`.
+
 ## Triage PR feedback, never answer it (2026-06-30)
 
 The skill is adapted from the `get-pr-comments` skill in Cursor's MIT-licensed `cursor-team-kit` plugin ([cursor/plugins](https://github.com/cursor/plugins)). PR feedback is scattered across the conversation tab, review verdicts, and inline diff comments, and working out what must change from the UI is slow and easy to do incompletely. The skill collapses that into one `gh` pass over all three, groups the feedback by severity (blocking, should-fix, nit) and actionability (requested change or open question), and returns a prioritized action list plus the questions still waiting on a human. Its defining rule is a boundary: it never replies to, resolves, or reacts to a comment unless the operator explicitly asks for that specific action, because answering on a shared PR is an outward side effect that must never fall out of "show me the comments." It is otherwise read-only and reports a missing PR or unauthenticated `gh` plainly instead of guessing. Another review host would swap the fetch commands; the grouping is host-agnostic.

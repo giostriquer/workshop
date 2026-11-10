@@ -2,6 +2,22 @@
 
 This is the rationale for the `claim-check` skill, shipped by the workbench plugin; superseded choices are omitted, and git history keeps the originals.
 
+## The verdict buckets are listed in the spec (2026-11-09)
+
+The report template said `Verdict: <bucket>` and the rules named `confirmed`,
+`refuted`, `obsolete`, `mis-scoped` and `inconclusive` in passing, but the only
+list was the usage page, which agents do not load. That page also disagreed
+with the spec: it merged `refuted` and `obsolete` into one row and listed
+`confirmed-but-blocked` as a verdict, where the spec treats it as a readiness
+state of a `confirmed` premise. One report that week opened with "falsified" and
+no bucket line. The Output section now carries the five buckets as a table under
+the Verdict part, with `refuted` (never held) kept apart from `obsolete` (held,
+and already addressed in full), and a partly addressed premise placed under
+`mis-scoped` because its corrected framing is the part that remains.
+`confirmed-but-blocked` is stated as a `confirmed` verdict whose Readiness call
+opens `blocked`. The usage page follows the spec. A static review found the gap;
+no rate of wrong buckets was measured.
+
 ## Search beyond symbol consumers and test the safety assumption (2026-10-12)
 
 A compatibility or safety premise often rests on a small assumption that a

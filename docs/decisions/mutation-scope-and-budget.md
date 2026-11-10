@@ -120,17 +120,18 @@ in one review and `blocked` in another.
 The implementer now repairs only what it owns. Scope a round left `blocked`
 joins the next round's mutation scope even when no file changed, so a review
 round, not the implementer, runs the campaign. Another platform's code is
-`blocked` with that platform and the command for a host that builds it, and
-waits for the user to supply that host or waive the run, since another round on
-the same host cannot run it. The review's copy is cloned to an absent path inside
-a fresh `mktemp -d` directory and reused by follow-up rounds; processes stop by
-the run's own paths. Before each launch the reviewer lists running campaigns
+`blocked` with that platform and the command for a host that builds it, since
+another round on the same host cannot run it (since 2026-11-09 a session
+already authorised to use a capable host returns its results; see the last
+section). The review's copy is cloned to an absent path inside
+a fresh `mktemp -d` directory and reused by follow-up rounds while it exists;
+processes stop by the run's own paths. Before each launch the reviewer lists running campaigns
 with a self-excluding pattern and waits for another campaign, outside the budget
 and for at most fifteen minutes per round (since 2026-11-06 the slot helper
 below does this, and the listing is the fallback without Node). A listing that cannot see other
 sessions is not evidence of a free host. Scope the wait leaves uncovered is
-`partial`, unless no required scope ran at all, which is `blocked` and carried to
-the next round. `partial` records the budget ending, estimate sampling, the wait
+`partial`; a round in which no required scope ran at all is `blocked: host
+busy`, carried to a later round. `partial` records the budget ending, estimate sampling, the wait
 limit or a handback, or shared-host timeouts; otherwise remaining budget runs the
 next focused part. Counts that put a run
 under a minute serve as its estimate. A helper that applies one defect meets the
@@ -198,3 +199,90 @@ the symlinked layout returned no `node_modules` and the sandbox raised
 `MODULE_NOT_FOUND`, while a real directory of links to the author's entries was
 found and resolved scoped packages. The rubric now gives that layout before
 the first dry run.
+
+## Restrictions, copies, busy hosts and other hosts (2026-11-09)
+
+A transcript audit of 2026-11-02 to 2026-11-09 read 97 Claude Code
+test-quality reviewer threads. No reviewer reported a lane over budget in 104
+reported lane times, so the budgets stand. Six gaps remained.
+
+**Dispatch restrictions.** The rubric said a caller cannot waive the run but
+not what a reviewer records when a dispatch forbids, narrows or stretches the
+lane. 26 of 97 threads carried such limits, with three outcomes: an Issue for
+missing evidence, a silent PASS, and a wait stretched to ninety minutes. A
+restriction that cites a user instruction or repository rule is `waived` with
+that citation. One that cites neither leaves the scope unrun and is recorded
+as `blocked: dispatch restriction` with the dispatch's words, the same Issue
+as any required run that never happened, so the limit is visible to whoever
+set it. Wait limits and budgets come from the reference; a number in a
+dispatch does not replace them.
+
+**The disposable copy's removal had no owner.** "After the final round's
+verdict" named a moment the reviewer cannot see, and the dispatcher was never
+told a copy existed. Leftover copies of 1.7 to 5.2 GB sat in four project
+scratch folders, 29 more in session scratch directories and seven stale review
+worktrees in one repository; some reviewers instead removed the copy every
+round and rebuilt it. Cleanup through a variable path was refused by a host's
+safety check eleven times. A reviewer that returns PASS now removes its copy,
+by its absolute path typed out. On any other verdict the path goes in a
+required `Disposable copy:` report line, and `receiving-code-review` tells the
+dispatching session to remove it when the review ends without another round.
+A follow-up after a pass makes a new copy.
+
+**A busy host produced an Issue.** A reviewer that waited out its limit with
+nothing run recorded `blocked: host busy`, which is `ISSUES_FOUND`: four
+reviews ended that way on the day that prompted the queue. A first correction
+made that outcome a passing `partial`, and the independent review of it showed
+a change could then reach delivery with nothing run, so the outcome stays
+`blocked: host busy` and `ISSUES_FOUND`. What changed is what the dispatching
+session does with it: no code change is asked, one follow-up carries the
+uncovered scope, and a second busy result goes to the user. The two-per-session cap
+stays as the only count a dispatcher can observe: the slot is per host, so
+other sessions' reviewers lengthen a wait rather than count toward the two.
+The helper's wait limit is unchanged; ten threads on the queued helper waited
+0.1 to 53 seconds, so there is no contention evidence for a longer one.
+
+**Listings took the slot.** "Every invocation, dry runs included" sent
+`cargo mutants --list` through the queue; one thread queued three listings of
+about five seconds each. The helper now treats `--list`, `--list-files`,
+`--version` and `--help` as listings: it runs one it is handed at once, with
+queue mode `bypass`, and does not count a running listing as a campaign. A
+Stryker dry run still builds and runs tests, so it keeps the slot. Covered by
+two tests in `scripts/mutation-slot.test.mjs`.
+
+**Waits hung on log lines.** "A background job polled by an `until` loop" named
+no exit condition. One loop waited five hours for a score line its tool
+version never prints; another lived forty-nine hours. A wait now ends on the
+command's own exit (the host's completion notice, `wait`, or a `kill -0` loop
+that also stops at the invocation's limit), never on a line in a log.
+
+**Another platform's code had no route.** Six threads touched code the host
+could not build. One ended `ISSUES_FOUND` on that alone with no change able to
+close it. In another the dispatcher ran the campaign on the repository's CI
+runner for that platform; the reviewer had no word for the state and invented
+one, and the forwarded run had 50 missed mutants and produced a real finding.
+The route is now named: a session already authorised to use a capable host
+runs the report's command there and returns the host, run id and output in a
+follow-up, which the reviewer judges like any run. Without such a host the
+line stays `blocked` for the user, as before.
+
+The slot helper change is under test. One scenario probe gave a reviewer a
+dispatch that forbade the mutation run, capped waits at two minutes and asked
+for its own severity words: the report opened with `## Verdict: ISSUES_FOUND`,
+recorded `blocked: dispatch restriction` with the dispatch's words, did not
+apply the wait number and mapped the severity words in the body. Each scenario ran once, in a fresh context on Opus 5.5, before the last round of review corrections: regression evidence for that scenario, not a reliability estimate.
+
+## A busy host cannot stand in for mutation evidence (2026-11-09)
+
+Recording a busy host with nothing run as a passing `partial` left paths where
+a change reached delivery with no mutation evidence: the passed reviewer was
+told to answer a follow-up in one line, and a session that never loaded
+`receiving-code-review` saw only a `PASS` at `file-pr`'s gate. The outcome is
+`blocked: host busy` and `ISSUES_FOUND` again, so every gate that reads the
+verdict stops. A follow-up that carries an `Uncovered mutation scope:` line is
+the reviewer's ground, any Mutation run value other than a second `blocked:
+host busy` settles it, and a second one goes to the user. The slot helper also treated `-V` as a listing flag for both tools;
+cargo-mutants reads it as `--unviable`, so such a campaign skipped the queue.
+Listing flags are now keyed by tool, with a test. The `Disposable copy` line
+says whether the copy is a clone or a worktree, because removing a worktree
+with `rm -rf` leaves the stale registration this rule set out to stop.

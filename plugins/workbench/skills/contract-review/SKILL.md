@@ -11,13 +11,15 @@ implementer owns fixes.
 
 ## Who runs it
 
-This review is dispatched, never self-served. The parent loads this skill and
-invokes `contract-reviewer` in a context without the author's history, following
-that agent's Dispatch line for its host. Give it the accepted scope, diff/base,
-revision and verification evidence described below, plus the shared work-scope
-folder. Name this skill in the dispatch; the reviewer loads the installed
-`contract-review` skill as its complete rubric. Do not pin a plugin version or
-cache path. On Codex, paste the agent body as `using-workbench` describes.
+This review is dispatched, never self-served. Invoke `contract-reviewer` in a
+context without the author's history, following that agent's Dispatch line for
+its host. The prompt is six labelled lines and nothing else: `Worktree`,
+`Base or range`, `Revision`, `Accepted scope` (a file path, or the ask quoted
+when no file holds it), `Verification evidence` (each check run at this revision with its result, or a
+path to that record; `none` when nothing ran) and
+`Scope folder`. The reviewer loads the installed `contract-review` skill as its
+complete rubric. Do not pin a plugin version or cache path. On Codex, paste the
+agent body as `using-workbench` describes.
 
 Loading this skill as the dispatched reviewer means perform the review below,
 not dispatch another reviewer. If independent dispatch, the required model or
@@ -37,7 +39,7 @@ formatting and internal renames with no such effect do not trigger it. An explic
 review request keeps its requested scope. User waivers and repository process
 take precedence. Do not run after each edit or subtask.
 
-If no diff is supplied, use the working tree against the base's merge base
+Read the diff yourself: the working tree against the base's merge base
 (default: the remote default branch), including committed, staged, unstaged and
 untracked files. Record the commit and a diff fingerprint for uncommitted work.
 Resolve unclear intent from the request and repository first; a missing decision
@@ -88,11 +90,19 @@ that prevents review is `BLOCKED`, not permission to invent a requirement.
 
 ## Correction rounds
 
-Own this discipline's findings and pass record. Start at pass 0. Reuse this
-reviewer session for verified corrections, receiving finding IDs, previous and
-current revisions, correction delta and evidence, including reasoned rejections.
-A replacement receives the existing record. Passing tests or author assertions
-alone do not close blockers.
+Own this discipline's findings and pass record. Start at pass 0. This section
+is the reviewer's half; the dispatching session's half (what it returns, which
+reviewers see a later delta, when it holds delivery) is in
+`receiving-code-review`. A follow-up arrives in this reviewer session with
+finding IDs, previous and current revisions, correction delta and evidence,
+including reasoned rejections. A replacement receives the existing record.
+Passing tests or author assertions alone do not close blockers.
+
+After this review's PASS, a later delta is this review's only when it changes
+observable behavior, a consumer contract or cross-component wiring. For any
+other delta, reply `## Verdict: PASS`, the revision the record covers and `no
+contract ground in this delta`, and stop. A follow-up carrying a `Requested by
+the user:` line is reviewed whatever its ground.
 
 On follow-up, refresh the diff and inspect open blockers, the correction delta
 and affected contracts. Broader invalidation requires the full affected scope.
@@ -100,8 +110,8 @@ Walk prior findings as resolved, partially resolved, unresolved or rejected with
 evidence. Findings outside that focus are follow-ups unless they prove the change
 unsafe or incorrect as shipped; they never prolong the loop otherwise.
 
-Submit focused passes automatically while converging, without a pass-count cap.
-Advisory-only findings trigger no pass. Hold further submissions and delivery when:
+Name a convergence hold in the Delta walk, with the open findings, both sides'
+evidence and the decision needed, when:
 
 - a pass sent open blockers closes or narrows none;
 - an evidence-based rejection returns without new evidence; or
@@ -109,20 +119,19 @@ Advisory-only findings trigger no pass. Hold further submissions and delivery wh
   open blockers as they received. A narrowing-only pass neither counts toward
   nor breaks that sequence.
 
-Report the open findings, both sides' evidence and a recommendation to the epic
-owner for a delegated lane, otherwise the user. Corrections may continue under
-existing authority, but submission waits for their decision. Unless that decision
-ends review, automatic passes restart with the churn count reset. A hold is never
-PASS; only reviewer confirmation or an explicit user waiver closes a blocker.
+A hold is never PASS; only reviewer confirmation or an explicit user waiver
+closes a blocker.
 
-Finish when all blocking dispositions are confirmed and the current revision is
-covered. New commits, PR preparation or handoffs do not reset review. New scope or
-a material redesign that invalidates coverage needs review of the affected delta;
-preserve unaffected review results.
+Finish when all blocking dispositions are confirmed. New commits, PR
+preparation, handoffs and applied advisory findings this review raised do not
+reset review; another review's applied advisory is a delta like any other. New
+scope or a material redesign that invalidates coverage needs review of the
+affected delta; preserve unaffected review results.
 
 ## Report
 
-Open with `## Verdict: PASS | ISSUES_FOUND | BLOCKED`, then:
+Open every round's report with `## Verdict: PASS | ISSUES_FOUND | BLOCKED` as
+its first line, then:
 
 - **Reviewed revision and pass:** commit, diff fingerprint when needed, pass number.
 - **Contract coverage:** intended outcomes and affected consumers inspected;
@@ -135,6 +144,9 @@ Open with `## Verdict: PASS | ISSUES_FOUND | BLOCKED`, then:
 
 PASS means the scoped review is complete with no blocking findings. ISSUES_FOUND
 means a demonstrated blocker remains. BLOCKED means a necessary input, check or
-convergence decision is missing; retain any established findings. A missing
-verdict or an unexplained unreviewed contract leaves the stage pending. An empty
-findings list is valid. Do not manufacture nits to fill the report.
+convergence decision is missing; retain any established findings. A report
+without that first line reads as `ISSUES_FOUND`, and an unexplained unreviewed
+contract leaves the stage pending. When a dispatch uses other verdict or
+severity words, the line and the three finding labels stay as written; say in
+the body which of them each of the dispatch's words maps to. An empty findings
+list is valid. Do not manufacture nits to fill the report.

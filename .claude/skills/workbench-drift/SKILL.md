@@ -39,15 +39,19 @@ from the repository root, for example:
 node .claude/skills/workbench-drift/scripts/drift-check.mjs --manifest .claude/skills/workbench-drift/pstack-manifest.json --cache .cache/pstack-drift --json
 ```
 
-Follow the repository's hook-setup rule for a newly cloned cache. The pstack
+A newly cloned cache is an upstream checkout, not a project repository: apply
+whatever clone setup the operator's always-loaded instructions require, and
+never commit in it or push from it. The pstack
 and Matt Pocock manifests map carried pieces and explicitly reviewed exclusions,
 not their entire older corpora. Other paths remain unmapped and surface when they next change;
 never add a catch-all dropped entry that would hide new skills. The pstack
 manifest also watches the adopted Cursor team-kit PR walkthrough path; that
 scoped watch does not claim a full audit of the Cursor catalog.
 
-1. **Run the script:** `node scripts/drift-check.mjs` (add `--json` when you want
-   machine-readable output; `--manifest` / `--cache` to override paths). It
+1. **Run the script** as shown above, with the chosen `--manifest` and the
+   repo-local `--cache` (add `--json` when you want machine-readable output).
+   Always pass `--cache`: without it the script clones into the OS temp
+   directory, outside the ignored `.cache/`. It
    clones or fetches upstream, diffs `lastReviewed..target` over the watched
    paths, and groups every change by the manifest's dispositions.
 

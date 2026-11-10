@@ -1,6 +1,6 @@
 ---
 name: using-workbench
-description: Use before coding, auditing, planning, shipping, filing a PR, debugging or using any workbench skill.
+description: Use before coding, auditing, planning, shipping, filing a PR, debugging or using any workbench skill. Not for a subagent dispatched to execute a specific task.
 ---
 
 If you were dispatched as a subagent to execute a specific task, skip this orientation.
@@ -90,8 +90,8 @@ through a PR or the repository's delivery process, not an intermediate checkpoin
   skipped only on an explicit user decline or a superseding repo process; they
   fire here and nowhere else, right before the PR-or-merge ask, never
   mid-implementation →
-  verified fixes returned to the reviewer who owns the findings, under that
-  discipline's follow-up rules; preserve unaffected review results →
+  verified fixes returned to the reviewer who owns the findings, under
+  `receiving-code-review`'s **Completion-review findings**; preserve unaffected review results →
   USER gate: session outlines what was done, with the trim's open encoding offers,
   asks PR or merge (explicit repo/user rules may pre-authorize; an approved
   encoding is a correction batch) → land: file-pr · merge · push;
@@ -108,6 +108,7 @@ FEEDBACK
 | --- | --- |
 | Something to verify / hunt / check | `audit` (engines: `claim-check`, `qa-sweep`) |
 | Designing a feature or refactor | `brainstorming` → the user's route pick |
+| A design spec or implementation plan is written and implementers are about to be dispatched from it | the `spec-reviewer` agent, dispatched with file paths only: the mode and spec path, plus the plan path and touched source files for a plan |
 | An unresolved module, interface, ownership, or dependency choice during design | `codebase-design`, before defining dependent work |
 | Domain terms need to be settled or changed | `domain-modeling` |
 | Implementing with a test harness | `test-driven-development` |
@@ -115,11 +116,11 @@ FEEDBACK
 | Finishing a change or about to claim done / ready | `verification-before-completion` (use `empirical-proof` for behavioral changes; reuse adequate current evidence) |
 | The comment trim: **required** once the work-stream is complete, before the adversarial pass, **dispatched** to an agent that did not write the code | `trim-comments`, run by the `comment-trimmer` agent |
 | The initial adversarial pass: **required** on the trimmed diff, right before PR-or-merge, **dispatched** to reviewers that did not write the code | `code-quality-review`, run by the `code-quality-reviewer` agent; plus `test-quality-review`, run by the `test-quality-reviewer` agent, when the diff changes production logic or tests |
-| Changed behavior, consumer contracts or cross-component wiring, at completion | `contract-review`, run by `contract-reviewer`, given accepted outcomes, approved design and exclusions, diff/base and revision, and verification evidence; behavior and contract review, not convention compliance |
+| Changed behavior, consumer contracts or cross-component wiring, at completion | `contract-review`, run by `contract-reviewer`, dispatched with the six lines its description names; behavior and contract review, not convention compliance |
 | Additional scope opinion at the completion round | `scope-review`, one Muse-only attempt; skip any invocation problem, no fallback or delivery hold |
 | Checking existing tests or recommending a testing approach | `test-quality-review`, run by the `test-quality-reviewer` agent; give it the question and target |
 | Landing | outline gate → `file-pr` for opening or pushing to a PR; merge or branch-only push; `fix-ci`. Delegated PR delivery names `file-pr` |
-| Review feedback arrives | `receiving-code-review` |
+| Review feedback or a completion reviewer's report arrives | `receiving-code-review`, which holds the dispatching session's half of every correction round |
 | The user asks to reclaim project or machine disk space, or clean up worktrees, Docker, caches, scratch files or processes | `workspace-cleanup`; never on the session's own initiative |
 
 Before any push, resolve whether the branch has an open PR. If it does, load
@@ -135,7 +136,10 @@ them all:
 
 - `verification-before-completion` is the always-on gate that requires fresh evidence
   before any done/fixed/passing claim. For behavioral completion it requires
-  focused proof through the affected consumer boundary.
+  focused proof through the affected consumer boundary, on an artifact that
+  contains the change. A pre-fix comparison (a regression test or boundary
+  check seen failing before the fix) runs in a disposable checkout, never by
+  reverting or mutating the active worktree.
 - `empirical-proof`: one just-finished change with a drivable surface. For
   generator work, the emitted artifact **is** that surface: generate,
   build, drive it. This is the default route for behavioral completion, not
@@ -143,7 +147,7 @@ them all:
 - `qa-sweep`: a broad decomposable surface (release, branch, feature area)
   at team scale.
 - `claim-check`: one premise, ticket, or hunch to investigate.
-- `file-pr`: landing, not verification; it assumes the verificaiton and all reviewer gates already ran.
+- `file-pr`: landing, not verification; it assumes the verification and all reviewer gates already ran.
 
 When no frame fits the work's shape, keep the standard and drop the frame:
 prove the deliverable the way its real consumer would exercise it, and
@@ -223,7 +227,7 @@ question for the user to certify as true.
 
 CI watching always uses a separate Sonnet 5.5 agent on Claude Code or gpt-6.1-sol agent on
 Codex, even when the parent is idle or already uses that model. Never assign
-watching to Astra/Fable or fall back to parent polling when dispatch is unavailable.
+watching to Astra, Fable or Haiku, or fall back to parent polling when dispatch is unavailable.
 Epic returns require verified acknowledgment and a concrete next action; see
 `epic-orchestration` for lane, delivery, audit, and closure handoffs.
 
@@ -233,8 +237,11 @@ Epic returns require verified acknowledgment and a concrete next action; see
 Workbench agent. Follow its Muse invocation directions for the current surface.
 The host-agent instructions below do not apply to the reviewer itself.
 
-Each workbench agent file carries a **Dispatch** line near its top that names
-how to dispatch it; the calling skill supplies only the run's inputs. On
+Each workbench agent's description names its dispatch inputs (labelled lines
+for the reviewers and the trimmer), and its file carries a **Dispatch** line
+near its top that names the host arguments. The run's inputs are those and
+nothing else; on Codex they follow the contract prefix below. The agent's
+rubric sets verdict words, finding labels, edit rules, waits and budgets. On
 Claude Code the registered agent carries its contract and its frontmatter sets
 the model: dispatch it by name, pass no model, and paste nothing. Codex
 registers no plugin agents, so a workbench agent's contract reaches a Codex

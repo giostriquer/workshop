@@ -38,7 +38,7 @@ training compliance with it.
 
 ### Build Rationalization Table
 
-Capture rationalizations from baseline testing (see Testing section below). Every excuse agents make goes in the table:
+Capture rationalizations from baseline testing (the RED phase in `testing-skills-with-subagents.md`). Every excuse agents make goes in the table:
 
 ```markdown
 | Excuse | Reality |

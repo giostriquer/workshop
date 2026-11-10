@@ -29,10 +29,18 @@ Every command takes `--days N` (default 30) or `--since YYYY-MM-DD [--until YYYY
 
 ## Reading the reviewer table
 
+- One table each for `tq` (test-quality-reviewer), `cq` (code-quality-reviewer),
+  `ct` (contract-reviewer) and `ci` (ci-watcher); `--kinds` picks among them. A
+  `not tabulated` line names any other confirmed reviewer role in the window, so a
+  reviewer without a table is visible; `spend` has its time.
 - One row per version bucket and host. Never pool hosts: a Claude round is a
   SendMessage continuation, a Codex round is a turn.
 - `wall` is first to last event; `active` sums the rounds, so idle waits between
-  rounds drop out. `init` is the first round; `fu` the later ones. A fresh dispatch
+  rounds drop out. A Claude round ends at its report: a `SubagentHandback` call, or
+  in later rounds a `SendMessage` to the dispatcher. A background task that wakes
+  the agent after that report adds nothing to `active` or `wall`, unless the
+  wake-up reports again. A wake-up before the report is a wait inside the round
+  and counts. `init` is the first round; `fu` the later ones. A fresh dispatch
   counts as a follow-up when its prompt's opening (Claude) or its task name (Codex)
   names a later pass, such as `follow-up pass 1`, `round 2`, `re-review` or a
   correction delta.
@@ -54,6 +62,16 @@ Every command takes `--days N` (default 30) or `--since YYYY-MM-DD [--until YYYY
 - Give n beside every median. With n under 5, call the number anecdotal. `--rows`
   prints one line per dispatch when a median looks odd.
 
+## Reading the skills table
+
+- `read` is a `SKILL.md` opened by path, once per thread: `Read`, `cat`, `sed -n`,
+  `head` and the like, or a read call in inline code. A search, diff, copy or edit
+  that only names the path is not a read, though any mention of a plugin path still
+  dates a reviewer's version.
+- `user` is a slash command, a Codex `$mention`, or on Claude a `/name` typed
+  inside the prompt when that skill loads before the next typed prompt.
+- This repo's own skills print as `self:<name>` however they were loaded.
+
 ## Leak safety
 
 Default output is numbers and neutral labels: `proj-<hash>`, `self`, `scratch`, and
@@ -66,6 +84,8 @@ machine and never paste it into the repo, a commit, a PR or a ticket.
 A new question is a new subcommand in `mine.py` over the `Thread` records in
 `common.py`; `claude_code.py` and `codex.py` are the host readers. The record layouts
 are in `transcript-formats.md`. Keep it streaming, standard library, aggregate output.
+A scratch helper that imports the readers runs under `python3 -B`, as `mine.py` and
+the tests do, so no `__pycache__` lands beside them.
 
 `tests/test_mine.py` runs every command over a synthetic tree of both hosts and pins
 the reviewer rows, the leak-safe default output and the later-pass patterns. Cover a
@@ -83,3 +103,4 @@ change there, with placeholder strings only, and run from the repo root:
 | Comparing Claude and Codex numbers directly | Compare within a host |
 | Pasting `--local-detail` output into a note | Quote the default output only |
 | Quoting numbers under an `INCOMPLETE` banner line | Compressed Codex sessions were left out; rerun on Python 3.14+ or say what is missing |
+| Reading the first days under a `NOTICE` banner line as quiet | The host's older transcripts are gone; the line names the day the surviving history starts, and earlier days are undercounted |

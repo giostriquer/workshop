@@ -27,7 +27,8 @@ the agent contract, not historical model names in this note.
 ## Test review follows the request (2026-09-21)
 
 Use one workflow. The caller supplies a question or target and a base branch
-when known; it does not select a mode. A change review has a verdict and the
+when known (since 2026-11-09, five labelled lines for a change review); it does
+not select a mode. A change review has a verdict and the
 applicable mutation requirements. An audit of existing tests or a strategy
 question returns findings or recommendations without inventing a delivery gate.
 An explicit request to run mutation testing uses the same isolation and evidence
@@ -47,3 +48,18 @@ conditions. Shared authority, preservation and completion gates remain inline.
 The [repo tooling decision](repo-tooling.md#bounded-skill-entrypoints-2026-10-30)
 records the observed truncation and validation boundary. No delivery or review
 requirement is relaxed by this layout change.
+
+## Dispatch lines and the verdict line (2026-11-09)
+
+A change review's dispatch is five labelled lines and nothing else: `Worktree`,
+`Base or range`, `Revision`, `Accepted scope` and `Scope folder`; any other
+request is still the question and its target. The lines sit in the
+`test-quality-reviewer` description, the only part of the agent a Claude Code
+parent reads. The rubric had no missing-verdict rule: in a transcript audit of
+2026-11-02 to 2026-11-09, 19 of 238 Claude Code test-quality reports and 21 of
+26 Codex test-quality children's last messages had no `## Verdict:` line,
+against 2 of 290 for code quality, which has the rule. The first line of every
+round's change-review report is now the verdict line, a report without it
+reads as `ISSUES_FOUND`, and a dispatch's own verdict words are mapped in the
+body. The report gained a required `Disposable copy:` line; its rationale is
+in [mutation scope and budget](mutation-scope-and-budget.md#restrictions-copies-busy-hosts-and-other-hosts-2026-11-09).

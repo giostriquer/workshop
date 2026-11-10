@@ -6,7 +6,7 @@ import path from 'node:path';
 import { test } from 'node:test';
 import { loadRunner, runnerFile } from './template.mjs';
 
-const { watch, options } = await loadRunner();
+const { watch, options, reopen } = await loadRunner();
 const SHA = 'a'.repeat(40);
 const OTHER = 'b'.repeat(40);
 const PR_FIELDS = 'number,url,state,headRefOid,headRefName,mergedAt,closedAt,mergeable,mergeStateStatus,statusCheckRollup';
@@ -354,6 +354,88 @@ for (const terminal of ['blocked', 'pending']) test(`${terminal} result is saved
   assert.equal(next.calls.length, 0);
 });
 
+const settle = async (responses, extra) => {
+  const r = rig(responses, extra);
+  let saved;
+  const verdict = await watch(r.state, { ...r.deps, save: state => { saved = JSON.stringify(state); } });
+  return { verdict, restored: JSON.parse(saved), at: r.now() };
+};
+
+test('a watch that ended pending at its deadline continues under a new deadline', async () => {
+  const { verdict, restored, at } = await settle([pr([check('unit', null)])], { deadline: 1060 });
+  assert.equal(verdict.status, 'pending');
+  assert.equal(reopen(restored, 1600), true);
+  const next = rig([pr()], {}, restored);
+  next.setClock(at);
+  const result = await watch(next.state, next.deps);
+  assert.equal(result.status, 'passed');
+  assert.equal(result.deadline, 1600);
+  assert.equal(next.calls.length, 1);
+});
+
+test('a watch blocked by four failed reads continues once a read succeeds', async () => {
+  const { verdict, restored, at } = await settle([new Error('Access denied')]);
+  assert.equal(verdict.status, 'blocked');
+  assert.equal(reopen(restored, 1900), true);
+  // One more failed read must not block the reopened watch at once.
+  const next = rig([new Error('Access denied'), pr()], {}, restored);
+  next.setClock(at);
+  const result = await watch(next.state, next.deps);
+  assert.equal(result.status, 'passed');
+  assert.equal(result.reason, 'All reported checks settled without failure');
+  assert.equal(next.calls.length, 2);
+});
+
+test('a read block that returns unchanged after one resume stays blocked', async () => {
+  const { restored, at } = await settle([new Error('Access denied')]);
+  assert.equal(reopen(restored, 1900), true);
+  const next = rig([new Error('Access denied')], {}, restored);
+  next.setClock(at);
+  const again = await watch(next.state, next.deps);
+  assert.deepEqual([again.status, again.reason], ['blocked', 'Access denied']);
+  assert.equal(reopen(next.state, 2500), false);
+  assert.deepEqual([next.state.result.status, next.state.config.deadline], ['blocked', 1900]);
+});
+
+test('a read block after one resume stays blocked whatever its reason', async () => {
+  // Read failures often carry a request id, so the reason differs on every read.
+  const { restored, at } = await settle([new Error('Access denied REQ:1')]);
+  assert.equal(reopen(restored, 1900), true);
+  const next = rig([new Error('Bad gateway REQ:2')], {}, restored);
+  next.setClock(at);
+  assert.equal((await watch(next.state, next.deps)).reason, 'Bad gateway REQ:2');
+  assert.equal(reopen(next.state, 2500), false);
+  assert.equal(next.state.result.status, 'blocked');
+});
+
+test('a successful read after a resume clears the repeat guard', async () => {
+  const { restored, at } = await settle([new Error('Access denied')]);
+  assert.equal(reopen(restored, 1900), true);
+  const next = rig([pr([check('unit', null)]), new Error('Access denied')], {}, restored);
+  next.setClock(at);
+  const again = await watch(next.state, next.deps);
+  assert.deepEqual([again.status, again.reason], ['blocked', 'Access denied']);
+  assert.equal(reopen(next.state, 2500), true);
+});
+
+for (const [label, responses, status] of [
+  ['failed', [pr([check('unit', 'FAILURE')])], 'failed'],
+  ['passed', [pr()], 'passed'],
+  ['conflicted', [pr([], { mergeable: 'CONFLICTING' })], 'conflicted'],
+  ['superseded', [pr([check()], { headRefOid: OTHER })], 'superseded'],
+  ['merged', [pr(null, { state: 'MERGED' })], 'merged'],
+  ['closed', [pr(null, { state: 'CLOSED' })], 'closed'],
+  ['cancelled-check blocked', [pr([check('unit', 'CANCELLED')])], 'blocked'],
+]) test(`a ${label} verdict stays terminal when a new deadline is offered`, async () => {
+  const { verdict, restored } = await settle(responses);
+  assert.equal(verdict.status, status);
+  assert.equal(reopen(restored, 9999), false);
+  assert.equal(restored.config.deadline, 1600);
+  const next = rig([pr()], {}, restored);
+  assert.deepEqual(await watch(next.state, next.deps), verdict);
+  assert.equal(next.calls.length, 0);
+});
+
 test('progress is saved before each polling sleep', async () => {
   const r = rig([pr([check('unit', null)])], { deadline: 1060 });
   const events = [];
@@ -604,7 +686,11 @@ test('CLI requires an explicit full revision and one target type', () => {
   assert.throws(() => options([...base, '--branch', 'feature']), /exactly one/);
   assert.throws(() => options(base.map(x => x === SHA ? 'abc123' : x)), /full 40/);
   assert.throws(() => options([...base, '--rerun', '11']), /together/);
-  assert.throws(() => options(['--resume', '/tmp/watch.json', '--deadline', '999']), /resume accepts/);
+  assert.throws(() => options(['--resume', '/tmp/watch.json', '--pr', '2']), /resume accepts/);
+  assert.throws(() => options(['--resume', '/tmp/watch.json', '--expect', 'unit']), /resume accepts/);
+  assert.equal(options(['--resume', '/tmp/watch.json', '--deadline', '1700']).deadline, 1700);
+  assert.equal(options(['--resume', '/tmp/watch.json']).deadline, undefined);
+  assert.throws(() => options(['--resume', '/tmp/watch.json', '--deadline', '0']), /positive integer/);
   const configured = options([...base, '--expect', 'lint', '--expect', 'unit', '--rerun', '11', '--after-attempt', '2',
     '--deadline', '1700']);
   assert.deepEqual(configured.expected, ['lint', 'unit']);
@@ -679,6 +765,30 @@ test('the packaged CLI runs from a different cwd, persists its result and resume
   assert.equal(duplicate.status, 0);
   assert.equal(JSON.parse(duplicate.stdout).status, 'failed');
   assert.equal(JSON.parse(duplicate.stdout).reused, true);
+});
+
+test('the CLI continues a pending watch only under --resume with a new deadline', t => {
+  const { call, state, fixture, trace } = cli(t);
+  const target = ['--repo', 'acme/webapp', '--pr', '1', '--sha', SHA];
+  const verdict = result => { assert.equal(result.status, 0, result.stdout + result.stderr); return JSON.parse(result.stdout); };
+  assert.equal(verdict(call([...target, '--state', state, '--deadline', '1'])).status, 'pending');
+  // A duplicate dispatch names the saved watch instead of polling again.
+  const duplicate = verdict(call([...target, '--state', `${state}.other`]));
+  assert.deepEqual([duplicate.status, duplicate.reused, duplicate.stateFile], ['pending', true, state]);
+  const unchanged = verdict(call(['--resume', state]));
+  assert.deepEqual([unchanged.status, unchanged.reused, unchanged.deadline], ['pending', true, 1]);
+  assert.equal(existsSync(trace), false, 'no GitHub read before the new deadline');
+  const deadline = Math.floor(Date.now() / 1000) + 60;
+  const resumed = verdict(call(['--resume', state, '--deadline', String(deadline)]));
+  assert.deepEqual([resumed.status, resumed.reused, resumed.deadline, resumed.stateFile], ['failed', undefined, deadline, state]);
+  assert.equal(readFileSync(trace, 'utf8').trim().split('\n').length, 1);
+  // The fresh verdict is terminal: a later deadline changes nothing and reads nothing.
+  writeFileSync(fixture, '[]');
+  const again = verdict(call(['--resume', state, '--deadline', String(deadline + 600)]));
+  assert.deepEqual([again.status, again.reused, again.deadline], ['failed', true, deadline]);
+  assert.equal(again.deadlineIgnored, deadline + 600, 'an offered deadline that was not applied is named');
+  assert.equal(resumed.deadlineIgnored, undefined);
+  assert.equal(readFileSync(trace, 'utf8').trim().split('\n').length, 1);
 });
 
 test('the CLI sleeps after a pending poll until its real deadline', t => {

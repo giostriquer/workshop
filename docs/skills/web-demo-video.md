@@ -15,8 +15,11 @@ and finalizes only its own isolated browser session.
 ## When to use it
 
 Use it after a browser-driven UI change when a recorded walkthrough is useful,
-requested, or required by the repo. Small visual checks can use available
-browser tools without installing a recorder. Use the project test suite for
+requested, or required by the repo. When still screenshots are the whole need
+(a PR body, a quick visual check), no recording is owed: the host's browser
+tools do it, or the helper's `frame` PNGs when its CLI is already present, and
+nothing is installed for it. A missing recording prerequisite is installed only
+inside setup you authorized; otherwise the skill reports the gap. Use the project test suite for
 regression protection, `empirical-proof` for non-visual runnable surfaces, and
 `qa-sweep` for a broad verification pass.
 

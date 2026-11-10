@@ -5,6 +5,18 @@ Rationale for Toolkit's dependency upkeep skill. The
 procedure; its [ecosystem reference](../../plugins/toolkit/skills/dependency-audit/ecosystems.md)
 owns package-manager commands.
 
+## A named substitute for a missing audit tool (2026-11-09)
+
+The Cargo rule said a missing `cargo audit` "is reported as missing" and stopped
+there. One audit found the tool absent and queried OSV for the lockfile's
+crates instead: read-only, nothing installed, and more useful than an empty
+advisories group, but outside what the reference allowed. The reference now
+permits a read-only substitute that installs nothing, on one condition: the
+report names the substitute beside the missing tool and keeps the checks only
+that tool makes as "not checked". Installing the tool stays under the existing
+source, version and execution-risk rule. The same pass fixed a pointer to a
+heading renamed earlier ("Stay inside the selected project environment").
+
 ## A dependency audit in toolkit (2026-09-24)
 
 Dependency upkeep needs code-specific migration analysis, conflict checks,

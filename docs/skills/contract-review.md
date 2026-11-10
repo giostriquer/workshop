@@ -37,17 +37,27 @@ assertions and coverage; comment trimming owns cosmetic narration.
 `xhigh` on Codex, and the parent's model and effort on other harnesses. Dispatch
 details live in the agent file. An unavailable required route leaves it blocked.
 
+**What does the dispatch contain?** Six labelled lines and nothing else:
+`Worktree`, `Base or range`, `Revision`, `Accepted scope`, `Verification
+evidence` and `Scope folder`. The reviewer reads the diff itself.
+
 **How do corrections work?** Return verified fixes or evidence-based rejections
 to the same reviewer with stable finding IDs, revisions and the correction delta.
 There is no pass-count cap. A pass that makes no progress, a repeated rejection
 without new evidence, or repeated growth in blockers holds further submissions
 for the owner/user decision. Only reviewer confirmation or an explicit user
-waiver closes a blocker. Completed results survive commits and handoffs.
+waiver closes a blocker. Completed results survive commits and handoffs: after a
+pass the reviewer sees a later delta only when it changes observable behavior, a
+consumer contract or cross-component wiring, and answers any other delta in one
+line. The session's side of the loop is in
+[receiving-code-review](receiving-code-review.md).
 
 ## How to tell it worked
 
-The report names the reviewed revision, contracts inspected, source reasoning
-versus executed evidence, stable finding IDs and any correction dispositions.
+Every round's report opens with its verdict line; one without it reads as
+`ISSUES_FOUND`. The report names the reviewed revision, contracts inspected,
+source reasoning versus executed evidence, stable finding IDs and any correction
+dispositions.
 `PASS` means no blockers remain; `ISSUES_FOUND` means a demonstrated blocker
 remains; `BLOCKED` means a necessary input, check or decision is missing. A broken
 consumer contract blocks, while an approved design departure does not attract

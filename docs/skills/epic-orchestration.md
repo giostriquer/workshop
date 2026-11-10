@@ -1,10 +1,11 @@
 # epic-orchestration
 
 At the completion round, the lane also attempts the optional Muse `scope-review`
-once through its host invocation directions, with the original epic goal,
-accepted lane increment and exclusions, relevant source paths, and claimed versus
-verified journey. A failed invocation records `SKIPPED` without
-fallback or a delivery hold; the parent triages findings without a Muse rerun.
+once through its host invocation directions, with the epic goal and journey step
+from its dispatch, the accepted increment and exclusions, relevant source paths,
+and what it claims against what it verified. It records the outcome in its
+report's `REVIEW` scope slot. A failed invocation records `SKIPPED` without
+fallback or a delivery hold; the lane triages findings without a Muse rerun.
 
 [Canonical skill](../../plugins/workbench/skills/epic-orchestration/SKILL.md)
 
@@ -56,8 +57,10 @@ its own `Paste this into <LANE>:` label immediately above a fenced pointer namin
 the same lane, role, authority, fresh or existing session, and the file's absolute
 path. When several lanes are ready, the owner repeats that complete label-and-block
 pair for each lane in one reply. Returns to existing lanes after corrections use
-the same format. Session Orchestrator, when installed, files those handoffs from
-the owner's text, so the labels, pointers and `Lane:` lines are worth writing exactly.
+the same format. A lane whose delivery is merged, or whose audit is accepted,
+and that has nothing left assigned gets a closeout pointer in the same shape.
+Session Orchestrator, when installed, files those handoffs from the owner's
+text, so the labels, pointers and `Lane:` lines are worth writing exactly.
 
 Everything is dispatchable the moment it is written. A prompt whose trigger has
 not fired is not written yet; the session watches for the trigger.
@@ -89,7 +92,8 @@ criteria closed, the criteria remaining and the step now in work.
 Yes. It first ties each assignment to a journey step and the approved epic's
 acceptance criteria and scope sources, including explicit amendments and
 exclusions. It then refreshes
-the integration branch (`origin/dev` unless another target is configured)
+the integration branch (the one you name, else the one repository rules name,
+else the remote's default branch)
 without disturbing active lanes or your changes, then checks each ticket at that
 SHA. Fixed or obsolete work leaves the dispatch,
 partly resolved work is narrowed, and unresolved claims or a failed refresh
@@ -120,8 +124,8 @@ Keep them, their inputs and their results in the shared epic scope folder,
 verified to be ignored or locally excluded and untracked. Creating and using
 these tools needs no separate approval.
 
-This tooling stays out of commits, pushes and PRs to `dev` or another integration
-branch, including CI jobs, package commands and shared dependencies added only
+This tooling stays out of commits, pushes and PRs to the integration branch,
+including CI jobs, package commands and shared dependencies added only
 to run it. Passing checks or making evidence reproducible does not turn the
 harness into a required merge. Its creation does not count as migration progress.
 Normal reusable product regression tests still ship under repository rules;
@@ -152,10 +156,27 @@ the governing source. Independent work, and work against an agreed interface,
 keeps moving, with the reconciliation point recorded. A review you schedule for
 later holds nothing unless you name it as a gate.
 
-A hold that stops more than one lane or workset opens every reply to you, with
-what it stops, who ordered it, the exact words it rests on and what releases it.
-When the coordinator's reading goes wider than your words, the hold shows the
-coordinator as the one who ordered it, and you are asked to confirm or narrow it.
+A hold that only you can release, or that stops more than one lane or workset,
+opens every reply that ends the coordinator's turn. The line gives what it
+stops, since when, who ordered it, the exact words or observed blocker it rests
+on, what releases it, when the coordinator last rechecked that condition and
+with what evidence, and the exact action it needs from you. The coordinator
+re-observes the release condition before repeating a hold, and a condition that
+no longer holds releases it in that reply. When the coordinator's reading goes
+wider than your words, or nobody ordered the hold (a dependency, missing
+access), the line shows the coordinator as the one who ordered it and asks you
+to confirm, narrow or supply what it needs.
+
+**How does it notice a stalled lane or a report that never arrived?**
+
+At the start of every turn, and before saying the epic is idle or waiting, the
+coordinator compares each active lane with its ledger: the lane's
+highest-numbered report file under the scope folder's `reports/`, the
+worktree's HEAD and working-tree fingerprint, and whether the session is
+running where the host can list sessions. A handback that was never relayed is
+validated then. A lane unchanged across two such checks with no running session
+is silent and gets a hold line asking you to resume it or reassign its work. Every reply names
+the unrelayed handbacks and silent lanes it found, or says all lanes are current.
 
 **How does it group work into lanes?**
 
@@ -169,7 +190,12 @@ conditions. A lane's past work in an area does not reserve its future work.
 Unfinished assigned work, corrections, delivery and recovery continue in the
 existing session. For a new revalidated workset, the owner chooses an available
 existing or fresh lane. An idle lane with useful context can be reused through
-an explicit new assignment; completed work stays completed. The brief states
+an explicit new assignment; completed work stays completed. When nothing
+is left assigned to a lane (its delivery is verified merged, its audit is
+accepted, or its remaining work was withdrawn or reassigned), the coordinator
+sends a closeout: the accepted revision, "your implementation assignment is
+complete", the reporting skill, and a request to acknowledge only. A closeout removes nothing;
+deleting the lane's worktree is a separate decision of yours. The brief states
 whether the session is fresh or reused and why. The ledger tracks each workset's
 state, dependencies and next action separately from the lane's history.
 
@@ -276,6 +302,9 @@ Into a local epic ledger, with detailed records beside it.
 `DEBT + FOLLOW-UPS` is a required report slot, so a lane cannot silently skip
 it. Separately assignable work gets a deduplicated ticket; corrections stay in
 the lane's contract; unconfirmed claims keep their evidence and disposition.
+Each follow-up and debt item carries your disposition (do before close, separate
+ticket accepted, or drop) or shows as awaiting it, and every reply gives the
+count still open.
 
 **What should a new coordinator read?**
 
@@ -307,12 +336,21 @@ needs its closure gates and your decision.
 
 **How does each reply end?**
 
-After any active holds, an owner return opens with progress (criteria closed,
-criteria remaining, the journey step in work), then gives the verified result and revision, the required
-copyable handoff for each affected lane, and a concrete next action with its owner.
-Accepting or rejecting a report, issuing a ruling and authorizing delivery all
-require the file and fenced pointer. A prose recap or ledger update alone does
-not complete the handoff. Progress updates can stay brief prose.
+A reply that ends the coordinator's turn has six parts in order: active holds;
+progress (criteria closed and remaining, the journey step in work, open
+follow-ups); lane reconciliation; the verified result and revision with tracker
+sync; the copyable handoff for each affected lane; and next actions. Accepting
+or rejecting a report, issuing a ruling, authorizing delivery and closing a lane
+out all require the file and fenced pointer. A prose recap or ledger update
+alone does not complete the handoff.
+
+Next actions account for every open workset: each one is active in a lane,
+dispatched in that reply, or held with the owner who releases it. "Next is X"
+without X's dispatch file and pointer does not count. With no workset open, the
+reply carries the closing audit's brief, the closure proposal, or a hold on
+both. An answer or progress
+update with no lane disposition still gives the holds, progress, reconciliation
+and next actions; notes inside a turn stay brief prose.
 
 **Does an accepted correction still need a lane handoff?**
 
@@ -333,13 +371,21 @@ required delivery before proposing closure. You decide. Another round needs an
 unresolved finding, changed behavior or missing evidence; the number of rounds
 does not establish completion.
 
+Before proposing closure, the coordinator gives you every open follow-up and
+debt item on its own line and asks for a disposition on each: do before close,
+separate ticket accepted, or drop. An item you mark "do before close" enters a
+workset and the epic stays open. Closure is proposed only once every line has
+your ruling, and the proposal lists them; an open item is never presented as an
+accepted limit.
+
 **What does an accepted audit mean for the auditor?**
 
 The owner's return states three things: whether the report is accepted, whether
 the auditor's assignment is complete or has specific remaining work, and whether
 the epic is open, proposed for closure or closed by your decision. It names the
-audit contract and artifact revision. A completed assignment gets an explicit
-"your audit assignment is complete; acknowledge only" notice and copyable pointer.
+audit contract and artifact revision. A completed assignment gets the same
+closeout pointer an implementation lane gets, reading "your audit assignment is
+complete. Acknowledge only."
 The auditor acknowledges it without repeating the audit or submitting another
 report for validation. Findings and gaps keep their recorded dispositions.
 Fixes can remain with implementation lanes, and epic closure remains your decision.
@@ -364,7 +410,13 @@ review mechanics.
 - Each return tells you which criteria closed and which remain; tickets close as
   their steps are accepted.
 - A hold names the one step it stops; the rest of the epic keeps moving.
-- A hold across several lanes is the first thing you read in every reply.
+- A hold across several lanes, or one only you can release, is the first thing
+  you read in every reply, with the date it was last rechecked and the action it
+  needs from you.
+- Every reply accounts for every open workset, and names any report that reached
+  the coordinator without being relayed and any lane that went silent.
+- A lane with nothing left assigned receives a closeout: its delivery merged, its audit was accepted, or its remaining work was withdrawn or reassigned.
+- A closure proposal lists every follow-up with the disposition you gave it.
 - User-reachable changes are accepted on the running app.
 - Every auditor dispatch requires `epic-auditor`; audit handbacks remain complete
   copyable reports across follow-ups and recovery.
@@ -388,4 +440,6 @@ an epic and owns the judgment none can make alone.
 
 ## Recovery and detailed procedures
 
-The main skill keeps scope, authority, the primary journey, delivery gates and closure rules visible. Its conditional references supply lane contracts, dispatch formatting, owner validation, local tooling, ledger recovery and owner returns. Before the next lane-facing action after compaction, the owner reloads the dispatch instructions and emits the complete labeled pointer. A saved file or recap alone is not a handoff.
+The main skill keeps scope, authority, lane reconciliation, the dispatch label and pointer, the closeout form, the owner return's order, delivery gates and closure rules visible. Its conditional references supply journey planning, lane contracts, notice contents, owner validation, local tooling, delivery details, tracker mapping, ledger recovery, audit returns and the closing audit. A saved file or recap alone is not a handoff.
+
+A long-lived coordinator session can keep the version of the skill it loaded when it started. After a workbench release, type `/epic-orchestration` again in that session so it reads the current instructions.

@@ -14,6 +14,11 @@ export const MUTANTS = {
   'drop-merged-checks': ["try { state.checks = array(pr.statusCheckRollup, 'PR check rollup').map(check); }", 'try { state.checks = []; }'],
   'ignore-conflict': ["if (pr.mergeable === 'CONFLICTING')", 'if (false)'],
   'pass-unknown-mergeability': ["if (pr.mergeable === 'UNKNOWN') rows.push(", 'if (false) rows.push('],
+  'reopen-any-verdict': ["if (status !== 'pending' && !readBlocked) return false;", 'if (false) return false;'],
+  'resume-read-blocks-forever': ['if (state.resumedPast) return false;', 'if (false) return false;'],
+  'keep-resume-guard-after-read': ['      delete state.resumedPast;\n', ''],
+  'keep-read-errors-on-reopen': ['state.errors = 0;\n  state.config.deadline = deadline;', 'state.config.deadline = deadline;'],
+  'keep-saved-deadline-on-reopen': ['state.config.deadline = deadline;', ''],
 };
 
 export function mutate(source, name) {

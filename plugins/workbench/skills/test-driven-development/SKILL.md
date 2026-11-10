@@ -279,8 +279,8 @@ When writing or changing any test, read [writing-good-tests.md](writing-good-tes
 
 ## Red Flags - Check the Evidence
 
-- Code before test
-- Test after implementation
+- Code exists before its test: has the test been seen failing on the defect it claims to catch?
+- A test written after the implementation: do its expectations come from the requirement, or from what the code returns?
 - A claimed regression test passes even when the intended defect is present
 - Can't explain why test failed
 - Tests added "later"
@@ -288,8 +288,6 @@ When writing or changing any test, read [writing-good-tests.md](writing-good-tes
 - "I already manually tested it"
 - "Tests after achieve the same purpose"
 - "It's about spirit not ritual"
-- "Keep as reference" or "adapt existing code"
-- "Already spent X hours, deleting is wasteful"
 - "TDD is dogmatic, I'm being pragmatic"
 - "This is different because..."
 

@@ -213,6 +213,14 @@ test('a drifted repo-local mirror fails: Muse runs the .codex copy', (t) => {
 });
 
 
+test('an interpreter cache beside a repo-local script is not mirror drift', (t) => {
+  const copy = copyRepo(t);
+  copy.write('.claude/skills/mine-transcripts/scripts/__pycache__/common.cpython-314.pyc', 'bytecode\n');
+  assertPasses(copy.validate());
+  copy.write('.claude/skills/mine-transcripts/scripts/helper.py', 'print("unmirrored")\n');
+  assertFails(copy.validate(), /repo-local mirror drift: \.codex\/skills\/mine-transcripts differs from canonical \.claude\/skills\/mine-transcripts/);
+});
+
 test('every repo-local skill needs its complete Codex mirror', (t) => {
   const copy = copyRepo(t);
   copy.write('.claude/skills/acme-guide/SKILL.md', '---\nname: acme-guide\ndescription: Use when checking a sample.\n---\n');

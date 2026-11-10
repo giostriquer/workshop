@@ -1,6 +1,8 @@
 # session-messaging
 
-[Canonical skill](../../plugins/workbench/skills/session-messaging/SKILL.md)
+Historical usage page; this skill is retired and no longer ships in a plugin.
+
+[Canonical skill](SKILL.md)
 
 ## What it does
 

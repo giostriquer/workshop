@@ -170,7 +170,8 @@ Keep the report **concise and verdict-first**, written as **plain structured tex
 never wrapped in a `>` blockquote** (that renders as an annotation block that
 buries the verdict). It has three parts and nothing else:
 
-1. **Verdict: `<bucket>`:** the single most important sentence, then a tight
+1. **Verdict: `<bucket>`:** one bucket from the table below, then the single
+   most important sentence and a tight
    rationale in a sentence or two: why this verdict and how it was verified
    (the decisive method and its rung on the ladder). The evidence itself
    follows as short labeled bullets: one per repro case with its
@@ -181,6 +182,15 @@ buries the verdict). It has three parts and nothing else:
    one input that would breach it. For a safety or compatibility premise,
    include the load-bearing assumption and its proof or remaining limit among
    these evidence bullets.
+
+   | Bucket | The premise |
+   | --- | --- |
+   | `confirmed` | holds against the current repo |
+   | `refuted` | never held as stated: the evidence disproves it |
+   | `obsolete` | held when it was written, and the current repo already addresses it in full |
+   | `mis-scoped` | points at something real but frames it wrong, including a premise only partly addressed |
+   | `inconclusive` | cannot be settled: a real wall blocks a load-bearing claim |
+
 2. **Prior / parallel work: `<status>`:** the status is one word, so the
    landscape reads at a glance: `clean` (the search found nothing that
    addresses or constrains it), `in-flight` (parallel work on the same ground
@@ -200,8 +210,9 @@ buries the verdict). It has three parts and nothing else:
    (mark the recommendation when you have one), one per gotcha, dependency, or
    open unknown, each anchored to the relevant code or docs.
 
-A `confirmed` premise can still be `confirmed-but-blocked` on readiness: surface
-that when it is true.
+`confirmed-but-blocked` is not a sixth bucket. It is a `confirmed` verdict whose
+**Readiness** call opens `blocked` and names what blocks it: surface that when it
+is true.
 
 For mixed independent claims, a compact per-claim table may sit inside **Verdict**
 to preserve partial conclusions. Keep the overall verdict, prior/parallel search,

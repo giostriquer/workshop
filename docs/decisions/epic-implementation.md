@@ -42,6 +42,39 @@ The orchestrator applies existing delegated authority or escalates an
 operator-reserved decision. Independent authorized work continues while the
 dependent action waits. This changes routing without granting new authority.
 
+### Handback shape, acknowledgments and operator-only approvals (2026-11-09)
+
+Three gaps showed in the week of 2026-11-02.
+
+One lane ended seven of ten final replies with prose and a path to a saved
+report, and three with the fenced block. Handoff tooling relays the block, so
+the owner never received the prose ones. The skill said the reply contains the
+handback but did not cover a handback that is itself saved as a file. It now
+states the reply's shape: the fenced block is the last element, and a saved
+file holds the same block.
+
+Four acknowledge-only dispatches each came back as a full report marked
+ready for validation, and each cost the owner a verification turn. The auditor
+skill already had a one-line acknowledgment; implementation lanes now have one
+for an acceptance with work still assigned and one for a closeout.
+
+Three lanes opened a blocking question dialog for an approval only the operator
+could give; one waited 7 hours 50 minutes with its turn blocked. The by-the-book
+route lost another such ask at the owner for about 40 hours. An operator-only
+approval now goes in the same `need-guidance` handback with `operator` as the
+owner and the exact ask, while independent work continues; the owner carries
+that ask in its hold line.
+
+The report template's `REVIEW` field gains a `scope` slot for the lane's one
+`scope-review` attempt, and `NEXT STEP` names its owner as the orchestrator or
+the operator. The acknowledgment lines and a report carrying an operator ask
+were run through Session Orchestrator's recognition code: neither line files as
+a report, and the report files with its status. One scenario probe gave a
+lane a verified ticket, a second ticket blocked on a permission only the
+operator could grant, and a contract asking for a saved report: its reply ended
+with the fenced report, saved the same block, and named `operator` as owner in
+`NEXT STEP` with the exact ask. Each scenario ran once, in a fresh context on Opus 5.5, before the last round of review corrections: regression evidence for that scenario, not a reliability estimate.
+
 ## Validation
 
 The operator's repeated-round example is the recorded failure. A fresh control
@@ -63,3 +96,13 @@ fragments.
 A focused output probe covered all four statuses: `ready-for-validation` omitted
 `NEXT STEP`; blocked, follow-up and guidance reports named the required action or
 decision, owner and recommendation.
+
+## The lane reads the completion round's inputs (2026-11-09)
+
+The completion round's lane-side instructions (reviewer dispatch lines, the
+trim's commit subject, the one scope-review attempt) sat in a delivery
+reference only the owner read, and only after the round had run. The lane now
+reads that reference's completion-round section before dispatching the round,
+and the contract carries the inputs it needs. A closeout for withdrawn work
+has no accepted revision, so the lane's acknowledgment says `withdrawn` in its
+place.

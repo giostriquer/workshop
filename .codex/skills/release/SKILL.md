@@ -6,13 +6,16 @@ description: Use when the user asks to release in the Workshop repo, because wor
 # Release
 
 Ship every plugin with unreleased changes, then bring this machine's global
-Claude Code and Codex caches up to the pushed release. The user's request to
+Claude Code and Codex caches up to the pushed release. Muse is outside the
+helper: `bump` writes its manifest, and step 6 reports its installed versions
+without refreshing them. The user's request to
 release authorizes what it lists: version bumps, release notes, one commit and push to
 `main`, and updating the Workshop plugins this machine already has. It
 authorizes nothing else, such as installing or removing a plugin.
 
-Both hosts install Workshop from GitHub `main` and keep one cache folder per
-version. A change pushed without a new version never reaches an installed copy:
+Both hosts install Workshop from GitHub `main`. Claude Code keeps one cache
+folder per version; Codex keeps one folder per plugin, and `refresh` replaces
+it. A change pushed without a new version never reaches an installed copy:
 `claude plugin update` answers "already at the latest version" and keeps the old
 files. So every shipped change gets a new version, and the refresh follows the push.
 
@@ -76,12 +79,13 @@ kept out.
 
 ## 4. Commit and push
 
-Apply the repo `push` skill on `main`, with two differences:
+Apply the repo `push` skill on `main`, with two specifics:
 
-- Name the shipping files, not their directories, in both commands:
-  `git add -- <files>`, then `git commit -- <files>`. A plain commit would also
-  take files another session already staged. Check that `git show --stat HEAD`
-  lists exactly those files.
+- Its path list holds the shipping files from step 2 plus every file step 3
+  wrote (the manifests, the marketplace entry and `docs/change-log.md`), and
+  nothing else, so `push`'s pathspec commands take exactly those files and
+  leave what another session staged. `git show --name-only --format= HEAD`
+  lists exactly them.
 - Message as in the history: subject `<fix|feat>(<plugin>|plugins): <what ships>`,
   then one paragraph per released version starting `Release <Plugin> x.y.z`, then a
   line on supporting docs. No trailer.
@@ -94,6 +98,12 @@ check result.
 **Done:** after `git fetch origin`, `git rev-parse HEAD` equals `git rev-parse origin/main`.
 
 ## 5. Refresh this machine's caches
+
+First run `pgrep -x codex`. Any PID outside this session's own process tree
+means Codex is running, and its sessions may have loaded the folder `refresh`
+is about to replace. The count is an estimate, since it includes Codex's
+helper processes and one process can host several threads: keep it for the
+report as one.
 
 Run `refresh`. For each host with its CLI on `PATH`, it updates the `workshop`
 marketplace, then each user-scope Workshop plugin that `origin/main` releases.
@@ -119,6 +129,11 @@ Run `verify-caches`. It compares every installed Workshop copy with
 **Done:** exit 0. For a `stale` or `mismatch` row, run `refresh` once more and
 verify again. If the row still fails, report it: the refresh is not done.
 
+For Muse, run `muse plugins list --json` and note the `record.version` of each
+plugin `origin/main` releases beside its released version. This is report-only:
+the release does not update Muse, and a missing `muse` CLI is reported as
+skipped.
+
 On Windows the helper is unverified: a CLI installed only as a `.cmd` shim
 reads as not on `PATH`.
 
@@ -129,9 +144,14 @@ reads as not on `PATH`.
 - The commit and the push result, or why the release stopped and what it changed first.
 - Each host and plugin: installed version and `verify-caches` status, including
   `not-released`, `none` and `skipped` rows.
+- Muse: each Workshop plugin's installed and released version, marked not
+  refreshed by this release.
 - Gaps: missing decision notes or usage pages, changes kept out, anything not verified.
-- Running sessions keep the plugin versions they loaded. Restart Claude Code and
-  start a new Codex session to use the update.
+- Running Claude Code sessions keep the version they loaded: restart to use the
+  update. Live Codex sessions lost that version's files: say whether Codex was
+  running, with step 5's count as an estimate, and that each of its sessions
+  needs a new session before it next reads a skill, reference or bundled
+  script.
 
 ## Maintenance
 

@@ -24,6 +24,19 @@ LOCAL_SKILL_RE = re.compile(r"(?:^|/)\.(?:claude|codex|agents)/skills/([\w.-]+)/
 LOCAL_AGENT_RE = re.compile(r"(?:^|/)\.(?:claude|codex)/agents/([\w.-]+)\.(?:md|toml)$")
 WORKTREE_RE = re.compile(r"/(?:\.claude/worktrees|\.codex/worktrees|\.worktrees)/.*$")
 
+# A definition path in a command counts as a read only when the command opens the file: a pager-style
+# program (not sed -i) with no redirect between it and the path, or a read call in inline code. A search,
+# a diff, a copy, a write and a bare mention do not. Codex wraps the command in JSON or JavaScript, so the
+# program may follow a quote or a brace, and a newline may arrive escaped. tests/test_mine.py pins each case.
+SEGMENT_RE = re.compile(r"\|\||&&|[;|\n]|\\n")
+READER_RE = re.compile(r"(?:^|[\s\"'`(=:\[,{])(?P<prog>cat|bat|head|tail|less|more|nl|sed)\s(?P<rest>[^>]*)$")
+SED_IN_PLACE_RE = re.compile(r"(?:^|\s)-[a-zA-Z]*i")
+CODE_READ_RE = re.compile(r"\b(?:readFileSync|readFile)\(\s*[\"'`]?$")
+CODE_PATH_RE = re.compile(r"\bPath\(\s*[rf]?[\"']?$")
+CODE_OPEN_RE = re.compile(r"\bopen\(\s*[rf]?[\"']?$")
+# /name or /plugin:name typed inside a prompt; a path component (/Users/me, /notes.md) is not one.
+INLINE_SLASH_RE = re.compile(r"(?<![\w/.:~-])/((?:[\w.-]+:)?[\w-]+)(?![\w/:-])(?!\.\w)")
+
 BUILTIN_AGENTS = {"general-purpose", "Explore", "Plan", "fork", "workflow-subagent", "claude",
                   "statusline-setup", "claude-code-guide", "output-style-setup"}
 
@@ -74,6 +87,26 @@ def short_hash(text, n=4):
 
 def under(path, root):
     return bool(root) and (path == root or path.startswith(root.rstrip("/") + "/"))
+
+
+def definition_mentions(text):
+    """Yield (path, opened) for each skill or agent definition path in a command or code string."""
+    for m in DEF_PATH_RE.finditer(text):
+        before, after = SEGMENT_RE.split(text[:m.start()])[-1], text[m.end():m.end() + 40]
+        reader = READER_RE.search(before)
+        if reader:
+            opened = not (reader.group("prog") == "sed" and SED_IN_PLACE_RE.search(reader.group("rest")))
+        elif CODE_PATH_RE.search(before):
+            opened = bool(re.match(r"[\"']?\)\s*\.read_(?:text|bytes)\(", after))
+        elif CODE_OPEN_RE.search(before):
+            opened = not re.match(r"[\"']?\s*,\s*[\"'][wax+]", after)
+        else:
+            opened = bool(CODE_READ_RE.search(before))
+        yield m.group(), opened
+
+
+def inline_slash_names(text):
+    return set(INLINE_SLASH_RE.findall(text))
 
 
 def later_pass_prompt(text):
@@ -186,6 +219,9 @@ class Thread:
         self.first = self.last = None
         self.rounds = []           # [start, end, kind]; kind: initial | followup | other
         self.round_open = False
+        self.reported = False      # the open round's report reached the dispatcher (Claude subagents)
+        self.stale = False         # in a late wake-up after that report; counts only if it reports again
+        self.named = set()         # skills the latest typed prompt names inline as /name; never printed
         self.first_prompt = ""     # first 900 chars of a subagent's dispatch prompt; never printed
         self.versions = []         # (ts, plugin, version, 'skills'|'agents', name)
         self.agent_hints = set()   # local agent definitions read (Codex)
@@ -199,7 +235,11 @@ class Thread:
     def touch(self, ts):
         if self.first is None or ts < self.first:
             self.first = ts
-        if self.last is None or ts > self.last:
+        if self.last is None:
+            self.last = ts
+        if self.stale:
+            return
+        if ts > self.last:
             self.last = ts
         if self.round_open and ts > self.rounds[-1][1]:
             self.rounds[-1][1] = ts
@@ -207,21 +247,33 @@ class Thread:
     def start_round(self, ts, kind):
         self.rounds.append([ts, ts, kind])
         self.round_open = True
+        self.reported = self.stale = False
 
-    def note_definition(self, path, ts, cwd=None):
-        """A Read or command that opened a SKILL.md or agent definition."""
+    def note_report(self):
+        """The round's report went to the dispatcher. A tail that reports again was work after all."""
+        self.reported, self.stale = True, False
+
+    def note_wakeup(self):
+        """One of the agent's own background tasks finished. After the report, that is not round time."""
+        if self.reported:
+            self.stale = True
+
+    def note_definition(self, path, ts, cwd=None, opened=True):
+        """A SKILL.md or agent definition path in a Read or a command. Any mention of a plugin path dates
+        the run; only an open counts as a skill read."""
         m = PLUGIN_PATH_RE.search(path)
         if m:
             plugin, ver, what, name = m.groups()
             if what == "agents":
                 name = re.sub(r"\.(md|toml)$", "", name)
             self.versions.append((ts, plugin, ver, what, name))
-            if what == "skills" and path.endswith("SKILL.md"):
+            if opened and what == "skills" and path.endswith("SKILL.md"):
                 self.skills.append((ts, f"{plugin}:{name}", "read"))
             return
         m = LOCAL_SKILL_RE.search(path)
         if m:
-            self.skills.append((ts, f"{local_scope(path, cwd)}:{m.group(1)}", "read"))
+            if opened:
+                self.skills.append((ts, f"{local_scope(path, cwd)}:{m.group(1)}", "read"))
             return
         m = LOCAL_AGENT_RE.search(path)
         if m:
@@ -241,6 +293,26 @@ class Thread:
 
     def total_tokens(self):
         return sum(self.tokens.values())
+
+
+class Reach:
+    """How far back one host's transcript files go. Files are picked by last-write time, so when the
+    oldest surviving file was written after the window starts, the days before it hold only the
+    sessions that were still open then: an undercount that reads as quiet days."""
+
+    def __init__(self):
+        self.oldest = None  # earliest last-write time among the host's session files
+
+    def saw(self, mtime):
+        if self.oldest is None or mtime < self.oldest:
+            self.oldest = mtime
+
+    def starts_after(self, window):
+        """The day the surviving history starts, when that is after the window start; else None."""
+        if self.oldest is None:
+            return None
+        day = dt.date.fromtimestamp(self.oldest)
+        return day if day > window.since else None
 
 
 def workbench_version_at(thread, ts):

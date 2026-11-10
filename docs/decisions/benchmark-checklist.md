@@ -46,3 +46,20 @@ explicitly report a ballpark as a one-run observation.
 Native plugin validation and Codex export checks cover artifact structure and
 invocation metadata. They do not prove discovery in a running host, marketplace
 publication, or a performance result. No benchmark harness is shipped.
+
+## The decision is written before the run (2026-11-09)
+
+Upstream's `principle-explain-the-number` gained "write the decision before
+you run": name the result that would change a decision and the noise floor,
+and stop when run-to-run spread exceeds the effect. The stop rule is not
+taken: the checklist's trial step already separates no measurable difference
+from inconclusive, and stopping early could cut its trial floor short. The
+rule applies to comparisons, not to the one-run ballpark. The checklist framed the
+claim, workload and metric but set no threshold in advance and dealt with
+noise only after the runs, so a result could be read to fit whatever came out.
+The operator approved the adaptation, reviewed at `236e5481d05cbadc315b374a5de54971858c27bb` (source manifest
+0.15.36). Upstream's other edits in the range were copy changes.
+
+No scenario run was made for this wording: the one probe attempted did not
+complete. The change is a single framing sentence checked by an independent
+read of the skill, which is why the stop rule was dropped.

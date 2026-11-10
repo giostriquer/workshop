@@ -44,7 +44,7 @@ It has nine standards. Rule 0 is ambition: delete complexity rather than rearran
 
 A finding that proves the change unsafe or incorrect as shipped blocks wherever it lives. An unlabeled finding reads as blocking. Any structural concern blocks only when the review demonstrates a correctness or material maintainability consequence; file length or an alternative design alone does not.
 
-The report opens with `## Verdict: PASS` or `## Verdict: ISSUES_FOUND`, then the reviewed revision, follow-up pass number, and stable finding IDs; a missing verdict line reads as `ISSUES_FOUND`. Findings run structural regressions first and legibility last; few high-conviction comments beat many nits.
+Every round's report opens with `## Verdict: PASS` or `## Verdict: ISSUES_FOUND`, then the reviewed revision, follow-up pass number, and stable finding IDs; a missing verdict line reads as `ISSUES_FOUND`. A dispatch that uses other verdict or severity words does not change that line or the three labels; the report maps them in its body. Findings run structural regressions first and legibility last; few high-conviction comments beat many nits.
 
 ## Common questions
 
@@ -58,10 +58,10 @@ No. They become out-of-scope follow-ups, so the diff stays the size the accepted
 Not as this gate. Mid-implementation, each round surfaces new work and the diff grows.
 
 **How do follow-ups work after I fix its findings?**
-Return each blocking fix or evidence-based rejection to the same reviewer with finding IDs, revisions, the correction diff, and focused test evidence; a passing test alone does not close a blocker. This review owns its follow-ups and pass record, checking the corrections and what they affect.
+Return the verified batch of blocking fixes and evidence-based rejections to the same reviewer with finding IDs, revisions, the correction delta, and focused test evidence; a passing test alone does not close a blocker. This review owns its findings and pass record. The session's side of the loop (what it sends, to whom, and when it holds) is in [receiving-code-review](receiving-code-review.md).
 
 **Does every later edit restart review?**
-No. Confirmation of all blockers ends the correction loop. A new edit or SHA alone does not reopen it. New scope or a material redesign that invalidates a prior conclusion needs review of the affected delta by its owning reviewer. Explicit review requests and repository gates still apply.
+No. Confirmation of all blockers ends the correction loop, and a new commit alone does not reopen it. After a pass, this reviewer sees a later delta only when it changes structure outside the lines its findings named: a file, function, type or module added, moved or renamed, a changed signature, or new control flow. Sent any other delta, it answers in one line that its pass stands. Advisory findings you applied are recorded, not sent back. Explicit review requests and repository gates still apply.
 
 **Will the session stop to ask before another follow-up?**
 No. A focused follow-up on a verified correction runs without asking, however many passes came before; the pass number is a record, not a limit ([decision](../decisions/bounded-correction-review.md#convergence-replaces-the-follow-up-pass-count-2026-09-24)). On a follow-up, the reviewer checks the open blockers, the correction and what it affects; anything it finds outside that focus is a follow-up, never a blocker, unless it proves the change unsafe or incorrect as shipped. Review stops only when it stops converging: a follow-up closes or narrows none of the blockers it was sent, a finding the author rejected with evidence comes back without new evidence, or two follow-ups in a row each raise a new blocker and end with at least as many open blockers as they were sent (fixes that keep producing new blockers). Narrowing a finding is progress, never churn. One fix that regresses and gets caught does not stop it. When review does stop, delivery holds and the owning authority (the epic owner for a delegated lane, otherwise you) decides the next step; unless that decision ends review, follow-ups run on their own again from there, and a fix made while review is held waits for it. A held review is never PASS: a blocker closes only on reviewer confirmation or your explicit waiver, and a new reviewer or handoff does not reset the record.
@@ -73,7 +73,7 @@ No. Crossing it makes the review ask whether to decompose first; it blocks only 
 The `trim-comments` stage, run by the `comment-trimmer` agent before this round, edits the diff's code comments. This review flags what remains, per your repo's rules, and the implementer acts on it; it never deletes a comment itself. With no comment rules in the repo, it still flags a suppression that hides a correctness rule and a constraint comment that a test, type, or lint could enforce; one the trim already offered to encode waits for your answer at the outline, so the review notes it rather than raising it again. Cosmetic narration belongs to the comment trim, not a separate pattern-compliance review.
 
 **Can I run it inline in the session that wrote the code?**
-No. That session holds every justification behind the code, so a fresh reviewer tests those assumptions independently. Dispatch the `code-quality-reviewer` agent, which loads this skill as its rubric and, if needed, gathers the diff itself: the working tree against the base's merge base, untracked files included. Hand it the accepted scope, the ask as the ticket or plan put it, not your view of the code. It runs on your session's model, without your history. On Codex, spawn it as the agent file's Dispatch line says, which forks none of your history, and paste the file's body into the spawn message ahead of the three inputs, since Codex registers no plugin agents. With no subagent mechanism, hand the diff to a fresh session and say so in the report. An author's own pass is never this gate.
+No. That session holds every justification behind the code, so a fresh reviewer tests those assumptions independently. Dispatch the `code-quality-reviewer` agent, which loads this skill as its rubric and gathers the diff itself: the working tree against the base's merge base, untracked files included. The dispatch is six labelled lines and nothing else: `Worktree`, `Base or range`, `Revision`, `Accepted scope`, `Scope folder` and `Encoding offers`. The accepted scope is a path to the ask as the ticket or plan put it, not your view of the code. On Claude Code it runs on Opus 5.5 at `xhigh` whatever your session runs; on Codex and other hosts, on your session's model; never with your history. On Codex, spawn it as the agent file's Dispatch line says, which forks none of your history, and paste the file's body into the spawn message ahead of those lines, since Codex registers no plugin agents. With no subagent mechanism, hand the diff to a fresh session and say so in the report. An author's own pass is never this gate.
 
 ## It's working if
 
@@ -81,9 +81,10 @@ No. That session holds every justification behind the code, so a fresh reviewer 
 - Every finding is labeled, and out-of-scope ones became follow-ups without touching the diff.
 - The top findings are structural, and approval was withheld on working code that left the architecture messier.
 - The reviewer confirmed blocking dispositions against the corrected revision.
+- The dispatch held pointers only, and any probe the reviewer ran lived in the scope folder.
 - Focused follow-ups ran without asking you, and the session stopped only when review stopped converging.
 
-It's misapplied if it fires mid-implementation, the diff grows from findings the accepted work never named, it was skipped because the change looked small, the session asked permission for a focused follow-up, a finding outside the follow-up's focus held delivery, or review looped on fixes that kept producing new blockers.
+It's misapplied if it fires mid-implementation, the diff grows from findings the accepted work never named, it was skipped because the change looked small, the session asked permission for a focused follow-up, a finding outside the follow-up's focus held delivery, review looped on fixes that kept producing new blockers, the dispatch pasted the diff or set its own verdict words, the reviewer was sent a delta outside its ground after it passed, or it wrote a probe into your checkout.
 
 ## Where it fits
 

@@ -37,8 +37,8 @@ focused consumer proof.
 
 Its description loads it before coding, auditing, planning, shipping, filing a
 PR, debugging, or using any workbench skill. It answers "how does the flow
-work?" and "which skill owns this task?" A subagent dispatched to execute a
-specific task skips it.
+work?" and "which skill owns this task?" The description excludes a subagent
+dispatched to execute a specific task, which skips it.
 
 | The problem | The skill |
 | --- | --- |
@@ -75,7 +75,8 @@ specific task skips it.
   their owning reviewer; unresolved blockers hold delivery. Then the session outlines the
   work, with the trim's open encoding offers, and asks PR or merge, unless repo
   or user rules pre-authorize it.
-- **Feedback**: `receiving-code-review`; verified fixes re-enter implementation.
+- **Feedback**: `receiving-code-review`, for review feedback and for a completion reviewer's report; verified fixes re-enter implementation.
+- **Before building from a spec or plan**: the `spec-reviewer` agent, dispatched with file paths only.
 
 Before any push, check whether the branch has an open PR. If it does, load
 `file-pr` and synchronize its actual target before pushing, including review
@@ -123,8 +124,9 @@ confirmed ignored first. Never outside the repository unless the user asks.
 **CI watching** always goes to a separate Sonnet 5.5 agent on Claude Code or `gpt-6.1-sol`
 agent on Codex, never parent polling.
 
-**Workbench agents on Codex.** Each agent file has a Dispatch line naming how
-it is dispatched, and the calling skills add only the run's inputs. Codex
+**Workbench agents on Codex.** Each agent's description names its dispatch
+inputs, and its file has a Dispatch line naming the host arguments. The run's
+inputs are those and nothing else. Codex
 registers no plugin agents, so the parent reads the agent's file from the
 installed plugin (`agents/<name>.md`, two directories above the loaded skill's
 `SKILL.md`), spawns with the arguments its Dispatch line names, and pastes its

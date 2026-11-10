@@ -6,10 +6,11 @@
 
 `get-pr-comments`, in the optional `toolkit` plugin, turns a PR's scattered
 feedback into one prioritized list. It fetches conversation comments, review
-summaries and inline diff comments, groups them by **severity** (blocking /
-should-fix / nit) and **actionability** (a requested change versus an open
-question), and returns an action list ordered by priority plus the questions
-that still need a human answer.
+summaries, inline diff comments and each inline thread's state, groups them by
+**severity** (blocking / should-fix / nit) and **actionability** (a requested
+change versus an open question), and returns an action list ordered by priority
+plus the questions that still need a human answer. Resolved and outdated
+threads are counted on their own and kept out of the action list.
 
 It is read-only. It never replies to, resolves or reacts to a PR comment unless
 you explicitly ask, per action, and it does not edit code, push or change PR
@@ -17,7 +18,8 @@ state. Acting on the list is a separate step you direct.
 
 ## When to reach for it
 
-When a PR has feedback and you want to know what it actually asks you to change.
+When a PR has feedback you have not fetched yet and you want to know what it
+actually asks you to change. Feedback already in front of you needs no fetch.
 
 | The problem | The skill |
 | --- | --- |
@@ -32,9 +34,13 @@ When a PR has feedback and you want to know what it actually asks you to change.
    number,url,headRefName,state`.
 2. Fetch conversation comments and reviews with `gh pr view --json
    comments,reviews`, and every page of inline comments with `gh api --paginate
-   repos/{owner}/{repo}/pulls/{number}/comments`. Read all returned comments
-   and check each fetch's exit status.
-3. Group by severity and actionability.
+   "repos/{owner}/{repo}/pulls/<number>/comments"`, using the PR number from
+   step 1 (`gh` fills only `{owner}` and `{repo}`). A GraphQL `reviewThreads`
+   read adds each thread's resolved and outdated state. Read all returned
+   comments and check each fetch's exit status.
+3. Group by severity and actionability; resolved and outdated inline comments
+   form their own group, and a comment whose state could not be read stays in
+   the action list, labelled.
 4. Return retrieval coverage (complete or partial), the ordered action list and
    the open questions. If a fetch fails, retain usable feedback and identify the
    failed source and error; omitted feedback remains unknown.
@@ -55,6 +61,11 @@ answering an inline comment in its thread rather than as a top-level comment.
 since `gh pr view` alone misses them. It follows every inline-comment page, so a
 busy PR's later comments are included.
 
+**It listed a comment I already resolved.** It should not: resolved and
+outdated threads are reported as closed, outside the action list. If the thread
+state could not be read, the comment stays in the list marked `state unknown`,
+and the coverage line says which fetch failed.
+
 **What if a later page fails?** Earlier pages can still have printed, and the
 output may be invalid JSON. The summary marks retrieval partial, identifies the
 failure, and uses usable feedback without claiming there are no other comments.
@@ -70,6 +81,7 @@ the codebase is `receiving-code-review`'s call.
   questions kept apart from requested changes.
 - The summary states whether retrieval completed or which source remains
   incomplete.
+- Resolved and outdated threads are counted apart from the action list.
 - **Negative signal:** a reply, resolved thread or reaction you did not ask for,
   or a changed working tree.
 

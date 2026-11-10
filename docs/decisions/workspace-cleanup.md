@@ -1,5 +1,21 @@
 # Workspace cleanup and disk recovery
 
+## Read-only directories are checked before worktree removal (2026-11-09)
+
+A cleanup on 2026-11-09 ran approved non-force `git worktree remove` commands
+against worktrees that contained read-only directories. Git stopped deleting at
+those directories but had already dropped the registrations: four worktrees were
+left unregistered with about 56 GB still on disk, four more kept read-only
+remnants, and the operator had to approve a permission pass afterwards. The
+skill treated a refusal as leaving the entry intact.
+
+A scratch repository reproduced it: with one read-only directory inside,
+`git worktree remove` exits non-zero, the worktree leaves `git worktree list`
+and its files stay. The skill now checks for directories the owner cannot write
+before removal, holds an entry that has any, and asks for the permission change
+on that exact path first. The check printed the read-only directory in the
+reproduction and nothing for a clean worktree.
+
 ## Session transcripts are never a candidate (2026-11-04)
 
 A cleanup toward a used-space target listed agent session history as a 41 GB item

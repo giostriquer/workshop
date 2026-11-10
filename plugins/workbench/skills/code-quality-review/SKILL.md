@@ -21,16 +21,27 @@ follow the same boundary: finish and verify the batch before resuming delivery.
 ## Who runs it: a reviewer that did not write the code
 
 This review is **dispatched, never self-served.** Run it in a fresh reviewer
-context handed the accepted scope, the diff (the working tree against the base's
-merge base, untracked files included), and the changed files' contents:
-the `code-quality-reviewer` agent, or the host's equivalent subagent mechanism.
-The accepted scope is the ticket, plan or agreed change as it was asked for,
-never the author's account of the code; it sets where in-scope ends, not what
-the reviewer may read. Dispatch `code-quality-reviewer` by name with no model,
-so it runs on the parent's (on Codex, paste the agent file and use its Dispatch
-line, per `using-workbench`'s *Workbench agents on Codex*), with the three
-inputs as `### Accepted scope`, `### Git / diff output` and `### Changed file
-contents`.
+context: the `code-quality-reviewer` agent, or the host's equivalent subagent
+mechanism. Dispatch `code-quality-reviewer` by name with no model: on Claude
+Code its file pins Opus 5.5 at `xhigh`, and elsewhere it runs on the parent's
+(on Codex, paste the agent file and use its Dispatch line, per
+`using-workbench`'s *Workbench agents on Codex*). The prompt is these six
+lines and nothing else:
+
+```
+Worktree: <absolute path>
+Base or range: <base branch, or base..head>
+Revision: <HEAD commit, plus "+ uncommitted" when the working tree holds part of the change>
+Accepted scope: <path to the ticket, plan or brief; the ask quoted when no file holds it>
+Scope folder: <the work's scratch folder, for probes and evidence>
+Encoding offers: <constraint-comment encodings the trim offered, or none>
+```
+
+The reviewer reads the diff (the working tree against the base's merge base,
+untracked files included) and the changed files itself. The accepted scope is
+the ticket, plan or agreed change as it was asked for, never the author's
+account of the code; it sets where in-scope ends, not what the reviewer may
+read.
 
 The session that implemented the change is the one context that cannot perform
 this review. It holds every justification that produced the code, so the
@@ -89,18 +100,25 @@ scope states it. Findings outside it are classified, not chased:
   among them. Run the initial review when implementation is believed complete,
   before filing a PR or merging directly. Record the reviewed revision and
   dispositions. Complete the bounded correction review below before delivery.
+- The review reports and never patches. A probe the reviewer runs (a scratch
+  test, a script) lives in the dispatch's scope folder, or in a temporary
+  directory outside the repository when no folder was given; the author's
+  checkout stays as found.
 
 ## Bounded correction review
 
 Use one initial review round plus focused correction verification. The implementer owns
 fixes and focused tests; the independent reviewer owns closure of blocking findings.
+This section is the reviewer's half. The dispatching session's half (what it
+returns, which reviewers see a later delta, when it holds delivery) is in
+`receiving-code-review`.
 
-1. **Return every blocking disposition to its reviewer.** Send finding IDs, the
-   reviewed and current revisions, the correction diff, and focused test evidence.
-   Include evidence-based rejections as well as fixes. Reuse the same reviewer
-   session; if unavailable, give a replacement independent reviewer the prior
-   findings and evidence. A one-line correction or passing test does not close a
-   blocker without reviewer confirmation.
+1. **Close blockers yourself.** A follow-up arrives in the same reviewer session
+   with finding IDs, the reviewed and current revisions, the correction delta
+   and focused test evidence, including evidence-based rejections. A one-line
+   correction or passing test does not close a blocker without reviewer
+   confirmation. A replacement reviewer works from the prior findings,
+   dispositions and rejections.
 2. **Keep follow-up focused.** A follow-up pass's focus is the open blockers,
    the correction delta (the change since the last reviewed revision), and the
    callers, contracts, and behavior it affects, plus the full affected scope
@@ -113,20 +131,18 @@ fixes and focused tests; the independent reviewer owns closure of blocking findi
    the change unsafe or incorrect as shipped, which still blocks: an
    out-of-scope finding never makes the verdict ISSUES_FOUND, never justifies
    another pass, and never holds delivery.
-3. **Run follow-up passes automatically while review converges.** A pass is one
-   submission of the revised change to this reviewer. When a verified correction
-   batch is ready for review, submit the next pass without asking anyone: no pass count
-   limits it. Number passes as a record (0 for the initial round), never as a
-   limit. Correction dispatches, lane handbacks and owner validation are not
-   passes. A replacement for a reviewer that never returned completes the same
-   unchanged submission. Send this reviewer's findings and the changed surfaces
-   they concern. Stop when all blocking dispositions are confirmed and the
-   current revision is covered. Advisory-only findings never
-   trigger another pass.
-4. **Stop only when review stops converging.** Judge each follow-up pass on
-   what changed since the previous pass. Stop submitting passes, hold delivery,
-   and report to the authority that owns the work (the epic owner for a
-   delegated lane, the user for standalone implementation) when:
+3. **Answer a delta outside this review's ground in one line.** After this
+   review's PASS, a later delta is this review's only when it changes structure
+   outside the lines a finding named: a file, function, type or module added,
+   moved or renamed, a changed signature, or new control flow. For any other
+   delta, reply `## Verdict: PASS`, the revision the record covers and `no
+   code-quality ground in this delta`, and stop. A follow-up carrying a
+   `Requested by the user:` line is reviewed whatever its ground. Advisory
+   findings this review raised and the author applied are recorded, never
+   re-reviewed; another review's applied advisory is a delta like any other.
+4. **Name a convergence hold.** Judge each follow-up pass on what changed since
+   the previous pass. State the hold in the report, with each open finding and
+   both sides' evidence, when:
    - a follow-up pass sent at least one open blocker closed or narrowed none of
      them (a finding still Partially resolved on the same gap is no progress);
    - a finding the author rejected with evidence is raised again without new
@@ -136,24 +152,14 @@ fixes and focused tests; the independent reviewer owns closure of blocking findi
      pass that only narrows findings is judged by the first condition alone
      and neither counts toward nor breaks the two-pass run.
 
-   The report names each open finding with both sides' evidence and recommends
-   a next step; that authority decides it within its existing authority, and the
-   decision is recorded. Unless it ends review, the decision restarts automatic
-   passes under rules 3 and 4, with the two-pass churn count starting over.
-   Corrections and owner validation continue under existing task authority, but
-   a correction made while review is held waits for that decision before it is
-   submitted. A held review is never PASS: a blocker closes only on reviewer
+   A held review is never PASS: a blocker closes only on reviewer
    confirmation or the user's explicit waiver, and the author cannot dismiss a
    disputed blocker to bypass this gate.
 5. **Record closure against the revision.** The reviewer returns the reviewed
    revision, finding IDs with resolved / unresolved / rejected-with-evidence
-   dispositions, supporting evidence, and PASS or ISSUES_FOUND. Confirmation of
-   all blockers ends the correction loop. Further edits or a new SHA alone do
-   not reopen it. New scope or a material redesign that invalidates a prior
-   conclusion needs review of the affected delta by its owning reviewer.
-   Explicit review requests and superseding repository gates still apply. A new
-   reviewer, PR preparation, or session handoff does not reset the record: prior
-   findings, dispositions and rejections carry over.
+   dispositions, supporting evidence, and PASS or ISSUES_FOUND. Number passes
+   as a record (0 for the initial round), never as a limit. Confirmation of
+   all blockers ends the correction loop; a new commit alone does not reopen it.
 
 Existing explicit user waivers and superseding repository processes retain
 precedence.
@@ -223,7 +229,7 @@ Keep findings direct, evidenced and tied to a structural consequence.
 
 ## Output Expectations
 
-Open the report with the verdict, on its own line and before anything else:
+Open every round's report with the verdict, on its own line and before anything else:
 
 ```
 ## Verdict: PASS | ISSUES_FOUND
@@ -237,7 +243,10 @@ uncommitted changes), follow-up pass number (0 for the initial round), and
 stable finding IDs. On follow-up,
 include each prior blocker's disposition and supporting evidence.
 
-A report that omits the verdict line reads as `ISSUES_FOUND`.
+A report that omits the verdict line reads as `ISSUES_FOUND`. When a dispatch
+uses other verdict or severity words, this line and the three finding labels
+stay as written; say in the body which of them each of the dispatch's words
+maps to.
 
 Prioritize findings in this order:
 

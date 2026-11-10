@@ -269,7 +269,8 @@ Different skill types need different test approaches:
 | "Academic review is enough" | Reading ≠ using. Test application scenarios. |
 | "No time to test" | Deploying untested skill wastes more time fixing it later. |
 
-**All of these mean: Test before deploying. No exceptions.**
+**All of these mean: test a behavior change before it ships.** A mechanical
+correction applies directly, as *Evidence before shipping skill changes* states.
 
 ## Match the Form to the Failure
 
@@ -331,11 +332,17 @@ Full pressure-scenario runs are the final gate, but they are slow and expensive 
 
 Micro-tests verify wording; they do not replace pressure scenarios for discipline skills.
 
-**Testing methodology:** See [testing-skills-with-subagents.md](testing-skills-with-subagents.md) for the complete testing methodology:
-- How to write pressure scenarios
-- Pressure types (time, sunk cost, authority, exhaustion)
-- Plugging holes systematically
-- Meta-testing techniques
+**Testing methodology:** before running pressure scenarios, read
+[testing-skills-with-subagents.md](testing-skills-with-subagents.md) for scenario
+writing, pressure types (time, sunk cost, authority, exhaustion), plugging holes
+and meta-testing. When planning a first campaign, read
+[examples/CLAUDE_MD_TESTING.md](examples/CLAUDE_MD_TESTING.md) for a worked one.
+When writing a discipline scenario or counter, read
+[persuasion-principles.md](persuasion-principles.md) for why pressure wording
+works. When adding or changing a flowchart, read `graphviz-conventions.dot` for
+node and edge conventions. To view one, `node render-graphs.js <skill dir>`
+needs Graphviz's `dot` and writes `<skill dir>/diagrams/`: delete that folder
+after viewing.
 
 ## STOP: Before Moving to Next Skill
 
@@ -348,9 +355,7 @@ scenario, but do not publish each skill separately just to enforce sequencing.
 - Ship a changed contract before its relevant checks complete
 - Skip testing because "batching is more efficient"
 
-**The deployment checklist below is MANDATORY for EACH skill.**
-
-Deploying untested skills = deploying untested code. It's a violation of quality standards.
+Deploying an untested behavior change = deploying untested code. It's a violation of quality standards.
 
 ## Skill Creation Checklist (TDD Adapted)
 
@@ -362,8 +367,8 @@ Use the checklist below to track the checks relevant to this change.
 - [ ] Identify patterns in rationalizations/failures
 
 **GREEN Phase - Write Minimal Skill:**
-- [ ] Name uses only letters, numbers, hyphens (no parentheses/special chars)
-- [ ] YAML frontmatter with required `name` and `description` fields (max 1024 chars; see [spec](https://agentskills.io/specification))
+- [ ] Name is lowercase letters, numbers and hyphens, at most 64 chars, and matches the folder
+- [ ] YAML frontmatter with required `name` and `description` fields (description at most 1024 chars; see [spec](https://agentskills.io/specification))
 - [ ] Description starts with "Use when..." and includes specific triggers/symptoms
 - [ ] Description written in third person
 - [ ] Keywords throughout for search (errors, symptoms, tools)

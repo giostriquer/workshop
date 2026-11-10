@@ -2,15 +2,63 @@
 
 Rationale for the workbench `model-reference` skill, including fleet calibration and harness routing. The skill owns the table; agent contracts own dispatch arguments.
 
+## Table and notes agree again; effort is recorded; escalation climbs effort first (2026-11-09)
+
+The 2026-11-05 re-grade changed rows and nothing else, which left the skill
+disagreeing with itself. Corrected in one pass:
+
+- The reading notes said Opus was level with Fable on taste and code and sent
+  intelligence-heavy work to Fable, while the table graded Opus at or above
+  Fable 5.1 on all three quality axes. The notes now say what the table says.
+- The caveat said the Fable row had been renamed without re-grading; it was
+  re-graded on 2026-11-05. The caveat now gives that date and says what is
+  still missing: a task set and a method.
+- "luna and sol are not taste routes" contradicted Sol's taste grade against
+  the stated threshold of 7. The note now names the rows the threshold
+  excludes. Excluding Sol would take a higher threshold or a lower grade.
+- The priority order never placed the `code` axis added on 2026-07-31. It now
+  reads intelligence, then the axis the work loads (code or taste), then cost,
+  then speed, which is the tie-break the usage page already gave.
+- `fable-5.2` joined the fleet after the re-grade. It has a row with no
+  grades rather than Fable 5.1's numbers under a new name, which is the
+  rename-without-re-grading the caveat used to describe.
+- An `effort` column records the level each row is graded at, taken from the
+  operator's host configuration and dispatch pins on 2026-11-09; rows with no
+  recorded level show `n/a`. The table said rows were graded at the effort
+  actually run and never said which. Still one row per model.
+- Calibration gets a definition (date, task set with outcome checks, two or
+  three effort levels per candidate, score against spend), since the skill
+  required a calibration it never described.
+
+**Escalation climbs effort before tier, reversing the 2026-08-12 cut.** That
+decision dropped "climb effort before hopping models" as already covered by
+standing escalation. Vendor guidance published 2026-11-09 orders the steps as
+self-verification, one effort level, then the next model at a lower effort,
+and reports that past `high` one more level can cost as much as a larger
+model. The invariant now carries that order as two cases keyed to the current
+effort (below `high`, at or above it), since every pinned agent already runs
+above `high`, and says to escalate by fresh
+dispatch because a mid-session model switch re-pays the prompt cache and
+drops earlier reasoning. That guidance prices the API; the `cost` axis is
+subscription burn, which it does not measure.
+
+**Code-quality and spec review pin Opus 5.5 at `xhigh` on Claude Code.** Both
+agents inherited the parent's model. With sessions moving to Fable 5.2 they
+became the only reviewers running on it, while test-quality, contract and trim
+review stayed on Opus. The operator chose the pin; Codex and other harnesses
+keep the parent's model and effort.
+
+Open: the `xhigh` pins on the watcher and the reviewers have no measurement
+behind the level. The calibration recipe above is how to get one.
+
 ## Operator-supplied reference rows (2026-09-29)
 
-The operator re-graded `gpt-6.1-sol` to 7 / 9 / 8 / 8 / 6 and removed the
-older `gpt-6-sol` row. Astra's speed is 5, Fable's intelligence is 9.5 and
-speed is 4, Opus's speed is 6, and Sonnet's speed is 8. The other scores
-remain unchanged. The usage page links the canonical skill table.
+The operator removed the older `gpt-6-sol` row and re-graded several others.
+Those scores were superseded by the 2026-11-05 re-grade; the table in the
+skill is the only current copy. The usage page links it.
 
-The table retains its legacy-illustrative qualification. These operator-supplied
-edits provide no new evaluation provenance or general routing mandate.
+The table retains its illustrative qualification. Operator-supplied edits
+provide no new evaluation provenance or general routing mandate.
 
 ## Claude CI watching uses Sonnet 5.5 (2026-09-29)
 
@@ -56,7 +104,7 @@ A plugin that hard-codes one operator's fleet ships a policy its adopters never 
 
 ## One row per model; cost and speed kept apart (2026-08-12)
 
-Effort is not a modeled axis: each model gets one row, graded at the effort it actually runs at, and a change of habitual effort re-grades the row rather than splitting it. `cost` is subscription-limit burn alone and `speed` is wall-clock turnaround, since cost had included wall-clock and would otherwise score it twice. For shipped work the order is intelligence, taste, cost, speed; speed breaks ties between level rows and never buys a quality drop. "Climb effort before hopping models" was cut, not moved: standing escalation permission already covers rerunning a tier up.
+Effort is not a modeled axis: each model gets one row, graded at the effort it actually runs at, and a change of habitual effort re-grades the row rather than splitting it. `cost` is subscription-limit burn alone and `speed` is wall-clock turnaround, since cost had included wall-clock and would otherwise score it twice. For shipped work the order is intelligence, taste, cost, speed; speed breaks ties between level rows and never buys a quality drop. "Climb effort before hopping models" was cut then as already covered by standing escalation permission; the 2026-11-09 section above restores it as an ordered step.
 
 ## Renamed to model-reference; the floor leaves (2026-08-20)
 
