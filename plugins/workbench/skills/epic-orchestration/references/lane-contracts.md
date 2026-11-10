@@ -52,9 +52,11 @@ The initial dispatch is a complete brief that works without tracker access:
 - **Setup:** validated integration ref/SHA, worktree and branch, repository setup
   and toolchain, applicable repository rules and publication state. Include the
   shared scope folder and the [local tooling boundary](local-tooling.md); identify any tooling
-  explicitly approved for delivery and its authority source. Name your
-  delivery gate separately from any operator-reserved publication decision and
-  cite the governing instruction for that reservation.
+  explicitly approved for delivery and its authority source. State the
+  delivery gate in these terms: local commits are authorized; push, PR and CI
+  wait for your delivery authorization, which follows your acceptance of the
+  completion-round handback. Name any operator-reserved publication decision
+  separately and cite the governing instruction for that reservation.
 - **Inputs:** contract revision and smallest complete reading set, including
   exact required sections. Separate supporting evidence from startup reading;
   state which checks need it. Resolve conflicting contracts before dispatch.
@@ -72,7 +74,9 @@ The initial dispatch is a complete brief that works without tracker access:
   lane reconciliation reads that folder. An implementation contract also names
   the completion round's inputs from [Delivery](delivery.md): the epic goal and
   journey step for the lane's `scope-review` attempt, and the trim's commit
-  subject.
+  subject. Its last step is the completion round and a `ready-for-validation`
+  handback with the branch unpublished; opening the PR is a step of the later
+  delivery authorization, never of the brief.
 
 Name required skills by host name, task inputs, outcome and evidence. Do not
 copy their procedures or model routing, pin plugin versions/cache paths, or add
@@ -85,7 +89,10 @@ what changes, its scope basis, refreshed base/evidence where required, and any
 changed gates or authority. Retain unchanged terms by reference instead of
 repeating setup, standing rules, review instructions and the report template.
 Name the role's reporting skill in each amendment; implementation delivery
-authorizations name `workbench:epic-implementation`.
+authorizations name `workbench:epic-implementation`. An amendment or correction
+ends at a `ready-for-validation` handback like the brief: before the lane's PR
+exists its branch stays unpublished, and only a delivery authorization written
+under [Delivery](delivery.md) opens that gate.
 For a recovered session, make the current contract and amendments directly
 readable; reconcile conflicting revisions before continuing.
 

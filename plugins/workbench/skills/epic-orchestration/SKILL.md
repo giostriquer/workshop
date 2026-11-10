@@ -16,7 +16,7 @@ A lane returns for a ruling when the existing contract does not settle a decisio
 | Role | Owns | Boundary |
 | --- | --- | --- |
 | **Orchestrator** (you) | tickets, dispatches, independent validation, rulings, lane publication authorization | Never implements deliverables, commits, pushes, opens PRs or merges. |
-| **Implementer lane** | one worktree, implementation, completion review and report | Publishes only under your delivery authorization. |
+| **Implementer lane** | one worktree, implementation, completion review and report | Never pushes or opens a PR before your delivery authorization. |
 | **Auditor** | blind empirical audit of the artifact, findings with repro and source anchor | Does not read the PR list or implement fixes. |
 | **Operator** | lane dispatch, merges, product decisions and epic closure | Grants scope and authority. |
 
@@ -203,32 +203,35 @@ authority or issue work whose trigger has not fired.
 
 ## Completion review and delivery
 
-When the full agreed work set is verified and ready to ship, the lane uses
-`trim-comments`, then `code-quality-review` over the trimmed range, plus
-`test-quality-review` when production logic or tests changed and `contract-review`
-when observable behavior, consumer contracts or cross-component wiring changed.
-Applicable reviews run in parallel. Alongside that round the lane attempts
-`scope-review` once and records the outcome in its report's `REVIEW` scope slot.
-Intermediate validation reports and requests for rulings do not trigger review.
+A lane publishes nothing before you accept its work. The order is fixed:
 
-A pending required review or unconfirmed blocking disposition holds delivery
-unless the operator explicitly waives it or repository rules supersede the gate.
+1. **Completion round.** With the full agreed work set verified, the lane runs
+   the comment trim, the applicable reviews and one `scope-review` attempt,
+   then hands back `ready-for-validation` with its branch unpushed and no PR.
+   Intermediate reports and requests for rulings do not trigger review.
+2. **Acceptance.** You validate that head. A pending required review or
+   unconfirmed blocking disposition holds delivery unless the operator
+   explicitly waives it or repository rules supersede the gate.
+3. **Delivery authorization.** A separate dispatch naming the accepted revision
+   lets the lane push, open or update its PR, and monitor/fix CI. A brief,
+   amendment or correction never carries it.
+4. **Delivery check.** At green CI, read each commit added since the accepted
+   revision that is not a clean integration-branch merge, and verify terminal
+   CI and delivery state. A watcher's promise or an opened PR is not a
+   completed delivery.
+
 Before accepting a delivery range or writing an authorization, read
-[Delivery](references/delivery.md) for the range inspection, reviewer inputs and
-review record, the authorization's contents and the lane's latitude.
+[Delivery](references/delivery.md) for the range inspection, reviewer inputs,
+review record, authorization contents, lane latitude and delivery check.
 
 **You decide routine lane delivery authorization within the approved epic.**
-Once independent acceptance and required pre-publication gates are satisfied,
-authorize the lane to push its branch, open or update its PR, and monitor/fix CI.
-A dispatch's "not yet authorized" or "await delivery authorization" is your
-staged gate to release, not a request for another operator approval. Ask the
-operator only when a governing instruction explicitly reserves that publication
-decision or the action exceeds delegated scope or authority; identify that
-source or boundary. Your own dispatch, ledger or recovery note cannot create
-such a reservation. Merge decisions remain with the operator.
-
-Verify terminal CI and delivery state before calling the wave done. A watcher's
-promise or an opened PR is not a completed delivery.
+Issue it once step 2 is satisfied. A dispatch's "not yet authorized" or "await
+delivery authorization" is your staged gate to release, not a request for
+another operator approval. Ask the operator only when a governing instruction
+explicitly reserves that publication decision or the action exceeds delegated
+scope or authority; identify that source or boundary. Your own dispatch, ledger
+or recovery note cannot create such a reservation. Merge decisions remain with
+the operator.
 
 ## Rulings and findings
 

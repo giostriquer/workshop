@@ -261,6 +261,25 @@ gates. It sends the authorization file and copyable pointer without asking you
 to repeat that decision. "Await delivery authorization" in its own dispatch is
 the coordinator's gate to release. Holds name their decision owner and source.
 
+**Does a PR exist before the coordinator has validated the work?**
+
+No. The order is fixed. The lane finishes its completion round and hands back
+with its branch unpushed and no PR. The coordinator validates that head, then
+sends a separate delivery authorization naming the accepted revision. A brief,
+amendment or correction never carries that authorization, so nobody reviews or
+merges work the coordinator has not accepted. A correction moves the head, and
+the corrected head is validated before it is authorized.
+
+**What does the coordinator check after CI is green?**
+
+Only what was added since the revision it accepted. The lane's delivery
+handback lists each added commit with its kind: integration merge, conflict
+resolution, CI fix or correction. The coordinator reads every one that is not
+a clean merge of the integration branch and confirms the terminal CI result,
+then reports the PR ready for your merge. If a lane reports a PR at a head the
+coordinator never accepted, it validates that head at once and asks you, in a
+hold line, not to merge until it reports.
+
 An operator or repository instruction can explicitly reserve a publication
 decision for you. The coordinator identifies that instruction when asking; its
 own dispatch or ledger cannot invent the reservation. Publication stays within
@@ -409,6 +428,9 @@ review mechanics.
   the tickets its delivery closes.
 - Each return tells you which criteria closed and which remain; tickets close as
   their steps are accepted.
+- Every lane PR opens at or after a revision the coordinator accepted, under a
+  delivery authorization that names it.
+- Negative signal: a lane brief whose steps include opening the PR.
 - A hold names the one step it stops; the rest of the epic keeps moving.
 - A hold across several lanes, or one only you can release, is the first thing
   you read in every reply, with the date it was last rechecked and the action it

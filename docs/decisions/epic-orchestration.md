@@ -2,6 +2,62 @@
 
 This note is the rationale for the `epic-orchestration` skill, shipped in the `workbench` plugin; superseded choices are omitted and git history keeps the originals.
 
+## A lane publishes nothing before owner acceptance (2026-11-10)
+
+One owner session ran an epic for eleven days. Its first briefs stated the
+gate: local commits authorized, with push, PR and CI waiting for the owner's
+delivery authorization after validation. From the fifth day, after a delivery
+pause was lifted, its dispatches folded the review round, the PR and the CI
+watch into one list of steps. From the seventh day its initial briefs ended
+with "open the PR" and a handback carrying the PR link and the CI result. The
+owner then validated PR heads after green CI. On one PR two teammates approved
+16 minutes after it opened, before the owner had read it, and only the
+operator's patience stood between that PR and a merge.
+
+The original skill forbade a lane from pushing or opening a PR before
+authorization and drew the loop as report, owner validation, authorization,
+PR. The 0.43.1 rewrite kept that order only as "publishes only under your
+delivery authorization". Nothing said the authorization is its own dispatch, so
+a brief could carry it and still satisfy the words. The lane's skill had no
+hold of its own, so a lane did whatever its dispatch ordered.
+
+The owner complied with the wording and wrote a dispatch of the wrong shape, so
+the fix is a fixed order and required contract content, not a prohibition list.
+The entrypoint states four numbered steps: a completion round that ends in an
+unpublished handback, owner acceptance, a separate delivery authorization that
+names the accepted revision, and a delivery check. A brief, amendment or
+correction never carries the authorization. The contract's setup states the
+gate in fixed terms, and the brief's last step is the completion-round
+handback. `epic-implementation` holds publication on the lane side, which also
+covers an owner session still running an older copy of this skill. The
+report's `CHECKS` field gains a `delivery` slot so both sides state
+publication.
+
+Validating before the PR leaves one gap: the accepted commit is not the one
+that merges, because the integration merge and CI fixes come after it. The
+delivery check closes that gap. The lane lists each commit added since the
+accepted revision with its kind, and the owner reads every one that is not a
+clean integration merge and confirms terminal CI. The accepted range gets no
+second full validation. A PR already open at a head the owner never accepted is
+validated at once, with a hold line asking the operator not to merge.
+
+The list of which reviews the completion round runs moved from the entrypoint
+to the delivery reference's completion-round paragraph, which the lane reads
+before the round, to keep the entrypoint under its size bound.
+
+The owner session's transcript is the recorded failure. Five scenario probes
+followed. A lane whose brief listed "open the PR" as a step opened it under the
+previous skill; under this one it skipped the step and handed back unpublished.
+An owner whose ledger held three earlier briefs ending in "open the PR", with a
+deadline two days out, wrote a brief that ends at the unpublished handback and
+states the gate. An owner holding a confirmed defect, with the operator asking
+for the PR that day, sent a correction that carries no authorization. An owner
+asked at green CI whether to merge confirmed the integration merge was clean,
+read the conflict-resolution and CI-fix commits, confirmed terminal CI on that
+head and did not revalidate the accepted range. Each scenario ran once, in a
+fresh context on Fable 5.2: regression evidence for that scenario, not a
+reliability estimate.
+
 ## The owner reconciles lanes, drains ready work and closes lanes out (2026-11-09)
 
 A review of the week of 2026-11-02 found the same stall in two long-lived owner

@@ -8,6 +8,12 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.65.0: 2026-11-10
+
+- **Hold every lane PR until the owner has accepted the work.** `epic-orchestration` fixes the delivery order: the lane's completion round ends in a `ready-for-validation` handback with its branch unpushed and no PR, the owner validates that head, and a separate delivery authorization names the accepted revision. A brief, amendment or correction never carries that authorization, and a corrected head is validated before it is authorized. ([decision](decisions/epic-orchestration.md#a-lane-publishes-nothing-before-owner-acceptance-2026-11-10))
+- **Check only what was added after acceptance.** At green CI the owner reads each commit added since the accepted revision that is not a clean integration merge and confirms terminal CI, without a second full validation. A PR already open at a head the owner never accepted is validated at once, with a hold line asking the operator not to merge. ([decision](decisions/epic-orchestration.md#a-lane-publishes-nothing-before-owner-acceptance-2026-11-10))
+- **Keep the hold on the lane side too.** `epic-implementation` pushes or opens a PR only under a delivery authorization, and answers a dispatch step that orders either before one has arrived with the unpublished handback. The report's `CHECKS` field gains a `delivery` slot: `unpublished (awaiting authorization)`, or the PR, CI and merge state with each commit added since acceptance and its kind. ([decision](decisions/epic-implementation.md#publication-waits-for-acceptance-2026-11-10))
+
 ## workbench 0.64.1: 2026-11-09
 
 - **Ask the open question and the choice questions in one plain-text message.** While the user has not yet said what they want a thing for, `brainstorming` asks that open question together with any questions whose choices it can name, in plain text, and waits for the reply. A structured prompt returns once its own questions are answered, which left the open question unanswered; it is used once the purpose is known. ([decision](decisions/skill-wording-hardening.md#brainstorming-takes-three-question-techniques-from-upstream-v702-2026-11-09))
@@ -92,7 +98,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 ## workbench 0.59.0: 2026-10-30
 
 - **Invoke Muse through the host harness.** `scope-review` now prefers direct invocation from Codex and Claude, with bounded read-only source inspection and native JSON-schema output. The existing packet runner is optional; single-attempt skip behavior and parent finding triage remain. ([decision](decisions/scope-review.md#native-host-invocation-2026-10-30))
-
-## workbench 0.58.0: 2026-10-30
-
-- **Retire `handoff-goal`.** The skill, contract templates and historical docs move to the deprecated archive. Active workflow routes now offer Direct and Plan, and plugin catalogs no longer expose the retired skill. ([decision](../attic/deprecated/skills/handoff-goal/origin.md#retired-2026-10-30))

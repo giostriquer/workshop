@@ -75,6 +75,22 @@ operator could grant, and a contract asking for a saved report: its reply ended
 with the fenced report, saved the same block, and named `operator` as owner in
 `NEXT STEP` with the exact ask. Each scenario ran once, in a fresh context on Opus 5.5, before the last round of review corrections: regression evidence for that scenario, not a reliability estimate.
 
+### Publication waits for acceptance (2026-11-10)
+
+Lanes opened PRs before the coordinator had validated the work, because their
+dispatches listed "open the PR" as a step and this skill said nothing about
+publication. The skill now holds it: local commits need no authorization, and
+a push or a PR waits for a delivery authorization naming the revision the
+coordinator accepted. After the completion round the lane hands back
+`ready-for-validation` with `delivery: unpublished` in `CHECKS`. A dispatch
+step that orders a push or a PR before an authorization has arrived gets that
+handback first, so a coordinator session still running an older copy of its
+skill cannot move the gate. The authorization covers its PR until merge, and
+each delivery handback lists the commits added after the accepted revision with
+their kind, which is what the coordinator's delivery check reads. The reason
+and the coordinator's side are in
+[epic-orchestration](epic-orchestration.md).
+
 ## Validation
 
 The operator's repeated-round example is the recorded failure. A fresh control

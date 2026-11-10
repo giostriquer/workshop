@@ -6,13 +6,17 @@ regression RED; a claimed regression fix still needs defect-sensitivity evidence
 Keep applicable checks that were not run distinct from checks that do not apply.
 The `scope` slot records the lane's one `scope-review` attempt at the completion
 round; before that round it reads `not run (<why>)`.
+The `delivery` slot in `CHECKS` reads `unpublished (awaiting authorization)`
+until a delivery authorization has arrived. A delivery handback gives the PR, CI
+and merge state and each commit added after the accepted revision with its
+kind: integration merge, conflict resolution, CI fix or correction.
 
 ```
 ## <LANE> REPORT
 STATUS: ready-for-validation | blocked | need-follow-up | need-guidance
 WORKTREE + BRANCH + RANGE: <path> · <branch> · <base>..<head>
 PER TICKET: <ID> · <change in one sentence> · red: <defect-sensitivity evidence, or not applicable + reason> · green: <results>
-CHECKS: <suite> <n>/<n> · typecheck · lint · format
+CHECKS: <suite> <n>/<n> · typecheck · lint · format · delivery: unpublished (awaiting authorization) | PR <link>, CI <state>, merge <state>, added since accepted <sha>: <each commit + kind, or none>
 REVIEW: trim: DONE (<its comment-only commit, inside RANGE per trim-comments' Who runs it>) | NOTHING_TO_TRIM | BLOCKED | not run (<why>), encoding offers: <each, or none> · code: <n blocking / n advisory, one-line disposition each> · tests: PASS | ISSUES_FOUND (<n>, one-line disposition each) | not required · behavior/contracts: PASS | ISSUES_FOUND | BLOCKED (<findings and disposition>) | not required · scope: REVIEWED (<triage>) | SKIPPED (<reason>) | not run (<why>) · Mutation run: <line>
 REVIEW CLOSURE (per discipline): <code | tests | behavior/contracts> · <reviewed revision> · <reviewer-confirmed finding IDs/dispositions + evidence> · follow-up passes: <n> · hold: <none, or the convergence condition that stopped this review>
 FORKS/DEVIATIONS: <numbered, or "none">

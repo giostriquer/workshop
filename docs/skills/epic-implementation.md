@@ -63,8 +63,9 @@ remain explicit evidence gaps.
 No. The reply ends with the populated report block. When the contract also
 wants the handback saved, the file holds the same block, and a path to it
 supports the reply without replacing it. Evidence links support the populated
-fields. Missing checks or evidence are marked explicitly; delivery state (PR,
-CI and merge) goes in `CHECKS`. `REVIEW` and `REVIEW CLOSURE` retain separate
+fields. Missing checks or evidence are marked explicitly; delivery state
+(unpublished, or the PR, CI, merge and commits added since acceptance) goes in
+`CHECKS`. `REVIEW` and `REVIEW CLOSURE` retain separate
 code, test, and behavior/contract verdicts when applicable.
 For `blocked`, `need-follow-up` and `need-guidance`, `NEXT STEP` names the needed
 action or decision, owner and recommendation. Omit it for `ready-for-validation`.
@@ -85,6 +86,19 @@ dispatches, the trim's commit and the one scope-review attempt, then runs the
 round. The contract supplies the epic goal, the journey step and the trim's
 commit subject.
 
+**When does the lane push or open its PR?**
+
+Only after the coordinator's delivery authorization, a dispatch naming the
+revision the coordinator accepted. After the completion round the lane hands
+back `ready-for-validation` with its branch unpushed and no PR, with
+`delivery: unpublished (awaiting authorization)` in `CHECKS`, and holds. Local
+commits need no authorization. If a dispatch orders a push or a PR before that
+authorization exists, the lane completes the steps before it and sends the same
+handback first. Once authorized, the lane follows `file-pr`; conflict
+resolutions, CI fixes and corrections push under the authorization until the PR
+merges, and each delivery handback lists every commit added after the accepted
+revision with its kind.
+
 **Where does the scope review go?**
 
 In the `REVIEW` field's `scope` slot: `REVIEWED` with the lane's triage,
@@ -96,4 +110,5 @@ The operator can paste each complete handback directly to the coordinator,
 with the same fields after multiple rounds and no need to open another file
 to discover the current state. Acknowledge-only dispatches come back as one
 line, and an approval only you can give reaches you as an exact ask while the
-lane keeps working.
+lane keeps working. No lane PR appears before the coordinator has accepted the
+work.

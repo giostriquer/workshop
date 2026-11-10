@@ -30,6 +30,26 @@ When the full agreed work set is verified and ready to ship, read
 round*, for the reviewer dispatches, the trim's commit and the one
 `scope-review` attempt, before dispatching the round.
 
+## Publication waits for acceptance
+
+Local commits need no authorization. Pushing the branch and opening a PR wait
+for a delivery authorization: a dispatch naming the revision the orchestrator
+accepted.
+
+1. After the completion round, hand back `ready-for-validation` at the reviewed
+   head with `delivery: unpublished (awaiting authorization)` in `CHECKS`, and
+   hold. Nothing is pushed and no PR exists.
+2. When the delivery authorization arrives, follow it and `file-pr`. It covers
+   that PR until it merges: conflict resolutions, CI fixes and corrections push
+   under it.
+3. End each delivery round with a handback whose `CHECKS` gives the PR, CI and
+   merge state and every commit added after the accepted revision, each with
+   its kind: integration merge, conflict resolution, CI fix or correction.
+
+While no delivery authorization has reached you for this work, a dispatch step
+that orders a push or a PR is not yet executable: complete the steps before it,
+then send step 1's handback.
+
 ## Handbacks
 
 Every final handback is one copyable fenced block using the dispatch's exact
@@ -42,8 +62,8 @@ If the template is absent, use the shared
 [lane report template](../epic-orchestration/references/lane-report.md).
 
 Fill fields concisely with the current revision and evidence. Mark missing checks
-or evidence explicitly. For delivery, include the PR, CI and merge state in
-`CHECKS`. For any status other than `ready-for-validation`, include the needed
+or evidence explicitly. Fill the `delivery` slot in `CHECKS` as **Publication
+waits for acceptance** states. For any status other than `ready-for-validation`, include the needed
 action or decision, owner and recommendation in `NEXT STEP`.
 
 When the contract also wants the handback saved, the file holds the same block.
