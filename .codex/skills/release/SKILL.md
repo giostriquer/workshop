@@ -6,16 +6,20 @@ description: Use when the user asks to release in the Workshop repo, because wor
 # Release
 
 Ship every plugin with unreleased changes, then bring this machine's global
-Claude Code and Codex caches up to the pushed release. Muse is outside the
-helper: `bump` writes its manifest, and step 6 reports its installed versions
-without refreshing them. The user's request to
-release authorizes what it lists: version bumps, release notes, one commit and push to
-`main`, and updating the Workshop plugins this machine already has. It
-authorizes nothing else, such as installing or removing a plugin.
+Claude Code, Codex and Muse installs up to the pushed release. The user's
+request to release authorizes what it lists: version bumps, release notes, one
+commit and push to `main`, and updating the Workshop plugins this machine
+already has. It authorizes nothing else, such as installing or removing a
+plugin, approving agent definitions in Muse, or changing a skill's invocation
+policy there.
 
-Both hosts install Workshop from GitHub `main`. Claude Code keeps one cache
-folder per version; Codex keeps one folder per plugin, and `refresh` replaces
-it. A change pushed without a new version never reaches an installed copy:
+Claude Code and Codex install Workshop from GitHub `main`. Claude Code keeps
+one cache folder per version; Codex keeps one folder per plugin, and `refresh`
+replaces it. Muse installs from whatever source its `workshop` marketplace was
+added with, which can be a local checkout, and keeps one folder per package.
+`verify-caches` compares every host's copy with `origin/main`, so a Muse copy
+taken from a checkout holding unpushed or unshipped changes shows as a
+mismatch. A change pushed without a new version never reaches an installed copy:
 `claude plugin update` answers "already at the latest version" and keeps the old
 files. So every shipped change gets a new version, and the refresh follows the push.
 
@@ -84,8 +88,8 @@ Apply the repo `push` skill on `main`, with two specifics:
 - Its path list holds the shipping files from step 2 plus every file step 3
   wrote (the manifests, the marketplace entry and `docs/change-log.md`), and
   nothing else, so `push`'s pathspec commands take exactly those files and
-  leave what another session staged. `git show --name-only --format= HEAD`
-  lists exactly them.
+  leave what another session staged. `git show --no-renames --name-only
+  --format= HEAD` lists exactly them.
 - Message as in the history: subject `<fix|feat>(<plugin>|plugins): <what ships>`,
   then one paragraph per released version starting `Release <Plugin> x.y.z`, then a
   line on supporting docs. No trailer.
@@ -105,8 +109,9 @@ is about to replace. The count is an estimate, since it includes Codex's
 helper processes and one process can host several threads: keep it for the
 report as one.
 
-Run `refresh`. For each host with its CLI on `PATH`, it updates the `workshop`
-marketplace, then each user-scope Workshop plugin that `origin/main` releases.
+Run `refresh`. For each host with its CLI on `PATH` (Claude Code, Codex and
+Muse), it updates the `workshop` marketplace, then each user-scope Workshop
+plugin that `origin/main` releases.
 A project- or local-scope install is skipped, because it updates from its own
 project; report it.
 
@@ -129,10 +134,15 @@ Run `verify-caches`. It compares every installed Workshop copy with
 **Done:** exit 0. For a `stale` or `mismatch` row, run `refresh` once more and
 verify again. If the row still fails, report it: the refresh is not done.
 
-For Muse, run `muse plugins list --json` and note the `record.version` of each
-plugin `origin/main` releases beside its released version. This is report-only:
-the release does not update Muse, and a missing `muse` CLI is reported as
-skipped.
+A Muse row carries two more lists, and neither fails the check:
+
+- `review`: agent definitions Muse holds inactive until they are approved
+  again. Any release that changes an agent file puts that agent here. Approval
+  is Muse's review step and stays with the user: report the list with
+  `muse plugins approve <plugin>`, and do not run it.
+- `policy`: released skills marked user-invoked only that Muse still lets the
+  model invoke, because its loader ignores that frontmatter key. Report each
+  with `muse skills user-only <id> --scope plugin`, and do not run it.
 
 On Windows the helper is unverified: a CLI installed only as a `.cmd` shim
 reads as not on `PATH`.
@@ -144,8 +154,8 @@ reads as not on `PATH`.
 - The commit and the push result, or why the release stopped and what it changed first.
 - Each host and plugin: installed version and `verify-caches` status, including
   `not-released`, `none` and `skipped` rows.
-- Muse: each Workshop plugin's installed and released version, marked not
-  refreshed by this release.
+- Muse: each row's `review` and `policy` lists, with the command the user runs
+  for each.
 - Gaps: missing decision notes or usage pages, changes kept out, anything not verified.
 - Running Claude Code sessions keep the version they loaded: restart to use the
   update. Live Codex sessions lost that version's files: say whether Codex was

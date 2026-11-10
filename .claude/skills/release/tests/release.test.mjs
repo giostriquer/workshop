@@ -336,16 +336,29 @@ test('a wrong command or argument count prints the usage', (t) => {
 
 // Fake CLIs answer exactly `plugin list --json` from a file, log every other
 // call, and fail a call that contains `fail`. `null` leaves the CLI missing.
-function hosts(f, { claude = [], codex = [], fail = null } = {}) {
-  for (const [name, list] of [['claude', claude], ['codex', codex && { installed: codex }]]) {
+// Muse is absent unless a test passes `muse`: a list of install records, each
+// optionally carrying `agents`, the runtime states `plugins inspect` reports.
+function hosts(f, { claude = [], codex = [], muse = null, museSkills = [], fail = null } = {}) {
+  const museList = muse && { plugins: muse.map(({ agents, ...record }) => ({ record })) };
+  for (const [name, list] of [['claude', claude], ['codex', codex && { installed: codex }], ['muse', museList]]) {
     const bin = path.join(f.base, 'bin', name);
     rmSync(bin, { force: true });
     if (list === null) continue;
     const listFile = path.join(f.base, `${name}-list.json`);
     writeFileSync(listFile, JSON.stringify(list));
+    const inspections = (muse ?? []).map(({ agents = {}, ...record }) => {
+      const file = path.join(f.base, `muse-inspect-${record.id}.json`);
+      writeFileSync(file, JSON.stringify({ record, runtime_capabilities: Object.entries(agents)
+        .map(([id, status]) => ({ candidate: { plugin_id: record.id, scoped_definition_id: id }, status })) }));
+      return `if [ "$*" = "plugins inspect ${record.id} --json" ]; then cat '${file}'; exit 0; fi`;
+    });
+    const skillsFile = path.join(f.base, 'muse-skills.json');
+    writeFileSync(skillsFile, JSON.stringify({ skills: museSkills }));
+    inspections.push(`if [ "$*" = "skills list --source plugin --json" ]; then cat '${skillsFile}'; exit 0; fi`);
     writeFileSync(bin, [
       '#!/bin/sh',
-      `if [ "$*" = "plugin list --json" ]; then cat '${listFile}'; exit 0; fi`,
+      `if [ "$*" = "plugin list --json" ] || [ "$*" = "plugins list --json" ]; then cat '${listFile}'; exit 0; fi`,
+      ...(name === 'muse' ? inspections : []),
       `printf '%s\\n' "$*" >> '${path.join(f.base, `${name}.log`)}'`,
       fail ? `case "$*" in *'${fail}'*) echo "boom: $*" >&2; exit 3;; esac` : '',
       'exit 0',
@@ -353,6 +366,8 @@ function hosts(f, { claude = [], codex = [], fail = null } = {}) {
     chmodSync(bin, 0o755);
   }
 }
+const withoutMuse = (items) => items.filter((item) => item.host !== 'muse');
+
 const calls = (f, name) => {
   const log = path.join(f.base, `${name}.log`);
   return existsSync(log) ? readFileSync(log, 'utf8').trim().split('\n') : [];
@@ -392,7 +407,7 @@ test('refresh updates the marketplace, then each user-scope released Workshop pl
   ]);
   assert.deepEqual(calls(f, 'codex'), ['plugin marketplace upgrade workshop --json', 'plugin add alpha@workshop --json']);
   const steps = JSON.parse(r.stdout).steps;
-  assert.deepEqual(steps.filter((step) => step.status !== 'ok').map(({ host, plugin, status }) => ({ host, plugin, status })), [
+  assert.deepEqual(withoutMuse(steps).filter((step) => step.status !== 'ok').map(({ host, plugin, status }) => ({ host, plugin, status })), [
     { host: 'claude', plugin: 'beta', status: 'skipped' },
   ]);
 });
@@ -405,6 +420,7 @@ test('refresh skips a host without its CLI or without a released Workshop plugin
   assert.deepEqual(JSON.parse(r.stdout).steps.map(({ host, status }) => ({ host, status })), [
     { host: 'claude', status: 'skipped' },
     { host: 'codex', status: 'skipped' },
+    { host: 'muse', status: 'skipped' },
   ]);
   assert.deepEqual(calls(f, 'codex'), []);
 });
@@ -432,7 +448,7 @@ test('installed copies that match the released tree pass, ignoring host markers 
   hosts(f, { claude: [claudeEntry(f), ...foreignClaude(f)], codex: [codexEntry(), ...foreignCodex] });
   const r = f.run('verify-caches');
   assert.equal(r.status, 0, r.stdout + r.stderr);
-  assert.deepEqual(JSON.parse(r.stdout).rows.map(({ host, plugin, status, files }) => ({ host, plugin, status, files })), [
+  assert.deepEqual(withoutMuse(JSON.parse(r.stdout).rows).map(({ host, plugin, status, files }) => ({ host, plugin, status, files })), [
     { host: 'claude', plugin: 'alpha', status: 'match', files: 6 },
     { host: 'claude', plugin: 'retired', status: 'not-released', files: undefined },
     { host: 'codex', plugin: 'alpha', status: 'match', files: 6 },
@@ -496,13 +512,15 @@ test('a host without its CLI is skipped and one without Workshop plugins says so
     const r = f.run('verify-caches');
     assert.equal(r.status, 0, r.stdout + r.stderr);
     const rows = JSON.parse(r.stdout).rows.map(({ host, status }) => ({ host, status }));
-    assert.deepEqual(rows, ['claude', 'codex'].map((host) => ({ host, status: host === missing ? 'skipped' : 'match' })));
+    assert.deepEqual(rows, [...['claude', 'codex'].map((host) => ({ host, status: host === missing ? 'skipped' : 'match' })),
+      { host: 'muse', status: 'skipped' }]);
   }
   const f = fixture(t);
   hosts(f, { claude: [], codex: foreignCodex.slice(0, 1) });
   assert.deepEqual(f.json('verify-caches').rows.map(({ host, status }) => ({ host, status })), [
     { host: 'claude', status: 'none' },
     { host: 'codex', status: 'none' },
+    { host: 'muse', status: 'skipped' },
   ]);
 });
 
@@ -513,6 +531,75 @@ test('without CODEX_HOME the Codex copy is read from ~/.codex', (t) => {
   hosts(f, { claude: [], codex: [codexEntry()] });
   const row = f.json('verify-caches').rows.find((r) => r.host === 'codex');
   assert.equal(row.status, 'match');
+});
+
+const musePath = (f, digest = 'abc123') => path.join(f.base, 'muse-home/plugins/cache/local/alpha', digest, 'package');
+const museEntry = (f, version = '1.2.0', extra = {}) => ({
+  id: 'alpha', version, enabled: true, source: { provenance: 'marketplace-user-added', path: f.file('plugins/alpha') },
+  cache_path: musePath(f), ...extra,
+});
+// Installs Muse holds that are not this marketplace's releases: a local bundle
+// with a released name's sibling, and a marketplace plugin the release does not list.
+const foreignMuse = (f) => [
+  { id: 'beta', version: '0.0.1', enabled: true, source: { provenance: 'local-path', path: path.join(f.base, 'b') }, cache_path: path.join(f.base, 'b') },
+  { id: 'other', version: '3.0.0', enabled: true, source: { provenance: 'marketplace-user-added', path: path.join(f.base, 'o') }, cache_path: path.join(f.base, 'o') },
+];
+
+test('refresh updates the Muse marketplace snapshot, then each released marketplace plugin Muse has', (t) => {
+  const f = fixture(t);
+  hosts(f, { claude: null, codex: null, muse: [museEntry(f), ...foreignMuse(f)] });
+  const r = f.run('refresh');
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  assert.deepEqual(calls(f, 'muse'), ['plugins marketplace update workshop --json', 'plugins update alpha --json']);
+});
+
+test('a Muse copy is compared with origin/main, and agent definitions awaiting review are named without failing', (t) => {
+  const f = fixture(t);
+  install(f, musePath(f));
+  hosts(f, { claude: null, codex: null, muse: [
+    museEntry(f, '1.2.0', { agents: { 'alpha/watcher': 'trusted_enabled', 'alpha/reviewer': 'modified', 'alpha/new': 'review_needed' } }),
+    ...foreignMuse(f),
+  ] });
+  const r = f.run('verify-caches');
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  const rows = JSON.parse(r.stdout).rows.filter((row) => row.host === 'muse');
+  assert.deepEqual(rows.map(({ plugin, status, files, review }) => ({ plugin, status, files, review })), [
+    { plugin: 'alpha', status: 'match', files: 6, review: ['alpha/new: review_needed', 'alpha/reviewer: modified'] },
+  ]);
+  assert.deepEqual(calls(f, 'muse'), []);
+});
+
+test('a released user-invoked-only skill that Muse still lets the model invoke is named without failing', (t) => {
+  const f = fixture(t);
+  f.write('plugins/alpha/skills/two/SKILL.md', '---\nname: two\ndescription: Use when asked.\ndisable-model-invocation: true\n---\n\n# Two\n');
+  f.write('plugins/alpha/skills/three/SKILL.md', '---\nname: three\ndescription: Use when asked.\ndisable-model-invocation: true\n---\n\n# Three\n');
+  f.commit('feat: alpha gains two explicit-only skills');
+  f.publish();
+  install(f, musePath(f));
+  hosts(f, { claude: null, codex: null, muse: [museEntry(f)], museSkills: [
+    { id: 'plugin:alpha:one', activation: 'on' },
+    { id: 'plugin:alpha:two', activation: 'on' },
+    { id: 'plugin:alpha:three', activation: 'user-invocable-only' },
+  ] });
+  const r = f.run('verify-caches');
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  const row = JSON.parse(r.stdout).rows.find((entry) => entry.host === 'muse');
+  assert.deepEqual([row.status, row.policy], ['match', ['plugin:alpha:two']]);
+});
+
+test('a Muse copy on an older version is stale, and one with other bytes is a mismatch', (t) => {
+  const f = fixture(t);
+  install(f, musePath(f));
+  hosts(f, { claude: null, codex: null, muse: [museEntry(f, '1.1.0')] });
+  let r = f.run('verify-caches');
+  assert.equal(r.status, 1);
+  assert.equal(JSON.parse(r.stdout).rows.find((row) => row.host === 'muse').status, 'stale');
+  writeFileSync(path.join(musePath(f), 'skills/one/SKILL.md'), '# working tree bytes, never pushed\n');
+  hosts(f, { claude: null, codex: null, muse: [museEntry(f)] });
+  r = f.run('verify-caches');
+  assert.equal(r.status, 1);
+  const row = JSON.parse(r.stdout).rows.find((entry) => entry.host === 'muse');
+  assert.deepEqual([row.status, row.differing], ['mismatch', ['skills/one/SKILL.md']]);
 });
 
 test('the Codex copy of the skill matches the canonical one', () => {

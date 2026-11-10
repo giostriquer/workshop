@@ -206,3 +206,33 @@ that role, and any other name stays hashed so default output cannot leak a
 private agent's name, each with a test. `push` lists ignored paths under
 `.codex/skills` only, so a local Codex config file is never a candidate. A release test that had failed since the Muse manifest was added (it
 expected five manifest files, there are six) is corrected.
+
+## release refreshes and verifies Muse (2026-11-09)
+
+The release helper covered Claude Code and Codex and only read Muse's
+installed versions, so Muse stayed two releases behind until someone noticed.
+`refresh` now updates Muse's `workshop` marketplace snapshot and each released
+plugin Muse installed from a marketplace, and `verify-caches` compares the Muse
+copy with `origin/main` byte for byte like the others. A Muse install record
+names no marketplace, so a marketplace install of a released plugin name is
+taken as this marketplace's.
+
+Muse may have added the marketplace from a local checkout. The update then
+copies the working tree, not GitHub, which is why the byte comparison with
+`origin/main` matters there: a checkout holding unpushed or unshipped changes
+shows as a mismatch.
+
+Two things on Muse stay with the user, and the helper reports them without
+failing. A release that changes an agent file leaves that agent awaiting
+re-approval, since Muse's review binds the definition's source; the first run
+on a machine found all six Workbench agents in that state. And Muse's loader
+ignores `disable-model-invocation`, so a new user-invoked-only skill is
+model-invocable there until its policy is set; the same run found two. The
+release names each with the command to run and runs neither, because approving
+an agent and changing an invocation policy are trust settings on the machine,
+outside what a request to release authorizes.
+
+`push` checked its commit with `git show --name-only`, which shows a moved file
+under its new path only, so the retired skill's three moves read as three
+listed paths missing from a correct commit. The check now passes
+`--no-renames`.

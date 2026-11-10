@@ -60,6 +60,9 @@ noise only after the runs, so a result could be read to fit whatever came out.
 The operator approved the adaptation, reviewed at `236e5481d05cbadc315b374a5de54971858c27bb` (source manifest
 0.15.36). Upstream's other edits in the range were copy changes.
 
-No scenario run was made for this wording: the one probe attempted did not
-complete. The change is a single framing sentence checked by an independent
-read of the skill, which is why the stop rule was dropped.
+One scenario probe (Opus 5.5, fresh context, one run) asked for a comparison
+of two parsers with a known share of request time. Before any run, the reply
+wrote the decision rule (a threshold tied to that share and to the cost of the
+swap), the expected run-to-run variation, and how the trials would be read
+against both. Regression evidence for that scenario only. A first attempt at
+this probe did not complete and was reworded.

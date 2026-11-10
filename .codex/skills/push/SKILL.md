@@ -19,7 +19,7 @@ This skill is not restricted to a particular branch; it always operates on the b
 6. If no change-log update is the real source of the change, derive the message from the primary changed area in the diff.
 7. Write the paths that belong to this change, one per line, to a list file in the session's scratch directory. Name files, not directories. Paths that belong to someone else stay out of the list.
 8. Stage and commit from that list: `git --literal-pathspecs add -f --pathspec-from-file=<list>`, then `git --literal-pathspecs commit --pathspec-from-file=<list>` with a multiline message. The list file keeps paths out of shell word splitting, `--literal-pathspecs` keeps a path with glob characters from matching other files, `-f` stages a `.codex/` mirror path that a local exclude rule ignores, and the pathspec commit leaves files another session staged out of the commit. No trailer: this repository's history carries none.
-9. Check that `git show --name-only --format= HEAD` lists exactly the listed paths.
+9. Check that `git show --no-renames --name-only --format= HEAD` lists exactly the listed paths. Without `--no-renames` a moved file shows only its new path, and the old one looks missing.
 10. Push with `git push origin <current-branch>`.
 11. Report the branch, commit hash, and subject in one sentence, then any changed paths left out of the commit.
 
