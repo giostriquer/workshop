@@ -9,9 +9,11 @@ these files, and do not decompress an archive beside its original.
 
 On every host, a session belongs to this workspace when its recorded working
 directory is the workspace, a directory inside it, or one of its worktrees. A
-session started elsewhere counts only when its commands or edits name this
-workspace's path as a whole path, not as the start of a longer sibling name:
-search it for that path before keeping it. Subagent threads are left out.
+session started in a directory that contains the workspace (a parent such as
+the home folder) counts only when its commands or edits name this workspace's
+path as a whole path, not as the start of a longer sibling name: search it for
+that path before keeping it. A session recorded in another project stays out
+unless the user names that project. Subagent threads are left out.
 
 A host whose folder is absent has no history here: say so and go on. For a
 host not listed, look for its documented session store; when none is found,
@@ -41,7 +43,9 @@ Root: `$CODEX_HOME`, else `~/.codex`.
 - Most files, and every file under `archived_sessions/`, can be compressed as
   `.jsonl.zst`, and a plain `grep` skips them. Search them with `rg -z`, or
   stream one to standard output (`zstd -dc <file>`) and search the stream.
-  Without either tool, name the compressed sessions as unreadable.
+  Both routes need the `zstd` binary: check `command -v zstd` first, since
+  `rg -z` finds nothing and reports nothing without it. Without `zstd`, name
+  the compressed sessions as unreadable.
 
 ## Muse
 
@@ -49,7 +53,10 @@ Root: `~/.local/share/muse`.
 
 - Sessions: `sessions/YYYY/MM/DD/<session id>/session.jsonl`.
 - Subagent threads sit under `<session id>/subagent/<id>/session.jsonl`.
-- Session metadata records the working directory as `workspace_root`.
+- A `runtime.session.metadata` record near the top of each `session.jsonl`
+  holds the working directory as `workspace_root`.
+- Read the `session.jsonl` files only. Do not open `session-index.db`: opening
+  it writes beside the session store.
 
 ## Cursor
 

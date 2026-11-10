@@ -72,3 +72,12 @@ one workspace rule for every host, names where Muse keeps subagent threads and
 its working directory, and says most Codex history is compressed and how to
 search it. The Cursor layout is taken from upstream and was not checked on a
 machine with Cursor history.
+
+A second review pass corrected three things in the layout reference. Both
+routes for compressed Codex history need the `zstd` binary, and `rg -z` finds
+nothing and says nothing without it, so the reference has the check run first.
+The rule for sessions started outside the workspace is limited to a directory
+that contains it, such as the home folder: a session recorded in another
+project stays out unless the user names that project. And the Muse entry names
+the record that holds the working directory and says not to open the session
+index database, since opening it writes beside the session store.

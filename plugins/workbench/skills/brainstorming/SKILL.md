@@ -169,9 +169,10 @@ plus a short in-chat design is the whole process.
   it can establish; spend the user's attention on missing decisions.
 - Until the user has said what they want it for, in the request or an answer,
   ask that as a plain-text open question with no options: their own words
-  carry intent that offered options steer away from. Questions whose choices
-  you can name go in one structured prompt beside it, each choice with what
-  it trades off and which you would pick.
+  carry intent that offered options steer away from. While it is pending, ask
+  it and any questions with nameable choices in plain text in one message,
+  each choice listed with what it trades off and which you would pick, and
+  wait for the reply. Use the structured prompt once the purpose is known.
 - Say why you are asking: what the answer would change about what gets built.
 - Focus on understanding: purpose, constraints, success criteria
 

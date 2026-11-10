@@ -94,3 +94,10 @@ do with the result as an open question, said what the answer would settle, and
 put three decisions with nameable choices in one structured prompt, each with
 a trade-off and a pick. That is regression evidence for the scenario, not a
 reliability estimate.
+
+A second review pass found the reworded rule could still lose the open
+question: a structured prompt returns as soon as its own questions are
+answered, so a plain-text question asked beside it has nowhere to be answered.
+While the purpose is unknown, the open question and any questions with
+nameable choices now go in one plain-text message and the session waits for
+the reply; the structured prompt is used once the purpose is known.

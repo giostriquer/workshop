@@ -8,6 +8,14 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.64.1: 2026-11-09
+
+- **Ask the open question and the choice questions in one plain-text message.** While the user has not yet said what they want a thing for, `brainstorming` asks that open question together with any questions whose choices it can name, in plain text, and waits for the reply. A structured prompt returns once its own questions are answered, which left the open question unanswered; it is used once the purpose is known. ([decision](decisions/skill-wording-hardening.md#brainstorming-takes-three-question-techniques-from-upstream-v702-2026-11-09))
+
+## toolkit 0.23.1: 2026-11-09
+
+- **Tighten `recall`'s host reference.** It checks for the `zstd` binary before searching compressed Codex history, since `rg -z` finds nothing and reports nothing without it. A session started outside the workspace counts only when its directory contains the workspace, so another project's sessions stay out unless the user names that project. The Muse entry names the record that holds the working directory and says not to open the session index database. ([decision](decisions/recall.md#checked-2026-11-09))
+
 ## workbench 0.64.0: 2026-11-09
 
 - **Reconcile lanes every owner turn and drain ready work.** `epic-orchestration` starts each owner turn by comparing every active lane with the ledger, so an unrelayed report is validated and a silent lane is held for the operator. The reply that ends a turn now accounts for every open workset as active, dispatched or held, and carries the closing audit's brief, the closure proposal or a hold when none is open. Hold lines gain `since`, `rechecked` and `operator action` slots, and the slot takes any hold the operator releases. ([decision](decisions/epic-orchestration.md#the-owner-reconciles-lanes-drains-ready-work-and-closes-lanes-out-2026-11-09))
@@ -88,12 +96,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 ## workbench 0.58.0: 2026-10-30
 
 - **Retire `handoff-goal`.** The skill, contract templates and historical docs move to the deprecated archive. Active workflow routes now offer Direct and Plan, and plugin catalogs no longer expose the retired skill. ([decision](../attic/deprecated/skills/handoff-goal/origin.md#retired-2026-10-30))
-
-## toolkit 0.21.0: 2026-10-30
-
-- **Allow model invocation for dependency and HTML work.** `dependency-audit` and `html-artifact` can be selected when the task matches, with the Codex policy kept in sync. Existing scope, update authorization and verification requirements still apply. ([dependency decision](decisions/dependency-audit.md#model-invocation-2026-10-30), [HTML decision](decisions/html-artifact.md#model-invocation-2026-10-30))
-- **Retire `me-human`.** The complete skill and its historical docs move to the deprecated archive, outside all shipped plugin discovery paths. ([decision](../attic/deprecated/skills/me-human/origin.md#retired-2026-10-30))
-
-## workbench 0.57.0: 2026-10-30
-
-- **Add a Muse scope opinion at completion.** `scope-review` checks the original request, accepted increment, exclusions and evidence claims through one bounded Muse invocation. It trusts the configured authentication, skips invocation failures without fallback or delivery holds, and leaves finding triage to the parent while required reviewers retain their gates. ([decision](decisions/scope-review.md#decision-2026-10-30))

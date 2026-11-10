@@ -67,8 +67,9 @@ decomposed before any detail work; each sub-project gets its own design, route,
 and implementation cycle. Independent questions are batched, dependent ones
 stay sequential, and anything the codebase can establish it answers itself.
 Until you have said what you want the thing for, it asks that as an open
-question with no options attached, beside any questions whose choices it can
-name, and each question says what your answer would change.
+question with no options attached, in one plain-text message with any
+questions whose choices it can name, and waits for your reply. Each question
+says what your answer would change.
 
 **Exploring approaches.** Weak alternatives are dropped first. Two or three
 that remain, with trade-offs, recommendation first; or one, with the reason
