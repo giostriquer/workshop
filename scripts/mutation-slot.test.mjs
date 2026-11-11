@@ -103,8 +103,14 @@ test('recognizes campaign processes and ignores shells, pollers, builds and the 
     '  209 cargo build --release',
     '  210 node',
     '  211 node --inspect',
+    '  107 node /plugins/workbench/skills/test-quality-review/scripts/rust-mutants-runner.mjs --crate lib/parser --file src/parse.rs -- //lib/parser:parser_test',
+    '  108 node /Users/me/.local/bin/rust-mutants-runner --crate lib/parser --file src/parse.rs -- //lib/parser:parser_test',
+    '  109 /Users/me/.local/bin/rust-mutants-runner --crate lib/parser --file src/parse.rs -- //lib/parser:parser_test',
+    '  212 node /plugins/workbench/skills/test-quality-review/scripts/rust-mutants-runner.mjs --list --crate lib/parser --file src/parse.rs',
+    '  213 bazelisk test --test_timeout=20 //lib/parser:parser_test',
+    '  214 node /plugins/workbench/skills/test-quality-review/scripts/mutation-slot.mjs -- node rust-mutants-runner.mjs --crate lib/parser --file src/parse.rs -- :parser_test',
   ].join('\n');
-  assert.deepEqual(campaigns(listing, 0).map(c => c.pid), [101, 103, 104, 105, 106]);
+  assert.deepEqual(campaigns(listing, 0).map(c => c.pid), [101, 103, 104, 105, 106, 107, 108, 109]);
 });
 
 test('a listing that executes no mutant is not a campaign', () => {
@@ -124,6 +130,12 @@ test('a listing that executes no mutant is not a campaign', () => {
     ['cargo-mutants', '-V'],
   ]) assert.equal(isListing(argv), false, argv.join(' '));
   for (const argv of [['stryker', '-V'], ['node', 'node_modules/.bin/stryker', '--version']]) assert.equal(isListing(argv), true, argv.join(' '));
+  assert.equal(isListing(['node', 'scripts/rust-mutants-runner.mjs', '--list', '--crate', 'lib/parser', '--file', 'src/parse.rs']), true);
+  for (const argv of [
+    ['node', 'scripts/rust-mutants-runner.mjs', '--crate', 'lib/parser', '--file', 'src/parse.rs', '--', ':parser_test'],
+    ['node', 'scripts/rust-mutants-runner.mjs', '--crate', 'lib/parser', '--', '--list'],
+    ['rust-mutants-runner', '--version', '--crate', 'lib/parser'],
+  ]) assert.equal(isListing(argv), false, argv.join(' '));
   assert.deepEqual(campaigns('  401 cargo mutants --in-place -V\n', 0).map(c => c.pid), [401]);
   assert.deepEqual(campaigns('  301 cargo mutants --list-files\n  302 cargo mutants --in-place -- --list\n', 0).map(c => c.pid), [302]);
 });

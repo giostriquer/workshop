@@ -253,7 +253,8 @@ Follow-up pass: [0 initial, or the follow-up's number]
   counts; Stryker: killed / timeout / survived /
   no coverage (unavailable with the command runner) / errors; cargo-mutants:
   caught / missed / timeout / unviable, timeout reasons and inconclusive outcomes,
-  with fresh and reused results separated, and any campaign wait in minutes and
+  with fresh and reused results separated; Bazel runner: the same four, then not
+  applied / not run / inconclusive with Bazel's exit; and any campaign wait in minutes and
   whether the process listing could see other sessions; or "partial: <covered
   scope> / <uncovered scope>" when the budget, the estimate rule, the wait limit
   (a busy host included) or a handback stopped the lane, or shared-host timeouts

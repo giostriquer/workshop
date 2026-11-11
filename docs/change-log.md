@@ -8,6 +8,11 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.66.0: 2026-11-11
+
+- **Mutation-test Rust that Bazel builds with no Cargo manifest.** `test-quality-review` bundles `scripts/rust-mutants-runner.mjs`: cargo-mutants only lists the mutants, from a scratch copy of the crate under a stand-in `Cargo.toml`, and Bazel tests each one in the review's copy, which gets the file restored and its digest checked after every mutant. Only a crate with no `Cargo.toml` up to the repository root, in a repository with Bazel files, takes this route; every crate with a Cargo manifest keeps `cargo mutants --in-place`, even when Bazel also builds it. The run keeps to changed lines (`--base`, or `--in-diff` where the copy has no git), at most 10 mutants and a budget the runner enforces, and the Mutation run line reports `CAUGHT`, `MISSED`, `TIMEOUT`, `UNVIABLE` and the inconclusive outcomes. ([decision](decisions/mutation-scope-and-budget.md#rust-built-by-bazel-with-no-cargo-manifest-2026-11-11))
+- **Queue the Bazel runner and clean up after it.** The slot helper counts the runner as a campaign and its `--list` as a listing. The reviewer shuts the copy's Bazel server down when the lane ends, and whoever removes the copy first runs `bazelisk clean --expunge` in it, since Bazel keeps that build tree outside the copy; `receiving-code-review` says so for the session's removal. `test-driven-development` names the runner among the sweeps that belong to the review. ([decision](decisions/mutation-scope-and-budget.md#rust-built-by-bazel-with-no-cargo-manifest-2026-11-11))
+
 ## workbench 0.65.1: 2026-11-10
 
 - **Pin test-quality review and the comment trim to Opus 5.5 on Claude Code.** `test-quality-reviewer` and `comment-trimmer` name `claude-opus-5-5` in place of the `opus` alias, so all five Opus agents carry the same exact model and a new Opus release reaches none of them until the pin is edited. Effort stays `xhigh`, dispatch is still by name with no model override, and the Codex `gpt-6.1-sol` pin is unchanged. ([decision](decisions/model-reference.md#test-quality-review-and-comment-trim-pin-opus-55-2026-11-10))
@@ -94,7 +99,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 
 - **Reclaim development storage toward an explicit target.** A bare `workspace-cleanup` invocation inventories machine development storage, including Docker, local VMs, worktree build outputs and temporary artifacts. It separates host caches from VM state, verifies each approved removal and keeps going when measured usage still misses the requested target. ([decision](decisions/workspace-cleanup.md#recurring-cleanup-and-vm-storage-2026-11-02))
 - **Retire temporary Workbench artifacts when their use ends.** Sessions remove their own obsolete `.workbench` outputs within existing authority and account for retained files by their remaining consumer and removal event. Cleanup keeps a small receipt outside deletion targets without creating a permanent evidence archive by default. ([decision](decisions/workbench-operator-decisions.md#temporary-artifacts-have-an-end-of-use-2026-11-02))
-
-## workbench 0.59.1: 2026-10-30
-
-- **Read Muse event envelopes directly.** `scope-review` names the JSONL event discriminator and nested model, tool-result and terminal-report fields, avoiding output-format rediscovery by native callers. Direct invocation remains script-optional and retains its existing validation gates. ([decision](decisions/scope-review.md#direct-result-envelope-2026-10-30))

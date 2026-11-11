@@ -121,9 +121,11 @@ a blocker closes on reviewer confirmation or the user's explicit waiver.
   decision that ends a held review, abandoned work), remove that path under the
   deletion authority this session already has, typed out in the command with no
   variable or glob: `rm -rf <path>` then `rmdir` on its emptied parent for a
-  clone, `git -C <repo> worktree remove --force <path>` for a worktree. Where
-  user or repository rules require approval for deletions, list the path for
-  approval instead.
+  clone, `git -C <repo> worktree remove --force <path>` for a worktree. When
+  the report's Mutation run line names the Bazel runner, first run `bazelisk
+  clean --expunge` in the copy: Bazel keeps its build tree outside the copy.
+  Where user or repository rules require approval for deletions, list the path
+  for approval instead.
 - `blocked`, naming a platform this host cannot build: when this session
   already has authority to use a host that builds it, such as the repository's
   CI runner for that platform, run the report's command there and add `Mutation

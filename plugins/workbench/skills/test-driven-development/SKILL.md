@@ -81,8 +81,8 @@ the test fail, revert, watch it pass. Before running a hand-applied mutant,
 diff the mutated source against its pristine copy and inspect the intended
 change; unchanged source or a failed replacement does not establish RED.
 Keep test expectations intact and confirm the failure is the intended assertion.
-Mutation-tool sweeps (cargo-mutants,
-Stryker) belong to the test-quality review, never to the implementer proving a
+Mutation-tool sweeps (cargo-mutants, the review's Bazel runner for
+Rust, Stryker) belong to the test-quality review, never to the implementer proving a
 fix. Before probing, record the author's staged, unstaged, and
 untracked state. After success, failure, or timeout, stop any remaining probe
 processes and verify that state is preserved. Clean up only artifacts created by

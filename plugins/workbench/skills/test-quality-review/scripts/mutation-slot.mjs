@@ -5,8 +5,9 @@
 // line is `mutation-slot: {json}` with the status, queue mode, seconds waited and
 // whether the process listing could see other sessions (`listingSeesHost`; null when it
 // waited behind other tickets or a lock the whole time and never took a listing).
-// A listing (`--list`, `--list-files`, `--version`, `--help`) executes no mutant: it
-// runs at once with queue mode `bypass` and never holds another campaign back.
+// Campaigns are Stryker, cargo-mutants and the bundled rust-mutants-runner. A listing
+// (`--list`, `--list-files`, `--version`, `--help`) executes no mutant: it runs at once
+// with queue mode `bypass` and never holds another campaign back.
 import { execFileSync, spawn } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmdirSync, statSync, unlinkSync, utimesSync, writeFileSync } from 'node:fs';
 import os from 'node:os';
@@ -19,11 +20,14 @@ const STALE_MS = 120000;
 const SIGNALS = ['SIGINT', 'SIGTERM', 'SIGHUP'];
 const VALUE_OPTIONS = new Set(['-r', '--require', '--import', '--loader', '--experimental-loader', '-C', '--conditions']);
 // Keyed by tool: cargo-mutants reads -V as --unviable, which runs the campaign.
-const CARGO_LISTING = new Set(['--list', '--list-files', '--version', '--help', '-h']);
-const STRYKER_LISTING = new Set(['--version', '-V', '--help', '-h']);
+const LISTING = {
+  'cargo-mutants': new Set(['--list', '--list-files', '--version', '--help', '-h']),
+  stryker: new Set(['--version', '-V', '--help', '-h']),
+  'rust-mutants-runner': new Set(['--list']),
+};
+const SCRIPTS = { stryker: ['stryker', 'stryker.js'], 'rust-mutants-runner': ['rust-mutants-runner', 'rust-mutants-runner.mjs'] };
 
 const base = arg => path.basename(arg || '');
-const isStryker = arg => base(arg) === 'stryker' || base(arg) === 'stryker.js';
 
 function scriptOf(args) {
   for (let i = 0; i < args.length; i += 1) {
@@ -33,27 +37,22 @@ function scriptOf(args) {
   return '';
 }
 
-function isCargoMutants(argv) {
+function toolOf(argv) {
   const program = base(argv[0]);
-  return program === 'cargo-mutants' || (program === 'cargo' && argv[1] === 'mutants');
-}
-
-function isCampaign(argv) {
-  const program = base(argv[0]);
-  if (isCargoMutants(argv)) return true;
-  if (isStryker(argv[0])) return true;
-  return (program === 'node' || program === 'bun') && isStryker(scriptOf(argv.slice(1)));
+  if (program === 'cargo-mutants' || (program === 'cargo' && argv[1] === 'mutants')) return 'cargo-mutants';
+  const script = base(program === 'node' || program === 'bun' ? scriptOf(argv.slice(1)) : argv[0]);
+  return Object.keys(SCRIPTS).find(tool => SCRIPTS[tool].includes(script)) ?? null;
 }
 
 // Arguments after a bare `--` go to the test phase, so a flag there lists nothing.
 export function isListing(argv) {
-  if (!isCampaign(argv)) return false;
+  const tool = toolOf(argv);
+  if (!tool) return false;
   const end = argv.indexOf('--');
-  const flags = isCargoMutants(argv) ? CARGO_LISTING : STRYKER_LISTING;
-  return (end < 0 ? argv : argv.slice(0, end)).some(arg => flags.has(arg));
+  return (end < 0 ? argv : argv.slice(0, end)).some(arg => LISTING[tool].has(arg));
 }
 
-const holdsSlot = argv => isCampaign(argv) && !isListing(argv);
+const holdsSlot = argv => toolOf(argv) !== null && !isListing(argv);
 
 export function campaigns(listing, exclude = process.pid) {
   return listing.split('\n')

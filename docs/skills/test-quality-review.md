@@ -82,6 +82,9 @@ No. The tests that exercised it before the move still characterize it; only the 
 **My project has no mutation tool or config. Will the review set it up?**
 Yes, in isolation, with a focused config and a passing, nonempty baseline. For Rust the run is `cargo mutants --in-place` inside the reviewer's clone, so the clone's build cache serves every mutant. Permanent changes go back to the implementer; an install restriction or unresolved environment failure is reported as a blocker.
 
+**My Rust crate builds with Bazel and has no `Cargo.toml`. Can the review still mutate it?**
+Yes. When no `Cargo.toml` exists for the changed crate up to the repository root and Bazel files are present, the reviewer uses the skill's bundled Bazel runner: cargo-mutants only lists the mutants, from a scratch copy with a stand-in manifest, and Bazel tests each one in the reviewer's clone, which gets its file restored and checked after every mutant. Each mutant is a Bazel rebuild, so the run keeps to changed lines, at most ten mutants and the lane's budget; what that leaves out is `partial`. A crate with a `Cargo.toml` keeps the ordinary cargo-mutants run, even when Bazel also builds it.
+
 **A test file changed but the production file did not. What gets mutated?**
 The functions the changed test cases call, selected by name or line range, not the whole file. A changed or removed assertion that loses protection creates an Issue even when production is unchanged. Gaps that predate both the production and test diff stay under Strategy notes.
 

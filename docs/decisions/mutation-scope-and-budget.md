@@ -286,3 +286,73 @@ cargo-mutants reads it as `--unviable`, so such a campaign skipped the queue.
 Listing flags are now keyed by tool, with a test. The `Disposable copy` line
 says whether the copy is a clone or a worktree, because removing a worktree
 with `rm -rf` leaves the stale registration this rule set out to stop.
+
+## Rust built by Bazel with no Cargo manifest (2026-11-11)
+
+A Rust workspace built and tested only through Bazel (`rules_rust`), with no
+`Cargo.toml` anywhere, gave reviewers no mutation tool: cargo-mutants needs a
+Cargo manifest to find the source and runs `cargo build` and `cargo test` for
+each mutant. Reviewers there fell back to a few hand-made mutants.
+
+The skill now bundles `scripts/rust-mutants-runner.mjs`, which splits the job.
+cargo-mutants only generates: the runner copies the crate's `.rs` files to a
+scratch folder under a stand-in `Cargo.toml` and runs `cargo mutants --list
+--json --diff`, optionally `--in-diff` for changed lines, which builds nothing.
+Bazel tests: the runner writes each mutant into the file in the review's copy,
+runs `bazel test` on the named target, records the verdict and restores the
+file, checking its digest. It applies each mutant's diff itself, refusing a
+hunk that does not match at its stated line, so no fuzz, offset or reject file
+can enter; on a signal it restores the file before stopping Bazel. Bazel exits
+0 when tests pass, 1 when the build fails and 3 when a test fails or times out,
+so the runner reads Bazel's summary line to tell `TIMEOUT` from `CAUGHT`, and
+sets `--test_timeout` at five times the slowest baseline test, at least 20
+seconds, as cargo-mutants does. Without it, a mutant that loops would hold the
+target's own timeout, five minutes for a medium test. The slot helper treats
+the runner as a campaign, and its `--list` as a listing.
+
+The route is conditional and narrow: only a crate with no `Cargo.toml` up to
+the repository root, in a repository with Bazel files, takes the runner. Every
+crate with a Cargo manifest keeps the cargo-mutants recipe unchanged, including
+one Bazel also builds. Each mutant is a Bazel rebuild of the crate and its
+dependents in the test's graph, and Bazel runs one command per checkout at a
+time, so the runner works in series under a cap (at most 10, spread evenly over
+the list) and a wall-clock budget it enforces itself: it starts no mutant the
+slowest so far would carry past the budget, stops one still running at the end
+and records the rest `NOT RUN`. A new copy's first Bazel build is cold, since
+Bazel keys its build tree by the checkout path, and that tree and Bazel's
+server live outside the copy, so the reviewer shuts the server down when the
+lane ends and expunges the tree before the copy goes. The prototype refused a
+file with uncommitted changes; that refusal is gone, because the review's copy
+usually carries the change uncommitted and the saved-copy restore with its
+digest check is exact either way. `--in-diff` covers a copy whose `.git` file
+was removed, where `--base` cannot run git.
+
+`scripts/rust-mutants-runner.test.mjs` covers the diff application, the
+verdict and timeout rules, the cap's spread, the options, and, with a stub in
+place of Bazel and the real cargo-mutants, the exact change under test, the
+restore, `--base` with committed and uncommitted changes, `--in-diff` from
+another checkout, an untracked file, a failing or slow baseline, the budget, a
+signal mid-mutant and a file that cannot be restored. Those cases skip when
+cargo-mutants is missing. A throwaway bzlmod workspace (`rules_rust` 0.75.0,
+Bazel 9.3.2, one `rust_library` with a `rust_test`, no Cargo manifest) gave the
+real-Bazel evidence, every run through the slot helper. 22 mutants gave 15
+`CAUGHT`, 6 `MISSED` (four in a function left untested on purpose, two
+equivalent boundary mutants) and 1 `TIMEOUT` (a loop that never advanced),
+with the file and its uncommitted change byte-identical afterwards. `--base`
+kept 3 of the 22 for one committed and one uncommitted change. A SIGTERM to
+the helper mid-mutant stopped Bazel (exit 8), restored the file and exited
+143. In a cloned copy with its `.git` removed, `--in-diff` from the original
+kept the same 3; the copy's first baseline took 86 seconds against 6 to 8
+warm, and `bazelisk clean --expunge` removed its build tree and server. A
+hand-applied defect check over the runner found
+every defect but one: rounding the guard's mutant time is too small for the
+budget test's timing to tell apart.
+
+The route wording had four scenario checks, each a fresh reviewer context on
+Opus 5.5 given only the skill and a repository layout. A Bazel crate with no
+manifest went to the runner, with `--in-diff` because its copy had no `.git`,
+and `bazelisk shutdown` at the end. A crate with a `Cargo.toml` that Bazel
+also builds, and a plain Cargo crate, stayed on `cargo mutants --in-place`. A
+crate with neither a manifest nor Bazel files did not take the runner and
+recorded `blocked`, as before. One run each: regression evidence for those
+layouts, not a reliability estimate.

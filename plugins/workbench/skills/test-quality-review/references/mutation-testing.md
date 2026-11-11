@@ -76,7 +76,8 @@ named tests.
 
 - **Set up, then run.** For each required or requested mutation run, cover the
   eligible behavior in scope. Use StrykerJS for `.ts`, `.tsx`, `.js`, and `.jsx` production
-  code, and `cargo-mutants` for Rust. Mixed changes need both; a language with
+  code, and for Rust `cargo-mutants`, or the bundled Bazel runner for a crate
+  the Rust route below sends to it. Mixed changes need both; a language with
   no production line and no test in scope gets no run and no setup. Mutate
   production behavior exercised by changed tests, not the tests' assertions. The run's test
   set is the focused tests that exercise the scope; a test whose own run takes
@@ -181,6 +182,15 @@ named tests.
   Resuming partial work does not restart the round's budget or authorize a second
   completed campaign over the same scope.
 
+- **Rust route.** A Rust crate runs `cargo-mutants` as in the next bullet. Only
+  a crate that Bazel builds and that has no Cargo manifest takes the bundled
+  runner in the bullet after it: no `Cargo.toml` in the changed crate's
+  directory or in any parent up to the repository root, and Bazel files present
+  (`MODULE.bazel`, `WORKSPACE.bazel` or `WORKSPACE` at the root, and
+  `BUILD.bazel` or `BUILD` in the crate's directory). cargo-mutants cannot run
+  there: it needs a Cargo manifest and runs `cargo build` and `cargo test` for
+  each mutant. A crate with a `Cargo.toml` stays on cargo-mutants, even when
+  Bazel also builds it.
 - For Rust, run `cargo mutants --in-place` from the crate or workspace inside the
   disposable copy, as a single job, with `--copy-target` and `--jobs` unset and
   `--output` outside the copy: the clone's build cache serves every mutant, where
@@ -200,19 +210,52 @@ named tests.
   Report caught / missed / timeout / unviable counts; review missed mutants as
   survivors and keep timeouts separate from caught. Do not infer coverage from
   cargo-mutants outcomes.
+- For a Rust crate built by Bazel with no Cargo manifest, run
+  `scripts/rust-mutants-runner.mjs` beside this skill's `SKILL.md` in the
+  disposable copy. `cargo mutants --list` generates the mutants from a scratch
+  copy of the crate's `.rs` files under a stand-in `Cargo.toml`, with no build;
+  Bazel then tests each mutant in the copy, and the runner restores the file and
+  checks its digest after each one. It needs cargo-mutants (install it as
+  above), `git` and a Bazel launcher (`bazelisk`; `--bazel` names another):
+  `node "<skill dir>/scripts/mutation-slot.mjs" --wait-limit <seconds> -- node "<skill dir>/scripts/rust-mutants-runner.mjs" --crate <crate dir> --file <path in the crate> --base <base> --max 10 --budget <seconds> --out <outside-copy> -- <test label>`.
+  Add `--crate-root` when the crate root is not `src/lib.rs`, and Bazel flags
+  such as `--test_arg=<test filter>` after the label. `--base` runs git in the
+  copy; where the copy's `.git` file was removed, pass `--in-diff <patch>`
+  instead, made in the author's checkout by `git diff --relative <merge base>
+  -- <file>` from the crate's directory, and pass neither for a file the change
+  adds. `--list` prints the mutants and takes no slot.
+  Each mutant costs one Bazel rebuild of the crate and of everything the test
+  target builds on it, and Bazel runs one command per checkout at a time, so
+  mutants run in series: changed lines only (`--base` or `--in-diff`), `--max`
+  at most 10, which the runner spreads evenly over the listed mutants, and
+  `--budget` set to the round's remaining lane time, at most 900 seconds. It
+  prints the estimate after the first mutant, starts no mutant that the slowest
+  so far would carry past the budget, stops one still running when the budget
+  ends, and lists the rest `NOT RUN`: that scope is `partial`. The first Bazel
+  build in a new copy is cold, because Bazel keys its build tree by the
+  checkout's path; it counts as setup.
+  Verdicts, per line and in `results.json` under `--out`: `CAUGHT`, `MISSED`,
+  `TIMEOUT` (Bazel's test timeout, set at five times the slowest baseline test
+  and at least 20 seconds), `UNVIABLE` (the build failed), and the inconclusive
+  `INCONCLUSIVE` (another Bazel exit, or stopped by the budget or a signal),
+  `NOT APPLIED` (the mutant's diff did not match the file) and `NOT RUN`. Exit
+  4 is a failing baseline. A `was not restored` stop names the saved original:
+  put it back before anything else runs. Bazel keeps the copy's server and
+  build tree outside the copy: run `bazelisk shutdown` in the copy when the
+  lane ends, and `bazelisk clean --expunge` in it before removing the copy.
 - **One run per scope.** A completed run is the round's evidence for its
   scope; the same scope does not run again in the round under another runner,
   coverage setting or test set to confirm or reconcile its counts. A survivor
   the reviewer wants to check by hand gets one hand-applied defect in the copy.
 - **One campaign at a time, through the slot helper.** Campaigns run one at a
   time on the host, in arrival order, across every session on it. Launch every
-  Stryker and cargo-mutants invocation that builds or runs tests, dry runs
-  included, through `scripts/mutation-slot.mjs` beside this skill's `SKILL.md`:
+  Stryker, cargo-mutants and Bazel runner invocation that builds or runs tests,
+  dry runs included, through `scripts/mutation-slot.mjs` beside this skill's `SKILL.md`:
   `node "<skill dir>/scripts/mutation-slot.mjs" --wait-limit <seconds> -- <campaign command>`.
   It queues the launch host-wide, waits for any running campaign, including
   one started without the helper, then runs the command and exits with its
   status. A listing that executes no mutant (`cargo mutants --list` or
-  `--list-files`, a tool's `--version` or `--help`) takes no slot: run it
+  `--list-files`, the runner's `--list`, a tool's `--version` or `--help`) takes no slot: run it
   directly, and the helper runs one it is handed at once (queue mode `bypass`).
   To stop a campaign early, signal the helper's PID: it passes the
   signal to the campaign, whose tool stops its own workers, and frees the slot
@@ -232,7 +275,7 @@ named tests.
   sandbox refuses `ps`, means the helper could not see campaigns other
   sessions started without it; `null` means it waited behind other tickets or
   a lock the whole time and never took a listing. Without Node, run
-  `ps -axo pid,etime,command | grep -E '[s]tryker|[c]argo-mutants'` as its own
+  `ps -axo pid,etime,command | grep -E '[s]tryker|[c]argo-mutants|[r]ust-mutants-runner'` as its own
   command before each launch and wait while a campaign runs; a listing without
   PID 1 or other users' processes has the same blind spot, and the Mutation
   run line says so.
@@ -262,7 +305,8 @@ named tests.
 - **Estimate, then bound.** Every run has an estimate before its mutants
   execute: mutants × baseline seconds ÷ concurrency, from the counts the tool
   prints first (Stryker's `Instrumented N mutants` and `Initial test run
-  succeeded ... in S seconds`; `cargo mutants --list` and the baseline build).
+  succeeded ... in S seconds`; `cargo mutants --list` and the baseline build;
+  the Bazel runner's `--list` count times one rebuild, measured on its first mutant).
   When those counts put the run under one minute, the counts are its estimate.
   An estimate over 10 minutes ends that run and narrows the scope before the
   next one starts: the functions behind a changed test shrink to the lines its
