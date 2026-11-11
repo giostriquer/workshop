@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { spawn, spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { chmodSync, cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { chmodSync, cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { test } from 'node:test';
@@ -9,7 +9,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const runner = path.resolve(path.dirname(fileURLToPath(import.meta.url)),
   '../plugins/workbench/skills/test-quality-review/scripts/rust-mutants-runner.mjs');
-const { applyDiff, parse, spread, testTimeout, verdict } = await import(pathToFileURL(runner).href);
+const { applyDiff, budgetClock, parse, spread, testTimeout, verdict } = await import(pathToFileURL(runner).href);
 const hasCargoMutants = spawnSync('cargo', ['mutants', '--version']).status === 0;
 const needsTool = { timeout: 60000, skip: hasCargoMutants ? false : 'cargo-mutants is not installed' };
 const sha = data => createHash('sha256').update(data).digest('hex');
@@ -35,7 +35,8 @@ pub fn label(n: u32) -> &'static str {
 
 // Stands in for the Bazel launcher. It finds the line cargo-mutants marked and answers
 // as Bazel would: tests cover clamp_percent but not label, a 1 hangs a test, a -1 does
-// not build. Each call is logged with the file's content.
+// not build. Each call is logged with the file's content. STUB_FIRST_DELAY, when set,
+// replaces STUB_DELAY for the first mutant.
 const STUB = `
 const fs = require('fs');
 const [file, log, mode] = [process.env.STUB_FILE, process.env.STUB_LOG, process.env.STUB_MODE ?? ''];
@@ -53,7 +54,8 @@ const answer = () => {
   say(3, '//calc:calc_test FAILED in 0.3s');
 };
 process.on('SIGINT', () => process.exit(8));
-const delay = Number(process.env[marked < 0 ? 'STUB_BASELINE_DELAY' : 'STUB_DELAY'] ?? 0);
+const first = marked >= 0 && fs.readFileSync(log, 'utf8').trim().split('\\n').length === 2;
+const delay = Number(process.env[marked < 0 ? 'STUB_BASELINE_DELAY' : first && process.env.STUB_FIRST_DELAY ? 'STUB_FIRST_DELAY' : 'STUB_DELAY'] ?? 0);
 if (delay) { if (process.env.STUB_STARTED && marked >= 0) fs.writeFileSync(process.env.STUB_STARTED, ''); setTimeout(answer, delay); }
 else answer();
 `;
@@ -92,6 +94,9 @@ test('applies a unified diff exactly where its hunk says, and nowhere else', () 
   assert.equal(applyDiff('x\nb\nb\n', '@@ -1,1 +1,1 @@\n-b\n+B\n'), null);
   assert.equal(applyDiff(text, '@@ -2,1 +2,1 @@\n-changed elsewhere\n+B\n'), null);
   assert.equal(applyDiff(text, 'no hunk at all\n'), null);
+  // Hunks out of order, or overlapping the one before, are refused.
+  assert.equal(applyDiff(text, '@@ -3,1 +3,1 @@\n-c\n+C\n@@ -1,1 +1,1 @@\n-a\n+A\n'), null);
+  assert.equal(applyDiff(text, '@@ -2,2 +2,2 @@\n-b\n-c\n+B\n+C\n@@ -3,1 +3,1 @@\n-c\n+X\n'), null);
   assert.equal(applyDiff('a\nb', '@@ -2,1 +2,1 @@\n-b\n\\ No newline at end of file\n+B\n\\ No newline at end of file\n'), 'a\nB');
   assert.equal(applyDiff('a\nb\n', '@@ -1,2 +1,2 @@\n a\n-b\n+b\n\\ No newline at end of file\n'), 'a\nb');
 });
@@ -112,6 +117,65 @@ test('sets the test timeout at five times the slowest baseline test, never under
   assert.equal(testTimeout('INFO: Build completed successfully'), null);
 });
 
+const fakeClock = () => {
+  let ms = 1700000000000;
+  const now = () => ms;
+  now.advance = step => { ms += step; };
+  return now;
+};
+
+test('the budget guard starts a mutant only when the slowest so far would end within the budget, to the millisecond', () => {
+  const now = fakeClock();
+  const clock = budgetClock(3.5, now);
+  assert.equal(clock.fits(), true);
+  now.advance(100);
+  const begun = clock.elapsed();
+  now.advance(1400);
+  assert.equal(clock.took(begun), 1400);
+  now.advance(600);
+  // 2100 elapsed + 1400 slowest ends exactly at the 3500 budget: it starts.
+  assert.equal(clock.fits(), true);
+  now.advance(1);
+  assert.equal(clock.fits(), false);
+});
+
+test('the budget guard keeps the slowest mutant time to the millisecond, not the last or a rounded one', () => {
+  const now = fakeClock();
+  const clock = budgetClock(4, now);
+  now.advance(200);
+  let begun = clock.elapsed();
+  now.advance(1600);
+  assert.equal(clock.took(begun), 1600);
+  begun = clock.elapsed();
+  now.advance(300);
+  assert.equal(clock.took(begun), 300);
+  assert.equal(clock.elapsed(), 2100);
+  now.advance(300);
+  // 2400 + 1600 = 4000, the budget: rounding 1600 ms up to 2 s would refuse this one.
+  assert.equal(clock.fits(), true);
+  now.advance(1);
+  // 2401 + 1600 = 4001: keeping the last time (300 ms) or 1600 ms rounded down to 1 s would start it.
+  assert.equal(clock.fits(), false);
+});
+
+test('the budget counts whole milliseconds: what is left stops a running mutant and never goes below zero', () => {
+  for (const [seconds, ms] of [[3.5, 3500], [1.005, 1005], [2.007, 2007], [900, 900000]]) {
+    const now = fakeClock();
+    const clock = budgetClock(seconds, now);
+    assert.equal(clock.left(), ms, `--budget ${seconds}`);
+    now.advance(ms - 250);
+    assert.equal(clock.left(), 250, `--budget ${seconds}`);
+    assert.equal(clock.fits(), true, `--budget ${seconds}`);
+    now.advance(250);
+    assert.equal(clock.left(), 0, `--budget ${seconds}`);
+    assert.equal(clock.fits(), true, `--budget ${seconds}`);
+    now.advance(1);
+    assert.equal(clock.fits(), false, `--budget ${seconds}`);
+    now.advance(5000);
+    assert.equal(clock.left(), 0, `--budget ${seconds}`);
+  }
+});
+
 test('takes an even spread when more mutants exist than the cap', () => {
   const items = Array.from({ length: 21 }, (_, i) => i);
   assert.deepEqual(spread(items, 5), [0, 4, 8, 12, 16]);
@@ -126,6 +190,68 @@ test('rejects incomplete or unknown options', () => {
   assert.throws(() => parse(['--crate', 'c', '--file', 'f', '--base', 'main', '--in-diff', 'p', '--', ':t']), /exclude/);
   assert.equal(parse(['--crate', 'c', '--file', 'f', '--list']).list, true);
   assert.deepEqual(parse(['--crate', 'c', '--file', 'f', '--', '//a:t', '--test_arg=x']).bazelArgs, ['//a:t', '--test_arg=x']);
+});
+
+test('reads --help and -h before the bazel arguments only', () => {
+  for (const argv of [['--help'], ['-h'], ['--crate', 'c', '-h'], ['--bogus', '--help', '--', '//a:t']]) {
+    assert.equal(parse(argv).help, true, argv.join(' '));
+  }
+  const options = parse(['--crate', 'c', '--file', 'f', '--', '//a:t', '-h', '--help']);
+  assert.equal(options.help, undefined);
+  assert.deepEqual(options.bazelArgs, ['//a:t', '-h', '--help']);
+});
+
+test('--help and -h print the options, verdicts and exit codes, run nothing and exit 0', t => {
+  const r = rig(t);
+  const help = spawnSync(process.execPath, [runner, '--help'], { env: r.env, encoding: 'utf8' });
+  assert.equal(help.status, 0, help.stderr);
+  assert.equal(help.stderr, '');
+  assert.match(help.stdout, /^usage: node rust-mutants-runner\.mjs --crate <dir> --file <path in crate> /);
+  const text = help.stdout.replace(/\s+/g, ' ');
+  for (const option of ['--crate-root', '--base', '--in-diff', '--max', '--budget', '--out', '--bazel', '--list', '-h, --help']) {
+    assert.ok(text.includes(option), option);
+  }
+  for (const outcome of ['CAUGHT', 'MISSED', 'TIMEOUT', 'UNVIABLE', 'INCONCLUSIVE', 'NOT APPLIED', 'NOT RUN']) {
+    assert.ok(text.includes(` ${outcome} (`), outcome);
+  }
+  assert.ok(text.includes('Exit: 0 nothing missed or uncertain, 2 a mutant MISSED, 3 none missed but some TIMEOUT, '
+    + 'INCONCLUSIVE, NOT APPLIED or NOT RUN, 4 the baseline failed, 1 usage or run failure, 128+n after signal n.'), text);
+  const short = spawnSync(process.execPath, [runner, '-h'], { env: r.env, encoding: 'utf8' });
+  assert.equal(short.status, 0, short.stderr);
+  assert.equal(short.stdout, help.stdout);
+  const full = run(r, ['--help']);
+  assert.equal(full.status, 0, full.stderr);
+  assert.equal(full.stdout, help.stdout);
+  assert.equal(existsSync(r.log), false);
+  assert.equal(existsSync(r.out), false);
+});
+
+test('a wrong or missing option fails with exit 1 and says how to get the help', () => {
+  for (const [argv, message] of [
+    [['--bogus'], 'unknown or incomplete option: --bogus'],
+    [['--crate', 'c', '--file'], 'unknown or incomplete option: --file'],
+    [[], '--crate and --file are required'],
+  ]) {
+    const result = spawnSync(process.execPath, [runner, ...argv], { encoding: 'utf8' });
+    assert.equal(result.status, 1, argv.join(' '));
+    assert.equal(result.stdout, '');
+    assert.equal(result.stderr, `${message}; run with --help for the usage\n`);
+  }
+});
+
+test('--crate-root names a crate root other than src/lib.rs', needsTool, t => {
+  const r = rig(t);
+  const crate = path.join(r.repo, 'calc');
+  renameSync(r.file, path.join(crate, 'src', 'calc.rs'));
+  const list = (...extra) => spawnSync(process.execPath, [runner, '--crate', crate, '--file', 'src/calc.rs',
+    '--list', '--max', '50', ...extra], { env: r.env, encoding: 'utf8' });
+  const missing = list();
+  assert.equal(missing.status, 1);
+  assert.match(missing.stderr, /src\/lib\.rs is not a file in /);
+  const listed = list('--crate-root', 'src/calc.rs');
+  assert.equal(listed.status, 0, listed.stderr);
+  assert.match(listed.stdout, /^[1-9]\d* mutants in src\/calc\.rs; listing [1-9]/);
+  assert.match(listed.stdout, /clamp_percent/);
 });
 
 test('tests each mutant as an exact change, gives each verdict and restores the file', needsTool, t => {
@@ -234,14 +360,17 @@ test('a baseline that outlasts the budget is stopped and reported', needsTool, t
   assert.match(result.stderr, /did not finish within the budget/);
 });
 
-test('starts no mutant the budget cannot fit and records the rest as not run', needsTool, t => {
+test('starts no mutant the slowest so far would carry past the budget and records the rest as not run', needsTool, t => {
   const r = rig(t);
-  const result = run(r, ['--budget', '3.5', '--max', '50'], { STUB_DELAY: '1000' });
+  // The first mutant ends near 4 s of a 6 s budget, and another as slow would end near 7.5 s,
+  // so the guard stops there although the others would take 0.2 s.
+  const result = run(r, ['--budget', '6', '--max', '50'], { STUB_FIRST_DELAY: '3000', STUB_DELAY: '200' });
   assert.equal(result.status, 3, result.stderr);
-  const { counts } = r.results();
-  // Mutants of equal length: the guard stops before one the budget would cut short.
-  assert.equal(counts.INCONCLUSIVE, undefined, JSON.stringify(counts));
-  assert.ok(counts['NOT RUN'] > 0 && r.calls().length >= 2, JSON.stringify(counts));
+  const [first, ...rest] = r.results().results;
+  assert.equal(r.calls().length, 2);
+  assert.ok(['CAUGHT', 'MISSED', 'TIMEOUT', 'UNVIABLE'].includes(first.verdict), JSON.stringify(first));
+  assert.ok(rest.length > 0 && rest.every(entry => entry.verdict === 'NOT RUN'), JSON.stringify(rest));
+  assert.match(result.stdout, /\[2\/\d+\] NOT RUN for \d+ mutants: the budget would end first/);
   assert.equal(readFileSync(r.file, 'utf8'), SOURCE);
 });
 

@@ -1,22 +1,5 @@
 #!/usr/bin/env node
-// Mutation testing for a Rust crate that Bazel builds and that has no Cargo manifest:
-//   node rust-mutants-runner.mjs --crate <dir> --file <path in crate> [--crate-root src/lib.rs]
-//       [--base <ref> | --in-diff <patch>] [--max 10] [--budget 900] [--out <dir>] [--bazel bazelisk] [--list]
-//       -- <bazel test arguments, such as //lib/parser:parser_test>
-// cargo-mutants lists the mutants from a scratch copy of the crate's .rs files under a
-// stand-in Cargo.toml, which needs no build. Each mutant is then written into the file,
-// tested with `<bazel> test`, one at a time, and the file is restored and its digest checked.
-// --base keeps the mutants on lines changed since the merge base with that ref,
-// uncommitted changes included; --in-diff does it from a diff with paths relative to the
-// crate directory, for a checkout where git cannot run. Over --max mutants, an even
-// spread is taken. --budget bounds the whole run in seconds: no mutant starts that the
-// slowest one so far would carry past it, and the remaining ones are NOT RUN.
-// Verdicts: CAUGHT (tests failed), MISSED (tests passed), TIMEOUT (a test hit the timeout,
-// 5x the baseline test time and at least 20 s), UNVIABLE (the build failed), INCONCLUSIVE
-// (any other Bazel exit), NOT APPLIED (the diff did not match the file), NOT RUN (budget).
-// Exit: 0 nothing missed or uncertain, 2 a mutant MISSED, 3 none missed but some TIMEOUT,
-// INCONCLUSIVE, NOT APPLIED or NOT RUN, 4 the baseline failed, 1 usage or run failure,
-// 128+n after signal n.
+// Mutation testing for a Rust crate that Bazel builds and that has no Cargo manifest; USAGE says how.
 import { spawn, spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, realpathSync, rmSync, statSync, writeFileSync } from 'node:fs';
@@ -24,6 +7,29 @@ import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+const USAGE = `usage: node rust-mutants-runner.mjs --crate <dir> --file <path in crate> [--crate-root src/lib.rs]
+    [--base <ref> | --in-diff <patch>] [--max 10] [--budget 900] [--out <dir>] [--bazel bazelisk] [--list]
+    -- <bazel test arguments, such as //lib/parser:parser_test>
+Mutation testing for a Rust crate that Bazel builds and that has no Cargo manifest.
+cargo-mutants lists the mutants from a scratch copy of the crate's .rs files under a
+stand-in Cargo.toml, which needs no build. Each mutant is then written into the file,
+tested with \`<bazel> test\` in --crate, one at a time, and the file is restored and its
+digest checked. --file and --crate-root are relative to --crate. --list prints the
+mutants and runs none. -h, --help prints this help.
+--base keeps the mutants on lines changed since the merge base with that ref,
+uncommitted changes included; --in-diff does it from a diff with paths relative to the
+crate directory, for a checkout where git cannot run. Over --max mutants, an even
+spread is taken. --budget bounds the whole run in seconds: no mutant starts that the
+slowest one so far would carry past it, and the remaining ones are NOT RUN. --out keeps
+the original file, each mutant's diff and log, and results.json (default: a new
+temporary folder).
+Verdicts: CAUGHT (tests failed), MISSED (tests passed), TIMEOUT (a test hit the timeout,
+5x the slowest baseline test and at least 20 s), UNVIABLE (the build failed), INCONCLUSIVE
+(another Bazel exit, or stopped by the budget or a signal), NOT APPLIED (the diff did not
+match the file), NOT RUN (the budget or a signal ended the run first).
+Exit: 0 nothing missed or uncertain, 2 a mutant MISSED, 3 none missed but some TIMEOUT,
+INCONCLUSIVE, NOT APPLIED or NOT RUN, 4 the baseline failed, 1 usage or run failure,
+128+n after signal n.`;
 const MANIFEST = '[package]\nname = "mutants-scratch"\nversion = "0.0.0"\nedition = "2021"\n\n[lib]\npath = "ROOT"\n\n[workspace]\n';
 const SIGNALS = ['SIGINT', 'SIGTERM', 'SIGHUP'];
 const KILL_GRACE_MS = 60000;
@@ -32,6 +38,7 @@ const digest = data => createHash('sha256').update(data).digest('hex');
 export function parse(argv) {
   const split = argv.indexOf('--');
   const flags = split < 0 ? argv : argv.slice(0, split);
+  if (flags.includes('--help') || flags.includes('-h')) return { help: true };
   const options = { crateRoot: 'src/lib.rs', max: 10, budget: 900, bazel: 'bazelisk', list: false,
     bazelArgs: split < 0 ? [] : argv.slice(split + 1) };
   const names = { '--crate': 'crate', '--file': 'file', '--crate-root': 'crateRoot', '--base': 'base',
@@ -86,6 +93,24 @@ export function applyDiff(text, diff) {
 
 export const spread = (items, max) => items.length <= max ? items
   : Array.from({ length: max }, (_, i) => items[Math.floor((i * items.length) / max)]);
+
+// The run's budget in whole milliseconds of the clock `now`: no mutant starts that the
+// slowest one so far would carry past it.
+export function budgetClock(budgetSeconds, now = Date.now) {
+  const [start, limit] = [now(), Math.round(budgetSeconds * 1000)];
+  let slowest = 0;
+  const elapsed = () => now() - start;
+  return {
+    elapsed,
+    left: () => Math.max(0, limit - elapsed()),
+    fits: () => elapsed() + slowest <= limit,
+    took: begun => {
+      const ms = elapsed() - begun;
+      slowest = Math.max(slowest, ms);
+      return ms;
+    },
+  };
+}
 
 export function testTimeout(baselineOutput) {
   const times = [...baselineOutput.matchAll(/\bPASSED in ([\d.]+)s/g)].map(match => Number(match[1]));
@@ -161,8 +186,12 @@ export async function main(argv) {
   try {
     options = parse(argv);
   } catch (error) {
-    console.error(`usage: ${error.message}`);
+    console.error(`${error.message}; run with --help for the usage`);
     return 1;
+  }
+  if (options.help) {
+    console.log(USAGE);
+    return 0;
   }
   options.crate = path.resolve(options.crate);
   if (options.inDiff) options.inDiff = path.resolve(options.inDiff);
@@ -198,8 +227,7 @@ export async function main(argv) {
   mkdirSync(out, { recursive: true });
   writeFileSync(path.join(out, `original-${path.basename(target)}`), original);
   console.log(`the original ${options.file} is saved in ${out}`);
-  const started = Date.now();
-  const elapsed = () => (Date.now() - started) / 1000;
+  const clock = budgetClock(options.budget);
   let child = null;
   let stopping = null;
   let unrestored = false;
@@ -224,7 +252,7 @@ export async function main(argv) {
     child = proc;
     proc.stdout.on('data', chunk => { output += chunk; });
     proc.stderr.on('data', chunk => { output += chunk; });
-    const left = Math.max(0, options.budget - elapsed()) * 1000;
+    const left = clock.left();
     const stop = setTimeout(() => { overBudget = true; proc.kill('SIGINT'); }, left);
     const kill = setTimeout(() => proc.kill('SIGKILL'), left + KILL_GRACE_MS);
     proc.on('error', error => { output += `${error.message}\n`; });
@@ -251,12 +279,11 @@ export async function main(argv) {
       return 4;
     }
     testTime = testTimeout(baseline.output);
-    console.log(`baseline passed in ${Math.round(elapsed())}s; test timeout ${testTime ? `${testTime}s` : 'left to Bazel'}`);
+    console.log(`baseline passed in ${Math.round(clock.elapsed() / 1000)}s; test timeout ${testTime ? `${testTime}s` : 'left to Bazel'}`);
     const args = [...(testTime ? [`--test_timeout=${testTime}`] : []), ...options.bazelArgs];
-    let slowest = 0;
     for (const [index, mutant] of chosen.entries()) {
       const label = `[${index + 1}/${chosen.length}]`;
-      if (stopping || elapsed() + slowest > options.budget) {
+      if (stopping || !clock.fits()) {
         for (const rest of chosen.slice(index)) results.push({ name: rest.name, verdict: 'NOT RUN', seconds: 0 });
         console.log(`${label} NOT RUN for ${chosen.length - index} mutants: ${stopping ?? 'the budget would end first'}`);
         break;
@@ -269,13 +296,11 @@ export async function main(argv) {
       }
       const log = path.join(out, `mutant-${String(index + 1).padStart(2, '0')}.log`);
       writeFileSync(path.join(out, `mutant-${String(index + 1).padStart(2, '0')}.diff`), mutant.diff);
-      const begun = Date.now();
+      const begun = clock.elapsed();
       writeFileSync(target, mutated);
       const tested = await bazel(args, log);
       restore();
-      const took = (Date.now() - begun) / 1000;
-      const seconds = Math.round(took);
-      slowest = Math.max(slowest, took);
+      const seconds = Math.round(clock.took(begun) / 1000);
       const outcome = tested.overBudget || stopping ? 'INCONCLUSIVE' : verdict(tested.code, tested.output);
       results.push({ name: mutant.name, verdict: outcome, seconds, bazelExit: tested.code, log });
       const reason = tested.overBudget ? ', budget' : stopping ? `, ${stopping}` : '';

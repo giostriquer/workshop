@@ -130,10 +130,15 @@ test('a listing that executes no mutant is not a campaign', () => {
     ['cargo-mutants', '-V'],
   ]) assert.equal(isListing(argv), false, argv.join(' '));
   for (const argv of [['stryker', '-V'], ['node', 'node_modules/.bin/stryker', '--version']]) assert.equal(isListing(argv), true, argv.join(' '));
-  assert.equal(isListing(['node', 'scripts/rust-mutants-runner.mjs', '--list', '--crate', 'lib/parser', '--file', 'src/parse.rs']), true);
+  for (const argv of [
+    ['node', 'scripts/rust-mutants-runner.mjs', '--list', '--crate', 'lib/parser', '--file', 'src/parse.rs'],
+    ['node', 'scripts/rust-mutants-runner.mjs', '--help'],
+    ['/Users/me/.local/bin/rust-mutants-runner', '-h'],
+  ]) assert.equal(isListing(argv), true, argv.join(' '));
   for (const argv of [
     ['node', 'scripts/rust-mutants-runner.mjs', '--crate', 'lib/parser', '--file', 'src/parse.rs', '--', ':parser_test'],
     ['node', 'scripts/rust-mutants-runner.mjs', '--crate', 'lib/parser', '--', '--list'],
+    ['node', 'scripts/rust-mutants-runner.mjs', '--crate', 'lib/parser', '--', ':parser_test', '-h', '--help'],
     ['rust-mutants-runner', '--version', '--crate', 'lib/parser'],
   ]) assert.equal(isListing(argv), false, argv.join(' '));
   assert.deepEqual(campaigns('  401 cargo mutants --in-place -V\n', 0).map(c => c.pid), [401]);

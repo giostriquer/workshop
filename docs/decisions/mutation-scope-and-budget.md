@@ -308,7 +308,7 @@ so the runner reads Bazel's summary line to tell `TIMEOUT` from `CAUGHT`, and
 sets `--test_timeout` at five times the slowest baseline test, at least 20
 seconds, as cargo-mutants does. Without it, a mutant that loops would hold the
 target's own timeout, five minutes for a medium test. The slot helper treats
-the runner as a campaign, and its `--list` as a listing.
+the runner as a campaign, and its `--list` and `--help` as listings.
 
 The route is conditional and narrow: only a crate with no `Cargo.toml` up to
 the repository root, in a repository with Bazel files, takes the runner. Every
@@ -328,10 +328,11 @@ digest check is exact either way. `--in-diff` covers a copy whose `.git` file
 was removed, where `--base` cannot run git.
 
 `scripts/rust-mutants-runner.test.mjs` covers the diff application, the
-verdict and timeout rules, the cap's spread, the options, and, with a stub in
-place of Bazel and the real cargo-mutants, the exact change under test, the
-restore, `--base` with committed and uncommitted changes, `--in-diff` from
-another checkout, an untracked file, a failing or slow baseline, the budget, a
+verdict and timeout rules, the cap's spread, the budget guard on a fake clock,
+the options and `--help`, and, with a stub in place of Bazel and the real
+cargo-mutants, the exact change under test, the restore, `--base` with
+committed and uncommitted changes, `--in-diff` from another checkout,
+`--crate-root`, an untracked file, a failing or slow baseline, the budget, a
 signal mid-mutant and a file that cannot be restored. Those cases skip when
 cargo-mutants is missing. A throwaway bzlmod workspace (`rules_rust` 0.75.0,
 Bazel 9.3.2, one `rust_library` with a `rust_test`, no Cargo manifest) gave the
@@ -344,9 +345,19 @@ the helper mid-mutant stopped Bazel (exit 8), restored the file and exited
 143. In a cloned copy with its `.git` removed, `--in-diff` from the original
 kept the same 3; the copy's first baseline took 86 seconds against 6 to 8
 warm, and `bazelisk clean --expunge` removed its build tree and server. A
-hand-applied defect check over the runner found
-every defect but one: rounding the guard's mutant time is too small for the
-budget test's timing to tell apart.
+hand-applied defect check over the runner found 11 of 12 defects. The miss was
+the budget guard keeping each mutant's time rounded to whole seconds, which the
+budget test, timed on the real clock, could not tell apart; rounding up, and
+refusing a mutant that would end exactly at the budget, passed it too. The
+guard now counts whole milliseconds on a clock the tests replace, and its tests
+fail for that rounding, for rounding up or down, for the boundary moved by one
+millisecond either way, for seconds mixed with milliseconds and for a budget
+not rounded to whole milliseconds. The real-clock budget test now makes the
+first mutant the slowest, so its stop no longer depends on equal mutant times
+under load. A second check planted 28 defects over the guard, `--help`,
+`--crate-root`, the verdicts, the test timeout, the spread, the diff
+application and the exit codes, and the tests caught all 28 once out-of-order
+hunks had a test of their own.
 
 The route wording had four scenario checks, each a fresh reviewer context on
 Opus 5.5 given only the skill and a repository layout. A Bazel crate with no

@@ -23,7 +23,7 @@ const VALUE_OPTIONS = new Set(['-r', '--require', '--import', '--loader', '--exp
 const LISTING = {
   'cargo-mutants': new Set(['--list', '--list-files', '--version', '--help', '-h']),
   stryker: new Set(['--version', '-V', '--help', '-h']),
-  'rust-mutants-runner': new Set(['--list']),
+  'rust-mutants-runner': new Set(['--list', '--help', '-h']),
 };
 const SCRIPTS = { stryker: ['stryker', 'stryker.js'], 'rust-mutants-runner': ['rust-mutants-runner', 'rust-mutants-runner.mjs'] };
 

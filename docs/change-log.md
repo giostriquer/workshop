@@ -8,6 +8,11 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.66.1: 2026-11-11
+
+- **Give the Bazel mutation runner a help.** `rust-mutants-runner.mjs --help` or `-h` prints the usage, every option, the verdicts and the exit codes, and exits 0; the same flags after `--` still go to Bazel. A wrong or missing option exits 1 and says to run with `--help`. The slot helper runs the runner's `--help` at once, as a listing. ([decision](decisions/mutation-scope-and-budget.md#rust-built-by-bazel-with-no-cargo-manifest-2026-11-11))
+- **Test the runner's budget guard exactly.** The rule that no mutant starts which the slowest one so far would carry past `--budget` now counts whole milliseconds on a clock its tests replace, so a guard that rounds a mutant's time, moves the boundary by a millisecond or mixes seconds with milliseconds fails a test; the real-time test could not tell a rounded guard apart. That test also no longer assumes mutants take equal time, which failed it on a heavily loaded machine. ([decision](decisions/mutation-scope-and-budget.md#rust-built-by-bazel-with-no-cargo-manifest-2026-11-11))
+
 ## workbench 0.66.0: 2026-11-11
 
 - **Mutation-test Rust that Bazel builds with no Cargo manifest.** `test-quality-review` bundles `scripts/rust-mutants-runner.mjs`: cargo-mutants only lists the mutants, from a scratch copy of the crate under a stand-in `Cargo.toml`, and Bazel tests each one in the review's copy, which gets the file restored and its digest checked after every mutant. Only a crate with no `Cargo.toml` up to the repository root, in a repository with Bazel files, takes this route; every crate with a Cargo manifest keeps `cargo mutants --in-place`, even when Bazel also builds it. The run keeps to changed lines (`--base`, or `--in-diff` where the copy has no git), at most 10 mutants and a budget the runner enforces, and the Mutation run line reports `CAUGHT`, `MISSED`, `TIMEOUT`, `UNVIABLE` and the inconclusive outcomes. ([decision](decisions/mutation-scope-and-budget.md#rust-built-by-bazel-with-no-cargo-manifest-2026-11-11))
@@ -94,8 +99,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 
 - **Let the Muse scope review read the whole checkout.** `scope-review` starts from named files and follows them through the reviewed checkout, under one 10-minute deadline instead of 120 seconds and 8 model steps. The packet-only runner is gone. A read or search result from a secret-bearing file or outside the checkout rejects the run and is reported to the user. ([decision](decisions/scope-review.md#checkout-reads-no-runner-2026-11-04))
 - **Run Muse through the surface's own handler.** When the session's surface can start Muse itself, such as T3 Code's `delegate_task`, the review goes through it, and `muse exec` remains the route elsewhere. Native handlers may gate tools behind approvals rather than remove them, so any approval or question cancels the run as a skip. ([decision](decisions/scope-review.md#checkout-reads-no-runner-2026-11-04))
-
-## workbench 0.60.0: 2026-11-02
-
-- **Reclaim development storage toward an explicit target.** A bare `workspace-cleanup` invocation inventories machine development storage, including Docker, local VMs, worktree build outputs and temporary artifacts. It separates host caches from VM state, verifies each approved removal and keeps going when measured usage still misses the requested target. ([decision](decisions/workspace-cleanup.md#recurring-cleanup-and-vm-storage-2026-11-02))
-- **Retire temporary Workbench artifacts when their use ends.** Sessions remove their own obsolete `.workbench` outputs within existing authority and account for retained files by their remaining consumer and removal event. Cleanup keeps a small receipt outside deletion targets without creating a permanent evidence archive by default. ([decision](decisions/workbench-operator-decisions.md#temporary-artifacts-have-an-end-of-use-2026-11-02))
