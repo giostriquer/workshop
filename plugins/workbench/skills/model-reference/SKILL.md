@@ -129,7 +129,7 @@ polling or a prohibited fallback. See `fix-ci` for the workflow.
 ## Test-quality review and comment-trim exception
 
 Every `test-quality-reviewer` and every `comment-trimmer` dispatch uses a
-separate **Opus (`opus`) agent at `xhigh` effort on Claude Code** or
+separate **Opus 5.5 (`claude-opus-5-5`) agent at `xhigh` effort on Claude Code** or
 **`gpt-6.1-sol` agent at `xhigh` reasoning effort on Codex**, spawned without the
 parent's history, and the host's default model on any other host. On Muse,
 dispatch the approved `workbench/test-quality-reviewer` or

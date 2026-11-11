@@ -22,7 +22,7 @@ gates: they fire on relevance, not compulsion.
 **Two completion requirements apply by default:** `verification-before-completion`
 at each done/fixed/passing claim, and independent review before PR-or-merge:
 first the comment trim (`trim-comments`, run by the dispatched `comment-trimmer`
-agent), then, on the trimmed diff, `code-quality-review`, plus `test-quality-review` (a separate Opus agent on Claude,
+agent), then, on the trimmed diff, `code-quality-review`, plus `test-quality-review` (a separate Opus 5.5 agent on Claude,
 `gpt-6.1-sol` on Codex) when the diff changes production logic or tests, and
 `contract-review` for changed observable behavior, consumer contracts or
 cross-component wiring. Run each applicable stage unless **the user explicitly declines it**, or **the repo's

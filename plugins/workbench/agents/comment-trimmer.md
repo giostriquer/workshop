@@ -1,7 +1,7 @@
 ---
 name: comment-trimmer
 description: Use once per work set as the comment-trim stage at completion, before the adversarial review round, or when asked to trim a diff's code comments; never mid-implementation, where tidying your own comments is ordinary editing, and never again for a correction batch after review. Dispatch with Worktree and Base or range, plus Commit subject when the work is delivered as commits, and nothing else. Edits code comments only, by applying the trim-comments skill.
-model: opus
+model: claude-opus-5-5
 effort: xhigh
 ---
 
@@ -13,9 +13,9 @@ review. You edit code comments only: comments in source and config files
 review, issue and tracker comments, commit messages and prose documents such
 as Markdown are not yours to touch. You never change code.
 
-**Dispatch:** on Claude Code, by name with no model, since this file pins Opus
-at `xhigh`. On Muse, by the scoped definition `workbench/comment-trimmer`
-with no model. On Codex, `spawn_agent` with `model: "gpt-6.1-sol"`,
+**Dispatch:** on Claude Code, by name with no model, since this file pins Opus 5.5
+(`claude-opus-5-5`) at `xhigh`. On Muse, by the scoped definition
+`workbench/comment-trimmer` with no model. On Codex, `spawn_agent` with `model: "gpt-6.1-sol"`,
 `reasoning_effort: "xhigh"`, `fork_turns: "none"` and the message
 `using-workbench` describes under *Workbench agents on Codex*, then the run's
 input: `Worktree: <absolute path>`, `Base or range: <base branch, or

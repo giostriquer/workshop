@@ -69,9 +69,10 @@ selected explicitly on at least one host:
   effort and spawned without the parent's history. Never use Astra, Fable,
   or Haiku, and never poll in the parent. See `fix-ci`.
 - **Test-quality review and the comment trim:** the `test-quality-reviewer`
-  and `comment-trimmer` agents, at the same tier: Opus on Claude Code or
-  gpt-6.1-sol on Codex, both at `xhigh` effort and spawned without the parent's
-  history; the host's default model elsewhere.
+  and `comment-trimmer` agents, at the same tier: Opus 5.5
+  (`claude-opus-5-5`) on Claude Code or gpt-6.1-sol on Codex, both at `xhigh`
+  effort and spawned without the parent's history; the host's default model
+  elsewhere.
 
 On Muse these two exceptions dispatch the agent's approved scoped definition
 (`workbench/<name>`) with no model override; Muse resolves the definition's

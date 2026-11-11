@@ -76,10 +76,10 @@ instructions.
 | --- | --- |
 | [`spec-reviewer`](agents/spec-reviewer.md) | a design spec or implementation plan, before you build |
 | [`code-quality-reviewer`](agents/code-quality-reviewer.md) | a diff's maintainability and structure; loads the `code-quality-review` rubric |
-| [`test-quality-reviewer`](agents/test-quality-reviewer.md) | test code for trustworthiness and risk coverage; loads the `test-quality-review` rubric; separate Opus (Claude) or Sol (Codex) reviewer |
+| [`test-quality-reviewer`](agents/test-quality-reviewer.md) | test code for trustworthiness and risk coverage; loads the `test-quality-review` rubric; separate Opus 5.5 (Claude) or Sol (Codex) reviewer |
 | [`contract-reviewer`](agents/contract-reviewer.md) | a finished change's agreed behavior, integration and consumer compatibility; loads the `contract-review` rubric |
 | [`ci-watcher`](agents/ci-watcher.md) | PR or branch CI through the bundled Node 18+ watcher command; separate Sonnet 5.5 (Claude Code) or Sol (Codex) agent invokes it and reports its verdict |
-| [`comment-trimmer`](agents/comment-trimmer.md) | a finished diff's code comments, trimmed before the review round; loads the `trim-comments` rubric; separate Opus (Claude) or Sol (Codex) agent; returns constraint-comment encoding offers, never applies them |
+| [`comment-trimmer`](agents/comment-trimmer.md) | a finished diff's code comments, trimmed before the review round; loads the `trim-comments` rubric; separate Opus 5.5 (Claude) or Sol (Codex) agent; returns constraint-comment encoding offers, never applies them |
 
 ## Everyday skills
 

@@ -2,6 +2,16 @@
 
 Rationale for the workbench `model-reference` skill, including fleet calibration and harness routing. The skill owns the table; agent contracts own dispatch arguments.
 
+## Test-quality review and comment trim pin Opus 5.5 (2026-11-10)
+
+`test-quality-reviewer` and `comment-trimmer` pinned the `opus` alias on Claude
+Code, which resolves to whichever Opus the host maps it to. The operator asked
+for both to carry `claude-opus-5-5`, the pin the contract, code-quality and
+spec reviewers already use. All five Opus agents now name one exact model, and
+a new Opus release reaches none of them until the pin is edited. Effort, the
+separate context, by-name dispatch with no model override, the Muse
+scoped-definition route and the Codex `gpt-6.1-sol` pin are unchanged.
+
 ## Table and notes agree again; effort is recorded; escalation climbs effort first (2026-11-09)
 
 The 2026-11-05 re-grade changed rows and nothing else, which left the skill

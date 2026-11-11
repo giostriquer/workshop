@@ -8,6 +8,10 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.65.1: 2026-11-10
+
+- **Pin test-quality review and the comment trim to Opus 5.5 on Claude Code.** `test-quality-reviewer` and `comment-trimmer` name `claude-opus-5-5` in place of the `opus` alias, so all five Opus agents carry the same exact model and a new Opus release reaches none of them until the pin is edited. Effort stays `xhigh`, dispatch is still by name with no model override, and the Codex `gpt-6.1-sol` pin is unchanged. ([decision](decisions/model-reference.md#test-quality-review-and-comment-trim-pin-opus-55-2026-11-10))
+
 ## workbench 0.65.0: 2026-11-10
 
 - **Hold every lane PR until the owner has accepted the work.** `epic-orchestration` fixes the delivery order: the lane's completion round ends in a `ready-for-validation` handback with its branch unpushed and no PR, the owner validates that head, and a separate delivery authorization names the accepted revision. A brief, amendment or correction never carries that authorization, and a corrected head is validated before it is authorized. ([decision](decisions/epic-orchestration.md#a-lane-publishes-nothing-before-owner-acceptance-2026-11-10))
@@ -94,7 +98,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 ## workbench 0.59.1: 2026-10-30
 
 - **Read Muse event envelopes directly.** `scope-review` names the JSONL event discriminator and nested model, tool-result and terminal-report fields, avoiding output-format rediscovery by native callers. Direct invocation remains script-optional and retains its existing validation gates. ([decision](decisions/scope-review.md#direct-result-envelope-2026-10-30))
-
-## workbench 0.59.0: 2026-10-30
-
-- **Invoke Muse through the host harness.** `scope-review` now prefers direct invocation from Codex and Claude, with bounded read-only source inspection and native JSON-schema output. The existing packet runner is optional; single-attempt skip behavior and parent finding triage remain. ([decision](decisions/scope-review.md#native-host-invocation-2026-10-30))
