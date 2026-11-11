@@ -7,10 +7,12 @@
 //   bump <plugin> <x.y.z>   writes the version into the plugin's host manifests and its
 //                           marketplace entry, editing only the version text
 //   refresh                 updates the marketplace and each user-scope Workshop plugin in
-//                           Claude Code, Codex and Muse; exits 1 when a host command fails
+//                           Claude Code, Codex and Muse, then approves the agent definitions
+//                           Muse holds for a refreshed plugin whose copy matches origin/main;
+//                           exits 1 when a host command fails
 //   verify-caches           compares each installed Workshop copy with origin/main;
 //                           exits 1 when a copy is stale or differs. A Muse row also
-//                           names agent definitions awaiting review and user-invoked-only
+//                           names agent definitions still held and user-invoked-only
 //                           skills the model can still invoke there; neither fails
 //
 // Run from anywhere inside the Workshop checkout. Tests: node --test .claude/skills/release/tests/release.test.mjs
@@ -40,6 +42,7 @@ const HOST_COMMANDS = {
   muse: {
     marketplace: (market) => ["plugins", "marketplace", "update", market, "--json"],
     plugin: (install) => ["plugins", "update", install.plugin, "--json"],
+    approve: (install) => ["plugins", "approve", install.plugin],
   },
 };
 // The state Muse gives an agent definition whose current source the user approved.
@@ -192,7 +195,7 @@ function hostList(cli, args = ["plugin", "list", "--json"]) {
 function hosts({ name: market, plugins: released }) {
   const claude = hostList("claude");
   const codex = hostList("codex");
-  const muse = hostList("muse", ["plugins", "list", "--json"]);
+  const muse = museInstalls(released);
   const codexCache = join(process.env.CODEX_HOME || join(homedir(), ".codex"), "plugins", "cache", market);
   return [
     {
@@ -209,17 +212,18 @@ function hosts({ name: market, plugins: released }) {
       installs: (codex?.installed ?? []).filter((entry) => entry.marketplaceName === market).map((entry) => (
         { plugin: entry.name, version: entry.version, enabled: entry.enabled, path: join(codexCache, entry.name, entry.version) })),
     },
-    {
-      host: "muse",
-      missing: muse === null,
-      // A Muse install record names no marketplace, so a marketplace install of a
-      // released plugin name is taken as this marketplace's. Muse may read the
-      // marketplace from a local checkout; verify-caches still compares with origin/main.
-      installs: (muse?.plugins ?? []).map((entry) => entry.record)
-        .filter((record) => record?.source?.provenance?.startsWith("marketplace") && released.has(record.id))
-        .map((record) => ({ plugin: record.id, version: record.version, enabled: record.enabled, path: record.cache_path })),
-    },
+    { host: "muse", missing: muse === null, installs: muse ?? [] },
   ];
+}
+
+// null when Muse is not installed. A Muse install record names no marketplace, so a
+// marketplace install of a released plugin name is taken as this marketplace's. Muse may
+// read the marketplace from a local checkout; verify-caches still compares with origin/main.
+function museInstalls(released) {
+  const muse = hostList("muse", ["plugins", "list", "--json"]);
+  return muse && (muse.plugins ?? []).map((entry) => entry.record)
+    .filter((record) => record?.source?.provenance?.startsWith("marketplace") && released.has(record.id))
+    .map((record) => ({ plugin: record.id, version: record.version, enabled: record.enabled, path: record.cache_path }));
 }
 
 // Released skills marked user-invoked only that Muse would still let the model invoke.
@@ -248,6 +252,28 @@ function museReview(plugin) {
     .sort();
 }
 
+function hostStep(host, args) {
+  const r = spawnSync(host, args, { cwd: root, encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
+  const step = { host, command: [host, ...args].join(" "), status: r.status === 0 ? "ok" : "failed" };
+  if (r.status !== 0) step.output = (r.stderr || r.stdout || String(r.error ?? "")).trim();
+  return step;
+}
+
+// Muse holds an agent definition inactive once its file changes. Approves the held ones of
+// each refreshed plugin whose copy is the released one; any other copy keeps them held.
+function approveMuse(market, plugins) {
+  const steps = [];
+  for (const install of (museInstalls(market.plugins) ?? []).filter((entry) => plugins.has(entry.plugin))) {
+    const agents = museReview(install.plugin);
+    if (!agents.length) continue;
+    const copy = checkCopy("muse", install, market.plugins.get(install.plugin)).status;
+    steps.push(copy === "match"
+      ? { ...hostStep("muse", HOST_COMMANDS.muse.approve(install)), agents }
+      : { host: "muse", plugin: install.plugin, status: "skipped", reason: `copy is ${copy}: its agent definitions stay held`, agents });
+  }
+  return steps;
+}
+
 function refresh() {
   const market = releasedMarketplace();
   const steps = [];
@@ -264,12 +290,8 @@ function refresh() {
       continue;
     }
     const commands = [HOST_COMMANDS[host].marketplace(market.name), ...global.map((install) => HOST_COMMANDS[host].plugin(install, market.name))];
-    for (const args of commands) {
-      const r = spawnSync(host, args, { cwd: root, encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
-      const step = { host, command: [host, ...args].join(" "), status: r.status === 0 ? "ok" : "failed" };
-      if (r.status !== 0) step.output = (r.stderr || r.stdout || String(r.error ?? "")).trim();
-      steps.push(step);
-    }
+    for (const args of commands) steps.push(hostStep(host, args));
+    if (host === "muse") steps.push(...approveMuse(market, new Set(global.map((install) => install.plugin))));
   }
   print({ steps });
   if (steps.some((step) => step.status === "failed")) process.exitCode = 1;

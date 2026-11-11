@@ -222,15 +222,25 @@ copies the working tree, not GitHub, which is why the byte comparison with
 `origin/main` matters there: a checkout holding unpushed or unshipped changes
 shows as a mismatch.
 
-Two things on Muse stay with the user, and the helper reports them without
-failing. A release that changes an agent file leaves that agent awaiting
-re-approval, since Muse's review binds the definition's source; the first run
-on a machine found all six Workbench agents in that state. And Muse's loader
-ignores `disable-model-invocation`, so a new user-invoked-only skill is
-model-invocable there until its policy is set; the same run found two. The
-release names each with the command to run and runs neither, because approving
-an agent and changing an invocation policy are trust settings on the machine,
-outside what a request to release authorizes.
+One thing on Muse stays with the user, and the helper reports it without
+failing. Muse's loader ignores `disable-model-invocation`, so a new
+user-invoked-only skill is model-invocable there until its policy is set; the
+first run on a machine found two. The release names each with the command to
+run and does not run it, because an invocation policy is a trust setting on
+the machine, outside what a request to release authorizes.
+
+**`refresh` approves the released agent definitions (2026-11-10).** A release
+that changes an agent file leaves that agent held on Muse until it is approved
+again, since Muse's review binds the definition's source; the first run on a
+machine found all six Workbench agents in that state. The release named them
+with the command and ran nothing, on the same trust-setting ground, so every
+release that touched an agent stayed half applied on Muse until the operator
+approved by hand. The operator asked for the release to approve them.
+`refresh` now runs `muse plugins approve` for each plugin it refreshed that has
+held definitions, and only when that plugin's Muse copy matches `origin/main`
+byte for byte, so what it approves is what the release pushed. A copy taken
+from a checkout with unpushed or unshipped changes keeps its definitions held
+and gets a `skipped` step; `verify-caches` still lists whatever remains held.
 
 `push` checked its commit with `git show --name-only`, which shows a moved file
 under its new path only, so the retired skill's three moves read as three

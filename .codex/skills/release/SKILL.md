@@ -8,10 +8,11 @@ description: Use when the user asks to release in the Workshop repo, because wor
 Ship every plugin with unreleased changes, then bring this machine's global
 Claude Code, Codex and Muse installs up to the pushed release. The user's
 request to release authorizes what it lists: version bumps, release notes, one
-commit and push to `main`, and updating the Workshop plugins this machine
-already has. It authorizes nothing else, such as installing or removing a
-plugin, approving agent definitions in Muse, or changing a skill's invocation
-policy there.
+commit and push to `main`, updating the Workshop plugins this machine already
+has, and approving in Muse the agent definitions of a refreshed plugin whose
+copy is the released one. It authorizes nothing else, such as installing or
+removing a plugin, approving any other definition, or changing a skill's
+invocation policy in Muse.
 
 Claude Code and Codex install Workshop from GitHub `main`. Claude Code keeps
 one cache folder per version; Codex keeps one folder per plugin, and `refresh`
@@ -115,6 +116,12 @@ plugin that `origin/main` releases.
 A project- or local-scope install is skipped, because it updates from its own
 project; report it.
 
+On Muse a release that changes an agent file leaves that agent held inactive.
+`refresh` then runs `muse plugins approve <plugin>` for each refreshed plugin
+with held definitions whose copy matches `origin/main`, and lists them in the
+step's `agents`. A copy that does not match gets a `skipped` step and keeps
+its definitions held.
+
 **Done:** exit 0. A `failed` step carries the host's output: report it.
 
 ## 6. Verify
@@ -136,10 +143,10 @@ verify again. If the row still fails, report it: the refresh is not done.
 
 A Muse row carries two more lists, and neither fails the check:
 
-- `review`: agent definitions Muse holds inactive until they are approved
-  again. Any release that changes an agent file puts that agent here. Approval
-  is Muse's review step and stays with the user: report the list with
-  `muse plugins approve <plugin>`, and do not run it.
+- `review`: agent definitions Muse still holds inactive, because `refresh`
+  skipped their approval or it failed. On a `match` row, run `refresh` once
+  more and verify again. Report what is left with
+  `muse plugins approve <plugin>`, and do not run it by hand.
 - `policy`: released skills marked user-invoked only that Muse still lets the
   model invoke, because its loader ignores that frontmatter key. Report each
   with `muse skills user-only <id> --scope plugin`, and do not run it.
@@ -154,8 +161,8 @@ reads as not on `PATH`.
 - The commit and the push result, or why the release stopped and what it changed first.
 - Each host and plugin: installed version and `verify-caches` status, including
   `not-released`, `none` and `skipped` rows.
-- Muse: each row's `review` and `policy` lists, with the command the user runs
-  for each.
+- Muse: the agent definitions `refresh` approved, then each row's remaining
+  `review` and `policy` lists, with the command the user runs for each.
 - Gaps: missing decision notes or usage pages, changes kept out, anything not verified.
 - Running Claude Code sessions keep the version they loaded: restart to use the
   update. Live Codex sessions lost that version's files: say whether Codex was

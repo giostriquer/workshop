@@ -553,6 +553,46 @@ test('refresh updates the Muse marketplace snapshot, then each released marketpl
   assert.deepEqual(calls(f, 'muse'), ['plugins marketplace update workshop --json', 'plugins update alpha --json']);
 });
 
+const heldAgents = { 'alpha/watcher': 'trusted_enabled', 'alpha/reviewer': 'modified', 'alpha/new': 'review_needed' };
+const museUpdates = ['plugins marketplace update workshop --json', 'plugins update alpha --json'];
+
+test('refresh approves the agent definitions Muse holds when the refreshed copy is the released one', (t) => {
+  const f = fixture(t);
+  install(f, musePath(f));
+  hosts(f, { claude: null, codex: null, muse: [museEntry(f, '1.2.0', { agents: heldAgents }), ...foreignMuse(f)] });
+  const r = f.run('refresh');
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  assert.deepEqual(calls(f, 'muse'), [...museUpdates, 'plugins approve alpha']);
+  const step = JSON.parse(r.stdout).steps.at(-1);
+  assert.deepEqual([step.command, step.status, step.agents], ['muse plugins approve alpha', 'ok', ['alpha/new: review_needed', 'alpha/reviewer: modified']]);
+});
+
+test('refresh keeps Muse agent definitions held when the copy is not the released one', (t) => {
+  const f = fixture(t);
+  install(f, musePath(f));
+  writeFileSync(path.join(musePath(f), 'skills/one/SKILL.md'), '# working tree bytes, never pushed\n');
+  hosts(f, { claude: null, codex: null, muse: [museEntry(f, '1.2.0', { agents: heldAgents })] });
+  let r = f.run('refresh');
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  let step = JSON.parse(r.stdout).steps.at(-1);
+  assert.deepEqual([step.plugin, step.status, step.reason], ['alpha', 'skipped', 'copy is mismatch: its agent definitions stay held']);
+  hosts(f, { claude: null, codex: null, muse: [museEntry(f, '1.1.0', { agents: heldAgents })] });
+  r = f.run('refresh');
+  step = JSON.parse(r.stdout).steps.at(-1);
+  assert.deepEqual([step.status, step.reason], ['skipped', 'copy is stale: its agent definitions stay held']);
+  assert.deepEqual(calls(f, 'muse'), [...museUpdates, ...museUpdates]);
+});
+
+test('a failed Muse approval fails refresh and is reported', (t) => {
+  const f = fixture(t);
+  install(f, musePath(f));
+  hosts(f, { claude: null, codex: null, muse: [museEntry(f, '1.2.0', { agents: heldAgents })], fail: 'approve' });
+  const r = f.run('refresh');
+  assert.equal(r.status, 1);
+  const step = JSON.parse(r.stdout).steps.at(-1);
+  assert.deepEqual([step.status, step.output], ['failed', 'boom: plugins approve alpha']);
+});
+
 test('a Muse copy is compared with origin/main, and agent definitions awaiting review are named without failing', (t) => {
   const f = fixture(t);
   install(f, musePath(f));
