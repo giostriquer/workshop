@@ -8,6 +8,12 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.67.0: 2026-11-13
+
+- **Run mutest-rs first for Rust.** `test-quality-review` picks one Rust mutation tool per crate from a table. A crate with a `Cargo.toml` runs mutest-rs, which builds once with every mutation compiled in and edits no source file. cargo-mutants runs only when mutest-rs cannot: its install failed or was refused, the crate does not build or pass its baseline under mutest-rs's pinned nightly, or a test longer than 60 seconds reaches the scope. A crate with no manifest that Bazel builds keeps the bundled runner. A completed run never passes its scope to another tool. ([decision](decisions/mutation-scope-and-budget.md#mutest-rs-first-for-rust-2026-11-13))
+- **Read a mutest-rs run from its output, not its exit status.** `cargo mutest` exits 0 after a compile error, a failing baseline and undetected mutations alike, so the reference counts a run complete only when the summary line printed and `evaluation.json` exists. Lines that get no mutation (code no selected test reaches within three calls, a function with an `unsafe` block, a bare literal) take hand-applied defects. The Mutation run line reports detected / timed out / crashed / undetected / total per target. ([decision](decisions/mutation-scope-and-budget.md#mutest-rs-first-for-rust-2026-11-13))
+- **Queue mutest-rs campaigns.** The slot helper counts `cargo mutest` as a campaign, its mutation listing included, since that type-checks the crate; only `--version` and `--help` take no slot. ([decision](decisions/mutation-scope-and-budget.md#mutest-rs-first-for-rust-2026-11-13))
+
 ## workbench 0.66.2: 2026-11-13
 
 - **Stop rerunning flaky tests to green.** `fix-ci` step 5 is now "Rerun or repair?", a table read from the failing log and the branch's diff. Only a failure with no failed test (runner, checkout, install, download, a service the job calls) is rerun as infrastructure. A failed test the branch adds or changes, or whose code it changes, is the branch's fault and is repaired, whatever it does locally or on a rerun. A failed test outside the diff is rerun once and reported by name, with its failure and run link, as a defect that still needs an owner. A rerun is no longer counted beside the two fix attempts. ([decision](decisions/fix-ci.md#a-flaky-test-is-a-fault-not-a-rerun-2026-11-13))
@@ -93,8 +99,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 ## workbench 0.62.1: 2026-11-04
 
 - **Name Muse's session storage in cleanup.** `workspace-cleanup` now lists Muse's sessions, session index and prompt history among the transcripts it never touches. ([decision](decisions/workspace-cleanup.md#session-transcripts-are-never-a-candidate-2026-11-04))
-
-## workbench 0.62.0: 2026-11-04
-
-- **Open reports with holds that stop several lanes.** `epic-orchestration` owner returns gain a required **Active holds** slot ahead of **Progress**, and every other operator reply carries it too. Each line names what is stopped, who ordered it, the source's exact words and what releases it. A reading wider than those words is recorded as the epic owner's, with a request to confirm or narrow it in the same reply. ([decision](decisions/epic-orchestration.md#a-wide-hold-opens-every-report-2026-11-04))
-- **Never touch session transcripts during cleanup.** `workspace-cleanup` leaves agent session history out of inventories, totals, batches, estimates and prevention advice. It never suggests, deletes, moves, compresses or truncates that history, never shortens a host's retention setting, and reports a storage target it cannot reach without them as a remaining gap. ([decision](decisions/workspace-cleanup.md#session-transcripts-are-never-a-candidate-2026-11-04))

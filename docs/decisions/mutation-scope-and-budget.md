@@ -367,3 +367,73 @@ also builds, and a plain Cargo crate, stayed on `cargo mutants --in-place`. A
 crate with neither a manifest nor Bazel files did not take the runner and
 recorded `blocked`, as before. One run each: regression evidence for those
 layouts, not a reliability estimate.
+
+## mutest-rs first for Rust (2026-11-13)
+
+cargo-mutants rebuilds the crate for every mutant, which is what the lane's
+budget mostly pays for on Rust. mutest-rs compiles every mutation into one
+test binary and switches between them at run time, so a scope costs one build
+plus its tests, and no source file is edited. The operator asked for it as the
+first Rust tool, the way Stryker is for TypeScript, with cargo-mutants and the
+Bazel runner behind it and only one of the three running a scope.
+
+The route is a table read from the crate: a `Cargo.toml` up to the repository
+root means mutest-rs; cargo-mutants runs only when mutest-rs cannot; a crate
+with no manifest that Bazel builds keeps the bundled runner, since both Cargo
+tools need a manifest. "Cannot" is three observable cases: the install failed
+or was refused, the crate does not build or pass its baseline under mutest-rs's
+pinned nightly while `cargo test` passes under the project's toolchain, or a
+test longer than 60 seconds reaches the scope, because the harness takes no
+test-name filter. A completed run never passes its scope on: undetected
+mutations, timeouts and lines with no mutation are that run's evidence, which
+keeps the existing one-run-per-scope rule.
+
+mutest-rs has no published release and no version tag. The reference pins
+commit `16593ebb264a2224ed8b582be0155ac1845dcb09` and its build commands with
+the self-contained `embed-runtime` driver, and accepts a `cargo mutest` already
+on PATH. On the trial host that build was refused to an agent by the host's
+permission policy and ran only when the operator typed it, so a host without a
+preinstalled copy will often take the cargo-mutants row; the usage page says so.
+
+What a trial on `nightly-2026-07-18` (cargo-mutest 0.0.0 at that commit, macOS
+arm64) established, each written into the reference:
+
+- Options go after `run`; the book's `cargo mutest -p <package> run` is rejected.
+- `--filter-mutations file:<path>:<start>..<end>` scopes to lines, with the
+  path relative to the workspace root even from the crate's directory. A path
+  relative to the crate gives zero mutations and no error.
+- The exit status is 0 after a compile error, after a failing baseline and
+  with undetected mutations. A run is complete only when the summary line
+  printed and `evaluation.json` exists.
+- It mutates only code a selected test reaches within three calls (`--depth`),
+  skips a function that contains an `unsafe` block under the default `--safe`,
+  and has no operator for a bare literal. Those lines take hand-applied
+  defects, or untested code would read as clean.
+- An integration-test target mutates the library it calls. A project's own
+  `rust-toolchain.toml` is overridden by the pinned nightly.
+- Listing with `--print mutations --no-build` type-checks the crate, so the
+  slot helper counts it as a campaign; only `--version` and `--help` bypass.
+- A mutation that loops is reported as timed out inside the detected count.
+
+On a 30-line sample crate mutest-rs made 24 mutations from the library's
+tests and ran them in 11 seconds including the build; cargo-mutants lists 27
+for the same file. Installing took about two and a half minutes on a loaded
+host with the nightly already present.
+
+The slot helper recognises `cargo mutest` and `cargo-mutest` through two new
+tests written first; its 40 tests pass. One end-to-end run on Opus (the host's `opus` alias) followed
+the edited reference over a one-commit change in a throwaway Cargo workspace:
+it chose mutest-rs by the first row, listed and ran through the slot helper
+with a workspace-relative filter, read 7 detected and 8 undetected of 15, and
+covered three literal lines with hand-applied defects. Its two mutest-rs
+frictions are fixed in the text: Cargo's `error: test failed` after a run with
+survivors, and literals among the lines that get no mutation. Four route
+probes on Fable 5.2, one run each in a fresh context, chose as intended: a
+refused install went to cargo-mutants with the reason recorded; a completed
+run with survivors and unmutated `unsafe` lines declined a cargo-mutants
+cross-check and used hand-applied defects; a Bazel crate with no manifest took
+the bundled runner; an exit 0 over a compile error under the nightly was read
+as no run and sent to cargo-mutants. This is regression evidence for those
+scenarios, not a reliability estimate. Not tried: Linux, a large workspace, a
+crate with procedural macros or build scripts, and the batching options, which
+the reference leaves unset.

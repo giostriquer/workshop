@@ -5,9 +5,9 @@
 // line is `mutation-slot: {json}` with the status, queue mode, seconds waited and
 // whether the process listing could see other sessions (`listingSeesHost`; null when it
 // waited behind other tickets or a lock the whole time and never took a listing).
-// Campaigns are Stryker, cargo-mutants and the bundled rust-mutants-runner. A listing
-// (`--list`, `--list-files`, `--version`, `--help`) executes no mutant: it runs at once
-// with queue mode `bypass` and never holds another campaign back.
+// Campaigns are Stryker, mutest-rs, cargo-mutants and the bundled rust-mutants-runner. A
+// listing (`--list`, `--list-files`, `--version`, `--help`) executes no mutant: it runs at
+// once with queue mode `bypass` and never holds another campaign back.
 import { execFileSync, spawn } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmdirSync, statSync, unlinkSync, utimesSync, writeFileSync } from 'node:fs';
 import os from 'node:os';
@@ -22,10 +22,13 @@ const VALUE_OPTIONS = new Set(['-r', '--require', '--import', '--loader', '--exp
 // Keyed by tool: cargo-mutants reads -V as --unviable, which runs the campaign.
 const LISTING = {
   'cargo-mutants': new Set(['--list', '--list-files', '--version', '--help', '-h']),
+  // mutest-rs lists mutations by type-checking the crate, which is a build.
+  'cargo-mutest': new Set(['--version', '-V', '--help', '-h']),
   stryker: new Set(['--version', '-V', '--help', '-h']),
   'rust-mutants-runner': new Set(['--list', '--help', '-h']),
 };
 const SCRIPTS = { stryker: ['stryker', 'stryker.js'], 'rust-mutants-runner': ['rust-mutants-runner', 'rust-mutants-runner.mjs'] };
+const CARGO_TOOLS = new Map([['mutants', 'cargo-mutants'], ['mutest', 'cargo-mutest']]);
 
 const base = arg => path.basename(arg || '');
 
@@ -39,7 +42,8 @@ function scriptOf(args) {
 
 function toolOf(argv) {
   const program = base(argv[0]);
-  if (program === 'cargo-mutants' || (program === 'cargo' && argv[1] === 'mutants')) return 'cargo-mutants';
+  if (program === 'cargo' && CARGO_TOOLS.has(argv[1])) return CARGO_TOOLS.get(argv[1]);
+  if ([...CARGO_TOOLS.values()].includes(program)) return program;
   const script = base(program === 'node' || program === 'bun' ? scriptOf(argv.slice(1)) : argv[0]);
   return Object.keys(SCRIPTS).find(tool => SCRIPTS[tool].includes(script)) ?? null;
 }

@@ -251,7 +251,9 @@ Follow-up pass: [0 initial, or the follow-up's number]
   (mutants × baseline ÷ concurrency) and any narrowing, setup and run
   commands, lane time as minutes of the round's budget, report path and outcome
   counts; Stryker: killed / timeout / survived /
-  no coverage (unavailable with the command runner) / errors; cargo-mutants:
+  no coverage (unavailable with the command runner) / errors; mutest-rs:
+  detected / timed out / crashed / undetected / total per target; cargo-mutants,
+  with the reason mutest-rs could not run:
   caught / missed / timeout / unviable, timeout reasons and inconclusive outcomes,
   with fresh and reused results separated; Bazel runner: the same four, then not
   applied / not run / inconclusive with Bazel's exit; and any campaign wait in minutes and

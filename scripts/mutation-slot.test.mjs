@@ -145,6 +145,35 @@ test('a listing that executes no mutant is not a campaign', () => {
   assert.deepEqual(campaigns('  301 cargo mutants --list-files\n  302 cargo mutants --in-place -- --list\n', 0).map(c => c.pid), [302]);
 });
 
+test('recognizes a mutest-rs campaign and ignores the builds and tests it starts', () => {
+  const listing = [
+    '  501 /Users/me/tools/bin/cargo-mutest mutest run -p pricing --lib --filter-mutations file:crates/pricing/src/lib.rs:9..17',
+    '  502 cargo mutest run --lib',
+    '  503 cargo mutest run --lib --print mutations --no-build',
+    '  601 /Users/me/.rustup/toolchains/nightly-2026-07-18-aarch64-apple-darwin/bin/cargo test --no-fail-fast --target-dir /tmp/tq.abc/tree/target/mutest --lib',
+    '  602 /Users/me/tools/bin/mutest-driver /Users/me/.rustup/toolchains/nightly-2026-07-18-aarch64-apple-darwin/bin/rustc --crate-name pricing',
+    '  603 /tmp/tq.abc/tree/target/mutest/debug/deps/pricing-3fde84f307c5e9c2 --isolate=unsafe',
+    '  604 grep cargo-mutest',
+    '  605 cargo mutest --version',
+  ].join('\n');
+  assert.deepEqual(campaigns(listing, 0).map(c => c.pid), [501, 502, 503]);
+});
+
+test('only a mutest-rs version or help request takes no slot', () => {
+  for (const argv of [
+    ['cargo', 'mutest', '--version'],
+    ['cargo', 'mutest', '-V'],
+    ['cargo', 'mutest', 'run', '--help'],
+    ['/Users/me/tools/bin/cargo-mutest', 'mutest', '-h'],
+  ]) assert.equal(isListing(argv), true, argv.join(' '));
+  for (const argv of [
+    ['cargo', 'mutest', 'run', '--lib'],
+    // Listing the mutations type-checks the crate and its dependencies: a build.
+    ['cargo', 'mutest', 'run', '--lib', '--print', 'mutations', '--no-build'],
+    ['cargo', 'mutest', 'run', '--lib', '--', '--help'],
+  ]) assert.equal(isListing(argv), false, argv.join(' '));
+});
+
 test('never counts its own process as a running campaign', () => {
   assert.deepEqual(campaigns('  4242 node /tmp/x/stryker.js run\n', 4242), []);
 });

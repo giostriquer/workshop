@@ -80,10 +80,19 @@ names concrete defects, protected behavior, runner limits and preservation.
 No. The tests that exercised it before the move still characterize it; only the changed wiring and edited lines are in scope.
 
 **My project has no mutation tool or config. Will the review set it up?**
-Yes, in isolation, with a focused config and a passing, nonempty baseline. For Rust the run is `cargo mutants --in-place` inside the reviewer's clone, so the clone's build cache serves every mutant. Permanent changes go back to the implementer; an install restriction or unresolved environment failure is reported as a blocker.
+Yes, in isolation, with a focused config and a passing, nonempty baseline. For Rust the run is `cargo mutest run` inside the reviewer's clone: mutest-rs builds the crate once with every mutation compiled in and edits no source file. Permanent changes go back to the implementer; an install restriction or unresolved environment failure is reported as a blocker.
+
+**Which Rust mutation tool runs?**
+One per crate, never two over the same scope. A crate with a `Cargo.toml` runs mutest-rs. It falls to `cargo mutants --in-place` only when mutest-rs cannot run it: its install failed or was refused, the crate does not build or pass its baseline under mutest-rs's pinned nightly compiler, or a test longer than 60 seconds reaches the scope. The Mutation run line gives that reason. A crate with no `Cargo.toml` that Bazel builds takes the bundled Bazel runner. Undetected mutations, timeouts or lines that got no mutation never send a completed mutest-rs run on to another tool.
+
+**Do I need to install mutest-rs?**
+It helps. mutest-rs has no published release, so without a `cargo mutest` on PATH the reviewer clones a pinned commit and builds it into an isolated tool prefix, which takes a few minutes and a nightly toolchain that rustup downloads. Where that build is refused or fails, the review uses cargo-mutants and says so.
+
+**mutest-rs reported no mutation for my changed lines. Are they covered?**
+Not by that alone. mutest-rs mutates only code that a selected test reaches within three calls, skips functions that contain an `unsafe` block, and has no operator for a bare literal or constant. The reviewer checks the filter path, the test targets and the call depth, then applies defects by hand to the lines that still got none.
 
 **My Rust crate builds with Bazel and has no `Cargo.toml`. Can the review still mutate it?**
-Yes. When no `Cargo.toml` exists for the changed crate up to the repository root and Bazel files are present, the reviewer uses the skill's bundled Bazel runner: cargo-mutants only lists the mutants, from a scratch copy with a stand-in manifest, and Bazel tests each one in the reviewer's clone, which gets its file restored and checked after every mutant. Each mutant is a Bazel rebuild, so the run keeps to changed lines, at most ten mutants and the lane's budget; what that leaves out is `partial`. A crate with a `Cargo.toml` keeps the ordinary cargo-mutants run, even when Bazel also builds it.
+Yes. When no `Cargo.toml` exists for the changed crate up to the repository root and Bazel files are present, the reviewer uses the skill's bundled Bazel runner: cargo-mutants only lists the mutants, from a scratch copy with a stand-in manifest, and Bazel tests each one in the reviewer's clone, which gets its file restored and checked after every mutant. Each mutant is a Bazel rebuild, so the run keeps to changed lines, at most ten mutants and the lane's budget; what that leaves out is `partial`. A crate with a `Cargo.toml` keeps the Cargo tools, mutest-rs first, even when Bazel also builds it.
 
 **A test file changed but the production file did not. What gets mutated?**
 The functions the changed test cases call, selected by name or line range, not the whole file. A changed or removed assertion that loses protection creates an Issue even when production is unchanged. Gaps that predate both the production and test diff stay under Strategy notes.

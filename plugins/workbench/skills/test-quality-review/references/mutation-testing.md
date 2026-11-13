@@ -9,8 +9,8 @@ A test that would obviously survive a relevant mutant is a test-quality issue.
 **Mutation scope.** For a change review, the scope is the production lines whose
 content changed (`path:startLine-endLine`) and, behind a changed test file, the
 production functions its added, changed or removed test cases call (Stryker
-`path:start-end` ranges over those functions; cargo-mutants `--re` on their
-names), not the whole file. A test file and the helpers it defines are never a
+`path:start-end` ranges over those functions; mutest-rs `def:` filters or
+cargo-mutants `--re` on their names), not the whole file. A test file and the helpers it defines are never a
 mutation target, whatever a dispatch names as scope: gate, oracle or parser
 logic that lives in a test file is reviewed through the checklist (a setup that
 passes trivially, a helper that cannot fail) and at most five hand-applied
@@ -76,8 +76,8 @@ named tests.
 
 - **Set up, then run.** For each required or requested mutation run, cover the
   eligible behavior in scope. Use StrykerJS for `.ts`, `.tsx`, `.js`, and `.jsx` production
-  code, and for Rust `cargo-mutants`, or the bundled Bazel runner for a crate
-  the Rust route below sends to it. Mixed changes need both; a language with
+  code, and for Rust the one tool the Rust route below picks for the crate:
+  mutest-rs, cargo-mutants or the bundled Bazel runner. Mixed changes need both languages; a language with
   no production line and no test in scope gets no run and no setup. Mutate
   production behavior exercised by changed tests, not the tests' assertions. The run's test
   set is the focused tests that exercise the scope; a test whose own run takes
@@ -101,7 +101,8 @@ named tests.
   runner dependencies, or repair the config, in the disposable copy or a dedicated
   tool prefix. Use the project's package manager and runtime; record versions and
   setup commands. For Stryker, install `@stryker-mutator/core` and any required
-  framework runner. For Rust, use `cargo install --locked cargo-mutants --root
+  framework runner. For mutest-rs, follow its bullet below. For cargo-mutants,
+  use `cargo install --locked cargo-mutants --root
   <isolated-tool-prefix>` and put that prefix's `bin` on the run's PATH. Keep
   installation caches and artifacts outside the author's checkout. Return needed
   permanent config or dependency changes to the implementer; do not edit the
@@ -182,16 +183,74 @@ named tests.
   Resuming partial work does not restart the round's budget or authorize a second
   completed campaign over the same scope.
 
-- **Rust route.** A Rust crate runs `cargo-mutants` as in the next bullet. Only
-  a crate that Bazel builds and that has no Cargo manifest takes the bundled
-  runner in the bullet after it: no `Cargo.toml` in the changed crate's
-  directory or in any parent up to the repository root, and Bazel files present
-  (`MODULE.bazel`, `WORKSPACE.bazel` or `WORKSPACE` at the root, and
-  `BUILD.bazel` or `BUILD` in the crate's directory). cargo-mutants cannot run
-  there: it needs a Cargo manifest and runs `cargo build` and `cargo test` for
-  each mutant. A crate with a `Cargo.toml` stays on cargo-mutants, even when
-  Bazel also builds it.
-- For Rust, run `cargo mutants --in-place` from the crate or workspace inside the
+- **Rust route.** One tool runs a Rust crate's scope: the first row the crate
+  meets. The three bullets after this one give each tool's commands.
+
+  | Order | The crate | Tool |
+  |---|---|---|
+  | 1 | has a `Cargo.toml` in its directory or a parent up to the repository root | mutest-rs |
+  | 2 | has a `Cargo.toml`, and mutest-rs cannot run it | cargo-mutants |
+  | 3 | has no `Cargo.toml` up to the repository root, and Bazel builds it | the bundled Bazel runner |
+
+  mutest-rs cannot run a crate when its install failed or was refused, when
+  the crate does not build or its baseline does not pass under mutest-rs's
+  pinned compiler although `cargo test` passes under the project's own, or
+  when a test longer than 60 seconds reaches the scope from a target the run
+  needs. Name that reason on the Mutation run line. A run that completed is
+  the scope's evidence: undetected mutations, timeouts and lines that got no
+  mutation never send the scope on to cargo-mutants.
+  Row 3 needs Bazel files as well: `MODULE.bazel`, `WORKSPACE.bazel` or
+  `WORKSPACE` at the root, and `BUILD.bazel` or `BUILD` in the crate's
+  directory. Neither Cargo tool runs there, since both need a Cargo manifest.
+  A crate with a `Cargo.toml` stays on rows 1 and 2, even when Bazel also
+  builds it.
+- For mutest-rs, run `cargo mutest run` from the crate or workspace inside the
+  disposable copy. It compiles every mutation into one test binary and
+  switches between them at run time, so the crate builds once and no source
+  file is edited:
+  `cargo mutest run -p <package> --lib --color never --timings --filter-mutations 'file:<path>:<start>..<end>' --metadata-out-root-dir <outside-copy>`.
+  Options go after `run`. Select the targets whose tests exercise the scope
+  with `--lib`, `--bin <name>` and `--test <name>`; an integration-test target
+  mutates the library code it calls. Each target is its own run with its own
+  summary, and the harness takes no test-name filter. Scope the mutations with
+  `--filter-mutations`: a `file:` path is relative to the workspace root
+  wherever the command runs, a line range is `<start>..<end>`, several filters
+  join with commas, and `def:<item path>` names a function behind a changed
+  test. Leave mutation batching and `--parallel-mutants` unset.
+  `--print mutations --no-build` lists the mutations without running them. It
+  type-checks the crate, so it goes through the slot helper like the run.
+
+  mutest-rs has no published release. Use a `cargo mutest` already on PATH, or
+  build commit `16593ebb264a2224ed8b582be0155ac1845dcb09` into the isolated
+  tool prefix: `git clone https://github.com/zalanlevai/mutest-rs <prefix>/src`
+  and `git -C <prefix>/src checkout 16593ebb264a2224ed8b582be0155ac1845dcb09`,
+  then from `<prefix>/src` run `cargo build --release -p mutest-runtime`,
+  `cargo install --locked --path mutest-driver --features embed-runtime --root <prefix>`
+  and `cargo install --locked --path cargo-mutest --root <prefix>`. rustup
+  installs the nightly compiler that checkout pins, and mutest-rs compiles the
+  reviewed crate with it, whatever toolchain the project pins. Record
+  `cargo mutest --version` with the setup commands.
+
+  `cargo mutest` exits 0 after a compile error, after a failing baseline
+  (`not all tests passed, cannot continue`) and with undetected mutations
+  alike. A target's run completed only when its `mutations: ... total` summary
+  line printed and `evaluation.json` exists under the metadata directory;
+  anything else is an invocation to repair. A completed run with undetected
+  mutations also prints Cargo's `error: test failed` and `1 target failed`:
+  those lines report the survivors, not a failed invocation.
+  Zero mutations over lines that hold expressions is first a wrong `file:`
+  path, then a missing target whose tests reach the lines, then call depth:
+  mutest-rs mutates functions up to three calls from a test, and `--depth <n>`
+  raises that. Two kinds of line get none whatever the setup: a function that
+  contains an `unsafe` block, under the default `--safe`, and a bare literal
+  or constant, which no mutest-rs operator changes. Lines that still get none
+  take hand-applied defects under the rule below, which shows whether any
+  test catches them.
+  Report detected / timed out / crashed / undetected / total for each target.
+  The detected count includes the timed out and the crashed: keep those apart
+  from assertion detections. Review each `mutation was not detected` warning
+  as a survivor.
+- For cargo-mutants, run `cargo mutants --in-place` from the crate or workspace inside the
   disposable copy, as a single job, with `--copy-target` and `--jobs` unset and
   `--output` outside the copy: the clone's build cache serves every mutant, where
   the tool's own temporary copy rebuilds cold or copies `target/` once per job.
@@ -249,7 +308,7 @@ named tests.
   the reviewer wants to check by hand gets one hand-applied defect in the copy.
 - **One campaign at a time, through the slot helper.** Campaigns run one at a
   time on the host, in arrival order, across every session on it. Launch every
-  Stryker, cargo-mutants and Bazel runner invocation that builds or runs tests,
+  Stryker, mutest-rs, cargo-mutants and Bazel runner invocation that builds or runs tests,
   dry runs included, through `scripts/mutation-slot.mjs` beside this skill's `SKILL.md`:
   `node "<skill dir>/scripts/mutation-slot.mjs" --wait-limit <seconds> -- <campaign command>`.
   It queues the launch host-wide, waits for any running campaign, including
@@ -275,7 +334,7 @@ named tests.
   sandbox refuses `ps`, means the helper could not see campaigns other
   sessions started without it; `null` means it waited behind other tickets or
   a lock the whole time and never took a listing. Without Node, run
-  `ps -axo pid,etime,command | grep -E '[s]tryker|[c]argo-mutants|[r]ust-mutants-runner'` as its own
+  `ps -axo pid,etime,command | grep -E '[s]tryker|[c]argo-mutest|[c]argo-mutants|[r]ust-mutants-runner'` as its own
   command before each launch and wait while a campaign runs; a listing without
   PID 1 or other users' processes has the same blind spot, and the Mutation
   run line says so.
@@ -305,7 +364,9 @@ named tests.
 - **Estimate, then bound.** Every run has an estimate before its mutants
   execute: mutants × baseline seconds ÷ concurrency, from the counts the tool
   prints first (Stryker's `Instrumented N mutants` and `Initial test run
-  succeeded ... in S seconds`; `cargo mutants --list` and the baseline build;
+  succeeded ... in S seconds`; mutest-rs's `--print mutations --no-build` count
+  times the baseline's test seconds, with no rebuild per mutation;
+  `cargo mutants --list` and the baseline build;
   the Bazel runner's `--list` count times one rebuild, measured on its first mutant).
   When those counts put the run under one minute, the counts are its estimate.
   An estimate over 10 minutes ends that run and narrows the scope before the
