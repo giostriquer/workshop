@@ -8,6 +8,10 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.66.2: 2026-11-13
+
+- **Stop rerunning flaky tests to green.** `fix-ci` step 5 is now "Rerun or repair?", a table read from the failing log and the branch's diff. Only a failure with no failed test (runner, checkout, install, download, a service the job calls) is rerun as infrastructure. A failed test the branch adds or changes, or whose code it changes, is the branch's fault and is repaired, whatever it does locally or on a rerun. A failed test outside the diff is rerun once and reported by name, with its failure and run link, as a defect that still needs an owner. A rerun is no longer counted beside the two fix attempts. ([decision](decisions/fix-ci.md#a-flaky-test-is-a-fault-not-a-rerun-2026-11-13))
+
 ## workbench 0.66.1: 2026-11-11
 
 - **Give the Bazel mutation runner a help.** `rust-mutants-runner.mjs --help` or `-h` prints the usage, every option, the verdicts and the exit codes, and exits 0; the same flags after `--` still go to Bazel. A wrong or missing option exits 1 and says to run with `--help`. The slot helper runs the runner's `--help` at once, as a listing. ([decision](decisions/mutation-scope-and-budget.md#rust-built-by-bazel-with-no-cargo-manifest-2026-11-11))
@@ -94,8 +98,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 
 - **Open reports with holds that stop several lanes.** `epic-orchestration` owner returns gain a required **Active holds** slot ahead of **Progress**, and every other operator reply carries it too. Each line names what is stopped, who ordered it, the source's exact words and what releases it. A reading wider than those words is recorded as the epic owner's, with a request to confirm or narrow it in the same reply. ([decision](decisions/epic-orchestration.md#a-wide-hold-opens-every-report-2026-11-04))
 - **Never touch session transcripts during cleanup.** `workspace-cleanup` leaves agent session history out of inventories, totals, batches, estimates and prevention advice. It never suggests, deletes, moves, compresses or truncates that history, never shortens a host's retention setting, and reports a storage target it cannot reach without them as a remaining gap. ([decision](decisions/workspace-cleanup.md#session-transcripts-are-never-a-candidate-2026-11-04))
-
-## workbench 0.61.0: 2026-11-04
-
-- **Let the Muse scope review read the whole checkout.** `scope-review` starts from named files and follows them through the reviewed checkout, under one 10-minute deadline instead of 120 seconds and 8 model steps. The packet-only runner is gone. A read or search result from a secret-bearing file or outside the checkout rejects the run and is reported to the user. ([decision](decisions/scope-review.md#checkout-reads-no-runner-2026-11-04))
-- **Run Muse through the surface's own handler.** When the session's surface can start Muse itself, such as T3 Code's `delegate_task`, the review goes through it, and `muse exec` remains the route elsewhere. Native handlers may gate tools behind approvals rather than remove them, so any approval or question cancels the run as a skip. ([decision](decisions/scope-review.md#checkout-reads-no-runner-2026-11-04))

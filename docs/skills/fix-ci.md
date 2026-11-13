@@ -5,7 +5,7 @@
 ## What it does
 
 `fix-ci` sees the current branch's CI through to a verdict and fixes what
-breaks: it pulls the failing log, decides flake or fault, fixes in-session,
+breaks: it pulls the failing log, decides rerun or repair, fixes in-session,
 pushes, and re-watches. It is the invocable form of "CI is failing, take a
 look."
 
@@ -41,7 +41,7 @@ checks should be seen through to green.
 2. **Dispatch one watcher** for that SHA: a separate `ci-watcher`, even when
    your session is idle, with a labelled block whose seven slots are all
    filled: `Runner`, `Repo`, `PR` (or `Branch`), `SHA`, `State file` (named by
-   the SHA, and by run and attempt for a flake rerun), `Deadline` and `Expected
+   the SHA, and by run and attempt for a step 5 rerun), `Deadline` and `Expected
    checks`. The deadline comes from one read of the repository's last
    successful runs: the longest workflow's run time, plus half again, capped at
    sixty minutes; ten minutes only when there is no run to read. On
@@ -63,7 +63,7 @@ checks should be seen through to green.
    **first failed check or job on the pinned revision**, including failures not
    listed as required, at a **merge conflict**, or the moment the PR **merges
    or closes**. Its report lists the checks still pending. For a conflicted PR,
-   real faults among the listed failures are fixed first, flakes are not
+   the branch's faults among the listed failures are fixed first, nothing is
    rerun, and synchronization (step 8) resolves the conflict without using a
    fix attempt. The runner's `passed` verdict describes reported checks on a PR
    GitHub reports mergeable. Green also requires every known required check to pass on
@@ -77,12 +77,21 @@ checks should be seen through to green.
    isn't reachable from the repo, report rather than guess.
 4. **Diagnose in repo context.** The branch's own recent commits are the prime
    suspects, ahead of infrastructure.
-5. **Flake or fault?** An infra failure with no plausible code cause gets one
-   `gh run rerun <run-id> --failed`, noted as a flake, and one more watcher
-   for the head, given the run and the attempt that failed. It waits for the
-   rerun's new attempt, so the old failure cannot end it, then watches every
-   check on the head. On Codex that watcher is a fresh spawn. A real fault
-   continues.
+5. **Rerun or repair?** The failing log and the branch's diff decide:
+
+   | The log shows | The diff | Then |
+   |---|---|---|
+   | No failed test: the runner died, or checkout, install, a download or a service the job calls failed | anything | Infrastructure failure: rerun |
+   | A failed or timed-out test | adds or changes that test, or code it runs | The branch's fault: it is repaired |
+   | A failed or timed-out test | touches neither | Another owner's broken test: rerun, and reported |
+
+   A flaky test is a broken test. Passing locally, on an earlier head or on a
+   rerun does not clear the branch's own test: the loop finds what differs
+   between runs and fixes that. A rerun is one `gh run rerun <run-id> --failed`
+   and one more watcher for the head, given the run and the attempt that
+   failed. It waits for the rerun's new attempt, so the old failure cannot end
+   it, then watches every check on the head. On Codex that watcher is a fresh
+   spawn.
 6. **Reproduce locally when feasible.** Run the focused failing case before and
    after the fix, plus mandatory local gates; full suites run in PR CI.
 7. **Fix in-session**, addressing only the cause. After completed review, a
@@ -150,8 +159,20 @@ watcher reads mergeability on every poll and returns at the first conflict. If
 GitHub has not finished computing mergeability, green checks wait for it; a
 watch that ends while waiting reports a pending `GitHub mergeability` row.
 
-**It re-ran the job instead of fixing anything.** That is the flake path, and it
-fires once. If the rerun comes back red, the loop treats it as a fault.
+**It re-ran the job instead of fixing anything.** A rerun is for a failure
+the branch did not cause: the infrastructure failed before any test did, or
+the failed test and the code it runs are outside the branch's diff. It fires
+once. If the rerun comes back red, the loop treats it as a fault.
+
+**My new test failed once in CI and passes locally. Why no rerun?** A test
+that passes on some runs and fails on others is broken, and a rerun to green
+would ship it. When the branch adds or changes the test, or code it runs, the
+loop reproduces the failure under the CI job's conditions and fixes what
+differs between runs (timing, ordering, shared state, clock, randomness).
+
+**It reran someone else's flaky test. Is that test now forgotten?** No. The
+report names the test, its failure and the run link as a defect that still
+needs an owner.
 
 **It stopped after two attempts and left CI red.** That is the cap. Instead of a
 third attempt you get the diagnosis, the failing-log excerpt or check link, and a
@@ -263,7 +284,9 @@ rerunning, and tells you plainly what happened and what it chose.
   parent does not duplicate GitHub polling.
 - **Negative signal:** a force-push, an amended commit, a skipped test, a third
   attempt on one cause, a second watcher on the same head other than the
-  one after a flake rerun or a `Resume` of a pending or read-blocked watch, a
+  one after a step 5 rerun or a `Resume` of a pending or read-blocked watch, a
+  rerun of a test the branch added or changed, a rerun with no line in the
+  report, a
   dispatch with an unfilled slot, or a Codex watcher handed anything but a
   head to watch.
 

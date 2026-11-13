@@ -26,7 +26,7 @@ Runner: <absolute path of scripts/watch-ci.mjs in this loaded skill's directory>
 Repo: <OWNER/REPO whose checks are watched>
 PR: <number>    (branch-only CI: Branch: <name>)
 SHA: <full 40-character pinned head>
-State file: <session scratch dir>/ci-watch-<SHA>.json    (flake rerun: ci-watch-<SHA>-rerun-<run id>-<attempt>.json)
+State file: <session scratch dir>/ci-watch-<SHA>.json    (step 5 rerun: ci-watch-<SHA>-rerun-<run id>-<attempt>.json)
 Deadline: <Unix seconds>
 Expected checks: <required check names, or "not known">
 ```
@@ -42,7 +42,7 @@ Expected checks: <required check names, or "not known">
   `startedAt` among each workflow's newest run, add half again, cap the window
   at sixty minutes, and add it to now; a longer CI continues under `Resume`.
   With no successful run to read, use ten minutes.
-- A flake rerun adds `Rerun: <run id>, failed attempt <n>` and takes its own
+- A step 5 rerun adds `Rerun: <run id>, failed attempt <n>` and takes its own
   state file, named as above: the first watch's file holds a verdict. A resume carries
   `Resume: <returned state file>` in place of `State file`, with a new
   `Deadline`.
@@ -76,7 +76,7 @@ Host notes, of which only the first is Claude Code behavior:
   a finished child does not wake the parent. Run no `gh` read or `sleep`
   between waits, and do not ask the watcher for progress updates. A
   follow-up to a returned watcher follows `using-workbench`'s *Workbench
-  agents on Codex*: a new pinned head and nothing else. The flake rerun's
+  agents on Codex*: a new pinned head and nothing else. The step 5 rerun's
   watcher and a `Resume` dispatch are therefore fresh spawns, since their head
   is not new, and the fix, the commit and the push stay in this session.
 - **Other hosts.** The parent dispatches the watcher and waits for its return
@@ -86,7 +86,7 @@ Host notes, of which only the first is Claude Code behavior:
 dispatch, not two. Never dispatch a second watcher on a head whose watcher is
 still running or has returned red; the checks it listed as pending are not
 watched further, since they rerun on the next head. A re-watch after a push is
-a new head and therefore a new watcher. The flake rerun is the one same-head
+a new head and therefore a new watcher. The step 5 rerun is the one same-head
 re-watch: step 5 dispatches one watcher for the head, naming the rerun's run
 id and the attempt that failed, and that watcher waits for the new attempt,
 then watches every check on the head. No other second watcher on a red head.
@@ -128,8 +128,8 @@ is not polling and the parent runs it itself.
      GitHub starts no `pull_request` workflows on a conflicted PR, so waiting
      only runs out the window, and green checks cannot make it mergeable. The
      verdict lists the failed and pending checks the PR rollup shows. The
-     parent first takes real faults among those failures through steps 3–7; a
-     flake gets no rerun, since every check runs again on the resolved head.
+     parent first takes the branch's faults among those failures through steps
+     3–7; nothing is rerun, since every check runs again on the resolved head.
      Then step 8 resolves the conflict. Resolving a conflict is
      synchronization and uses no fix attempt.
    - Any failed check or job on the pinned SHA → return `failed` immediately,
@@ -171,10 +171,25 @@ is not polling and the parent runs it itself.
 4. **Diagnose in repo context.** The branch's own recent commits are the prime
    suspects: check `git log` and the diff against the base branch before suspecting
    infrastructure.
-5. **Flake or fault?** An infra failure with no plausible code cause (runner died,
-   network timeout, unrelated job) → read its attempt (`gh run view <run-id> --json
-   attempt`), `gh run rerun <run-id> --failed` once, note the flake, and dispatch
-   the head's flake watcher with the run id and that attempt. A real fault → continue.
+5. **Rerun or repair?** Classify the failure by what its log and the branch's
+   diff (`git diff --name-only <base>...HEAD`) show:
+
+   | The log shows | The diff | Then |
+   |---|---|---|
+   | No failed test: the runner died, or checkout, install, a download or a service the job calls failed | anything | Infrastructure failure: rerun |
+   | A failed or timed-out test | adds or changes that test, or code it runs | The branch's fault: continue to step 6 |
+   | A failed or timed-out test | touches neither | Another owner's broken test: rerun, and report it |
+
+   A flaky test, one that passes on some runs and fails on others, is a broken
+   test and never an infrastructure failure. Passing locally, on an earlier
+   head or on a rerun does not clear it: for the branch's own test, steps 6–7
+   find what differs between runs (timing, ordering, shared state, clock,
+   randomness) and fix that. A test whose code you cannot place outside the
+   diff is the branch's.
+
+   To rerun: read the attempt (`gh run view <run-id> --json attempt`), `gh run rerun
+   <run-id> --failed` once, and dispatch the head's rerun watcher with the run id and
+   that attempt.
 6. **Reproduce locally when feasible.** Read the failing workflow command and
    run the relevant focused case before the fix and again after it. Keep mandatory
    local gates. Full suites run in PR CI by default; a wider local run needs an
@@ -233,8 +248,8 @@ is not polling and the parent runs it itself.
    named in the report. Carry
    existing authority forward and honor no-commit/no-push instructions. If delivery
    is unavailable, finish the authorized local repair and name the remaining step.
-9. **Re-watch** (step 2, a new watcher for the new head). Hard cap: **two fix attempts per failing cause** (plus
-   the single flake rerun). Acting at the first failure means a later check on
+9. **Re-watch** (step 2, a new watcher for the new head). Hard cap: **two fix attempts per failing cause**; a
+   step 5 rerun is not one of them. Acting at the first failure means a later check on
    the new head can surface a different cause; that is a new cause with its own
    two attempts, not a third attempt on the first. The same check failing after
    its second fix ends the loop: stop and report the diagnosis and recommended
@@ -245,6 +260,9 @@ is not polling and the parent runs it itself.
 - Final CI verdict (green / conflicted / still red / pending / superseded / blocked), target
   SHA, expected checks, watcher model, and PR/run link. Name the immediate next step.
 - Per attempt: what failed, the root cause, and what changed (files + commit).
+- Per rerun: the job and its step 5 row. For another owner's broken test, add
+  the test's name, its failure and the run link, as a defect that still needs
+  an owner.
 - If not fixed: the diagnosis, the failing-log excerpt or check link, and the
   recommended next step.
 

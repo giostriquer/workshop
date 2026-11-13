@@ -2,6 +2,60 @@
 
 This note is the rationale for the `fix-ci` skill and the `ci-watcher` agent it dispatches, both shipped in the `workbench` plugin; superseded choices are omitted and git history keeps the originals.
 
+## A flaky test is a fault, not a rerun (2026-11-13)
+
+Step 5 read "Flake or fault?" and offered one rerun for "an infra failure with
+no plausible code cause (runner died, network timeout, unrelated job)". Step 9
+counted "the single flake rerun" beside the two fix attempts. Sessions read
+that as an allowance. In the week from 2026-11-05 their own reports called it
+"the one permitted flake rerun", "the one allowed flake rerun" and a "flake
+rerun budget", and spent it on failed tests. In one, the log showed a timing
+assertion off by one millisecond; the session named that cause, reran the job
+and recorded "a timing flake". The test stayed broken and nothing reached its
+owner. The operator reported the same reading applied to tests a session was
+developing: its own flaky test shipped because a rerun turned the check green.
+
+"No plausible code cause" and "unrelated job" were judgments, and "the test
+passed on the earlier head" satisfied both. Step 5 is now "Rerun or repair?",
+a three-row table keyed on two things a session can read, the failing log and
+`git diff --name-only <base>...HEAD`:
+
+- No failed test (runner, checkout, install, download, a service the job
+  calls): an infrastructure failure, rerun once.
+- A failed test the diff adds or changes, or whose code it changes: the
+  branch's fault, repaired through steps 6–7 and never rerun. Passing locally,
+  on an earlier head or on a rerun does not clear it.
+- A failed test the diff does not touch: another owner's broken test, rerun
+  once and reported by name with its failure and run link, as a defect that
+  still needs an owner.
+
+A test the session cannot place outside the diff is the branch's. The Output
+section gained a per-rerun line, so a rerun can no longer reach the report as
+a bare "flake". Step 9 says a rerun is not a fix attempt instead of adding it
+to the cap. `fix-ci` no longer calls the mechanism a flake rerun; `ci-watcher`
+keeps that name for its input, since the watcher never decides to rerun.
+
+Rejected: forbidding every rerun of a failed test. A branch that cannot have
+caused another owner's failure would wait on it, or would repair an unrelated
+test inside its own PR, which the boundary on unrelated changes excludes.
+
+Probes: one fresh context per run, given the full skill and one scenario, on
+Fable 5.2 (Claude Code subagents) and on `gpt-6-astra` at `xhigh` (`codex
+exec`, read-only).
+
+| Scenario | Old wording | New wording |
+|---|---|---|
+| Another owner's test fails a timing assertion; the diff is elsewhere | 3 of 3 reran it as a "flake" (2 Fable, 1 Codex); 1 of the 3 suggested a follow-up | 4 of 4 reran it and reported the named test as a defect needing an owner (2 Fable, 2 Codex) |
+| The branch's new test fails once in CI, passes locally and on the previous head | 5 of 5 repaired, no rerun (3 Fable, 2 Codex) | 3 of 3 repaired, no rerun (1 Fable, 2 Codex) |
+| A test of code the branch changes fails; a teammate calls it a known flake | 1 of 1 repaired (Fable) | 1 of 1 repaired (Fable) |
+| Dependency install fails on a network reset; no test ran | not run | 2 of 2 reran once (1 Fable, 1 Codex) |
+| Before filing, the branch's new test failed 1 of 6 local runs (`file-pr` step 8) | 3 of 3 held the push and repaired (Fable) | not run; that `file-pr` text is unchanged |
+
+This is regression evidence for these scenarios, not a reliability estimate.
+No probe reproduced a rerun of the branch's own test under the old wording on
+either model, so the second row rests on the operator's report and the new
+wording is checked there only for no regression.
+
 ## Stalled watches resume, and dispatches carry labelled inputs (2026-11-09)
 
 A review of the week's watcher runs (2026-11-02 to 2026-11-09: 95 Claude Code

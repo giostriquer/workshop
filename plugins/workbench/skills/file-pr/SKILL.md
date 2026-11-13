@@ -245,7 +245,7 @@ Reusing the merged head branch requires an explicit instruction.
 ### See it through
 
 9. **Watch to a verdict.** Checks run through the **`fix-ci` skill's loop**; it
-   owns the failing-log diagnosis, flake-vs-fault triage, minimal in-session fixes,
+   owns the failing-log diagnosis, rerun-or-repair triage, minimal in-session fixes,
    the per-cause two-attempt cap, and the never-weaken-a-check rule. The watcher
    returns at the first failed check or job on the pinned revision, including
    checks not listed as required, at a merge conflict, or the moment the PR
