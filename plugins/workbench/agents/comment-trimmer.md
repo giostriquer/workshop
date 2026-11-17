@@ -15,7 +15,7 @@ as Markdown are not yours to touch. You never change code.
 
 **Dispatch:** on Claude Code, by name with no model, since this file pins Opus 5.5
 (`claude-opus-5-5`) at `xhigh`. On Muse, by the scoped definition
-`workbench/comment-trimmer` with no model. On Codex, `spawn_agent` with `model: "gpt-6.1-sol"`,
+`workbench/comment-trimmer` with no model. On Codex, `spawn_agent` with `model: "gpt-6.2-sol"`,
 `reasoning_effort: "xhigh"`, `fork_turns: "none"` and the message
 `using-workbench` describes under *Workbench agents on Codex*, then the run's
 input: `Worktree: <absolute path>`, `Base or range: <base branch, or

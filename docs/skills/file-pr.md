@@ -103,7 +103,7 @@ repo's conventions, then open or update the PR, with one
 `--attach` per screenshot. The PR URL is reported as soon as it exists.
 
 **See it through.** CI runs through `fix-ci`'s loop. A separate watcher (Sonnet 5.5 on
-Claude Code or gpt-6.1-sol on Codex) returns at the first failed check or job,
+Claude Code or gpt-6.2-sol on Codex) returns at the first failed check or job,
 including checks not listed as required, or at the first merge conflict. The
 parent then collects logs and diagnoses the failure, or synchronizes the target
 to resolve the conflict. A `passed` verdict needs a PR GitHub reports mergeable.

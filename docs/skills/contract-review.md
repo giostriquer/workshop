@@ -33,7 +33,7 @@ constraint can reopen the affected choice. A preferred abstraction or sibling
 convention alone is not a finding. Code quality owns structure; test quality owns
 assertions and coverage; comment trimming owns cosmetic narration.
 
-**Which model runs it?** Opus 5.5 at `xhigh` on Claude Code, GPT-6.1 Sol at
+**Which model runs it?** Opus 5.5 at `xhigh` on Claude Code, GPT-6.2 Sol at
 `xhigh` on Codex, and the parent's model and effort on other harnesses. Dispatch
 details live in the agent file. An unavailable required route leaves it blocked.
 

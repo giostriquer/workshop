@@ -2,6 +2,14 @@
 
 Rationale for the workbench `model-reference` skill, including fleet calibration and harness routing. The skill owns the table; agent contracts own dispatch arguments.
 
+## Sol and Astra 6.2 (2026-11-17)
+
+The operator selected `gpt-6.2-sol` for the four Workbench agents that pin
+Sol on Codex. CI watching, test-quality review, comment trimming and contract
+review each request it at `xhigh` in a fresh context. The Astra fleet entry
+moves to `gpt-6.2-astra`. Both new rows are ungraded because the existing
+scores describe the previous models.
+
 ## Test-quality review and comment trim pin Opus 5.5 (2026-11-10)
 
 `test-quality-reviewer` and `comment-trimmer` pinned the `opus` alias on Claude

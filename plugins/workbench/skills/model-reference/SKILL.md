@@ -14,14 +14,11 @@ anything.
 
 ## The table
 
-**Illustrative operator scores, not a measured fleet calibration.** The
-operator last revised these rows on 2026-11-05 without a recorded task set or
-method, and `fable-5.2` joined the fleet afterwards with no grades (`n/a`). The
-rows explain the axes and rank models against each other; they do not
-establish a routing rule. A new model, effort or routing rule needs its own
-calibration (see Calibrating a row). Until then use available host
-capabilities and the session's current model under standing routing
-instructions.
+**Illustrative operator scores.** The 2026-11-05 grades have no recorded
+task set or method. Sol 6.2 and Astra 6.2 have no recorded grades (`n/a`).
+A score-based routing decision needs a calibration for the model and effort
+in use (see Calibrating a row). Until then, use available host capabilities
+and the session's current model under standing routing instructions.
 
 Scores are 1–10, higher is better.
 
@@ -37,8 +34,8 @@ Scores are 1–10, higher is better.
 
 | model | cost | intelligence | taste | code | speed |
 |---|---|---|---|---|---|
-| gpt-6-astra | 3 | 8.5 | 9 | 8.5 | 5 |
-| gpt-6.1-sol | 7 | 8 | 8 | 8 | 7 |
+| gpt-6.2-astra | n/a | n/a | n/a | n/a | n/a |
+| gpt-6.2-sol | n/a | n/a | n/a | n/a | n/a |
 | gpt-6-luna | 10 | 3 | 3 | 3 | 9 |
 | fable-5.2 | 2 | 10 | 9.5 | 10 | 5 |
 | opus-5.5 | 7 | 9 | 9.5 | 9.5 | 6 |
@@ -100,13 +97,13 @@ The examples below apply only after the named models and grades have been
 verified for the current fleet; the illustrative rows above do not establish that.
 
 - Routine, well-specified work → the cheap end: luna only for truly
-  mechanical bulk, sol for routine work that still needs judgment.
+  mechanical bulk. For routine work that needs judgment, use Sol if its
+  calibrated grades meet the task's requirements.
 - Judgment-heavy, taste-critical, or silent-failure work → the frontier:
   opus-5.5 by default, graded at or above fable-5.1 on intelligence, taste
-  and code at a fraction of the burn. An ungraded row (fable-5.2) is not a
-  table route: it runs where the operator's rules file or the session's own
-  model puts it. Putting high-tier judgment at the plan while a cheaper tier
-  implements is often the better spend.
+  and code at a fraction of the burn. For ungraded models, use the operator's
+  explicit routes or the session's current model. Putting high-tier judgment
+  at the plan while a cheaper tier implements is often the better spend.
 - A shipping taste surface needs taste ≥ 7: rows below it (luna and
   haiku-5.5 today) are not taste routes.
 - Speed breaks ties, never quality. When two rows are level on the axis the
@@ -116,7 +113,7 @@ verified for the current fleet; the illustrative rows above do not establish tha
 ## CI monitoring exception
 
 Every CI watch uses a separate **Sonnet 5.5 (`claude-sonnet-5-5`) agent at
-`xhigh` effort on Claude Code** or **`gpt-6.1-sol` agent at `xhigh` reasoning
+`xhigh` effort on Claude Code** or **`gpt-6.2-sol` agent at `xhigh` reasoning
 effort on Codex**, spawned
 without the parent's history. On Muse, dispatch the approved
 `workbench/ci-watcher` definition by its scoped id with no model override;
@@ -130,7 +127,7 @@ polling or a prohibited fallback. See `fix-ci` for the workflow.
 
 Every `test-quality-reviewer` and every `comment-trimmer` dispatch uses a
 separate **Opus 5.5 (`claude-opus-5-5`) agent at `xhigh` effort on Claude Code** or
-**`gpt-6.1-sol` agent at `xhigh` reasoning effort on Codex**, spawned without the
+**`gpt-6.2-sol` agent at `xhigh` reasoning effort on Codex**, spawned without the
 parent's history, and the host's default model on any other host. On Muse,
 dispatch the approved `workbench/test-quality-reviewer` or
 `workbench/comment-trimmer` definition by its scoped id with no model
@@ -141,7 +138,7 @@ Select the model and effort explicitly; do not inherit the parent's. See
 ## Contract-review exception
 
 `contract-review` dispatches `contract-reviewer` on **Opus 5.5 at `xhigh` on
-Claude Code** and **GPT-6.1 Sol at `xhigh` on Codex**, without the author's
+Claude Code** and **GPT-6.2 Sol at `xhigh` on Codex**, without the author's
 history. Other harnesses use the parent's model and effort. In particular, Muse
 must override the shared definition's Claude settings with the parent's values.
 The agent's Dispatch line is the source for exact arguments. An unavailable

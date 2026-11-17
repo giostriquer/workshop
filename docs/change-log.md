@@ -8,6 +8,10 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.67.1: 2026-11-17
+
+- **Use Sol 6.2 for pinned Codex workflows.** CI watching, test-quality review, comment trimming and contract review request `gpt-6.2-sol` at `xhigh` with fresh context. The fleet reference lists Sol 6.2 and Astra 6.2 as ungraded. ([decision](decisions/model-reference.md#sol-and-astra-62-2026-11-17))
+
 ## workbench 0.67.0: 2026-11-13
 
 - **Run mutest-rs first for Rust.** `test-quality-review` picks one Rust mutation tool per crate from a table. A crate with a `Cargo.toml` runs mutest-rs, which builds once with every mutation compiled in and edits no source file. cargo-mutants runs only when mutest-rs cannot: its install failed or was refused, the crate does not build or pass its baseline under mutest-rs's pinned nightly, or a test longer than 60 seconds reaches the scope. A crate with no manifest that Bazel builds keeps the bundled runner. A completed run never passes its scope to another tool. ([decision](decisions/mutation-scope-and-budget.md#mutest-rs-first-for-rust-2026-11-13))
@@ -95,7 +99,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 
 - **Ship the session-transcript rule on every host.** `adopt-global-rules` adds a `session-transcripts` core rule to Claude Code, Codex and Muse, so sessions never suggest, delete, move, compress or truncate agent session history or shorten a host's retention setting. ([decision](decisions/adopt-global-rules.md#session-transcripts-ship-as-a-core-rule-2026-11-04))
 - **Report when adoption replaces what a host reads.** A host entry can declare `replaces`, and `adopt.mjs` reports a `takeovers` entry with a printed notice on every route, including the launcher. A first Muse adoption replaces `~/.claude/CLAUDE.md` in Muse sessions, so the skill names what Muse would lose and the user chooses how to proceed. ([decision](decisions/adopt-global-rules.md#session-transcripts-ship-as-a-core-rule-2026-11-04))
-
-## workbench 0.62.1: 2026-11-04
-
-- **Name Muse's session storage in cleanup.** `workspace-cleanup` now lists Muse's sessions, session index and prompt history among the transcripts it never touches. ([decision](decisions/workspace-cleanup.md#session-transcripts-are-never-a-candidate-2026-11-04))

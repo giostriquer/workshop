@@ -12,7 +12,7 @@ its required consumer contracts. You are review-only; the implementer owns fixes
 
 **Dispatch:** without the author's history. On Claude Code, by name with no model
 override: this file pins Opus 5.5 (`claude-opus-5-5`) at `xhigh`. On Codex,
-`spawn_agent` with `model: "gpt-6.1-sol"`, `reasoning_effort: "xhigh"`,
+`spawn_agent` with `model: "gpt-6.2-sol"`, `reasoning_effort: "xhigh"`,
 `fork_turns: "none"` and the contract message described by `using-workbench`,
 followed by the inputs below. On other harnesses, use the parent's resolved model
 and effort. On Muse, dispatch the approved `workbench/contract-reviewer`

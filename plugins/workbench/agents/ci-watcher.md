@@ -14,7 +14,7 @@ the parent.
 
 **Dispatch:** on Claude Code, by name with no model, since this file pins Sonnet 5.5
 at `xhigh`. On Muse, by the scoped definition `workbench/ci-watcher` with
-no model. On Codex, `spawn_agent` with `model: "gpt-6.1-sol"`,
+no model. On Codex, `spawn_agent` with `model: "gpt-6.2-sol"`,
 `reasoning_effort: "xhigh"`, `fork_turns: "none"` and the message
 `using-workbench` describes under *Workbench agents on Codex*.
 Inputs arrive in the labelled block `fix-ci` defines: `Runner`, `Repo`, `PR` or

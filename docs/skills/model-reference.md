@@ -31,11 +31,12 @@ dispatch.
 The [table and axis definitions](../../plugins/workbench/skills/model-reference/SKILL.md#the-table)
 live only in the canonical skill. Its scores are the operator's illustrative
 grades, last revised 2026-11-05 with no recorded task set or method: they rank
-rows against each other and are not a basis for a routing rule. A row showing
-`n/a` is ungraded. A row counts as calibrated once it has a date, a task set with
-an outcome check per task, a method run at two or three effort levels, and the
-observed score against spend. Until then, use available host capabilities and
-the session's model under standing rules.
+rows against each other and are not a basis for a routing rule. Sol 6.2 and
+Astra 6.2 show `n/a` until the operator grades them. The explicit Sol dispatches
+below apply independently of those grades. A row counts as calibrated once it
+has a date, a task set with an outcome check per task, a method run at two or
+three effort levels, and the observed score against spend. Until then, use
+available host capabilities and the session's model under standing rules.
 
 Cost means subscription-limit burn, speed means turnaround on the same task,
 code means implementation quality, and taste covers user-facing work. The
@@ -65,12 +66,12 @@ names models in four exceptions, for separate agents whose model is
 selected explicitly on at least one host:
 
 - **CI watching:** Sonnet 5.5 (`claude-sonnet-5-5`) on Claude Code or
-  gpt-6.1-sol on Codex, both at `xhigh`
+  gpt-6.2-sol on Codex, both at `xhigh`
   effort and spawned without the parent's history. Never use Astra, Fable,
   or Haiku, and never poll in the parent. See `fix-ci`.
 - **Test-quality review and the comment trim:** the `test-quality-reviewer`
   and `comment-trimmer` agents, at the same tier: Opus 5.5
-  (`claude-opus-5-5`) on Claude Code or gpt-6.1-sol on Codex, both at `xhigh`
+  (`claude-opus-5-5`) on Claude Code or gpt-6.2-sol on Codex, both at `xhigh`
   effort and spawned without the parent's history; the host's default model
   elsewhere.
 
@@ -79,7 +80,7 @@ On Muse these two exceptions dispatch the agent's approved scoped definition
 model pin on its own fleet.
 
 - **Contract review:** `contract-reviewer` uses Opus 5.5 on Claude Code and
-  GPT-6.1 Sol on Codex, both at `xhigh` and without the author's history.
+  GPT-6.2 Sol on Codex, both at `xhigh` and without the author's history.
   Other harnesses use the parent's model and effort. Muse dispatch explicitly
   overrides the shared definition's Claude settings with the parent's values.
   See [contract-review](contract-review.md); the agent owns exact dispatch settings.
