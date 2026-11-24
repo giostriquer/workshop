@@ -24,8 +24,9 @@ It uses ASD-STE100 Simplified Technical English as a guiding style, without
 claiming formal compliance. Short sentences retain domain terms and necessary
 technical detail.
 If the repo ships a PR template, the body fills it in with headings, order,
-checkboxes and hidden `<!-- markers -->` intact. The skill adds only two
-conditional sections: `## Architecture` and `## Screenshots`.
+checkboxes and hidden `<!-- markers -->` intact. The skill adds two
+conditional sections, `## Architecture` and `## Screenshots`, and a
+`## CI run time` section when the head ran CI jobs.
 
 It never merges, enables auto-merge, closes or re-targets the PR, force-pushes,
 or rewrites published history. Without publishing authority or access, it
@@ -109,8 +110,12 @@ parent then collects logs and diagnoses the failure, or synchronizes the target
 to resolve the conflict. A `passed` verdict needs a PR GitHub reports mergeable.
 The skill resolves conflicts that appear while tending. Every push integrates the latest
 target, even without conflicts. It refreshes the title and body when
-the diff changes. It stops at green and mergeable, when a CI cause exhausts its
-two fix attempts, or when a genuine blocker prevents delivery, and reports why.
+the diff changes. When the checks finish, a bundled script writes the
+`## CI run time` section: each job of the PR against the median of its last
+three successful runs on the base branch. A job that became slower holds the
+end state until its cause and decision are written. It stops at green and
+mergeable with that section complete, when a CI cause exhausts its two fix
+attempts, or when a genuine blocker prevents delivery, and reports why.
 
 ## Common questions
 
@@ -170,8 +175,8 @@ complex material, without removing essential detail or claiming STE compliance.
 **My PR has `Summary` / `Ticket` / `Caveats` headings, but my repo has a
 template.** The fallback replaced the template, which the skill forbids. Every
 original heading must survive in order; the only additions are the two
-conditional sections and anything governing instructions require, such as an
-attribution footer.
+conditional sections, the CI run time section and anything governing
+instructions require, such as an attribution footer.
 
 **When does the body get an Architecture section?** When a Mermaid diagram
 materially clarifies calls, dependencies or data flow between modules that the
@@ -189,6 +194,35 @@ place. If the app cannot run, there is no section and the report says why.
 **Why does the body reference images before upload?** `gh` rewrites a reference
 such as `![alt](./after.png)` to the uploaded asset in place, keeping the
 section where it belongs. Re-attach failed uploads with `gh pr edit --attach`.
+
+**What is the `## CI run time` section?** One table, in one form, that shows
+whether this PR made CI slower. `scripts/ci-run-time.mjs` in the skill's folder
+writes it from GitHub: each GitHub Actions job of the PR head, the median of
+the same job in its last three successful runs on the base branch, and the
+change. A job is over the limit when it changes by more than 10% and more than
+20 seconds; `--percent`, `--seconds` and `--base-runs` take another rule. The
+table holds the jobs over the limit, the new jobs and the jobs you name with
+`--job` (those that build or test what the diff changes); the other jobs are
+folded below it. The section goes last in the body, above any footer or
+bot-managed block, and is written again after every push.
+
+**A job is marked slower. What happens?** Its line ends with `_cause and
+decision not written yet_`, and the script names the steps that grew most. The
+PR is not green and mergeable until that line is complete. There are three
+ways to complete it. Remove the cost and push. Show that the growth is in a
+step the diff cannot reach, such as a dependency install or a tool setup, with
+that step's time here and on the base. Or report the numbers as a decision for
+you and write your answer. A job "inside the range" of the base needs nothing:
+a base run already took that long.
+
+**Why a script and not a hand-made table?** Agents that measured CI time by
+hand each chose their own jobs, baseline and layout, so reviewers could not
+compare two PRs. The script fixes the baseline, the limit and the form.
+
+**What if the repository has no CI, or GitHub refuses the read?** With no
+GitHub Actions job on the head, the script exits 3 and the body gets no
+section; the report says "no CI jobs". When the read fails, the section holds
+the one line `Not available: <reason>` and the report names the gap.
 
 **Does landing rerun checks?** It reuses current evidence unless integration or
 corrections invalidate coverage, or the repository requires fresh delivery checks.
@@ -263,6 +297,11 @@ several candidates or the template requires one.
 - The report, in the session's required handback format or verdict-first, gives
   the end state (green and mergeable, merged, still red, conflicted, or blocked),
   gate results, fixes, attempts and re-syncs.
+- A PR whose head ran CI jobs has one `## CI run time` section, last in the
+  body above any footer, for the current head, with every line complete.
+- **Negative signal:** a hand-made timing table, a section left from an older
+  head, or "green and mergeable" reported while a line still reads `_cause and
+  decision not written yet_`.
 - **Negative signal:** a force-push, a rebased published commit, a skipped check,
   or the skill merging the PR.
 
@@ -276,4 +315,4 @@ returns missing stages to completion. After it,
 
 ## Writing the PR
 
-When the title or body is drafted or revised, the author reads the [PR writing contract](../../plugins/workbench/skills/file-pr/references/pr-writing.md). It includes template preservation and the conditional architecture and screenshot guidance. Recovery reloads those rules before continuing the text; the completion and publication gates remain in the main skill.
+When the title or body is drafted or revised, the author reads the [PR writing contract](../../plugins/workbench/skills/file-pr/references/pr-writing.md). It includes template preservation, the conditional architecture and screenshot guidance, and the CI run time section. Recovery reloads those rules before continuing the text; the completion and publication gates remain in the main skill.

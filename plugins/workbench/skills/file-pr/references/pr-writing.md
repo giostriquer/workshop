@@ -107,8 +107,9 @@ or name the gap. More test counts and screenshots do not fill those gaps.
 
 If the repo ships a PR template, the body **is** that template filled in: its
 exact headings, order, checkboxes, and hidden `<!-- markers -->`, plus the
-conditional `Architecture` and `Screenshots` sections below and additions
-required by governing instructions, such as a host attribution footer. The
+conditional `Architecture` and `Screenshots` sections and the `CI run time`
+section below, and additions required by governing instructions, such as a host
+attribution footer. The
 [built-in fallback](../SKILL.md#prepare) is a **last resort for repos that have no template**;
 never emit it, or its `Summary` / `Ticket` / `Caveats` headings, when a template
 exists.
@@ -191,3 +192,65 @@ gh pr create --base <base> --head <branch> --title "<title>" --body-file body.md
 A partial upload leaves the PR created with the files that succeeded and a
 non-zero exit; re-attach the missing files with `gh pr edit --attach` rather
 than refiling.
+
+## CI run time in the PR body
+
+Every PR whose head ran GitHub Actions jobs carries one `## CI run time`
+section, in one form, so a reviewer sees whether this change made CI slower.
+The bundled script writes it. Do not write the table by hand or with another
+helper, and do not run a full suite locally to measure.
+
+```bash
+node "<skill dir>/scripts/ci-run-time.mjs" --pr <number> \
+  --job '<part of a job name>' > ci-run-time.md
+# another repository than the working directory: add --repo <owner/name>
+```
+
+Run it when the checks on the head have finished, and again after each push:
+the times belong to one head. Through `gh` it reads each job of the PR and the
+same job in its last three successful runs on the PR's base branch. Give one
+`--job` for each job that builds, lints or tests a path the diff changes. Those
+rows stay in the table. The table also holds every job over the limit and every
+new job; the script folds the other jobs under the notes.
+
+A job is over the limit when it changes by more than 10% and more than 20
+seconds against the median of the base runs. When the user's or the
+repository's rules give another limit or sample size, pass `--percent`,
+`--seconds` and `--base-runs`.
+
+**Place the section last in the body, above any footer, attribution or
+bot-managed block.** Reuse, in place, a section the template already has for CI
+or check timing. At each update, read the PR's current body first (`gh pr view
+<number> --json body`), because bots and people edit it. Replace the whole
+section, and send the body with `gh pr edit <number> --body-file <file>`. Keep
+the heading, the first paragraph and the table as the script wrote them.
+
+Under the table the script writes one line for each finding. Complete them:
+
+- **A job in bold is slower.** Its line ends with `_cause and decision not
+  written yet_`, and the line under it names the steps that grew most. Find what
+  the change added. Compare the job with a base run by step (`gh run view <run>
+  --json jobs`), and by test file where the job log gives those times. Then
+  replace the marker with one of these:
+  - **Removed.** The change did not need the cost: share setup, shorten a wait,
+    test at a cheaper level, or drop a duplicate. Push through the normal
+    steps, then write the section again at the new head.
+  - **Not from this change.** The growth is in a step that the diff cannot
+    reach, such as a dependency install, a runner or tool setup, or a cache
+    restore. Name the step with its time here and in the base runs.
+  - **Decided by the user.** The cost is needed, or the evidence does not show
+    where it comes from. Report the numbers and what you found as a decision
+    for the user, and wait. Then write the cause and their decision.
+- **A job "inside the range" of the base** needs no action: a base run already
+  took that long. Leave its line.
+- **Add one line for the suite that the change touched** when the job log gives
+  its own time: its tests and seconds on the base and here. A job total can
+  hide a small suite.
+
+While a line still holds `_cause and decision not written yet_`, the PR is not
+*green and mergeable*: report it as still open.
+
+The script exits 3 and writes nothing when no GitHub Actions job ran on the
+head: add no section and say "no CI jobs" in the report. When it fails for
+another reason, such as no `gh` access or an API error, add the section with
+the one line `Not available: <reason>` and report the gap.

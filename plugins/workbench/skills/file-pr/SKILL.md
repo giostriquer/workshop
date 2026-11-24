@@ -114,7 +114,7 @@ loads before delivery, plus the agreed PR plan entry when a plan exists.
 
 Before drafting or revising a title or body, read
 [PR writing](references/pr-writing.md), including the repository-template rules
-and conditional architecture and screenshot sections. Read it again after
+and the conditional architecture, screenshot and CI run time sections. Read it again after
 compaction when continuing PR text work. Lead with the evidenced problem and
 resulting behavior; distinguish verified effects from intent and remaining gaps.
 Preserve the repository template and only check boxes supported by evidence.
@@ -201,8 +201,8 @@ Reusing the merged head branch requires an explicit instruction.
    actually verified; leave unfillable fields blank
    rather than fabricating. Before finalizing, check your headings against the
    template's: every original heading remains in order and is not renamed. The
-   conditional `## Architecture` and `## Screenshots` sections are the only
-   extra sections this skill requires; apply the [PR writing rules](references/pr-writing.md) to both template
+   conditional `## Architecture` and `## Screenshots` sections and step 11's
+   `## CI run time` are the only extra sections this skill requires; apply the [PR writing rules](references/pr-writing.md) to both template
    and fallback bodies. Preserve
    other additions required by governing instructions. Required host attribution
    may follow the body without a new section. If there is no template, use the
@@ -258,8 +258,16 @@ Reusing the merged head branch requires an explicit instruction.
     verdict, use steps 2 and 8 to integrate the
     target, resolve them, validate, and push. Every push still integrates the
     latest target even when GitHub reports the PR as mergeable.
-11. **Stop when the PR is green and mergeable, or when a CI cause exhausts its
-    two fix attempts**, and report either way. Report access, synchronization,
+11. **Report CI run time.** Once the head's checks have finished, run
+    `node "<skill dir>/scripts/ci-run-time.mjs" --pr <number>`, adding one
+    `--job <name text>` per job that builds or tests a path the diff changes.
+    Put its output in the body as `## CI run time` and complete its lines as
+    [PR writing](references/pr-writing.md#ci-run-time-in-the-pr-body) says.
+    Do it again after every push. A job it marks slower holds step 12 until
+    that line states its cause and decision.
+12. **Stop when the PR is green and mergeable and its `## CI run time` section
+    is complete for the head, or when a CI cause exhausts its two fix
+    attempts**, and report either way. Report access, synchronization,
     or unresolved-decision blockers when they prevent delivery; concurrent branch
     movement alone is work to complete.
 
@@ -276,6 +284,8 @@ in its existing fields. If no format is required, use a verdict-first report.
   commits), attempts and re-syncs used.
 - Screenshots: attached (how they were captured), not applicable (no rendered
   change in the diff), or skipped because the app could not be run.
+- CI run time: no job over the limit, each slower job with its cause and
+  decision, or why the section is absent.
 - If stopped early: the diagnosis and the recommended next step.
 
 ## Boundaries
