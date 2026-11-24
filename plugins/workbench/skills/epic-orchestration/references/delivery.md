@@ -33,8 +33,10 @@ correction pass number. Return findings to their owning reviewer under the
 unaffected reviews' results.
 
 **The authorization.** Write it after you accepted an unpublished handback, and
-name that accepted revision in it. A correction moves the head, so the corrected
-head is validated before any authorization names it. Reference the active
+name that accepted revision in it. Tell the lane to use
+`workbench:epic-implementation` in both the authorization and its pointer.
+A correction moves the head, so the corrected head is validated before any
+authorization names it. Reference the active
 contract, scope the tickets and range, and state which gates are satisfied with
 evidence or still pending. Require the actual integration branch to be merged,
 never rebased, affected checks/local gates to run, and `file-pr` to prepare the

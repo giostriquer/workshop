@@ -8,6 +8,11 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.68.1: 2026-11-24
+
+- **Name the lane skill in every handoff.** Both the saved dispatch and its paste-ready message tell implementation lanes to use `workbench:epic-implementation`, from the initial assignment through corrections and delivery. ([decision](decisions/epic-orchestration.md#dispatches-are-files-and-paste-blocks-are-pointers-2026-09-11))
+- **Send lane questions through the orchestrator.** Implementation lanes return open questions and approval requests in a `need-guidance` report. When only the operator can act, the orchestrator relays the exact request. ([decision](decisions/epic-implementation.md#questions-through-the-orchestrator-2026-10-28))
+
 ## workbench 0.68.0: 2026-11-24
 
 - **Write one CI run time section in every PR body.** `file-pr` gains step 11: when the head's checks have finished, and again after every push, the bundled `scripts/ci-run-time.mjs` compares each GitHub Actions job of the PR with the median of its last three successful runs on the base branch and writes `## CI run time`, last in the body above any footer. The table holds the jobs over the limit (more than 10% and more than 20 seconds), the new jobs and the jobs named with `--job`; every job is in a folded block. ([decision](decisions/file-pr.md#one-ci-run-time-section-in-every-pr-body-2026-11-24))
@@ -94,8 +99,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 ## workbench 0.62.3: 2026-11-05
 
 - **Keep Muse's session log for scope reviews.** The direct `muse exec` example in `scope-review` no longer passes `--no-session-log`, so each review leaves an ordinary Muse session and its token usage reaches usage tracking that reads Muse's logs. The breach report now names that session log, which also holds every read and search result. ([decision](decisions/scope-review.md#session-log-kept-2026-11-05))
-
-## workbench 0.62.2: 2026-11-05
-
-- **Run the Muse scope review at xhigh effort with a 15-minute deadline.** `scope-review` now invokes `muse-wonder-full-1.0` at `xhigh` reasoning instead of `high` on every route: `muse exec`, T3 Code's `delegate_task` and other native handlers. Its deadline rises from 10 to 15 minutes, including the T3 `timeoutMs` and the Claude Code timer. The model stays pinned with no fallback. ([decision](decisions/scope-review.md#higher-effort-longer-deadline-2026-11-05))
-- **Re-grade the model-reference fleet table.** `model-reference` lowers gpt-6-astra and fable-5.1 on intelligence and fable-5.1 on code, re-grades gpt-6.1-sol, opus-5.5, sonnet-5.5 and grok-4.7, and adds rows for haiku-5.5 and muse-wonder-full-1.0.

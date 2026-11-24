@@ -55,7 +55,8 @@ still contains the complete populated report. Each dispatch file sits under the
 scope folder's `dispatches/` and opens with `Lane: <LANE>`. Each destination gets
 its own `Paste this into <LANE>:` label immediately above a fenced pointer naming
 the same lane, role, authority, fresh or existing session, and the file's absolute
-path. When several lanes are ready, the owner repeats that complete label-and-block
+path. Both the file and the pointer tell the recipient which skill to use
+before acting. When several lanes are ready, the owner repeats that complete label-and-block
 pair for each lane in one reply. Returns to existing lanes after corrections use
 the same format. A lane whose delivery is merged, or whose audit is accepted,
 and that has nothing left assigned gets a closeout pointer in the same shape.
@@ -230,9 +231,11 @@ and includes or links the shared
 Auditors start without PR history or implementer conclusions. Each audit result
 contains the complete audit report for owner corroboration, including blockers.
 
-Every implementation dispatch names [epic-implementation](epic-implementation.md),
-which keeps handbacks in the shared
-[lane report template](../../plugins/workbench/skills/epic-orchestration/references/lane-report.md).
+From the first assignment through corrections, recovery, delivery and closeout,
+the owner directs the lane to use `workbench:epic-implementation`.
+The skill routes questions and requires a populated report for work or a one-line
+acknowledgment when the dispatch asks for acknowledgment only. See the
+[implementation skill](epic-implementation.md) and [lane report template](../../plugins/workbench/skills/epic-orchestration/references/lane-report.md).
 When the full agreed work set is ready to ship, the lane runs
 [trim-comments](trim-comments.md), committing its edits inside the lane's
 range, then [code-quality-review](code-quality-review.md), plus

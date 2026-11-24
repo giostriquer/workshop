@@ -27,7 +27,7 @@ Lane L3, existing session. Delivery at abc1234 accepted; your implementation ass
 `Paste this into L1:`
 
 ```
-Lane L1. Implementer, delivery authorized, existing session. Read and execute:
+Lane L1. Implementer, delivery authorized, existing session. Use workbench:epic-implementation. Read and execute:
 /Users/me/acme/.workbench/webapp/dispatches/L1-delivery.md
 ```
 

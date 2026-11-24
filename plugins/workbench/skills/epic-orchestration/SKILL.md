@@ -150,26 +150,26 @@ any inherited-label mapping without replacing the session or artifact paths.
 
 Every assignment traces to approved scope and a primary-journey step. Coordinate
 ownership overlaps before concurrent edits; dependencies and epic exclusions
-still govern. Require `workbench:epic-implementation` for implementation handbacks
-and delivery authorizations, and `workbench:epic-auditor` for every auditor return.
-Auditors start from approved criteria and the artifact, without implementer
-conclusions or PR history.
+still govern. Auditors start from approved criteria and the artifact, without
+implementer conclusions or PR history.
 
 ## Dispatching
 
 Every lane-facing prompt, amendment, acceptance, ruling, audit brief or
-authorization is a file plus a labeled pointer in your reply. A saved file,
-ledger update or prose recap alone is not a handoff. Helpers do not replace
-that handoff.
+authorization needs a dispatch file and a labeled pointer in your reply, even
+when a helper or ledger update has already recorded it.
 
-1. Write the file under the scope folder's `dispatches/`. Its first line is
-   `Lane: <LANE>`, the ledger's canonical name; the brief follows.
-2. Give each destination its own label directly above its own fenced pointer:
+1. Start each file under the scope folder's `dispatches/` with `Lane: <LANE>`,
+   the ledger's canonical name.
+2. In both the file and the pointer, tell implementers to use
+   `workbench:epic-implementation` and auditors to use `workbench:epic-auditor`
+   from the start, including on resume and closeout.
+3. Put each destination's label directly above its fenced pointer:
 
 `Paste this into <LANE>:`
 
 ```
-Lane <LANE>. <Role, what is authorized, fresh or existing session>. Read and execute:
+Lane <LANE>. <Role, what is authorized, fresh or existing session>. Use <reporting skill>. Read and execute:
 <absolute dispatch path>
 <lines governing instructions require verbatim, if any>
 ```
@@ -318,8 +318,8 @@ A reply that ends an owner turn has these parts, in order:
    here, outside the paste blocks; dispatch a routine next lane the plan already
    determines instead of asking.
 
-Before sending, check that every lane-facing disposition has its file, label and
-pointer under one canonical name, and that part 6 accounts for every open
+Before sending, check each disposition's file, label, pointer, canonical lane
+name and role skill, and that part 6 accounts for every open
 workset. An answer or progress update with no lane disposition still gives parts
 1 to 3 and 6; messages inside a turn stay brief prose. Before a session's first
 owner return and before each audit return, read

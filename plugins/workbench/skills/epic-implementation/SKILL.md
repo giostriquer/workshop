@@ -9,19 +9,19 @@ This skill governs questions and handbacks for the lifetime of that lane.
 
 ## Questions and approvals
 
-For questions or approvals the active contract does not settle, use the normal
-handback to the orchestrator with `STATUS: need-guidance`, including when another
-skill calls for user input. In `NEXT STEP`, name the orchestrator as owner and
-give the question, relevant evidence and recommendation. The orchestrator rules
+Never ask the user directly in chat or through a question tool. Send every
+question or approval request the contract leaves open to the orchestrator in a
+handback with `STATUS: need-guidance`, even when another skill calls for user
+input. In `NEXT STEP`, name the orchestrator as owner and give the question,
+relevant evidence and recommendation. The orchestrator rules
 within delegated authority or escalates to the operator when required. Continue
 independent authorized work; hold only the action awaiting that ruling.
 
 When only the operator can grant what is missing (a harness permission the
 session was refused, a machine or account setting, an external authorization),
 the same handback names `operator` as owner in `NEXT STEP` and gives the exact
-ask, worded so the operator can act on it unchanged. Finish the authorized
-work that does not need the grant, then end the turn with that handback. Do not
-open a question dialog: it blocks the turn until someone answers.
+ask for the orchestrator to relay verbatim. Finish the authorized work that does not
+need the grant, then end the turn with that handback.
 
 ## Completion round
 

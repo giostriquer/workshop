@@ -64,13 +64,13 @@ The initial dispatch is a complete brief that works without tracker access:
   compatibility obligations and handback evidence, including the running-app
   flow for a user-reachable change. Let the lane choose design,
   sequencing and test techniques within repository and owning-skill rules.
-- **Coordination and handback:** other lanes' ownership/dependencies, required
-  gates, and the role's reporting skill: `workbench:epic-implementation` for the
-  complete [lane report](lane-report.md), or
-  `workbench:epic-auditor` for the complete
-  [audit report](audit-report.md). Give the absolute path where the lane saves
-  each final report block, `<scope folder>/reports/<LANE>-<n>.md`, where `<n>` is
-  one more than the highest number that lane already has there: the owner's
+- **Coordination and handback:** other lanes' ownership/dependencies and required
+  gates. Tell implementers to use `workbench:epic-implementation` from the start.
+  Their handbacks use the complete [lane report](lane-report.md). Auditors use
+  `workbench:epic-auditor` and use the complete [audit report](audit-report.md).
+  Give the absolute path where the lane saves each final report block,
+  `<scope folder>/reports/<LANE>-<n>.md`, where `<n>` is one more than
+  the highest number that lane already has there: the owner's
   lane reconciliation reads that folder. An implementation contract also names
   the completion round's inputs from [Delivery](delivery.md): the epic goal and
   journey step for the lane's `scope-review` attempt, and the trim's commit
@@ -88,9 +88,9 @@ audit work must still contain the populated copyable report.
 what changes, its scope basis, refreshed base/evidence where required, and any
 changed gates or authority. Retain unchanged terms by reference instead of
 repeating setup, standing rules, review instructions and the report template.
-Name the role's reporting skill in each amendment; implementation delivery
-authorizations name `workbench:epic-implementation`. An amendment or correction
-ends at a `ready-for-validation` handback like the brief: before the lane's PR
+Carry the instruction to use the role's skill into each amendment and its pointer.
+An amendment or correction ends at a `ready-for-validation` handback like the
+brief: before the lane's PR
 exists its branch stays unpublished, and only a delivery authorization written
 under [Delivery](delivery.md) opens that gate.
 For a recovered session, make the current contract and amendments directly

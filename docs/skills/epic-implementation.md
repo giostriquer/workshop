@@ -28,10 +28,11 @@ through the lane's lifetime.
 
 **Who answers a lane's questions?**
 
-Questions or approvals unresolved by the active contract go to the orchestrator
-in the normal `need-guidance` report, including when another skill calls for user
-input. `NEXT STEP` names the orchestrator as owner and gives the question,
-evidence and recommendation. The orchestrator rules within delegated authority
+The lane sends every open question or approval request to the orchestrator in
+its `need-guidance` report, even when another skill asks it to prompt you.
+Only the orchestrator brings a lane's question to you. `NEXT STEP` names the
+orchestrator as owner and gives the question, evidence and recommendation.
+The orchestrator rules within delegated authority
 or escalates to the operator. Continue independent authorized work while the
 dependent action awaits a ruling.
 
@@ -39,10 +40,8 @@ dependent action awaits a ruling.
 
 A permission the session was refused, a machine or account setting, or an
 external authorization goes in the same `need-guidance` report, with `operator`
-as the owner in `NEXT STEP` and the exact ask written so you can act on it
-unchanged. The lane first finishes the authorized work that does not need the
-grant, then ends its turn with that report. It does not open a question dialog,
-which would stop the lane until someone answered it.
+as the owner in `NEXT STEP`. The orchestrator relays the exact ask to you.
+The lane finishes any independent authorized work before returning that report.
 
 **Where is the template?**
 

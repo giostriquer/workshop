@@ -42,6 +42,10 @@ The orchestrator applies existing delegated authority or escalates an
 operator-reserved decision. Independent authorized work continues while the
 dependent action waits. This changes routing without granting new authority.
 
+The same route applies to direct chat questions and question tools. Naming
+`operator` as the person who can grant a request still sends the handback to
+the orchestrator, who relays the exact ask.
+
 ### Handback shape, acknowledgments and operator-only approvals (2026-11-09)
 
 Three gaps showed in the week of 2026-11-02.

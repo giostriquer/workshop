@@ -324,9 +324,15 @@ A coordinator pushed detailed evidence into tracker descriptions because the ski
 
 ## Dispatches are files and paste blocks are pointers (2026-09-11)
 
-Several-hundred-line inline briefs were hard to copy precisely from a terminal, while a session reads a file exactly. Each lane prompt, audit brief and authorization is its own file in the epic's scope folder, indexed in the ledger. The paste block carries only role, authority, whether the session is fresh, the absolute path and any required verbatim lines.
+Several-hundred-line inline briefs were hard to copy precisely from a terminal, while a session reads a file exactly. Each lane prompt, audit brief and authorization is its own file in the epic's scope folder, indexed in the ledger. The paste block carries the lane, role, authority, whether the session is fresh, the skill to use, the absolute path and any required verbatim lines.
 
 The initial lane contract is complete. Amendments reference its revision and carry only changed scope, inputs, evidence, gates or authority. A recovered session reads the active contract and amendments. The report template can be referenced directly instead of copied into every dispatch; every handback of implementation or audit work still contains the complete populated block.
+
+The ordinary pointer omitted the reporting skill even though the contract named
+it. An implementer could receive a fresh assignment, correction or delivery
+authorization with no instruction in the message to use the skill that
+governs questions and handbacks. Both the dispatch file and its paste block
+now give that instruction, including when the lane resumes.
 
 An owner accepted a correction in prose and recommended approval and merge,
 but omitted the paste-ready return to the implementation lane. The operator
