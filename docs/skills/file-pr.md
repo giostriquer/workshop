@@ -200,7 +200,9 @@ whether this PR made CI slower. `scripts/ci-run-time.mjs` in the skill's folder
 writes it from GitHub: each GitHub Actions job of the PR head, the median of
 the same job in its last three successful runs on the base branch, and the
 change. A job is over the limit when it changes by more than 10% and more than
-20 seconds; `--percent`, `--seconds` and `--base-runs` take another rule. The
+20 seconds; `--percent`, `--seconds` and `--base-runs` take another rule. Bold
+marks a slower job: one over the limit that also took longer than every one of
+those base runs. The
 table holds the jobs over the limit, the new jobs and the jobs you name with
 `--job` (those that build or test what the diff changes); the other jobs are
 folded below it. The section goes last in the body, above any footer or
@@ -208,7 +210,8 @@ bot-managed block, and is written again after every push.
 
 **A job is marked slower. What happens?** Its line ends with `_cause and
 decision not written yet_`, and the script names the steps that grew most. The
-PR is not green and mergeable until that line is complete. There are three
+PR is not green and mergeable until that line is complete; until then the end
+state is blocked. There are three
 ways to complete it. Remove the cost and push. Show that the growth is in a
 step the diff cannot reach, such as a dependency install or a tool setup, with
 that step's time here and on the base. Or report the numbers as a decision for
@@ -221,7 +224,7 @@ compare two PRs. The script fixes the baseline, the limit and the form.
 
 **What if the repository has no CI, or GitHub refuses the read?** With no
 GitHub Actions job on the head, the script exits 3 and the body gets no
-section; the report says "no CI jobs". When the read fails, the section holds
+section; the report says "no GitHub Actions jobs". When the read fails, the section holds
 the one line `Not available: <reason>` and the report names the gap.
 
 **Does landing rerun checks?** It reuses current evidence unless integration or

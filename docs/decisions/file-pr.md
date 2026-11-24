@@ -24,8 +24,10 @@ was not an option.
   jobs and the jobs named with `--job`. Naming the jobs that run the diff keeps
   the reviewer's first look on the jobs that matter.
 - **Baseline.** The median of each job's last three successful runs on the PR's
-  base branch, from push runs first. The script reads nine runs, so a job that a
-  path filter or a cache skips in the newest runs still gets three samples.
+  base branch, from push runs first. The script reads up to nine runs and stops
+  when every job has three samples, so a job that a path filter or a cache
+  skips in the newest runs still gets them. It asks for the runs of each
+  workflow by name, disabled workflows included, and reads each run once.
 - **Limit.** More than 10% and more than 20 seconds, both. One number alone
   flags a 5-second job that doubles, or a 20-minute job that moves by 30
   seconds. `--percent`, `--seconds` and `--base-runs` take a repository's own
@@ -33,7 +35,11 @@ was not an option.
 - **Inside the range.** A median of three runs is noisy. A job that passes the
   limit but takes no longer than its slowest base run is marked "inside the
   range" and needs no action. On one real PR with 29 compared jobs, 6 passed
-  the limit against the median and 3 of those were inside the range.
+  the limit against the median and 3 of those were inside the range. This is
+  an exception to the user's rule, and the user approved it on 2026-11-24
+  ("No action"). Its cost: one slow base run can cover a real slowdown of the
+  same size. The row, its change and the base's range stay in the section, and
+  only bold rows hold the end state.
 - **Steps.** For a slower job the script names the three steps that grew most.
   On that PR the growth of the 3 remaining jobs was in a tool setup step, which
   the diff could not reach. That evidence closes a line as "not from this
@@ -47,12 +53,13 @@ was not an option.
   times exist only after CI ran, so this evidence arrives late, and a bot's
   footer must stay last.
 - **No data.** With no GitHub Actions job on the head the script exits 3 and
-  the body gets no section. When the read fails, the section holds `Not
-  available: <reason>`. A table from memory is the variation this decision
-  ends.
+  the body gets no section. A workflow that the PR adds has no base run, so its
+  jobs read "new". When the read fails, the section holds `Not available:
+  <reason>`. A table from memory is the variation this decision ends.
 
-Checked before shipping: the script's 13 tests, one run against a real PR with
-63 checks (29 jobs compared in 31 seconds), and five scenarios, each given to
+Checked before shipping: the script's 13 tests against a strict stand-in for
+`gh`, a mutation run over the whole script, two runs against a real PR with 63
+checks (29 jobs compared in 31 to 41 seconds), and five scenarios, each given to
 one fresh agent with the changed skill. The scenarios were a slower job under a
 user's deadline, a slower job whose growth was in a setup step with an old
 section and a bot footer in the body, an "inside the range" job in a fallback

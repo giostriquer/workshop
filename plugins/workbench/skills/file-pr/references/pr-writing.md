@@ -210,11 +210,14 @@ Run it when the checks on the head have finished, and again after each push:
 the times belong to one head. Through `gh` it reads each job of the PR and the
 same job in its last three successful runs on the PR's base branch. Give one
 `--job` for each job that builds, lints or tests a path the diff changes. Those
-rows stay in the table. The table also holds every job over the limit and every
-new job; the script folds the other jobs under the notes.
+rows stay in the table. The table also holds every job over the limit, every
+new job and every job that failed or still runs; the script folds the other
+jobs under the notes.
 
 A job is over the limit when it changes by more than 10% and more than 20
-seconds against the median of the base runs. When the user's or the
+seconds against the median of the base runs. It is **slower**, in bold, only
+when it also took longer than every one of those base runs; otherwise the
+script marks it inside the range of the base. When the user's or the
 repository's rules give another limit or sample size, pass `--percent`,
 `--seconds` and `--base-runs`.
 
@@ -248,9 +251,9 @@ Under the table the script writes one line for each finding. Complete them:
   hide a small suite.
 
 While a line still holds `_cause and decision not written yet_`, the PR is not
-*green and mergeable*: report it as still open.
+*green and mergeable*: report the end state as blocked, and name that line.
 
 The script exits 3 and writes nothing when no GitHub Actions job ran on the
-head: add no section and say "no CI jobs" in the report. When it fails for
+head: add no section and say "no GitHub Actions jobs" in the report. When it fails for
 another reason, such as no `gh` access or an API error, add the section with
 the one line `Not available: <reason>` and report the gap.

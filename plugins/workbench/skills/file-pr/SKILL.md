@@ -284,8 +284,8 @@ in its existing fields. If no format is required, use a verdict-first report.
   commits), attempts and re-syncs used.
 - Screenshots: attached (how they were captured), not applicable (no rendered
   change in the diff), or skipped because the app could not be run.
-- CI run time: no job over the limit, each slower job with its cause and
-  decision, or why the section is absent.
+- CI run time: no slower job, each slower job with its cause and decision,
+  each job inside the base's range, or why the section is absent.
 - If stopped early: the diagnosis and the recommended next step.
 
 ## Boundaries

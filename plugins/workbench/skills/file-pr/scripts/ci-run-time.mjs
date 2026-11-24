@@ -16,6 +16,7 @@ const PLACEHOLDER = '_cause and decision not written yet_';
 const SCAN = 3;
 const STEP_FLOOR = 5;
 const ORDER = ['slower', 'slower-in-range', 'new', 'faster', 'not-compared', 'running', 'within'];
+const COMPARED = new Set(['slower', 'slower-in-range', 'faster', 'within']);
 
 export function options(argv) {
   const config = { pr: null, repo: null, jobs: [], baseRuns: 3, percent: 10, seconds: 20, json: false, help: false };
@@ -86,55 +87,66 @@ function pullRequestJobs(rollup) {
   return [...jobs.values()];
 }
 
-async function baseSamples(workflow, base, config, scope, read) {
-  const list = event => read(['run', 'list', ...scope, '--workflow', workflow, '--branch', base, '--status', 'success',
-    ...(event ? ['--event', event] : []), '--limit', String(config.baseRuns * SCAN), '--json', 'databaseId']);
+async function baseSamples(workflow, wanted, base, config, scope, read, jobsOf) {
+  const list = async event => {
+    try {
+      return await read(['run', 'list', ...scope, '--workflow', workflow, '--branch', base, '--status', 'success', '--all',
+        ...(event ? ['--event', event] : []), '--limit', String(config.baseRuns * SCAN), '--json', 'databaseId']);
+    } catch (error) {
+      // A workflow that this pull request adds is not registered yet: it has no base run.
+      if (/could not find any workflows named/i.test(error.message)) return null;
+      throw error;
+    }
+  };
   let runs = await list('push');
-  if (!runs.length) runs = await list(null);
-  const samples = new Map();
-  for (const run of runs) {
-    // One request at a time for each workflow: a burst of parallel job reads gets HTTP 502 from GitHub.
-    const view = await read(['run', 'view', String(run.databaseId), ...scope, '--json', 'jobs']);
-    for (const job of view.jobs ?? []) {
+  if (runs?.length === 0) runs = await list(null);
+  const samples = new Map(wanted.map(name => [name, []]));
+  for (const run of runs ?? []) {
+    if ([...samples.values()].every(kept => kept.length >= config.baseRuns)) break;
+    // One run at a time: a burst of parallel job reads gets HTTP 502 from GitHub.
+    for (const job of await jobsOf(run.databaseId)) {
+      const kept = samples.get(job.name);
       const seconds = job.conclusion === 'success' ? elapsed(job.startedAt, job.completedAt) : null;
-      const kept = samples.get(job.name) ?? [];
-      if (seconds !== null && kept.length < config.baseRuns) samples.set(job.name, [...kept, { seconds, steps: stepTimes(job) }]);
+      if (kept && seconds !== null && kept.length < config.baseRuns) kept.push({ seconds, steps: stepTimes(job) });
     }
   }
   return samples;
 }
 
-async function grownSteps(job, samples, scope, read) {
-  const [, run, id] = /\/actions\/runs\/(\d+)\/job\/(\d+)/.exec(job.link) ?? [];
+async function grownSteps(link, samples, jobsOf) {
+  const [, run, id] = /\/actions\/runs\/(\d+)\/job\/(\d+)/.exec(link) ?? [];
   if (!run) return [];
-  const view = await read(['run', 'view', run, ...scope, '--json', 'jobs']);
-  const own = stepTimes((view.jobs ?? []).find(candidate => String(candidate.databaseId) === id) ?? {});
+  const own = stepTimes((await jobsOf(run)).find(candidate => String(candidate.databaseId) === id) ?? {});
   return [...own].map(([name, after]) => {
-    const before = samples.filter(sample => sample.steps.has(name)).map(sample => sample.steps.get(name));
-    return { name, after, before: before.length ? median(before) : 0 };
-  }).map(step => ({ ...step, change: step.after - step.before }))
-    .filter(step => step.change > STEP_FLOOR).sort((left, right) => right.change - left.change).slice(0, 3);
+    const timed = samples.filter(sample => sample.steps.has(name)).map(sample => sample.steps.get(name));
+    const before = timed.length ? median(timed) : 0;
+    return { name, after, before, change: after - before };
+  }).filter(step => step.change > STEP_FLOOR).sort((left, right) => right.change - left.change).slice(0, 3);
 }
 
 export async function report(config, read = github, today = new Date()) {
   const scope = config.repo ? ['--repo', config.repo] : [];
   const pr = await read(['pr', 'view', String(config.pr), ...scope, '--json', 'number,url,headRefOid,baseRefName,statusCheckRollup']);
   const jobs = pullRequestJobs(pr.statusCheckRollup ?? []);
-  const known = new Set(jobs.length ? (await read(['workflow', 'list', ...scope, '--all', '--json', 'name'])).map(workflow => workflow.name) : []);
-  const workflows = [...new Set(jobs.map(job => job.workflow))];
-  const samples = new Map(await Promise.all(workflows.map(async workflow =>
-    [workflow, known.has(workflow) ? await baseSamples(workflow, pr.baseRefName, config, scope, read) : new Map()])));
-  const rows = await Promise.all(jobs.map(async job => {
-    if (job.state !== 'passed' || job.after === null) return { ...job, status: job.state === 'running' ? 'running' : 'not-compared' };
-    const base = samples.get(job.workflow).get(job.name) ?? [];
-    const row = { ...job, ...compare(job.after, base.map(sample => sample.seconds), config) };
-    return row.status === 'slower' ? { ...row, steps: await grownSteps(job, base, scope, read) } : row;
-  }));
+  const views = new Map();
+  const jobsOf = run => {
+    const id = String(run);
+    if (!views.has(id)) views.set(id, read(['run', 'view', id, ...scope, '--json', 'jobs']).then(view => view.jobs ?? []));
+    return views.get(id);
+  };
+  const samples = new Map(await Promise.all([...new Set(jobs.map(job => job.workflow))].map(async workflow => [workflow,
+    await baseSamples(workflow, jobs.filter(job => job.workflow === workflow).map(job => job.name), pr.baseRefName, config, scope, read, jobsOf)])));
   const shown = config.jobs.map(text => text.toLowerCase());
+  const rows = await Promise.all(jobs.map(async ({ key, workflow, name, state, after, link }) => {
+    const row = { key, workflow, name, named: shown.some(text => key.toLowerCase().includes(text)) };
+    if (state === 'running') return { ...row, status: 'running' };
+    if (state !== 'passed' || after === null) return { ...row, status: 'not-compared', state, after };
+    const base = samples.get(workflow).get(name);
+    const compared = { ...row, after, ...compare(after, base.map(sample => sample.seconds), config) };
+    return compared.status === 'slower' ? { ...compared, steps: await grownSteps(link, base, jobsOf) } : compared;
+  }));
   return { pr: pr.number, url: pr.url, head: pr.headRefOid, base: pr.baseRefName, readOn: today.toISOString().slice(0, 10),
-    limit: { percent: config.percent, seconds: config.seconds }, baseRuns: config.baseRuns,
-    jobs: rows.map(({ startedAt, link, state, ...row }) => ({ ...row, ...(row.status === 'not-compared' ? { state } : {}),
-      named: shown.some(text => row.key.toLowerCase().includes(text)) })) };
+    limit: { percent: config.percent, seconds: config.seconds }, baseRuns: config.baseRuns, scanned: config.baseRuns * SCAN, jobs: rows };
 }
 
 function clock(seconds) {
@@ -156,23 +168,26 @@ function changed(row) {
 
 export function markdown(result) {
   const base = `\`${result.base}\``;
-  const cell = text => String(text).replaceAll('|', '\\|');
+  const timed = row => [clock(row.before), clock(row.after), changed(row)];
+  const cells = {
+    slower: row => [clock(row.before), clock(row.after), `**${changed(row)}**`],
+    'slower-in-range': timed,
+    faster: timed,
+    within: timed,
+    new: row => [`no successful run in the last ${result.scanned} ${base} runs`, clock(row.after), 'new'],
+    'not-compared': row => ['', row.after === null ? '' : clock(row.after), `not compared: ${row.state}`],
+    running: () => ['', '', 'still running'],
+  };
   const rows = [...result.jobs].sort((left, right) => ORDER.indexOf(left.status) - ORDER.indexOf(right.status)
     || Math.abs(right.change ?? 0) - Math.abs(left.change ?? 0) || left.key.localeCompare(right.key));
-  const line = row => {
-    const before = row.before === undefined ? (row.status === 'new' ? `no job of this name on ${base}` : '') : clock(row.before);
-    const after = row.after === null || row.after === undefined ? '' : clock(row.after);
-    const change = { new: 'new', running: 'still running', 'not-compared': `not compared: ${row.state}`,
-      slower: `**${row.before === undefined ? '' : changed(row)}**` }[row.status] ?? changed(row);
-    return `| ${cell(row.key)} | ${before} | ${after} | ${change} |`;
-  };
-  const table = list => [`| Job | Before (median of ${base}) | After | Change |`, '|---|---|---|---|', ...list.map(line)];
+  const table = list => [`| Job | Before (median of ${base}) | After | Change |`, '|---|---|---|---|',
+    ...list.map(row => `| ${[row.key.replaceAll('|', '\\|'), ...cells[row.status](row)].join(' | ')} |`)];
   const visible = rows.filter(row => row.status !== 'within' || row.named);
-  const compared = rows.filter(row => row.before !== undefined);
+  const compared = rows.filter(row => COMPARED.has(row.status));
   const notes = [];
   for (const row of rows.filter(candidate => candidate.status === 'slower')) {
     notes.push(`- **${row.key} (${signed(row.change)}):** ${PLACEHOLDER}`);
-    if (row.steps?.length) {
+    if (row.steps.length) {
       notes.push(`  - Steps that grew most: ${row.steps.map(step =>
         `\`${step.name}\` ${signed(step.change)} (${clock(step.after)}, ${clock(step.before)} on ${base})`).join('; ')}.`);
     }
@@ -180,7 +195,7 @@ export function markdown(result) {
   for (const row of rows.filter(candidate => candidate.status === 'slower-in-range')) {
     notes.push(`- **${row.key} (${signed(row.change)}) is inside the range of ${base}:** its last ${row.runs} runs took ${clock(row.fastest)} to ${clock(row.slowest)}.`);
   }
-  if (!notes.length) notes.push('- No job is over the limit.');
+  if (!notes.length) notes.push('- No job is slower than the limit.');
   if (compared.length) {
     const before = compared.reduce((sum, row) => sum + row.before, 0);
     const after = compared.reduce((sum, row) => sum + row.after, 0);
@@ -190,18 +205,20 @@ export function markdown(result) {
     ? ['', `<details><summary>All ${rows.length} jobs</summary>`, '', ...table(rows), '', '</details>'] : [];
   return ['## CI run time', '',
     `Before is the median of the last ${result.baseRuns} successful ${base} runs of each job; after is this pull request's run at \`${result.head.slice(0, 10)}\`. `
-      + `Read from GitHub on ${result.readOn}. A job is over the limit when it changes by more than ${result.limit.percent}% and more than ${result.limit.seconds}s.`,
+      + `Read from GitHub on ${result.readOn}. A job is over the limit when it changes by more than ${result.limit.percent}% and more than ${result.limit.seconds}s. `
+      + `Bold marks a job that is over the limit and slower than every one of those ${base} runs.`,
     '', ...(visible.length ? [...table(visible), ''] : []), ...notes, ...folded, ''].join('\n');
 }
 
-export async function github(args, { run = execute, pause = 2000, attempts = 3 } = {}) {
+export async function github(args, { run = execute, pause = 2000, attempts = 3, timeout = 60000 } = {}) {
   for (let attempt = 1; ; attempt += 1) {
     try {
-      const { stdout } = await run('gh', args, { maxBuffer: 64 * 1024 * 1024 });
+      const { stdout } = await run('gh', args, { timeout, killSignal: 'SIGKILL', maxBuffer: 64 * 1024 * 1024,
+        env: { ...process.env, GH_PROMPT_DISABLED: '1', GH_PAGER: 'cat' } });
       return JSON.parse(stdout);
     } catch (error) {
-      const reason = String(error.stderr || error.message).trim();
-      if (attempt >= attempts || !/HTTP 5\d\d|timed? ?out|connection reset|EAI_AGAIN/i.test(reason)) {
+      const reason = error.killed ? `no answer in ${timeout / 1000}s` : String(error.stderr || error.message).trim();
+      if (attempt >= attempts || !(error.killed || /HTTP 5\d\d|timed out|connection reset|EAI_AGAIN/i.test(reason))) {
         throw new Error(`gh ${args.join(' ')} failed: ${reason}`);
       }
       await new Promise(resolve => setTimeout(resolve, pause));
