@@ -103,6 +103,7 @@ test('report: each kind of pull request job gets its status, and rows that are n
   const answers = [
     [prCall(), pull([check('Unit tests', 300, { detailsUrl: link(901) }), check('Lint', 61, { detailsUrl: link(902) }), check('New suite', 90),
       check('Gate', 0), check('Build', 200, { conclusion: 'FAILURE' }),
+      check('Stopped early', 0, { conclusion: 'CANCELLED', startedAt: null, completedAt: null }),
       check('Deploy preview', 0, { status: 'IN_PROGRESS', conclusion: '', completedAt: null }),
       check('Docs', 5, { conclusion: 'SKIPPED' }), check('Advisory', 5, { conclusion: 'NEUTRAL' }),
       check('External review', 40, { workflowName: '' }),
@@ -116,7 +117,7 @@ test('report: each kind of pull request job gets its status, and rows that are n
   const { read, count } = fake(answers);
   const result = await report(config('--job', 'lint', '--job', 'GATE'), read, TODAY);
   assert.deepEqual(statuses(result), { 'CI / Unit tests': 'slower', 'CI / Lint': 'within', 'CI / New suite': 'new', 'CI / Gate': 'within',
-    'CI / Build': 'not-compared', 'CI / Deploy preview': 'running' });
+    'CI / Build': 'not-compared', 'CI / Stopped early': 'not-compared', 'CI / Deploy preview': 'running' });
   assert.deepEqual(result.jobs.find(row => row.name === 'Unit tests'), { key: 'CI / Unit tests', workflow: 'CI', name: 'Unit tests', named: false,
     after: 300, status: 'slower', before: 100, change: 200, percent: 200, fastest: 90, slowest: 110, runs: 3, steps: [] });
   assert.deepEqual(result.jobs.find(row => row.name === 'Lint'), { key: 'CI / Lint', workflow: 'CI', name: 'Lint', named: true,
@@ -126,6 +127,8 @@ test('report: each kind of pull request job gets its status, and rows that are n
     after: 0, status: 'within', before: 0, change: 0, percent: null, fastest: 0, slowest: 0, runs: 3 }, 'a job of 0 s is compared');
   assert.deepEqual(result.jobs.find(row => row.name === 'Build'), { key: 'CI / Build', workflow: 'CI', name: 'Build', named: false,
     status: 'not-compared', state: 'failure', after: 200 });
+  assert.deepEqual(result.jobs.find(row => row.name === 'Stopped early'), { key: 'CI / Stopped early', workflow: 'CI', name: 'Stopped early',
+    named: false, status: 'not-compared', state: 'cancelled', after: null }, 'a job cancelled before it started has no time');
   assert.deepEqual(result.jobs.find(row => row.name === 'Deploy preview'), { key: 'CI / Deploy preview', workflow: 'CI', name: 'Deploy preview',
     named: false, status: 'running' });
   assert.deepEqual(named(result), ['Lint', 'Gate'], 'each --job matches part of a name in any letter case; the other rows are not named');
@@ -137,12 +140,14 @@ test('report: each kind of pull request job gets its status, and rows that are n
 
 test('report: base samples are the newest successful jobs, and the scan stops when every job has its samples', async () => {
   const view = (unit, rare) => ({ jobs: [job('Unit tests', unit.seconds, unit.extra), job('Rare', 40, rare ? {} : { conclusion: 'skipped' }), job('Not in this PR', 999)] });
-  const complete = fake([[prCall(), pull([check('Unit tests', 100)])], [listCall('CI', 'push'), runs(1, 2, 3, 4, 5, 6, 7, 8, 9)],
+  const complete = fake([[prCall(), pull([check('Unit tests', 100), check('Smoke', 30, { workflowName: 'Nightly' })])],
+    [listCall('CI', 'push'), runs(1, 2, 3, 4, 5, 6, 7, 8, 9)], [listCall('Nightly', 'push'), runs(21)], [viewCall(21), { jobs: [job('Smoke', 30)] }],
     [viewCall(1), view({ seconds: 100 }, false)], [viewCall(2), view({ seconds: 500, extra: { conclusion: 'failure' } }, false)],
     [viewCall(3), view({ seconds: 110 }, false)], [viewCall(4), view({ seconds: 120 }, false)]]);
-  const [unit] = (await report(config(), complete.read, TODAY)).jobs;
+  const unit = (await report(config(), complete.read, TODAY)).jobs.find(row => row.name === 'Unit tests');
   assert.deepEqual([unit.fastest, unit.before, unit.slowest, unit.runs], [100, 110, 120, 3], 'a run where the job did not pass gives no sample, and the next run fills its place');
-  assert.deepEqual(complete.calls.filter(call => call[0] === 'run' && call[1] === 'view').map(call => call[2]), ['1', '2', '3', '4'], 'runs 5 to 9 are not read');
+  assert.deepEqual(complete.calls.filter(call => call[0] === 'run' && call[1] === 'view').map(call => call[2]).filter(id => id !== '21'), ['1', '2', '3', '4'],
+    'runs 5 to 9 are not read: a workflow waits only for its own jobs');
 
   const deep = fake([[prCall(), pull([check('Unit tests', 100), check('Rare', 40)])], [listCall('CI', 'push'), runs(1, 2, 3, 4, 5, 6, 7, 8, 9)],
     ...[1, 2, 3, 4, 5, 6].map(id => [viewCall(id), view({ seconds: 100 + id }, false)]),
@@ -186,24 +191,24 @@ test('report: the newest of two rows for one job counts in either order, and a p
 
 test('report: a slower job names the steps that grew by more than 5 s, largest first, at most three, from one read of its run', async () => {
   const link = id => `https://github.com/acme/webapp/actions/runs/77/job/${id}`;
-  const base = extra => ({ jobs: [job('Unit tests', 100, { steps: [step('Install', 12), step('Test', 82), step('Cache', 5), step('Checkout', 9), ...extra] }),
+  const base = install => ({ jobs: [job('Unit tests', 100, { steps: [install, step('Test', 82), step('Cache', 5), step('Checkout', 9)] }),
     job('E2E', 100, { steps: [step('Browser', 50), step('Run', 40), step('Report', 4), step('Pack', 3)] })] });
   const { read, count } = fake([
     [prCall(), pull([check('Unit tests', 300, { detailsUrl: link(901) }), check('E2E', 300, { detailsUrl: link(902) })])],
     [listCall('CI', 'push'), runs(1, 2, 3)],
-    [viewCall(1), base([])], [viewCall(2), base([{ name: 'Install', startedAt: null, completedAt: null }])], [viewCall(3), base([])],
+    [viewCall(1), base(step('Install', 10))], [viewCall(2), base({ name: 'Install', startedAt: null, completedAt: null })], [viewCall(3), base(step('Install', 14))],
     [viewCall(77), { jobs: [{ ...job('Other', 10), databaseId: 900, steps: [step('Install', 999)] },
       { ...job('Unit tests', 300), databaseId: 901, steps: [step('Install', 60), step('Test', 200), step('Cache', 10), step('Checkout', 4),
         { name: 'Skipped step', startedAt: null, completedAt: null }] },
-      { ...job('E2E', 300), databaseId: 902, steps: [step('Browser', 60), step('Run', 100), step('Report', 30), step('Pack', 20), step('Upload', 12)] }] }],
+      { ...job('E2E', 300), databaseId: 902, steps: [step('Browser', 60), step('Run', 100), step('Report', 30), step('Pack', 20), step('Upload', 70)] }] }],
   ]);
   const result = await report(config(), read, TODAY);
   assert.deepEqual(result.jobs.find(row => row.name === 'Unit tests').steps, [{ name: 'Test', after: 200, before: 82, change: 118 },
     { name: 'Install', after: 60, before: 12, change: 48 }],
-  'exactly +5 s, a step that shrank and a step with no time are left out; a base step with no time gives no sample');
-  assert.deepEqual(result.jobs.find(row => row.name === 'E2E').steps, [{ name: 'Run', after: 100, before: 40, change: 60 },
-    { name: 'Report', after: 30, before: 4, change: 26 }, { name: 'Pack', after: 20, before: 3, change: 17 }],
-  'three at most; Upload (+12 s, absent on the base) and Browser (+10 s) come after them');
+  'exactly +5 s, a step that shrank and a step with no time are left out; Install is the median of its two timed base samples, 10 and 14');
+  assert.deepEqual(result.jobs.find(row => row.name === 'E2E').steps, [{ name: 'Upload', after: 70, before: 0, change: 70 },
+    { name: 'Run', after: 100, before: 40, change: 60 }, { name: 'Report', after: 30, before: 4, change: 26 }],
+  'three at most; a step that the base lacks counts from 0; Pack (+17 s) and Browser (+10 s) come after them');
   assert.equal(count(viewCall(77)), 1, 'two slower jobs of one run read it once');
 });
 
@@ -216,6 +221,7 @@ const RESULT = { pr: 12, url: 'https://github.com/acme/webapp/pull/12', head: 'a
     { key: 'CI / Types', status: 'slower-in-range', before: 80, after: 119, change: 39, percent: 48.75, fastest: 72, slowest: 119, runs: 3, named: false },
     { key: 'CI / New suite', status: 'new', after: 88, named: false },
     { key: 'CI / Build', status: 'not-compared', state: 'failure', after: 200, named: false },
+    { key: 'CI / Cancelled', status: 'not-compared', state: 'cancelled', after: null, named: false },
     { key: 'CI / Deploy', status: 'running', named: false },
     { key: 'CI / Docs', status: 'faster', before: 150, after: 104, change: -46, percent: -30.67, named: false },
     { key: 'CI / Format', status: 'within', before: 43, after: 43, change: 0, percent: 0, named: true },
@@ -234,6 +240,7 @@ Before is the median of the last 3 successful \`main\` runs of each job; after i
 | CI / New suite | no successful run in the last 9 \`main\` runs | 1m28s | new |
 | CI / Docs | 2m30s | 1m44s | -46s (-31%) |
 | CI / Build |  | 3m20s | not compared: failure |
+| CI / Cancelled |  |  | not compared: cancelled |
 | CI / Deploy |  |  | still running |
 | CI / Format | 0m43s | 0m43s | 0s (0%) |
 
@@ -243,7 +250,7 @@ Before is the median of the last 3 successful \`main\` runs of each job; after i
 - **CI / Types (+39s) is inside the range of \`main\`:** its last 3 runs took 1m12s to 1m59s.
 - Job time in total for the 6 compared jobs: 10m10s before, 16m33s after (+6m23s).
 
-<details><summary>All 9 jobs</summary>
+<details><summary>All 10 jobs</summary>
 
 | Job | Before (median of \`main\`) | After | Change |
 |---|---|---|---|
@@ -253,6 +260,7 @@ Before is the median of the last 3 successful \`main\` runs of each job; after i
 | CI / New suite | no successful run in the last 9 \`main\` runs | 1m28s | new |
 | CI / Docs | 2m30s | 1m44s | -46s (-31%) |
 | CI / Build |  | 3m20s | not compared: failure |
+| CI / Cancelled |  |  | not compared: cancelled |
 | CI / Deploy |  |  | still running |
 | CI / Lint | 1m00s | 1m02s | +2s (+3%) |
 | CI / Format | 0m43s | 0m43s | 0s (0%) |
@@ -339,6 +347,7 @@ test('command line: it calls gh on PATH and passes on exit 0 with the section, e
 const args = process.argv.slice(2);
 if (process.env.FAKE_GH === 'fails') { process.stderr.write('HTTP 401: Bad credentials\\n'); process.exit(1); }
 const answers = ${JSON.stringify(answers)};
+if (args[1] === 'view' && args[0] === 'run' && args[2] !== '1') { process.stderr.write('unexpected run ' + args[2] + '\\n'); process.exit(1); }
 const key = args[0] === 'pr' ? (process.env.FAKE_GH === 'skipped' ? 'skipped' : 'pr') : args[1];
 process.stdout.write(JSON.stringify(answers[key]));
 `);
@@ -349,7 +358,8 @@ process.stdout.write(JSON.stringify(answers[key]));
   assert.equal(passed.status, 0, passed.stderr);
   assert.match(passed.stdout, /^## CI run time\n/);
   assert.ok(passed.stdout.includes('| CI / Unit tests | 1m40s | 5m00s | **+3m20s (+200%)** |'));
-  assert.ok(passed.stdout.includes('- **CI / Unit tests (+3m20s):** _cause and decision not written yet_'));
+  assert.ok(passed.stdout.includes('- **CI / Unit tests (+3m20s):** _cause and decision not written yet_\n- Job time in total'),
+    'a slower job with no job link reads no run of its own and gets no step line');
   const empty = run('skipped');
   assert.deepEqual([empty.status, empty.stdout, empty.stderr], [3, '', 'No GitHub Actions job ran on abc1234567: write no CI run time section.\n']);
   const failed = run('fails');
