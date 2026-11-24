@@ -8,6 +8,11 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.68.0: 2026-11-24
+
+- **Write one CI run time section in every PR body.** `file-pr` gains step 11: when the head's checks have finished, and again after every push, the bundled `scripts/ci-run-time.mjs` compares each GitHub Actions job of the PR with the median of its last three successful runs on the base branch and writes `## CI run time`, last in the body above any footer. The table holds the jobs over the limit (more than 10% and more than 20 seconds), the new jobs and the jobs named with `--job`; every job is in a folded block. ([decision](decisions/file-pr.md#one-ci-run-time-section-in-every-pr-body-2026-11-24))
+- **Hold the end state for a slower job.** A job over the limit that is also slower than every base run is bold, and its line ends with `_cause and decision not written yet_`, with the steps that grew most under it. The PR is green and mergeable only when that line states the cost removed, the step evidence that it is not from this change, or the user's decision. A job that a base run already matched is marked inside the range and needs no action. With no GitHub Actions job the script exits 3 and the body gets no section; when the read fails the section holds `Not available: <reason>`. ([decision](decisions/file-pr.md#one-ci-run-time-section-in-every-pr-body-2026-11-24))
+
 ## workbench 0.67.1: 2026-11-17
 
 - **Use Sol 6.2 for pinned Codex workflows.** CI watching, test-quality review, comment trimming and contract review request `gpt-6.2-sol` at `xhigh` with fresh context. The fleet reference lists Sol 6.2 and Astra 6.2 as ungraded. ([decision](decisions/model-reference.md#sol-and-astra-62-2026-11-17))
@@ -94,8 +99,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 
 - **Run the Muse scope review at xhigh effort with a 15-minute deadline.** `scope-review` now invokes `muse-wonder-full-1.0` at `xhigh` reasoning instead of `high` on every route: `muse exec`, T3 Code's `delegate_task` and other native handlers. Its deadline rises from 10 to 15 minutes, including the T3 `timeoutMs` and the Claude Code timer. The model stays pinned with no fallback. ([decision](decisions/scope-review.md#higher-effort-longer-deadline-2026-11-05))
 - **Re-grade the model-reference fleet table.** `model-reference` lowers gpt-6-astra and fable-5.1 on intelligence and fable-5.1 on code, re-grades gpt-6.1-sol, opus-5.5, sonnet-5.5 and grok-4.7, and adds rows for haiku-5.5 and muse-wonder-full-1.0.
-
-## toolkit 0.22.0: 2026-11-04
-
-- **Ship the session-transcript rule on every host.** `adopt-global-rules` adds a `session-transcripts` core rule to Claude Code, Codex and Muse, so sessions never suggest, delete, move, compress or truncate agent session history or shorten a host's retention setting. ([decision](decisions/adopt-global-rules.md#session-transcripts-ship-as-a-core-rule-2026-11-04))
-- **Report when adoption replaces what a host reads.** A host entry can declare `replaces`, and `adopt.mjs` reports a `takeovers` entry with a printed notice on every route, including the launcher. A first Muse adoption replaces `~/.claude/CLAUDE.md` in Muse sessions, so the skill names what Muse would lose and the user chooses how to proceed. ([decision](decisions/adopt-global-rules.md#session-transcripts-ship-as-a-core-rule-2026-11-04))
