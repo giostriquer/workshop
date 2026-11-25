@@ -278,8 +278,11 @@ the corrected head is validated before it is authorized.
 Only what was added since the revision it accepted. The lane's delivery
 handback lists each added commit with its kind: integration merge, conflict
 resolution, CI fix or correction. The coordinator reads every one that is not
-a clean merge of the integration branch and confirms the terminal CI result,
-then reports the PR ready for your merge. If a lane reports a PR at a head the
+a clean merge of the integration branch and confirms the terminal CI result.
+For a head that ran Actions jobs, it also reads the PR description and checks
+that the `file-pr` comparison covers that head and every slowdown has a
+disposition. Missing or stale timings go back to the lane before the coordinator
+reports the PR ready for your merge. If a lane reports a PR at a head the
 coordinator never accepted, it validates that head at once and asks you, in a
 hold line, not to merge until it reports.
 

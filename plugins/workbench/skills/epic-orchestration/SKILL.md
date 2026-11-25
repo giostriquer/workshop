@@ -216,9 +216,8 @@ A lane publishes nothing before you accept its work. The order is fixed:
    lets the lane push, open or update its PR, and monitor/fix CI. A brief,
    amendment or correction never carries it.
 4. **Delivery check.** At green CI, read each commit added since the accepted
-   revision that is not a clean integration-branch merge, and verify terminal
-   CI and delivery state. A watcher's promise or an opened PR is not a
-   completed delivery.
+   revision other than clean integration merges. Verify terminal CI, delivery
+   state and the PR body's CI run time for that head per the delivery check.
 
 Before accepting a delivery range or writing an authorization, read
 [Delivery](references/delivery.md) for the range inspection, reviewer inputs,

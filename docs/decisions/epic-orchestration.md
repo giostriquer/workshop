@@ -41,6 +41,12 @@ clean integration merge and confirms terminal CI. The accepted range gets no
 second full validation. A PR already open at a head the owner never accepted is
 validated at once, with a hold line asking the operator not to merge.
 
+A delivery authorization prescribed a second timing helper and asked for slow
+jobs to go to the owner first. The generated comparison stayed in a local
+file while the PR description lacked it. Delivery authorizations now name
+`file-pr`'s timing step, and the owner checks the published comparison at
+the delivered head before recommending merge.
+
 The list of which reviews the completion round runs moved from the entrypoint
 to the delivery reference's completion-round paragraph, which the lane reads
 before the round, to keep the entrypoint under its size bound.

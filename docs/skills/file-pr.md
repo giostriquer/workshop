@@ -26,7 +26,7 @@ technical detail.
 If the repo ships a PR template, the body fills it in with headings, order,
 checkboxes and hidden `<!-- markers -->` intact. The skill adds two
 conditional sections, `## Architecture` and `## Screenshots`, and a
-`## CI run time` section when the head ran CI jobs.
+`## CI run time` section marked pending when Actions checks are expected.
 
 It never merges, enables auto-merge, closes or re-targets the PR, force-pushes,
 or rewrites published history. Without publishing authority or access, it
@@ -206,12 +206,16 @@ those base runs. The
 table holds the jobs over the limit, the new jobs and the jobs you name with
 `--job` (those that build or test what the diff changes); the other jobs are
 folded below it. The section goes last in the body, above any footer or
-bot-managed block, and is written again after every push.
+bot-managed block. When checks are expected, the published description shows
+which head is pending from the moment the PR opens or receives a new push. As
+soon as checks finish, the author publishes the bundled output and reads the
+description back from GitHub to confirm the head and the comparison.
 
 **A job is marked slower. What happens?** Its line ends with `_cause and
-decision not written yet_`, and the script names the steps that grew most. The
-PR is not green and mergeable until that line is complete; until then the end
-state is blocked. There are three
+decision not written yet_`, and the script names the steps that grew most. A
+reviewer can see the measured times while the author investigates or waits for
+your decision. Merge readiness stays blocked until the author updates that
+line in the description. There are three
 ways to complete it. Remove the cost and push. Show that the growth is in a
 step the diff cannot reach, such as a dependency install or a tool setup, with
 that step's time here and on the base. Or report the numbers as a decision for
@@ -222,9 +226,10 @@ a base run already took that long.
 hand each chose their own jobs, baseline and layout, so reviewers could not
 compare two PRs. The script fixes the baseline, the limit and the form.
 
-**What if the repository has no CI, or GitHub refuses the read?** With no
-GitHub Actions job on the head, the script exits 3 and the body gets no
-section; the report says "no GitHub Actions jobs". When the read fails, the section holds
+**What if the repository has no CI, or GitHub refuses the read?** Once checks
+settle, exit 3 means no Actions jobs ran. The author removes the pending field
+or clears its contents if the template supplies the heading, and reports
+"no GitHub Actions jobs". When the read fails, the section holds
 the one line `Not available: <reason>` and the report names the gap.
 
 **Does landing rerun checks?** It reuses current evidence unless integration or

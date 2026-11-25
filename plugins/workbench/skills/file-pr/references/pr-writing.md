@@ -206,8 +206,9 @@ node "<skill dir>/scripts/ci-run-time.mjs" --pr <number> \
 # another repository than the working directory: add --repo <owner/name>
 ```
 
-Run it when the checks on the head have finished, and again after each push:
-the times belong to one head. Through `gh` it reads each job of the PR and the
+When Actions checks are expected, put `Pending checks for <head>.` in the
+timing section at filing and on each new push. Replace it as soon as the checks
+finish. Through `gh` the script reads each job of the PR and the
 same job in its last three successful runs on the PR's base branch. Give one
 `--job` for each job that builds, lints or tests a path the diff changes. Those
 rows stay in the table. The table also holds every job over the limit, every
@@ -224,9 +225,14 @@ repository's rules give another limit or sample size, pass `--percent`,
 **Place the section last in the body, above any footer, attribution or
 bot-managed block.** Reuse, in place, a section the template already has for CI
 or check timing. At each update, read the PR's current body first (`gh pr view
-<number> --json body`), because bots and people edit it. Replace the whole
-section, and send the body with `gh pr edit <number> --body-file <file>`. Keep
-the heading, the first paragraph and the table as the script wrote them.
+<number> --json headRefOid,body`), because bots and people edit it. Check that
+the report belongs to that head, replace the timing content and send the body
+with `gh pr edit <number> --body-file <file>`. Publish the generated comparison
+as soon as it is available, including any unresolved slowdown markers. Read back
+the head and body from GitHub and confirm the comparison appears once for that
+head. If the head moved, refresh the section for the new head. Use the same
+read, edit and readback when adding findings. Preserve the generated rows and
+any template timing heading.
 
 Under the table the script writes one line for each finding. Complete them:
 
@@ -254,6 +260,7 @@ While a line still holds `_cause and decision not written yet_`, the PR is not
 *green and mergeable*: report the end state as blocked, and name that line.
 
 The script exits 3 and writes nothing when no GitHub Actions job ran on the
-head: add no section and say "no GitHub Actions jobs" in the report. When it fails for
+settled head: remove the provisional section (clear only its contents in a
+template timing field) and say "no GitHub Actions jobs" in the report. When it fails for
 another reason, such as no `gh` access or an API error, add the section with
 the one line `Not available: <reason>` and report the gap.

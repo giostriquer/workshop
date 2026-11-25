@@ -8,6 +8,11 @@ deletes the oldest (git history keeps everything). Sections from before the
 2026-08-11 plugin split (`reviewers`, pre-split `toolkit`) were dropped in the
 2026-08-12 reformat.
 
+## workbench 0.68.2: 2026-11-25
+
+- **Publish CI times as soon as checks finish.** `file-pr` marks the current head pending when Actions checks are expected. Once they finish, it publishes the bundled comparison in the PR description and reads it back from GitHub. Reviewers can see the numbers while a slowdown decision is pending. ([decision](decisions/file-pr.md#one-ci-run-time-section-in-every-pr-body-2026-11-24))
+- **Verify the timing report before recommending merge.** The epic owner checks the live PR description for the delivered head and returns missing or stale comparisons to the lane. ([decision](decisions/epic-orchestration.md#a-lane-publishes-nothing-before-owner-acceptance-2026-11-10))
+
 ## workbench 0.68.1: 2026-11-24
 
 - **Name the lane skill in every handoff.** Both the saved dispatch and its paste-ready message tell implementation lanes to use `workbench:epic-implementation`, from the initial assignment through corrections and delivery. ([decision](decisions/epic-orchestration.md#dispatches-are-files-and-paste-blocks-are-pointers-2026-09-11))
@@ -95,7 +100,3 @@ deletes the oldest (git history keeps everything). Sections from before the
 - **Queue mutation campaigns host-wide.** `test-quality-review` now launches every Stryker and cargo-mutants run through a bundled `scripts/mutation-slot.mjs`, which runs one campaign at a time per host in arrival order, recovers locks left by crashed reviewers, still waits for campaigns started without it, and keeps working where a sandbox refuses `ps`. Its summary line gives the seconds waited, the queue mode and whether the process listing could see other sessions, for the Mutation run line. ([decision](decisions/mutation-scope-and-budget.md#queued-campaigns-two-reviewers-per-session-real-dependency-directories-2026-11-06))
 - **At most two test-quality reviewers per session.** `test-quality-review` and `using-workbench` cap concurrent test-quality reviewers at two, since their campaigns share one slot per host; other review stages stay unlimited. ([decision](decisions/mutation-scope-and-budget.md#queued-campaigns-two-reviewers-per-session-real-dependency-directories-2026-11-06))
 - **Give Stryker a real `node_modules`.** The mutation rubric now replaces a linked `node_modules` in the disposable copy with a real directory of links before the first dry run, because Stryker skips a symlinked one and the sandbox then cannot load dependencies. ([decision](decisions/mutation-scope-and-budget.md#queued-campaigns-two-reviewers-per-session-real-dependency-directories-2026-11-06))
-
-## workbench 0.62.3: 2026-11-05
-
-- **Keep Muse's session log for scope reviews.** The direct `muse exec` example in `scope-review` no longer passes `--no-session-log`, so each review leaves an ordinary Muse session and its token usage reaches usage tracking that reads Muse's logs. The breach report now names that session log, which also holds every read and search result. ([decision](decisions/scope-review.md#session-log-kept-2026-11-05))

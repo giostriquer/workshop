@@ -40,7 +40,10 @@ authorization names it. Reference the active
 contract, scope the tickets and range, and state which gates are satisfied with
 evidence or still pending. Require the actual integration branch to be merged,
 never rebased, affected checks/local gates to run, and `file-pr` to prepare the
-PR and tend it to green and mergeable. The authorization covers that PR until it
+PR and tend it to green and mergeable. Specify the jobs the change touches.
+Assign `file-pr` step 11 to publish its bundled comparison in the PR body
+when checks finish, including slow jobs awaiting a ruling. Put any additional
+suite timings below the bundled comparison. The authorization covers that PR until it
 merges: conflict resolutions, CI fixes and corrections push under it. Require
 the delivery handback to list every commit added after the accepted revision.
 
@@ -55,7 +58,11 @@ gate.
 the accepted revision. The delivery handback lists each commit added since,
 with its kind: integration merge, conflict resolution, CI fix or correction.
 Read every commit that is not a clean merge of the integration branch, and
-confirm the terminal CI result on that head yourself. A commit that changes
+confirm the terminal CI result on that head yourself. Read the live PR body
+and head. For a head that ran Actions jobs, verify the generated comparison is
+present for that head and every slowdown has a disposition. Return missing or
+stale timings to the lane before reporting readiness. When no Actions jobs ran,
+confirm that from the head's checks. A commit that changes
 behavior gets affected validation and its owning review, as **The lane's
 latitude** requires. The accepted range needs no second full validation. Report
 the PR ready for the operator's merge only after this check.

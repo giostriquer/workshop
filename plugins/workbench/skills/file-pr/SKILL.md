@@ -216,6 +216,13 @@ Reusing the merged head branch requires an explicit instruction.
    >
    > ## Caveats / follow-ups
    > `<anything the reviewer should know; "none" if none>`
+   >
+   > ## CI run time
+   > Pending checks for `<head>`.
+
+   Include that timing field when GitHub Actions checks are expected, in either
+   body format. On a new head replace the previous head's times. Preserve a
+   current comparison when editing the same head.
 7. **Draft the title using the PR text contract.** If the repo enforces PR-title
    or branch-name patterns (a title linter, commit-lint, a branch rule), discover the pattern from
    the linter / CI config and conform: don't guess a prefix that gets the PR
@@ -258,16 +265,19 @@ Reusing the merged head branch requires an explicit instruction.
     verdict, use steps 2 and 8 to integrate the
     target, resolve them, validate, and push. Every push still integrates the
     latest target even when GitHub reports the PR as mergeable.
-11. **Report CI run time.** Once the head's checks have finished, run
+11. **Publish CI run time.** As soon as the head's checks finish, run
     `node "<skill dir>/scripts/ci-run-time.mjs" --pr <number>`, adding one
     `--job <name text>` per job that builds or tests a path the diff changes.
-    Put its output in the body as `## CI run time` and complete its lines as
-    [PR writing](references/pr-writing.md#ci-run-time-in-the-pr-body) says.
-    Do it again after every push. A job it marks slower holds step 12 until
-    that line states its cause and decision.
+    The command prints Markdown. Edit the live PR description with that output
+    before investigating slow jobs or waiting for a ruling. Read back
+    `gh pr view <number> --json headRefOid,body` and verify the published
+    comparison matches the current head. Complete each slowdown line in place
+    under [PR writing](references/pr-writing.md#ci-run-time-in-the-pr-body).
+    Repeat for each pushed head. On exit 3 with settled checks, clear the
+    pending text and record “no GitHub Actions jobs” in the handback.
 12. **Stop when the PR is green and mergeable and its `## CI run time` section
-    is complete for the head, or when a CI cause exhausts its two fix
-    attempts**, and report either way. Report access, synchronization,
+    is complete and verified for the head (or no Actions jobs ran), or when a
+    CI cause exhausts its two fix attempts**, and report either way. Report access, synchronization,
     or unresolved-decision blockers when they prevent delivery; concurrent branch
     movement alone is work to complete.
 

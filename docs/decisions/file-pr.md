@@ -52,6 +52,13 @@ was not an option.
 - **Placement.** Last in the body, above any footer or bot-managed block. The
   times exist only after CI ran, so this evidence arrives late, and a bot's
   footer must stay last.
+- **Publication order (2026-11-25).** A session ran the bundled tool and kept
+  its report locally while it investigated two slow jobs. The PR first showed
+  timings after the owner asked again, from a different helper. The filing
+  body now marks expected checks pending for the pushed head. As soon as the
+  checks finish, the author publishes the generated section and reads it back
+  on GitHub. An outstanding slowdown decision holds merge readiness while the
+  measured times stay visible.
 - **No data.** With no GitHub Actions job on the head the script exits 3 and
   the body gets no section. A workflow that the PR adds has no base run, so its
   jobs read "new". When the read fails, the section holds `Not available:
