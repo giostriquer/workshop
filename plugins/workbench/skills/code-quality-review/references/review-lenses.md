@@ -15,6 +15,7 @@ For every meaningful change, ask:
 - Did the diff introduce casts, optionality, or ad-hoc object shapes that obscure the real invariant?
 - Is this logic living in the canonical layer, or did the diff leak details across a boundary?
 - Is this orchestration more sequential or less atomic than it needs to be?
+- Can a panic or thrown error between a write and the lock's release leave state that the next caller acts on?
 
 ## What to Flag Aggressively
 
@@ -37,6 +38,7 @@ Escalate findings when you see:
 - Logic added in the wrong layer/package when it should live somewhere more central.
 - Sequential async flow where obviously independent work could stay simpler and clearer with parallel execution.
 - Partial-update logic that leaves state less atomic than necessary.
+- A lock held across a call that can panic or throw after the guarded state changed, when poison recovery or a catch hands that half-applied state to the next caller.
 
 ## Preferred Remedies
 
@@ -58,6 +60,7 @@ When you identify a code-quality problem, prefer suggestions like:
 - Move the logic to the package/module/layer that already owns the concept.
 - Parallelize independent work when that also simplifies the orchestration.
 - Restructure related updates into a more atomic flow when partial state would be harder to reason about.
+- Compute fallible values before the first write under a lock, or install the guard that restores state before the write, so an unwind leaves valid state.
 
 Do not be satisfied with "maybe rename this" feedback when the real issue is structural.
 Do not be satisfied with a merely cleaner version of the same messy idea if there is a plausible path to a much simpler idea.

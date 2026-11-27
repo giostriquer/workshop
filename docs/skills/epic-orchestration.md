@@ -304,6 +304,9 @@ consequential claims. Regression fixes need evidence that checks detect the
 intended defect; reverts or mutations run only in disposable checkouts.
 Behavior-preserving work can use equivalence and passing characterization.
 New interfaces, docs and configuration get checks suited to their contracts.
+A durability or recovery claim names the faults its evidence covers, including
+an effect that lands before its call fails or panics, and the owner checks the
+next operation after each fault.
 A change a user can reach is accepted on the running app's affected flow, or
 with a named reason it is not reachable yet. A repository ban on E2E suites does
 not stop the owner or lanes from launching the app.

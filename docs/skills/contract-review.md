@@ -27,6 +27,10 @@ Existing task text and documents are enough; no new spec is required.
 observable results, plus affected wire formats, persisted data, configuration
 and consumers in other hosts or languages. It reuses adequate evidence and runs
 a focused real-interface check only when consequential uncertainty remains.
+For a call whose effect can land while the caller learns nothing, such as a
+durable store or a network request, it checks that the exact request is
+recorded before the call and settled on every exit, including a panic the
+caller recovers from.
 
 **Can it reopen architecture?** Only a reachable failure or violated accepted
 constraint can reopen the affected choice. A preferred abstraction or sibling

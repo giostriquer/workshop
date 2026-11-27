@@ -6,6 +6,11 @@ empty result, ignore a permission check, or no-op a state mutation.
 
 A test that would obviously survive a relevant mutant is a test-quality issue.
 
+Mutants change the code, never the fault model or the inputs. A fault the fixtures
+never inject (an effect that lands before its call panics) or an input no test passes
+(a `Duration::MAX` wait) leaves no surviving mutant, so read the fault fixtures and
+the input ranges for those gaps, as the checklist names them.
+
 **Mutation scope.** For a change review, the scope is the production lines whose
 content changed (`path:startLine-endLine`) and, behind a changed test file, the
 production functions its added, changed or removed test cases call (Stryker

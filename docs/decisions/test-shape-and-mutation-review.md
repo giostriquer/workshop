@@ -63,3 +63,7 @@ round's change-review report is now the verdict line, a report without it
 reads as `ISSUES_FOUND`, and a dispatch's own verdict words are mapped in the
 body. The report gained a required `Disposable copy:` line; its rationale is
 in [mutation scope and budget](mutation-scope-and-budget.md#restrictions-copies-busy-hosts-and-other-hosts-2026-11-09).
+
+## Caller extremes and landed-effect faults are found by reading (2026-11-27)
+
+The tests of a hosted save covered lost replies and returned store errors, and its mutation ledger caught every mutant. Still, no test let the store commit and then panic, and none passed `Duration::MAX` to a wait that overflowed under a lock. Mutants change code, not the fault model or the inputs, so a mutation run cannot expose either gap. The checklist's edge cases now name the largest value a caller can pass, a separate item flags fault fixtures that never land an effect, and the mutation reference says these gaps are found by reading. Single-shot reviews of the change's own tests, three runs per wording on Opus 5.5 (regression evidence): the extreme input was raised in one of three runs before and three of three after. The landed-effect fault was raised in none of three before, none of three while it was a clause inside the edge-case item, none of two as its own item, and three of three once the item also said that a panic skips the code that handles a returned error, so it needs its own fault.

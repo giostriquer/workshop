@@ -146,9 +146,14 @@ Flag test code exhibiting:
   real setup or shared fixtures could exercise.
 - **Wrong-path / adjacent testing** - the name claims behavior X but the body exercises
   behavior Y, or setup skips the state transition needed to reach X.
-- **Missing edge cases** - boundary values, malformed inputs, failure paths, optional
+- **Missing edge cases** - boundary values, including the largest value a caller can
+  pass (`Duration::MAX`, a type's maximum), malformed inputs, failure paths, optional
   fields, stale records, permission variants, concurrency/coincidence cases, or host
   variants that production code supports but tests omit.
+- **Fault fixtures that never land an effect** - a fake port fails only before it acts,
+  but the real one can apply the effect and then fail, time out or panic. A panic skips
+  the code that handles a returned error, so it needs its own fault. Ask for faults that
+  land the effect first, and a test of the next operation after each.
 - **Brittle / over-coupled tests** - assertions depend on incidental implementation detail
   when a stable observable contract exists.
 - **Non-deterministic / order-dependent tests** - reliance on wall clock, random data,

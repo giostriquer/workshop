@@ -599,3 +599,7 @@ conditions. Shared authority, preservation and completion gates remain inline.
 The [repo tooling decision](repo-tooling.md#bounded-skill-entrypoints-2026-10-30)
 records the observed truncation and validation boundary. No delivery or review
 requirement is relaxed by this layout change.
+
+## Durability claims name their fault model (2026-11-27)
+
+An owner accepted "an in-doubt commit is replayed first" on evidence that injected only returned errors and a lost reply. A store that committed and then panicked broke the claim. Owner validation now has a claim type for durability, exactly-once and recovery claims: the owner names the fault model, includes an effect that lands before its call fails or panics, and checks the next operation after each fault. A recovered lock or a caught panic is not evidence. In single-shot validation plans for the same handback, none of three included that fault with the previous text and three of three did with the new one (regression evidence, three runs per wording on Opus 5.5).

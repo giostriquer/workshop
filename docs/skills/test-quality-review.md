@@ -21,7 +21,7 @@ It runs when a full change to production logic or tests is implemented, verified
 
 ## The rubric
 
-**Checklist.** Trivially-passing setup, weak or absent assertions, tautological or saturated mocks, wrong-path testing, missing edge cases, brittle coupling, non-determinism, and test-code complexity. A finding names a concrete way the test fails to protect its claimed behavior.
+**Checklist.** Trivially-passing setup, weak or absent assertions, tautological or saturated mocks, wrong-path testing, missing edge cases (including the largest value a caller can pass), fault fixtures that never land an effect (no fault applies the effect and then fails, times out or panics), brittle coupling, non-determinism, and test-code complexity. Mutation runs cannot find an untested caller extreme or a fault the fixtures never inject, because mutants change code, not faults or inputs. A finding names a concrete way the test fails to protect its claimed behavior.
 
 **Scope.** Mutate changed production behavior and the functions behind changed
 test cases, including protection lost through a removed assertion. A pure move

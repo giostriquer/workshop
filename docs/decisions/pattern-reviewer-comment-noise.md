@@ -69,6 +69,10 @@ cross-component wiring. Rationale and counts:
 and
 [code-quality-review](code-quality-review.md#the-dispatch-is-pointers-agent-descriptions-name-them-2026-11-09).
 
+## The contract review follows a call whose effect can land without an answer (2026-11-27)
+
+Step 3 already asked the reviewer to trace failure paths, yet a save that recorded its commit as in doubt only after the store returned `Unavailable` passed review. A store that committed and then panicked lost the request, and the next save diverged. Step 3 now names the case: for a call whose effect can land while the caller learns nothing, the exact request is recorded before the call and settled on every exit, including a panic or error the caller recovers from. Given the change's own save owner and store contract, single-shot reviews raised the defect in none of three runs with the previous wording and as blocking in three of three with the new one (regression evidence, three runs per wording on Opus 5.5). A rule that a widened visibility is a contract change was drafted and dropped: with the current text, three of three reviewers already treated a `pub(super)` to `pub` delta as contract ground and found the input it exposed.
+
 ## A built-in check with a provenance exception (2026-06-05)
 
 The pattern reviewer normally derives findings from project-documented

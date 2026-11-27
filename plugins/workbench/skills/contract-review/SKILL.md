@@ -59,7 +59,11 @@ that prevents review is `BLOCKED`, not permission to invent a requirement.
    obsolete path the user explicitly authorized removing.
 3. **Challenge the fact that makes the change safe.** Name the consequential
    assumption, then inspect its real caller or dependency implementation. Trace
-   relevant failure, retry, cancellation and concurrent paths. A blocker needs a
+   relevant failure, retry, cancellation and concurrent paths. For a call whose
+   effect can land while the caller learns nothing (a durable store, the network,
+   a child process), check that the exact request is recorded before the call and
+   settled on every exit: a verified result, a definitive refusal, an unknown
+   answer, and a panic or error the caller recovers from. A blocker needs a
    reachable counterexample or a violated accepted requirement, not a hypothetical
    input the system already excludes.
 4. **Use evidence proportionate to the claim.** Reuse adequate verification on the

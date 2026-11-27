@@ -212,6 +212,7 @@ Apply the baseline prompt above, plus these explicit review rules:
 7. **Treat unnecessary sequential orchestration and non-atomic updates as design smells when the cleaner structure is obvious.**
    - If independent work is serialized for no good reason, ask whether the flow should run in parallel instead.
    - If related updates can leave state half-applied, push for a more atomic structure.
+   - A panic or thrown error leaves state half-applied too. Under a lock, list each call between the first write and the guard's release that can panic or throw: arithmetic or indexing on caller input, an unwrap, a call into a port, callback or foreign code. At each one the guarded state must already be valid for the next caller. Recovering a poisoned lock (Rust's `PoisonError::into_inner`) or catching the error hands that state on: it is a claim to verify, never evidence of safety. A point that leaves invalid state for a later caller is a blocking correctness finding. Remedy: compute fallible values first, or install the restoring guard before the write.
    - Do not over-index on micro-optimizations, but do flag avoidable orchestration complexity that makes the implementation more brittle.
 
 8. **Report what the comment trim left, per the repository's rules.** The `trim-comments` stage edits the diff's comments before this round; what remains is findings like any other, and the implementer acts on them. Cosmetic narration belongs to `trim-comments`; it does not acquire a blocking structural consequence merely because it survived that pass.

@@ -25,6 +25,11 @@ Match evidence to the claim:
   the repository allows.
 - **Gates and infrastructure:** inspect the design and exercise what it accepts
   and rejects, including legitimate work the fix might now refuse.
+- **Durability, exactly-once or recovery claims:** name the fault model the
+  evidence covers. It includes a returned error, a lost reply, and an effect that
+  lands before its call fails or panics. After each fault, check the next
+  operation, not only the failing one. A recovered lock or a caught panic is not
+  evidence that state stayed valid.
 - **Artifact acceptance or derived authority:** use output from the actual
   producer, including disposable copies of saved versions covered by
   compatibility requirements.
